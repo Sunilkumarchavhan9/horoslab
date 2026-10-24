@@ -30,6 +30,8 @@ import {
   AnthropicLogo,
   MistralLogo,
   OpenAILogo,
+  ClaudeLogo,
+  GrokLogo,
 } from "@/components/horos/primitives/brand-icons";
 const founderEmail = "chavhansunilkumar753@gmail.com";
 
@@ -276,39 +278,262 @@ const CODING_PLAN_FAQS = [
 ];
 
 const READY_AGENTS = [
-  { name: "Claude Code", icon: <AnthropicLogo size={14} /> },
-  { name: "Codex", icon: <OpenAILogo size={14} /> },
-  { name: "OpenCode", icon: <div className="w-3.5 h-3.5 border-2 border-[#F0EFE2]" /> },
-  { name: "Pi", icon: <span className="font-serif font-bold text-xs text-white">π</span> },
-  { name: "Aider", icon: <span className="font-mono font-bold text-[11px] text-[#76b900]">ai</span> },
-  { name: "Qwen Code", icon: <QwenLogo size={14} /> },
-  { name: "Kilo Code", icon: <span className="font-mono font-bold text-[10px] text-yellow-400">kilo</span> },
-  { name: "Goose", icon: <span className="text-xs">🪿</span> },
-  { name: "Continue", icon: <div className="w-3.5 h-3.5 rounded-full border border-white flex items-center justify-center"><div className="w-1.5 h-1.5 bg-white rounded-full" /></div> },
-  { name: "Cline", icon: <span className="font-mono font-bold text-[11px] text-sky-400">CL</span> },
-  { name: "Droid", icon: <span className="text-xs text-emerald-400">⚙</span> },
-  { name: "Grok Build", icon: <span className="font-bold text-xs text-white">/</span> },
-  { name: "Hermes Agent", icon: <span className="text-xs">⚡</span> },
-  { name: "OpenClaw", icon: <span className="text-xs">🦀</span> },
-  { name: "Crush", icon: <span className="text-xs text-pink-500">♥</span> },
-  { name: "Kimi CLI", icon: <span className="font-bold text-xs text-white">K</span> },
-  { name: "Mistral Vibe", icon: <MistralLogo size={14} /> },
-  { name: "Forge", icon: <span className="text-xs text-amber-500">{}</span> },
-  { name: "Nanocoder", icon: <span className="font-bold text-[10px] text-white">NC</span> },
+  {
+    name: "Claude Code",
+    icon: <ClaudeLogo size={15} className="text-[#E27D60]" />,
+  },
+  {
+    name: "Codex",
+    icon: <OpenAILogo size={15} className="text-[#10A37F]" />,
+  },
+  {
+    name: "OpenCode",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-white">
+        <rect x="3" y="3" width="18" height="18" rx="2" stroke="white" strokeWidth="2.5" fill="none" />
+        <rect x="8.5" y="8.5" width="7" height="7" fill="white" />
+      </svg>
+    ),
+  },
+  {
+    name: "Pi",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className="text-white">
+        <path d="M4 6.5h16v3h-3.5v8H13v-8H9v8H5.5v-8H4v-3z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Aider",
+    icon: (
+      <div className="w-full h-full bg-[#00e676] flex items-center justify-center">
+        <span className="font-mono font-black text-[10px] text-black tracking-tighter">ai</span>
+      </div>
+    ),
+  },
+  {
+    name: "Qwen Code",
+    icon: <QwenLogo size={15} className="text-[#8B5CF6]" />,
+  },
+  {
+    name: "Kilo Code",
+    icon: (
+      <div className="w-full h-full bg-[#FACC15] flex items-center justify-center">
+        <span className="font-mono font-black text-[9px] text-black tracking-tighter leading-none">kilo</span>
+      </div>
+    ),
+  },
+  {
+    name: "Goose",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className="text-white">
+        <path d="M5 11c0-2.8 2.2-5 5-5 1.5 0 2.8.6 3.7 1.6l.8.9h4.5c1.1 0 2 .9 2 2v1h-5.5l-1.5-1.5c-.5-.5-1.2-.8-1.9-.8-1.7 0-3 1.3-3 3 0 .9.4 1.7 1 2.2l2.8 2.5v3.6l-3.2-2.8C6.8 16.1 5 13.7 5 11z" />
+        <circle cx="8" cy="9" r="1" fill="#151515" />
+      </svg>
+    ),
+  },
+  {
+    name: "Continue",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="text-white">
+        <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="2.2" />
+        <circle cx="12" cy="12" r="4" fill="white" />
+      </svg>
+    ),
+  },
+  {
+    name: "Cline",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[#38BDF8]">
+        <rect x="4" y="6" width="16" height="14" rx="3.5" fill="#1E293B" stroke="#38BDF8" strokeWidth="2" />
+        <path d="M12 2v4" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="9" cy="12" r="1.5" fill="#38BDF8" />
+        <circle cx="15" cy="12" r="1.5" fill="#38BDF8" />
+        <path d="M9 16c.8.6 1.8.8 3 .8s2.2-.2 3-.8" stroke="#38BDF8" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    name: "Droid",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-white">
+        <circle cx="12" cy="12" r="2.8" fill="white" />
+        <path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.1-6.9-2.8 2.8m-8.2 8.2-2.8 2.8m0-13.8 2.8 2.8m8.2 8.2 2.8 2.8" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    name: "Grok Build",
+    icon: <GrokLogo size={14} className="text-white" />,
+  },
+  {
+    name: "Hermes Agent",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <rect width="24" height="24" fill="#0D0D11" rx="2" />
+        <path d="M6 18c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="#FFFFFF" />
+        <circle cx="12" cy="9" r="4" fill="#FFFFFF" />
+        <path d="M4 8l4 2-1 3-3-2zM20 8l-4 2 1 3 3-2z" fill="#FFFFFF" />
+        <circle cx="10.5" cy="9" r="0.8" fill="#0D0D11" />
+        <circle cx="13.5" cy="9" r="0.8" fill="#0D0D11" />
+      </svg>
+    ),
+  },
+  {
+    name: "OpenClaw",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className="text-[#EF4444]">
+        <ellipse cx="12" cy="14" rx="6.5" ry="5" />
+        <circle cx="9.5" cy="11.5" r="1.3" fill="#151515" />
+        <circle cx="14.5" cy="11.5" r="1.3" fill="#151515" />
+        <path d="M6.5 11C4.5 9.5 3 7.5 4 5s3.5.5 4 2.8M17.5 11c2-1.5 3.5-3.5 2.5-6s-3.5.5-4 2.8" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M5 16.5l-2.5 2.5M19 16.5l2.5 2.5M7.5 18.5l-1.5 2.5M16.5 18.5l1.5 2.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    name: "Crush",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="#F43F5E">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        <circle cx="8.5" cy="9.5" r="1.2" fill="#151515" />
+        <circle cx="15.5" cy="9.5" r="1.2" fill="#151515" />
+      </svg>
+    ),
+  },
+  {
+    name: "Kimi CLI",
+    icon: (
+      <div className="w-full h-full bg-black flex items-center justify-center">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
+          <path d="M6 3h3.5v7.5l5.5-7.5H20l-6.8 9 7.3 9h-4.8l-5.2-7v7H6V3z" />
+        </svg>
+      </div>
+    ),
+  },
+  {
+    name: "Mistral Vibe",
+    icon: <MistralLogo size={14} />,
+  },
+  {
+    name: "Forge",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-amber-400">
+        <path d="M8 3C6 3 5 4 5 6v3c0 1.5-1 2-2 2 1 0 2 .5 2 2v3c0 2 1 3 3 3m8-16c2 0 3 1 3 3v3c0 1.5 1 2 2 2-1 0-2 .5-2 2v3c0 2-1 3-3 3" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    name: "Nanocoder",
+    icon: (
+      <div className="w-full h-full bg-[#111] flex items-center justify-center">
+        <span className="font-mono font-bold text-[10px] text-white tracking-tight">NC</span>
+      </div>
+    ),
+  },
 ];
 
 const PREVIEW_AGENTS = [
-  { name: "Zed", icon: <span className="font-mono font-bold text-xs text-white">Z</span> },
-  { name: "Oh My Pi", icon: <span className="font-mono font-bold text-xs text-purple-400">π</span> },
-  { name: "gptme", icon: <span className="font-mono text-[10px] text-emerald-400">gpt</span> },
-  { name: "Tabby", icon: <span className="text-xs">🐱</span> },
-  { name: "Octofriend", icon: <span className="font-mono text-[10px] text-white">OC</span> },
-  { name: "Command Code", icon: <span className="font-mono text-xs text-white">⌘</span> },
-  { name: "Junie CLI", icon: <div className="w-2.5 h-2.5 bg-emerald-500 rounded-none" /> },
-  { name: "VS Code Copilot Chat", icon: <span className="font-mono text-[10px] text-sky-400">VC</span> },
-  { name: "Theia AI", icon: <span className="text-xs">👁</span> },
-  { name: "OpenHands CLI", icon: <span className="text-xs">🙌</span> },
-  { name: "Copilot CLI", icon: <span className="font-mono text-[10px] text-white">CP</span> },
+  {
+    name: "Zed",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-white">
+        <path d="M4 5h16v3.2l-9.8 9.5H20V20.5H4v-3.2l9.8-9.5H4V5z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Oh My Pi",
+    icon: (
+      <div className="w-full h-full bg-[#25143a] flex items-center justify-center">
+        <span className="font-serif font-bold text-xs text-[#C084FC]">π</span>
+      </div>
+    ),
+  },
+  {
+    name: "gptme",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="text-sky-400">
+        <rect x="3" y="6" width="18" height="14" rx="3.5" fill="#0C2340" stroke="#38BDF8" strokeWidth="1.8" />
+        <path d="M12 2v4" stroke="#38BDF8" strokeWidth="1.8" strokeLinecap="round" />
+        <circle cx="8.5" cy="12" r="1.5" fill="#38BDF8" />
+        <circle cx="15.5" cy="12" r="1.5" fill="#38BDF8" />
+      </svg>
+    ),
+  },
+  {
+    name: "Tabby",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#F97316">
+        <path d="M12 3C7 3 3 7 3 12c0 5 4 9 9 9s9-4 9-9c0-5-4-9-9-9z" />
+        <path d="M6 7l2.5 3.5h-5L6 7zm12 0l2.5 3.5h-5L18 7z" fill="#EA580C" />
+        <circle cx="8.5" cy="13" r="1.3" fill="#151515" />
+        <circle cx="15.5" cy="13" r="1.3" fill="#151515" />
+        <path d="M12 15l-1 1.2h2l-1-1.2z" fill="#FFFFFF" />
+        <path d="M11 5h2v3h-2zm-3.5 1h2v2h-2zm7 0h2v2h-2z" fill="#C2410C" />
+      </svg>
+    ),
+  },
+  {
+    name: "Octofriend",
+    icon: (
+      <div className="w-full h-full bg-[#1b1c20] flex items-center justify-center">
+        <span className="font-mono font-bold text-[9px] text-[#CBD5E1]">OC</span>
+      </div>
+    ),
+  },
+  {
+    name: "Command Code",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-white">
+        <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Junie CLI",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="3" width="8" height="8" rx="1.5" fill="#00E676" />
+        <rect x="13" y="3" width="8" height="8" rx="1.5" fill="#00B0FF" />
+        <rect x="3" y="13" width="8" height="8" rx="1.5" fill="#7C4DFF" />
+        <rect x="13" y="13" width="8" height="8" rx="1.5" fill="#FF5252" />
+      </svg>
+    ),
+  },
+  {
+    name: "VS Code Copilot Chat",
+    icon: (
+      <div className="w-full h-full bg-[#081a2e] flex items-center justify-center">
+        <span className="font-mono font-bold text-[9px] text-[#38BDF8]">VC</span>
+      </div>
+    ),
+  },
+  {
+    name: "Theia AI",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-white">
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="12" r="4.5" fill="white" />
+      </svg>
+    ),
+  },
+  {
+    name: "OpenHands CLI",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-amber-300">
+        <path d="M10 2c-.6 0-1 .4-1 1v7H8V4c0-.6-.4-1-1-1s-1 .4-1 1v6H5V6c0-.6-.4-1-1-1s-1 .4-1 1v9c0 4.4 3.6 8 8 8s8-3.6 8-8V9c0-.6-.4-1-1-1s-1 .4-1 1v3h-1V5c0-.6-.4-1-1-1s-1 .4-1 1v5h-1V3c0-.6-.4-1-1-1z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Copilot CLI",
+    icon: (
+      <div className="w-full h-full bg-[#1e232a] flex items-center justify-center">
+        <span className="font-mono font-bold text-[9px] text-white">CP</span>
+      </div>
+    ),
+  },
 ];
 
 export default function PricingPage() {
@@ -1185,13 +1410,15 @@ export default function PricingPage() {
               {/* 19 agents ready */}
               <div className="mb-6">
                 <div className="text-xs text-[#777] mb-3 font-medium">19 agents ready</div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
                   {READY_AGENTS.map((agent) => (
                     <div
                       key={agent.name}
-                      className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#262626] bg-[#161616] hover:border-[#76b900]/40 transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 border border-dashed border-[#262626] bg-[#161616] hover:border-[#76b900]/40 transition-colors"
                     >
-                      <div className="shrink-0">{agent.icon}</div>
+                      <div className="w-7 h-7 rounded-[4px] bg-[#1a1a1c] border border-[#2a2a2e] flex items-center justify-center shrink-0 overflow-hidden">
+                        {agent.icon}
+                      </div>
                       <span className="text-xs font-medium text-[#F0EFE2] truncate">{agent.name}</span>
                     </div>
                   ))}
@@ -1201,13 +1428,15 @@ export default function PricingPage() {
               {/* Preview agents */}
               <div>
                 <div className="text-xs text-[#777] mb-3 font-medium">Preview</div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 mb-3">
                   {PREVIEW_AGENTS.map((agent) => (
                     <div
                       key={agent.name}
-                      className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#262626] bg-[#161616] hover:border-[#76b900]/40 transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 border border-dashed border-[#262626] bg-[#161616] hover:border-[#76b900]/40 transition-colors"
                     >
-                      <div className="shrink-0">{agent.icon}</div>
+                      <div className="w-7 h-7 rounded-[4px] bg-[#1a1a1c] border border-[#2a2a2e] flex items-center justify-center shrink-0 overflow-hidden">
+                        {agent.icon}
+                      </div>
                       <span className="text-xs font-medium text-[#bbb] truncate">{agent.name}</span>
                     </div>
                   ))}
