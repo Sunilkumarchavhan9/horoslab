@@ -272,6 +272,10 @@ const CODING_PLAN_FAQS = [
 
 const READY_AGENTS = [
   {
+    name: "Horos",
+    logo: "/horos-icon.svg",
+  },
+  {
     name: "Claude Code",
     logo: "/logos/agents/claude-code.svg",
   },
@@ -446,8 +450,8 @@ export default function PricingPage() {
             <div
               onClick={() => setSelectedPlan("payg")}
               className={`border border-dashed p-4 sm:p-5 cursor-pointer transition-all ${selectedPlan === "payg"
-                  ? "border-[#76b900] bg-[#1a1a1a]/40 shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                  : "border-[#333] bg-[#1a1a1a]/20 hover:border-[#555]"
+                ? "border-[#76b900] bg-[#1a1a1a]/40 shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
+                : "border-[#333] bg-[#1a1a1a]/20 hover:border-[#555]"
                 }`}
             >
               <div className="flex justify-between items-start mb-1.5">
@@ -478,8 +482,8 @@ export default function PricingPage() {
             <div
               onClick={() => setSelectedPlan("coding")}
               className={`border border-dashed p-4 sm:p-5 cursor-pointer transition-all ${selectedPlan === "coding"
-                  ? "border-[#76b900] bg-[#1a1a1a]/40 shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                  : "border-[#333] bg-[#1a1a1a]/20 hover:border-[#555]"
+                ? "border-[#76b900] bg-[#1a1a1a]/40 shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
+                : "border-[#333] bg-[#1a1a1a]/20 hover:border-[#555]"
                 }`}
             >
               <div className="flex justify-between items-start mb-1.5">
@@ -540,8 +544,8 @@ export default function PricingPage() {
                             type="button"
                             onClick={() => setCreditAmount(amt)}
                             className={`text-xs px-2.5 py-1 font-mono transition-colors border ${creditAmount === amt
-                                ? "bg-[#76b900] text-black border-[#76b900] font-semibold"
-                                : "bg-[#222] text-[#888] border-[#333] hover:text-white"
+                              ? "bg-[#76b900] text-black border-[#76b900] font-semibold"
+                              : "bg-[#222] text-[#888] border-[#333] hover:text-white"
                               }`}
                           >
                             ${amt}
@@ -700,9 +704,8 @@ export default function PricingPage() {
                       <Link
                         key={model.id}
                         href={model.link}
-                        className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3.5 sm:py-4 items-center group hover:bg-[#1c1c1c] transition-colors ${
-                          idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
-                        }`}
+                        className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3.5 sm:py-4 items-center group hover:bg-[#1c1c1c] transition-colors ${idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
+                          }`}
                       >
                         {/* Model Icon + Title (clean row background, no icon border or box) */}
                         <div className="flex items-center gap-3 pr-3">
@@ -1206,25 +1209,25 @@ export default function PricingPage() {
               <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-10">
                 <div className="max-w-md">
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#F0EFE2] tracking-tight mb-3">
-                    Connect your coding & research{" "}
+                    Connect your agents to{" "}
                     <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-none font-semibold inline-block">
-                      agents
+                      Frontier Lab
                     </span>
                   </h2>
                   <p className="text-xs sm:text-sm text-[#888]">
-                    Review each connection before it is applied across your research environment.
+                    Route any coding agent, research CLI, or IDE directly through our Frontier Lab foundation models and high-throughput compute.
                   </p>
                 </div>
 
                 <div className="w-full lg:max-w-md">
                   <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-xs sm:text-sm font-medium text-[#F0EFE2]">
-                        Let your coding agent or research CLI set it up
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <span className="text-xs sm:text-sm font-medium text-[#F0EFE2] truncate">
+                        Automatic setup for your agent
                       </span>
                       <button
                         onClick={handleCopyPrompt}
-                        className="text-[11px] text-[#aaa] hover:text-white flex items-center gap-1.5 px-2.5 py-1 border border-[#333] hover:border-[#555] bg-[#141414] transition-colors"
+                        className="text-[11px] text-[#aaa] hover:text-white flex items-center gap-1.5 px-2.5 py-1 border border-[#333] hover:border-[#555] bg-[#141414] transition-colors shrink-0 whitespace-nowrap"
                       >
                         <Copy size={12} /> {copiedPrompt ? "Copied!" : "Copy setup prompt"}
                       </button>
@@ -1236,7 +1239,7 @@ export default function PricingPage() {
                         <div className="w-5 h-5 border border-[#76b900] bg-[#151515] text-[#76b900] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                           1
                         </div>
-                        <span className="text-xs text-[#C8C7BA]">Paste the prompt into your coding agent or research terminal</span>
+                        <span className="text-xs text-[#C8C7BA]">Paste the prompt into your agent or terminal</span>
                       </div>
                       <div className="flex items-center gap-3 relative z-10">
                         <div className="w-5 h-5 border border-[#76b900] bg-[#151515] text-[#76b900] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
@@ -1257,14 +1260,14 @@ export default function PricingPage() {
                     href="/developer-console"
                     className="text-xs sm:text-[13px] text-[#76b900] underline font-medium mt-3 inline-block hover:opacity-80"
                   >
-                    Set up with your coding agent or research CLI
+                    Set up with your coding agent
                   </Link>
                 </div>
               </div>
 
-              {/* 19 agents ready */}
+              {/* 20 agents ready */}
               <div className="mb-6">
-                <div className="text-xs text-[#777] mb-3 font-medium">19 coding & research agents ready</div>
+                <div className="text-xs text-[#777] mb-3 font-medium">20 compatible agents ready</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
                   {READY_AGENTS.map((agent) => (
                     <div
@@ -1290,7 +1293,7 @@ export default function PricingPage() {
 
               {/* Preview agents */}
               <div>
-                <div className="text-xs text-[#777] mb-3 font-medium">Preview agents</div>
+                <div className="text-xs text-[#777] mb-3 font-medium">Preview</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 mb-3">
                   {PREVIEW_AGENTS.map((agent) => (
                     <div
@@ -1349,11 +1352,10 @@ export default function PricingPage() {
                     <button
                       key={faq.question}
                       onClick={() => setCodingFaqActive(index)}
-                      className={`px-3 py-1.5 text-xs font-medium transition-all ${
-                        isActive
+                      className={`px-3 py-1.5 text-xs font-medium transition-all ${isActive
                           ? "bg-[#76b900] text-black font-semibold shadow-sm"
                           : "bg-[#181818] text-[#888] hover:text-[#F0EFE2] border border-[#282828] hover:border-[#444]"
-                      }`}
+                        }`}
                     >
                       {faq.question}
                     </button>
