@@ -16,8 +16,8 @@ import {
 
 export const CAPABILITIES = [
   {
-    id: "horos-reality-decoder",
-    name: "Reality Decoder",
+    id: "horos-argvis",
+    name: "Argvis",
     developer: "Horos",
     providerSlug: "horos-ai",
     icon: HorosLogo,
@@ -32,7 +32,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input Free per 1M at 99.4% hit rate",
-    description: "Horos Reality Decoder is a first-party physical foundation model engineered by the Horos Frontier AI Lab. It ingests multi-camera video, LiDAR, acoustic telemetry, and robotic proprioception, transforming raw physical world inputs into continuous spatial-temporal tokens.",
+    description: "Horos Argvis is a first-party physical foundation model engineered by the Horos Frontier AI Lab. It ingests multi-camera video, LiDAR, acoustic telemetry, and robotic proprioception, transforming raw physical world inputs into continuous spatial-temporal tokens.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -51,8 +51,8 @@ export const CAPABILITIES = [
     }
   },
   {
-    id: "horos-code-intelligence",
-    name: "Code Intelligence",
+    id: "horos-athcod",
+    name: "Athcod",
     developer: "Horos",
     providerSlug: "horos-ai",
     icon: HorosLogo,
@@ -67,7 +67,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "output tok/s, model only",
     effectiveCost: "Effective input Free per 1M at 98.7% hit rate",
-    description: "Horos Code Intelligence is an autonomous software engineering and reasoning foundation model trained with test-time compute search and automated verification loops. Reconciles repository dependencies, synthesizes contracts, and verifies correctness.",
+    description: "Horos Athcod is an autonomous software engineering and reasoning foundation model trained with test-time compute search and automated verification loops. Reconciles repository dependencies, synthesizes contracts, and verifies correctness.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -86,8 +86,8 @@ export const CAPABILITIES = [
     }
   },
   {
-    id: "horos-voice-intelligence",
-    name: "Voice Intelligence",
+    id: "horos-hervox",
+    name: "Hervox",
     developer: "Horos",
     providerSlug: "horos-ai",
     icon: HorosLogo,
@@ -102,7 +102,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "audio tok/s, real-time",
     effectiveCost: "Effective input Free per 1M at that hit rate",
-    description: "Horos Voice Intelligence operates natively on acoustic latents without text tokenization bottlenecks, delivering sub-100ms full-duplex conversational audio, spatial noise separation, and expressive multilingual speech.",
+    description: "Horos Hervox operates natively on acoustic latents without text tokenization bottlenecks, delivering sub-100ms full-duplex conversational audio, spatial noise separation, and expressive multilingual speech.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -121,8 +121,8 @@ export const CAPABILITIES = [
     }
   },
   {
-    id: "horos-visual-generation",
-    name: "Visual Generation",
+    id: "horos-morsim",
+    name: "Morsim",
     developer: "Horos",
     providerSlug: "horos-ai",
     icon: HorosLogo,
@@ -137,7 +137,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "frames/sec streaming",
     effectiveCost: "Effective input Free per 1M at 95.5% hit rate",
-    description: "Horos Visual Generation simulates photorealistic, multi-view physical environments with strict adherence to real-world physics, lighting, and fluid dynamics for synthetic training and simulation rollouts.",
+    description: "Horos Morsim simulates photorealistic, multi-view physical environments with strict adherence to real-world physics, lighting, and fluid dynamics for synthetic training and simulation rollouts.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
@@ -156,8 +156,8 @@ export const CAPABILITIES = [
     }
   },
   {
-    id: "horos-world-dynamics",
-    name: "World Dynamics",
+    id: "horos-chrdyn",
+    name: "Chrdyn",
     developer: "Horos",
     providerSlug: "horos-ai",
     icon: HorosLogo,
@@ -172,7 +172,7 @@ export const CAPABILITIES = [
     },
     speedLabel: "trajectory steps/s",
     effectiveCost: "Effective input Free per 1M at 97.2% hit rate",
-    description: "Horos World Dynamics Model forecasts future physical states conditioned on autonomous agent actions, enabling counterfactual simulation and safety verification before physical execution.",
+    description: "Horos Chrdyn forecasts future physical states conditioned on autonomous agent actions, enabling counterfactual simulation and safety verification before physical execution.",
     specs: {
       apiCompatibility: "Mission-compatible Outcome Intents",
       anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",

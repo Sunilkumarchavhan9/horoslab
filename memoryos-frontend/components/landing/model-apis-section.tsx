@@ -115,7 +115,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                       }`}
                     >
                       <HorosLogo size={12} />
-                      Horos Reality Decoder (Lab)
+                      Horos Argvis (Lab)
                     </button>
                     <button
                       type="button"
@@ -133,12 +133,12 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
                   {selectedModel === "horos" ? (
                     <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#75bf00]/40 flex items-center justify-center shrink-0 text-[#75bf00]">
+                      <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0 text-[#F0EFE2]">
                         <HorosLogo size={20} />
                       </div>
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-[#F0EFE2] text-[17px]">Horos Reality Decoder</span>
+                          <span className="font-semibold text-[#F0EFE2] text-[17px]">Horos Argvis</span>
                           <span className="bg-[#75bf00]/20 text-[#75bf00] border border-[#75bf00]/40 text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-xs">FRONTIER LAB</span>
                         </div>
 
@@ -150,10 +150,10 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                         </div>
 
                         <div className="text-[12px] text-[#888] font-mono mb-1">
-                          horos-lab/Reality-Decoder-v1
+                          horos-lab/argvis-v1
                         </div>
                         <div className="text-[12px] text-[#C8C7BA] mb-2 leading-relaxed">
-                          Multi-camera spatial depth, point clouds & industrial telemetry decoding
+                          Multi-camera spatial depth, point clouds & industrial telemetry perception
                         </div>
                         <div className="text-[12px] text-[#888] flex items-center gap-2">
                           Served natively via Horos Reality Fabric & Edge Mesh
@@ -222,7 +222,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
                 {/* --- ROW 4 --- */}
                 <div className="flex items-center p-6 lg:px-8 xl:px-[120px]">
-                  <Link href="/horos#horos-model-family" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
+                  <Link href="/horos#intelligence-optimization" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
                     Explore Horos Foundation Models
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </Link>

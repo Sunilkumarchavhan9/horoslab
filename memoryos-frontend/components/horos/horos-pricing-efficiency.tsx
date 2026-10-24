@@ -9,8 +9,8 @@ import { CAPABILITIES } from "@/lib/capabilities-data";
 // Extended Mock data for multi-dimensional optimization
 const MODELS = [
   {
-    id: "horos-reality-decoder",
-    name: "Horos Reality Decoder",
+    id: "horos-argvis",
+    name: "Horos Argvis",
     brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
 
     // Cost
@@ -33,114 +33,6 @@ const MODELS = [
 
     tags: ["Frontier Lab", "Physical Control", "Spatial Reasoning", "Multimodal"],
     trending: true,
-    frontierLab: true,
-  },
-  {
-    id: "horos-code-intelligence",
-    name: "Horos Code Intelligence",
-    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
-
-    // Cost
-    listPrice: 0.20,
-    effectivePrice: 0.018,
-    multiplier: "11.1x",
-    cacheHit: 98.6,
-    cachedInputPrice: 0.01,
-    outputPrice: 0.40,
-
-    // Latency
-    standardLatency: 580,
-    optimizedLatency: 65,
-    latencyMultiplier: "8.9x",
-
-    // Throughput
-    standardThroughput: 45,
-    optimizedThroughput: 380.0,
-    throughputMultiplier: "8.4x",
-
-    tags: ["Frontier Lab", "Reasoning", "Code", "Tool Use"],
-    trending: true,
-    frontierLab: true,
-  },
-  {
-    id: "horos-voice-intelligence",
-    name: "Horos Voice Intelligence",
-    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
-
-    // Cost
-    listPrice: 0.08,
-    effectivePrice: 0.009,
-    multiplier: "8.9x",
-    cacheHit: 97.8,
-    cachedInputPrice: 0.005,
-    outputPrice: 0.16,
-
-    // Latency
-    standardLatency: 650,
-    optimizedLatency: 78,
-    latencyMultiplier: "8.3x",
-
-    // Throughput
-    standardThroughput: 50,
-    optimizedThroughput: 420.0,
-    throughputMultiplier: "8.4x",
-
-    tags: ["Frontier Lab", "Voice", "Real-Time", "Multimodal"],
-    trending: false,
-    frontierLab: true,
-  },
-  {
-    id: "horos-visual-generation",
-    name: "Horos Visual Generation",
-    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
-
-    // Cost
-    listPrice: 0.35,
-    effectivePrice: 0.038,
-    multiplier: "9.2x",
-    cacheHit: 94.2,
-    cachedInputPrice: 0.02,
-    outputPrice: 0.70,
-
-    // Latency
-    standardLatency: 210,
-    optimizedLatency: 16,
-    latencyMultiplier: "13.1x",
-
-    // Throughput
-    standardThroughput: 15,
-    optimizedThroughput: 125.0,
-    throughputMultiplier: "8.3x",
-
-    tags: ["Frontier Lab", "World Modeling", "Simulation", "Video Understanding"],
-    trending: true,
-    frontierLab: true,
-  },
-  {
-    id: "horos-world-dynamics",
-    name: "Horos World Dynamics",
-    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
-
-    // Cost
-    listPrice: 0.28,
-    effectivePrice: 0.029,
-    multiplier: "9.7x",
-    cacheHit: 99.2,
-    cachedInputPrice: 0.015,
-    outputPrice: 0.60,
-
-    // Latency
-    standardLatency: 460,
-    optimizedLatency: 48,
-    latencyMultiplier: "9.6x",
-
-    // Throughput
-    standardThroughput: 22,
-    optimizedThroughput: 195.0,
-    throughputMultiplier: "8.9x",
-
-    tags: ["Frontier Lab", "World Modeling", "Simulation", "Physical Control"],
-    trending: false,
     frontierLab: true,
   },
   {
@@ -389,7 +281,7 @@ export function HorosPricingEfficiency() {
   });
 
   return (
-    <section className="w-full flex flex-col py-20 border-t border-dashed border-[#222]">
+    <section id="intelligence-optimization" className="w-full flex flex-col py-20 border-t border-dashed border-[#222] scroll-mt-24">
       <style dangerouslySetInnerHTML={{
         __html: `
         @keyframes scan-line {

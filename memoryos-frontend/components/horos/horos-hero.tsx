@@ -12,9 +12,9 @@ const createDot = (x: string, y: string, speed: number, cost: string, cacheHit: 
 
 const HERO_MODELS = [
   {
-    id: "horos-reality-decoder",
-    name: "Horos Reality Decoder",
-    icon: <HorosLogo variant="icon" size="sm" className="w-5 h-auto text-[#75bf00]" />,
+    id: "horos-argvis",
+    name: "Horos Argvis",
+    icon: <HorosLogo variant="icon" size="sm" className="w-5 h-auto text-[#F0EFE2]" />,
     speed: 310,
     cost: "$0.01",
     cacheHit: "99.4%",

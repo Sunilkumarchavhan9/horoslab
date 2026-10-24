@@ -41,7 +41,7 @@ const ALL_14_WORKLOADS = [
   {
     label: "Decode reality",
     title: "Run",
-    target: "Horos Reality Decoder on Edge Mesh",
+    target: "Horos Argvis on Edge Mesh",
     icon: <HorosLogo size={12} />,
   },
   {
