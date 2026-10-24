@@ -71,18 +71,11 @@ export function LearningFlywheelStep() {
           <div className="text-[9px] font-mono border border-[#333] text-[#777] px-1.5 py-0.5 rounded-[1px]">SYNTHETIC DATA</div>
         </div>
 
-        {/* 2-Column Grid for Lessons */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-4">
-          <div className="space-y-4">
-            {lessons.slice(0, 3).map((l) => (
-              <LessonItem key={l.num} num={l.num} title={l.title} desc={l.desc} status={l.status} />
-            ))}
-          </div>
-          <div className="space-y-4">
-            {lessons.slice(3, 6).map((l) => (
-              <LessonItem key={l.num} num={l.num} title={l.title} desc={l.desc} status={l.status} />
-            ))}
-          </div>
+        {/* Lessons List */}
+        <div className="space-y-3">
+          {lessons.map((l) => (
+            <LessonItem key={l.num} num={l.num} title={l.title} desc={l.desc} status={l.status} />
+          ))}
         </div>
       </div>
 
@@ -111,9 +104,9 @@ export function LearningFlywheelStep() {
 
 function LessonItem({ num, title, desc, status }: { num: string; title: string; desc: string; status: string }) {
   return (
-    <div className="flex items-start gap-4 pb-4 border-b border-dashed border-[#222222] last:border-0 last:pb-0">
-      <div className="text-[#F0EFE2] font-mono text-[12px] font-bold mt-0.5">{num}</div>
-      <div className="flex-1 flex flex-col gap-1">
+    <div className="flex items-start gap-3.5 pb-2.5 border-b border-dashed border-[#222222] last:border-0 last:pb-0">
+      <div className="text-[#F0EFE2] font-mono text-[11px] font-bold mt-0.5 shrink-0">{num}</div>
+      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
         <div className="flex items-center justify-between w-full gap-2">
           <span className="text-[#dddddd] font-medium text-[12px] leading-tight truncate">{title}</span>
           <span className="shrink-0 flex items-center gap-1.5 border border-[#333] bg-[#1a1a1a] px-1.5 py-0.5 rounded-[1px]">

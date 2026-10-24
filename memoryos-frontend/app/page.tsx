@@ -45,54 +45,9 @@ export default function Home() {
       const shouldShow = window.scrollY > window.innerHeight * 0.8;
       setShowFloatingComposer(shouldShow);
 
-      const dockTarget = document.getElementById("composer-dock-target");
       const composerElement = composerWrapperRef.current;
 
       if (composerElement) {
-        if (dockTarget && shouldShow && !isFloatingComposerDismissed) {
-          const dockRect = dockTarget.getBoundingClientRect();
-          const hasDockEntered = dockRect.top < window.innerHeight;
-
-          if (hasDockEntered) {
-            // Determine if the container is currently stuck
-            const stickyContainer = dockTarget.closest('.sticky');
-            let isStuck = false;
-            if (stickyContainer) {
-              const stickyRect = stickyContainer.getBoundingClientRect();
-              const computedTop = parseInt(window.getComputedStyle(stickyContainer).top) || 0;
-              isStuck = stickyRect.top <= computedTop + 1;
-            }
-
-            if (isStuck) {
-              // When stuck, use fixed positioning to completely eliminate scroll jitter
-              gsap.set(composerElement, {
-                position: "fixed",
-                xPercent: 0,
-                x: 0,
-                y: 0,
-                left: dockRect.left,
-                top: dockRect.top,
-                width: dockRect.width,
-                bottom: "auto",
-                maxWidth: "none",
-              });
-            } else {
-              // When not stuck, use absolute positioning relative to document to avoid scroll jitter
-              gsap.set(composerElement, {
-                position: "absolute",
-                xPercent: 0,
-                x: 0,
-                y: 0,
-                left: dockRect.left,
-                top: window.scrollY + dockRect.top,
-                width: dockRect.width,
-                bottom: "auto",
-                maxWidth: "none",
-              });
-            }
-            return;
-          }
-        }
 
         // Default floating behavior (bottom center)
         gsap.to(composerElement, {

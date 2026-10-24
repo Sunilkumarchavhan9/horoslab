@@ -2039,9 +2039,9 @@ export function TokenPromptInput({
           )}
 
           {/* Bottom Tool Rail (Synchronized with natural language intent and dropdowns) */}
-          <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#222222] pt-3 relative z-30 overflow-visible">
-            {/* Left Controls - Overflow Visible so Popovers Display Cleanly */}
-            <div className="flex items-center gap-1.5 min-w-0 flex-nowrap overflow-visible relative max-w-full">
+          <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#222222] pt-3 relative z-30">
+            {/* Left Controls - Scrollable without scrollbar so it never collides with right buttons */}
+            <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto no-scrollbar py-0.5">
               {/* (+) Attachment & Modality Dropdown Button */}
               <div className="relative shrink-0 z-50">
                 <button
@@ -2536,7 +2536,7 @@ export function TokenPromptInput({
               {/* Grouped Runtime + Cloud + Compute Box */}
               <div
                 className={cn(
-                  "flex items-center gap-2.5 border px-2.5 py-1 text-xs rounded-xs font-sans shrink-0 whitespace-nowrap",
+                  "hidden sm:flex items-center gap-2.5 border px-2.5 py-1 text-xs rounded-xs font-sans shrink-0 whitespace-nowrap",
                   dark
                     ? "border-[#383838] bg-[#1a1a1a] text-[#d1d5db]"
                     : "border-[#d8ddd3] bg-white text-[#2a3028]",
@@ -2574,7 +2574,7 @@ export function TokenPromptInput({
             </div>
 
             {/* Right Controls: Adaptive Mode Switcher + Bright Green Launch Button */}
-            <div className="flex items-center gap-1.5 shrink-0 relative z-50">
+            <div className="flex items-center gap-1.5 shrink-0 relative z-50 ml-2">
               <div className="relative">
                 <button
                   type="button"

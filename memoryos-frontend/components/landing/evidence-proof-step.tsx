@@ -64,18 +64,11 @@ export function EvidenceProofStep() {
           <div className="text-[#666666] font-mono text-[10px]">Cross-validated telemetry</div>
         </div>
 
-        {/* 2-Column Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-4">
-          <div className="space-y-4">
-            {evidenceItems.slice(0, 3).map((item) => (
-              <EvidenceItem key={item.num} item={item} />
-            ))}
-          </div>
-          <div className="space-y-4">
-            {evidenceItems.slice(3, 6).map((item) => (
-              <EvidenceItem key={item.num} item={item} />
-            ))}
-          </div>
+        {/* Evidence Items List */}
+        <div className="space-y-3">
+          {evidenceItems.map((item) => (
+            <EvidenceItem key={item.num} item={item} />
+          ))}
         </div>
       </div>
 
@@ -98,9 +91,9 @@ export function EvidenceProofStep() {
 
 function EvidenceItem({ item }: { item: any }) {
   return (
-    <div className="flex items-start gap-4 pb-4 border-b border-dashed border-[#222222] last:border-0 last:pb-0">
-      <div className="text-[#F0EFE2] font-mono text-[12px] font-bold mt-0.5">{item.num}</div>
-      <div className="flex-1 flex flex-col gap-1">
+    <div className="flex items-start gap-3.5 pb-2.5 border-b border-dashed border-[#222222] last:border-0 last:pb-0">
+      <div className="text-[#F0EFE2] font-mono text-[11px] font-bold mt-0.5 shrink-0">{item.num}</div>
+      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
         <div className="flex items-center justify-between w-full gap-2">
           <div className="flex items-center gap-1.5 truncate">
             <item.Icon size={12} />

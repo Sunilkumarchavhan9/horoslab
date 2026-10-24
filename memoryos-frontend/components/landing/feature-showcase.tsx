@@ -727,9 +727,6 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
               <div className="opacity-0 pointer-events-none h-[750px] lg:h-[650px] xl:h-[600px] w-full">
               </div>
             </div>
-
-            {/* Invisible target block for the global composer to dock into using GSAP */}
-            <div id="composer-dock-target" className="mt-16 xl:mt-24 relative w-auto -mx-2 sm:-mx-4 h-[80px] hidden md:block opacity-0 pointer-events-none" />
           </div>
         </div>
 
