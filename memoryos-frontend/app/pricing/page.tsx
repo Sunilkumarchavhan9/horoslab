@@ -227,52 +227,52 @@ export default function PricingPage() {
       {/* Top Navbar */}
       <LandingNavbar />
 
-      {/* Main Container */}
-      <main className="max-w-5xl mx-auto pt-28 pb-32 px-4 sm:px-6 md:px-0 relative z-10">
+      {/* Main Container - Perfectly fits between inner dashed grid lines */}
+      <main className="w-[94%] sm:w-[94%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto pt-24 sm:pt-28 pb-32 relative z-10">
 
         {/* SECTION 1: Top Product Plans Selection */}
-        <section className="mb-20">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl lg:text-[42px] font-medium tracking-tight flex items-center gap-2.5 text-[#F0EFE2] leading-tight">
+        <section className="mb-16">
+          <div className="mb-6">
+            <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-medium tracking-tight flex items-center gap-2 text-[#F0EFE2] leading-tight">
               Simple pricing for open{" "}
-              <span className="bg-[#76b900] text-[#151515] px-2.5 py-0.5 rounded-none font-semibold inline-block">
+              <span className="bg-[#76b900] text-[#151515] px-2 py-0.5 rounded-none font-semibold inline-block">
                 models
               </span>
             </h1>
-            <p className="text-[#888] text-base md:text-lg mt-2 font-normal">
+            <p className="text-[#888] text-xs sm:text-sm md:text-base mt-2 font-normal">
               Pick the way that fits how you work.
             </p>
           </div>
 
           {/* Plan Selector Cards (Pay as you go vs Coding plan vs Platform) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
             {/* Pay as you go Card */}
             <div
               onClick={() => setSelectedPlan("payg")}
-              className={`border border-dashed p-6 cursor-pointer transition-all ${selectedPlan === "payg"
+              className={`border border-dashed p-4 sm:p-5 cursor-pointer transition-all ${selectedPlan === "payg"
                   ? "border-[#76b900] bg-[#1a1a1a]/40 shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
                   : "border-[#333] bg-[#1a1a1a]/20 hover:border-[#555]"
                 }`}
             >
-              <div className="flex justify-between items-start mb-2">
-                <h2 className="text-xl font-medium text-[#F0EFE2]">Pay as you go</h2>
+              <div className="flex justify-between items-start mb-1.5">
+                <h2 className="text-lg font-medium text-[#F0EFE2]">Pay as you go</h2>
                 <div
-                  className={`w-4 h-4 rounded-none border flex items-center justify-center transition-colors ${selectedPlan === "payg" ? "border-[#76b900]" : "border-[#555]"
+                  className={`w-3.5 h-3.5 rounded-none border flex items-center justify-center transition-colors ${selectedPlan === "payg" ? "border-[#76b900]" : "border-[#555]"
                     }`}
                 >
-                  {selectedPlan === "payg" && <div className="w-2 h-2 rounded-none bg-[#76b900]" />}
+                  {selectedPlan === "payg" && <div className="w-1.5 h-1.5 rounded-none bg-[#76b900]" />}
                 </div>
               </div>
-              <p className="text-[#888] text-sm mb-6 font-normal">For apps, APIs and everything else</p>
+              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For apps, APIs and everything else</p>
 
-              <div className="text-sm">
-                <p className="font-medium mb-3 text-[#F0EFE2]">Any amount from $5</p>
-                <ul className="space-y-2 text-[#aaa]">
+              <div className="text-xs sm:text-sm">
+                <p className="font-medium mb-2 text-[#F0EFE2]">Any amount from $5</p>
+                <ul className="space-y-1.5 text-xs text-[#aaa]">
                   <li className="flex items-center gap-2">
-                    <Check size={14} className="text-[#76b900] shrink-0" /> Pay per token at published prices
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Pay per token at published prices
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check size={14} className="text-[#76b900] shrink-0" /> Credits last a year
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Credits last a year
                   </li>
                 </ul>
               </div>
@@ -281,30 +281,30 @@ export default function PricingPage() {
             {/* Coding Plan Card */}
             <div
               onClick={() => setSelectedPlan("coding")}
-              className={`border border-dashed p-6 cursor-pointer transition-all ${selectedPlan === "coding"
+              className={`border border-dashed p-4 sm:p-5 cursor-pointer transition-all ${selectedPlan === "coding"
                   ? "border-[#76b900] bg-[#1a1a1a]/40 shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
                   : "border-[#333] bg-[#1a1a1a]/20 hover:border-[#555]"
                 }`}
             >
-              <div className="flex justify-between items-start mb-2">
-                <h2 className="text-xl font-medium text-[#F0EFE2]">Coding plan</h2>
+              <div className="flex justify-between items-start mb-1.5">
+                <h2 className="text-lg font-medium text-[#F0EFE2]">Coding plan</h2>
                 <div
-                  className={`w-4 h-4 rounded-none border flex items-center justify-center transition-colors ${selectedPlan === "coding" ? "border-[#76b900]" : "border-[#555]"
+                  className={`w-3.5 h-3.5 rounded-none border flex items-center justify-center transition-colors ${selectedPlan === "coding" ? "border-[#76b900]" : "border-[#555]"
                     }`}
                 >
-                  {selectedPlan === "coding" && <div className="w-2 h-2 rounded-none bg-[#76b900]" />}
+                  {selectedPlan === "coding" && <div className="w-1.5 h-1.5 rounded-none bg-[#76b900]" />}
                 </div>
               </div>
-              <p className="text-[#888] text-sm mb-6 font-normal">For Claude Code, Codex, OpenCode and more</p>
+              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For Claude Code, Codex, OpenCode and more</p>
 
-              <div className="text-sm">
-                <p className="font-medium mb-3 text-[#F0EFE2]">From $10 a month</p>
-                <ul className="space-y-2 text-[#aaa]">
+              <div className="text-xs sm:text-sm">
+                <p className="font-medium mb-2 text-[#F0EFE2]">From $10 a month</p>
+                <ul className="space-y-1.5 text-xs text-[#aaa]">
                   <li className="flex items-center gap-2">
-                    <Check size={14} className="text-[#76b900] shrink-0" /> Usage included, resets every 5 hours and every week
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Usage included, resets every 5 hours and every week
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check size={14} className="text-[#76b900] shrink-0" /> At a limit, credits or free Standby
+                    <Check size={13} className="text-[#76b900] shrink-0" /> At a limit, credits or free Standby
                   </li>
                 </ul>
               </div>
@@ -314,32 +314,32 @@ export default function PricingPage() {
           {/* Selected Plan Details & Enterprise Split Box */}
           <div className="border border-dashed border-[#333] bg-[#181818]/60 flex flex-col md:flex-row">
             {/* Left Column: Dynamic based on selected plan */}
-            <div className="w-full md:w-1/2 flex flex-col justify-between p-6 sm:p-8 md:p-10">
+            <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7">
               {selectedPlan === "payg" ? (
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-2xl font-medium text-[#F0EFE2]">Pay as you go</h2>
-                    <span className="text-xs font-mono tracking-wide bg-[#222] border border-[#333] px-2.5 py-1 text-[#aaa] flex items-center gap-1.5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Pay as you go</h2>
+                    <span className="text-[11px] font-mono tracking-wide bg-[#222] border border-[#333] px-2 py-0.5 text-[#aaa] flex items-center gap-1.5">
                       <span className="text-[#76b900]">#</span> No subscription
                     </span>
                   </div>
-                  <p className="text-[#aaa] text-sm mb-8">
+                  <p className="text-[#aaa] text-xs sm:text-[13px] mb-6">
                     Hosted Model APIs, per token, on one prepaid balance.
                   </p>
 
-                  <div className="mb-8">
-                    <label className="text-[11px] text-[#777] font-semibold uppercase tracking-widest mb-3 block">
+                  <div className="mb-6">
+                    <label className="text-[10px] text-[#777] font-semibold uppercase tracking-widest mb-2.5 block">
                       AMOUNT IN DOLLARS
                     </label>
 
                     {/* Quick amount presets */}
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-1.5 mb-2.5">
                       {[5, 20, 50, 100, 250].map((amt) => (
                         <button
                           key={amt}
                           type="button"
                           onClick={() => setCreditAmount(amt)}
-                          className={`text-xs px-3 py-1 font-mono transition-colors border ${creditAmount === amt
+                          className={`text-xs px-2.5 py-1 font-mono transition-colors border ${creditAmount === amt
                               ? "bg-[#76b900] text-black border-[#76b900] font-semibold"
                               : "bg-[#222] text-[#888] border-[#333] hover:text-white"
                             }`}
@@ -350,7 +350,7 @@ export default function PricingPage() {
                     </div>
 
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-lg">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-base">
                         $
                       </span>
                       <input
@@ -358,95 +358,95 @@ export default function PricingPage() {
                         min="5"
                         value={creditAmount}
                         onChange={(e) => setCreditAmount(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-[#121212] border border-dashed border-[#333] rounded-none py-3 pl-9 pr-4 text-[#F0EFE2] font-mono text-lg focus:outline-none focus:border-[#76b900] transition-colors"
+                        className="w-full bg-[#121212] border border-dashed border-[#333] rounded-none py-2.5 pl-8 pr-3 text-[#F0EFE2] font-mono text-base focus:outline-none focus:border-[#76b900] transition-colors"
                       />
                     </div>
-                    <div className="flex items-center justify-between mt-2.5 text-[11px] text-[#777]">
+                    <div className="flex items-center justify-between mt-2 text-[11px] text-[#777]">
                       <span>$5 minimum top-up. Pay per token.</span>
                       <span className="text-[#76b900]">~{Math.round((creditAmount / 0.15) * 10) / 10}M tokens estimate</span>
                     </div>
                   </div>
 
-                  <div className="mb-8">
-                    <h3 className="font-medium text-sm text-[#F0EFE2] mb-4">What's included</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#bbb]">
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                  <div className="mb-6">
+                    <h3 className="font-medium text-xs sm:text-sm text-[#F0EFE2] mb-3">What's included</h3>
+                    <div className="space-y-2 text-xs text-[#bbb]">
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>OpenAI- and Anthropic-compatible APIs</span>
                       </div>
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>Per-token pricing with cached input discounts</span>
                       </div>
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>Session-aware routing keeps replays warm</span>
                       </div>
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>One prepaid balance, no per-seat fees</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-2">
-                    <p className="text-center text-xs text-[#777] mb-4">
+                  <div className="pt-1">
+                    <p className="text-center text-[11px] text-[#777] mb-3">
                       New accounts start with $1 free to test the Model APIs.
                     </p>
                     <Link
                       href="/developer-console"
-                      className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-sm py-3.5 flex items-center justify-center transition-colors shadow-sm"
+                      className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm"
                     >
-                      Add credits <ChevronRight size={16} strokeWidth={2.5} className="ml-1" />
+                      Add credits <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
                     </Link>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-2xl font-medium text-[#F0EFE2]">Coding plan</h2>
-                    <span className="text-xs font-mono tracking-wide bg-[#222] border border-[#333] px-2.5 py-1 text-[#aaa] flex items-center gap-1.5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Coding plan</h2>
+                    <span className="text-[11px] font-mono tracking-wide bg-[#222] border border-[#333] px-2 py-0.5 text-[#aaa] flex items-center gap-1.5">
                       <span className="text-[#76b900]">#</span> Subscription
                     </span>
                   </div>
-                  <p className="text-[#aaa] text-sm mb-8">
+                  <p className="text-[#aaa] text-xs sm:text-[13px] mb-6">
                     For Claude Code, Codex, OpenCode, Cursor, and agent terminal workflows.
                   </p>
 
-                  <div className="mb-8 p-4 border border-dashed border-[#333] bg-[#141414]">
-                    <div className="text-xs text-[#777] uppercase tracking-wider mb-1">Developer Subscription</div>
-                    <div className="text-3xl font-semibold text-[#F0EFE2] font-mono">$10 <span className="text-xs font-normal text-[#888]">/ month</span></div>
-                    <p className="text-xs text-[#888] mt-2">Includes dedicated throughput and priority coding queues.</p>
+                  <div className="mb-6 p-3.5 border border-dashed border-[#333] bg-[#141414]">
+                    <div className="text-[11px] text-[#777] uppercase tracking-wider mb-1">Developer Subscription</div>
+                    <div className="text-2xl sm:text-3xl font-semibold text-[#F0EFE2] font-mono">$10 <span className="text-xs font-normal text-[#888]">/ month</span></div>
+                    <p className="text-[11px] text-[#888] mt-1.5">Includes dedicated throughput and priority coding queues.</p>
                   </div>
 
-                  <div className="mb-8">
-                    <h3 className="font-medium text-sm text-[#F0EFE2] mb-4">What's included</h3>
-                    <div className="space-y-3 text-xs text-[#bbb]">
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                  <div className="mb-6">
+                    <h3 className="font-medium text-xs sm:text-sm text-[#F0EFE2] mb-3">What's included</h3>
+                    <div className="space-y-2 text-xs text-[#bbb]">
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>Usage included, resets every 5 hours and every week</span>
                       </div>
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>At a limit, automatic fallback to credits or free Standby</span>
                       </div>
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>Native integration with Cursor, Claude Code, and Windsurf</span>
                       </div>
-                      <div className="flex items-start gap-2.5">
-                        <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                         <span>Zero rate-limit throttling during sprint sessions</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-1">
                     <Link
                       href="/developer-console"
-                      className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-sm py-3.5 flex items-center justify-center transition-colors shadow-sm"
+                      className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm"
                     >
-                      Subscribe to Coding Plan <ChevronRight size={16} strokeWidth={2.5} className="ml-1" />
+                      Subscribe to Coding Plan <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
                     </Link>
                   </div>
                 </div>
@@ -454,51 +454,51 @@ export default function PricingPage() {
             </div>
 
             {/* Right Column: Enterprise (Always visible) */}
-            <div className="w-full md:w-1/2 flex flex-col justify-between p-6 sm:p-8 md:p-10 border-t md:border-t-0 md:border-l border-dashed border-[#333]">
+            <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7 border-t md:border-t-0 md:border-l border-dashed border-[#333]">
               <div>
-                <div className="mb-8">
-                  <h2 className="text-2xl font-medium text-[#F0EFE2] mb-2">Enterprise</h2>
-                  <p className="text-[#aaa] text-sm leading-relaxed">
+                <div className="mb-6">
+                  <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] mb-1.5">Enterprise</h2>
+                  <p className="text-[#aaa] text-xs sm:text-[13px] leading-relaxed">
                     Dedicated infrastructure, compliance, and custom volume.
                   </p>
                 </div>
 
                 <div className="mb-6">
-                  <div className="text-2xl font-semibold text-[#F0EFE2] font-mono mb-2">Custom pricing</div>
-                  <p className="text-sm font-medium text-[#F0EFE2] mt-6 mb-4">
+                  <div className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] font-mono mb-2">Custom pricing</div>
+                  <p className="text-xs sm:text-sm font-medium text-[#F0EFE2] mt-5 mb-3">
                     Everything self-serve includes, plus:
                   </p>
-                  <ul className="space-y-3.5 text-xs text-[#bbb]">
-                    <li className="flex items-start gap-2.5">
-                      <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                  <ul className="space-y-2.5 text-xs text-[#bbb]">
+                    <li className="flex items-start gap-2">
+                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                       <span>Audit logs and role-based access control (RBAC)</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                    <li className="flex items-start gap-2">
+                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                       <span>Custom volume and contract terms</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                    <li className="flex items-start gap-2">
+                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                       <span>Custom SLAs up to 99.99%</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                    <li className="flex items-start gap-2">
+                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                       <span>SOC 2 Type II attestation</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <Check size={14} className="text-[#76b900] mt-0.5 shrink-0" />
+                    <li className="flex items-start gap-2">
+                      <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
                       <span>Dedicated CSM and private Slack</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-2">
                 <a
                   href={`mailto:${founderEmail}?subject=HOROS%20Enterprise%20Inquiry`}
-                  className="w-full bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-sm py-3.5 flex items-center justify-center transition-colors"
+                  className="w-full bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-3 flex items-center justify-center transition-colors"
                 >
-                  Request a demo <ChevronRight size={16} strokeWidth={2} className="ml-1 text-[#888]" />
+                  Request a demo <ChevronRight size={15} strokeWidth={2} className="ml-1 text-[#888]" />
                 </a>
               </div>
             </div>
@@ -516,16 +516,16 @@ export default function PricingPage() {
             MODEL APIS
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
-            <h2 className="text-2xl sm:text-3xl md:text-[36px] font-semibold text-[#F0EFE2] tracking-tight flex items-center gap-2 flex-wrap">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
+            <h2 className="text-xl sm:text-2xl md:text-[28px] font-semibold text-[#F0EFE2] tracking-tight flex items-center gap-2 flex-wrap">
               Pay for model tokens, not idle{" "}
-              <span className="bg-[#76b900] text-[#0e0f12] px-2.5 py-0.5 rounded-none font-semibold leading-tight inline-block">
+              <span className="bg-[#76b900] text-[#0e0f12] px-2 py-0.5 rounded-none font-semibold leading-tight inline-block">
                 capacity
               </span>
             </h2>
 
             <div className="shrink-0">
-              <span className="text-xs text-[#888] font-mono font-medium border border-dashed border-[#333] bg-[#1a1a1a] px-3.5 py-1.5 rounded-none inline-block">
+              <span className="text-[11px] text-[#888] font-mono font-medium border border-dashed border-[#333] bg-[#1a1a1a] px-3 py-1 rounded-none inline-block">
                 Price per 1M tokens
               </span>
             </div>
@@ -533,9 +533,9 @@ export default function PricingPage() {
 
           {/* Table Container */}
           <div className="w-full border border-dashed border-[#333] bg-[#151515] overflow-x-auto">
-            <div className="min-w-[760px]">
+            <div className="min-w-[700px]">
               {/* Header Row */}
-              <div className="grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-6 py-4 border-b border-dashed border-[#333] text-xs font-medium text-[#777]">
+              <div className="grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3 border-b border-dashed border-[#333] text-xs font-medium text-[#777]">
                 <div>Model</div>
                 <div>Input</div>
                 <div>Cached input</div>
@@ -550,20 +550,20 @@ export default function PricingPage() {
                   <Link
                     key={model.id}
                     href={model.link}
-                    className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-6 py-5 items-center group hover:bg-[#1c1c1c] transition-colors ${
+                    className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3.5 sm:py-4 items-center group hover:bg-[#1c1c1c] transition-colors ${
                       idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
                     }`}
                   >
                     {/* Model Icon + Title + Promo Subtext */}
-                    <div className="flex items-center gap-3.5 pr-4">
-                      <div className="w-9 h-9 rounded-md bg-[#1c1c1f] border border-[#333] flex items-center justify-center shrink-0 p-1 group-hover:border-[#76b900] transition-colors overflow-hidden">
-                        <IconComponent size={20} />
+                    <div className="flex items-center gap-3 pr-3">
+                      <div className="w-8 h-8 rounded-md bg-[#1c1c1f] border border-[#333] flex items-center justify-center shrink-0 p-1 group-hover:border-[#76b900] transition-colors overflow-hidden">
+                        <IconComponent size={18} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-semibold text-[#F0EFE2] text-[15px] group-hover:text-[#76b900] transition-colors leading-snug">
+                        <span className="font-semibold text-[#F0EFE2] text-sm group-hover:text-[#76b900] transition-colors leading-snug">
                           {model.name}
                         </span>
-                        <div className="flex items-center gap-1.5 text-xs leading-snug mt-0.5">
+                        <div className="flex items-center gap-1.5 text-[11px] leading-snug mt-0.5">
                           <span className="text-[#76b900] font-medium">{model.promo}</span>
                           <span className="text-[#777] font-normal">{model.promoUntil}</span>
                         </div>
@@ -571,32 +571,32 @@ export default function PricingPage() {
                     </div>
 
                     {/* Input Price */}
-                    <div className="font-semibold text-[#F0EFE2] text-[15px] font-mono">
+                    <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
                       {model.inputPrice}
                     </div>
 
                     {/* Cached Input (3 separate stacked lines matching Image 2) */}
                     <div className="flex flex-col justify-center">
-                      <span className="line-through text-[#666] text-xs font-mono leading-none mb-1">
+                      <span className="line-through text-[#666] text-[11px] font-mono leading-none mb-0.5">
                         {model.strikethroughCached}
                       </span>
-                      <span className="font-bold text-[#F0EFE2] text-[15px] leading-tight">
+                      <span className="font-bold text-[#F0EFE2] text-sm leading-tight">
                         {model.cachedPrice}
                       </span>
-                      <span className="text-[11px] text-[#666] leading-snug mt-1 whitespace-pre-line pr-2">
+                      <span className="text-[10px] text-[#666] leading-snug mt-0.5 whitespace-pre-line pr-2">
                         {model.cacheHitRate}
                       </span>
                     </div>
 
                     {/* Output Price */}
-                    <div className="font-semibold text-[#F0EFE2] text-[15px] font-mono">
+                    <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
                       {model.outputPrice}
                     </div>
 
                     {/* View Model Link */}
                     <div className="flex justify-end">
-                      <span className="text-xs md:text-[13px] text-[#aaa] group-hover:text-[#F0EFE2] flex items-center gap-1.5 font-medium transition-colors">
-                        View model <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                      <span className="text-xs text-[#aaa] group-hover:text-[#F0EFE2] flex items-center gap-1 font-medium transition-colors">
+                        View model <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
                       </span>
                     </div>
                   </Link>
@@ -606,36 +606,36 @@ export default function PricingPage() {
           </div>
 
           {/* Subtext below table */}
-          <div className="mt-4 text-xs text-[#777]">
+          <div className="mt-3 text-xs text-[#777]">
             Limits and modality-specific capabilities are listed on each model page.
           </div>
         </section>
 
         {/* SECTION 3: Exact Screenshot 2 & 3 Comparison Section */}
-        <section className="mb-24">
+        <section className="mb-20">
           <div className="w-full border border-dashed border-[#333] bg-[#151515] flex flex-col">
             {/* Header Description Box */}
-            <div className="p-6 sm:p-8 border-b border-dashed border-[#333]">
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] mb-2 tracking-tight">
+            <div className="p-4 sm:p-6 border-b border-dashed border-[#333]">
+              <h2 className="text-lg sm:text-xl font-semibold text-[#F0EFE2] mb-1.5 tracking-tight">
                 Compare Pay as you go and Enterprise
               </h2>
-              <p className="text-xs sm:text-sm text-[#888] max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-[13px] text-[#888] max-w-2xl leading-relaxed">
                 Pay as you go is self-serve, funded by credit top-ups. Enterprise adds private infrastructure, reserved capacity, compliance, and custom terms.
               </p>
             </div>
 
             {/* Table Matrix Header */}
             <div className="grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#333] bg-[#181818]/80">
-              <div className="p-5 sm:p-6 flex items-end">
+              <div className="p-4 sm:p-5 flex items-end">
                 <span className="text-xs font-medium text-[#777]">Feature</span>
               </div>
-              <div className="p-5 sm:p-6 flex flex-col justify-end">
-                <span className="text-base sm:text-lg font-semibold text-[#F0EFE2]">Pay as you go</span>
-                <span className="text-xs text-[#777] mt-0.5">from a $5 top-up</span>
+              <div className="p-4 sm:p-5 flex flex-col justify-end">
+                <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Pay as you go</span>
+                <span className="text-[11px] text-[#777] mt-0.5">from a $5 top-up</span>
               </div>
-              <div className="p-5 sm:p-6 flex flex-col justify-end">
-                <span className="text-base sm:text-lg font-semibold text-[#F0EFE2]">Enterprise</span>
-                <span className="text-xs text-[#777] mt-0.5">Custom</span>
+              <div className="p-4 sm:p-5 flex flex-col justify-end">
+                <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Enterprise</span>
+                <span className="text-[11px] text-[#777] mt-0.5">Custom</span>
               </div>
             </div>
 
@@ -643,35 +643,35 @@ export default function PricingPage() {
             {COMPARISON_ROWS.map((row, i) => (
               <div
                 key={row.feature}
-                className={`grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#282828] text-xs sm:text-sm ${i % 2 === 1 ? "bg-[#181818]/40" : "bg-transparent"
+                className={`grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#282828] text-xs sm:text-[13px] ${i % 2 === 1 ? "bg-[#181818]/40" : "bg-transparent"
                   }`}
               >
                 {/* Feature Name */}
-                <div className="p-4 sm:p-5 text-[#aaa] font-normal flex items-center">
+                <div className="p-3.5 sm:p-4 text-[#aaa] font-normal flex items-center">
                   {row.feature}
                 </div>
 
                 {/* Pay as you go Value */}
-                <div className="p-4 sm:p-5 flex items-center text-[#C8C7BA]">
+                <div className="p-3.5 sm:p-4 flex items-center text-[#C8C7BA]">
                   {row.isText === true ? (
                     <span>{row.payg as string}</span>
                   ) : row.isText === "mixed" ? (
                     <span>{row.payg as string}</span>
                   ) : row.payg === true ? (
-                    <Check size={18} className="text-[#76b900]" strokeWidth={2.5} />
+                    <Check size={16} className="text-[#76b900]" strokeWidth={2.5} />
                   ) : (
-                    <X size={16} className="text-[#666]" strokeWidth={2} />
+                    <X size={15} className="text-[#666]" strokeWidth={2} />
                   )}
                 </div>
 
                 {/* Enterprise Value */}
-                <div className="p-4 sm:p-5 flex items-center text-[#C8C7BA]">
+                <div className="p-3.5 sm:p-4 flex items-center text-[#C8C7BA]">
                   {row.isText === true ? (
                     <span>{row.enterprise as string}</span>
                   ) : row.enterprise === true ? (
-                    <Check size={18} className="text-[#76b900]" strokeWidth={2.5} />
+                    <Check size={16} className="text-[#76b900]" strokeWidth={2.5} />
                   ) : (
-                    <X size={16} className="text-[#666]" strokeWidth={2} />
+                    <X size={15} className="text-[#666]" strokeWidth={2} />
                   )}
                 </div>
               </div>
@@ -728,67 +728,67 @@ export default function PricingPage() {
           </div>
 
           {/* FAQ Content */}
-          <div className="w-full space-y-4">
+          <div className="w-full space-y-3.5">
             {faqTab === "payg" ? (
               <>
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-6">
-                  <h3 className="font-medium text-[#F0EFE2] mb-2 text-sm flex items-center gap-2.5">
-                    <div className="w-3.5 h-3.5 border border-[#76b900] flex items-center justify-center shrink-0">
+                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                       <div className="w-1.5 h-1.5 bg-[#76b900]" />
                     </div>
                     How does cached input pricing work?
                   </h3>
-                  <p className="text-[#aaa] text-xs sm:text-sm pl-6 leading-relaxed">
+                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
                     When you send a prompt with repeated context (like conversation history, code repositories, or documents), supported models detect the cached prefix and discount the input cost by up to 90% or offer it completely free during promotional windows.
                   </p>
                 </div>
 
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-6">
-                  <h3 className="font-medium text-[#F0EFE2] mb-2 text-sm flex items-center gap-2.5">
-                    <div className="w-3.5 h-3.5 border border-[#76b900] flex items-center justify-center shrink-0">
+                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                       <div className="w-1.5 h-1.5 bg-[#76b900]" />
                     </div>
                     How do credit top-ups work?
                   </h3>
-                  <p className="text-[#aaa] text-xs sm:text-sm pl-6 leading-relaxed">
+                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
                     You can fund your prepaid balance with any amount starting from $5. You only pay for the tokens generated and executed. Unused credits remain valid for 12 months.
                   </p>
                 </div>
 
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-6">
-                  <h3 className="font-medium text-[#F0EFE2] mb-2 text-sm flex items-center gap-2.5">
-                    <div className="w-3.5 h-3.5 border border-[#76b900] flex items-center justify-center shrink-0">
+                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                       <div className="w-1.5 h-1.5 bg-[#76b900]" />
                     </div>
                     Are there per-seat or per-user fees?
                   </h3>
-                  <p className="text-[#aaa] text-xs sm:text-sm pl-6 leading-relaxed">
+                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
                     No. Our pay-as-you-go model APIs are charged strictly by token consumption, allowing your entire team or product application to share one single balance without seat penalties.
                   </p>
                 </div>
               </>
             ) : (
               <>
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-6">
-                  <h3 className="font-medium text-[#F0EFE2] mb-2 text-sm flex items-center gap-2.5">
-                    <div className="w-3.5 h-3.5 border border-[#76b900] flex items-center justify-center shrink-0">
+                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                       <div className="w-1.5 h-1.5 bg-[#76b900]" />
                     </div>
                     What SLA options are available for Enterprise?
                   </h3>
-                  <p className="text-[#aaa] text-xs sm:text-sm pl-6 leading-relaxed">
+                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
                     We offer contractual SLAs up to 99.99% uptime with guaranteed throughput reservations and sub-second failover routing across dedicated clusters.
                   </p>
                 </div>
 
-                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-6">
-                  <h3 className="font-medium text-[#F0EFE2] mb-2 text-sm flex items-center gap-2.5">
-                    <div className="w-3.5 h-3.5 border border-[#76b900] flex items-center justify-center shrink-0">
+                <div className="border border-dashed border-[#333] bg-[#181818]/60 p-4 sm:p-5">
+                  <h3 className="font-medium text-[#F0EFE2] mb-1.5 text-xs sm:text-sm flex items-center gap-2">
+                    <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                       <div className="w-1.5 h-1.5 bg-[#76b900]" />
                     </div>
                     Can we run private dedicated deployments?
                   </h3>
-                  <p className="text-[#aaa] text-xs sm:text-sm pl-6 leading-relaxed">
+                  <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
                     Yes. Enterprise contracts support private VPC peering, on-prem hardware integration, SOC 2 Type II controls, and custom model weights loaded into isolated nodes.
                   </p>
                 </div>
