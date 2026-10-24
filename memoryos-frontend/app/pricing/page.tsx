@@ -226,7 +226,7 @@ const CODING_PLAN_FAQS = [
   {
     question: "What happens at a limit?",
     answer:
-      "If you turned on Keep full speed on credits, credits pay with your choice of a cap per billing period or no limit. When credits cannot pay, free Standby serves chat. Choose at checkout and change it in Coding plan. If neither can serve a request, it stops with the reason, reset time and next step.",
+      "If you turned on Keep full speed on credits, credits pay with your choice of a cap per billing period or no limit. When credits cannot pay, free Standby serves chat. Choose at checkout and change it in your Frontier Lab plan settings. If neither can serve a request, it stops with the reason, reset time and next step.",
   },
   {
     question: "What does my plan cover?",
@@ -474,7 +474,7 @@ export default function PricingPage() {
               </div>
             </div>
 
-            {/* Coding Plan Card */}
+            {/* Frontier Lab & Agent Plan Card */}
             <div
               onClick={() => setSelectedPlan("coding")}
               className={`border border-dashed p-4 sm:p-5 cursor-pointer transition-all ${selectedPlan === "coding"
@@ -483,7 +483,7 @@ export default function PricingPage() {
                 }`}
             >
               <div className="flex justify-between items-start mb-1.5">
-                <h2 className="text-lg font-medium text-[#F0EFE2]">Coding & Agent Plan</h2>
+                <h2 className="text-lg font-medium text-[#F0EFE2]">Frontier Lab & Agent Plan</h2>
                 <div
                   className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedPlan === "coding" ? "border-[#76b900]" : "border-[#555]"
                     }`}
@@ -491,16 +491,16 @@ export default function PricingPage() {
                   {selectedPlan === "coding" && <div className="w-2 h-2 rounded-full bg-[#76b900]" />}
                 </div>
               </div>
-              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For autonomous coding agents, lab assistants & tools</p>
+              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For autonomous agents, lab researchers & intelligence tools</p>
 
               <div className="text-xs sm:text-sm">
                 <p className="font-medium mb-2 text-[#F0EFE2]">From $10 a month</p>
                 <ul className="space-y-1.5 text-xs text-[#aaa]">
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Included reasoning & coding compute, resets every 5h and weekly
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Included frontier reasoning & agent compute, resets every 5h and weekly
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> At a limit, credits or free Standby
+                    <Check size={13} className="text-[#76b900] shrink-0" /> At a limit, continue with credits or free Standby
                   </li>
                 </ul>
               </div>
