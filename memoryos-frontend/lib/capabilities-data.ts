@@ -9,10 +9,186 @@ import {
   MistralLogo,
   PhysicalIntelligenceLogo,
   GoogleLogo,
-  HuggingFaceLogo
+  HuggingFaceLogo,
+  OrnithLogo
 } from "@/components/horos/primitives/brand-icons";
 
 export const CAPABILITIES = [
+  {
+    id: "ornith-1-5-122b",
+    name: "Ornith 1.5 122B",
+    developer: "Ornith",
+    providerSlug: "ornith-ai",
+    icon: OrnithLogo,
+    tags: ["Trending", "Agentic · Reasoning · Long Context · Code"],
+    metrics: {
+      input: "$0.20",
+      cached: "$0.05",
+      output: "$0.80",
+      cacheHit: "94.6%",
+      speed: "210.4",
+      timeToFirst: "580",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.05 per 1M at that hit rate",
+    description: "Ornith 1.5 122B is an advanced agentic intelligence capability delivering superior multi-step reasoning, real-time code synthesis, and autonomous task execution with state-of-the-art context retention.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text, images, and tool responses",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "1,048,576 tokens",
+      maxRequestSize: "3.5 MB per request",
+      maxGeneratedOutput: "65,536 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP8, vendor-native release"
+      }
+    }
+  },
+  {
+    id: "deepseek-v4-1-flash-1017",
+    name: "DeepSeek V4.1 Flash 1017",
+    developer: "DeepSeek",
+    providerSlug: "deepseek",
+    icon: DeepSeekLogo,
+    tags: ["Trending", "Ultra-fast · MoE · Coding · Math"],
+    metrics: {
+      input: "$0.15",
+      cached: "$0.01",
+      output: "$0.60",
+      cacheHit: "29.7%",
+      speed: "320.5",
+      timeToFirst: "410",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.01 per 1M at that hit rate",
+    description: "DeepSeek V4.1 Flash 1017 delivers high-speed multi-head latent reasoning, providing ultra-fast code and math problem solving at fraction-of-cent token economics.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text, code, and structured data",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "128,000 tokens",
+      maxRequestSize: "2.5 MB per request",
+      maxGeneratedOutput: "16,384 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP8, vendor-native release"
+      }
+    }
+  },
+  {
+    id: "glm-5-3",
+    name: "GLM 5.3",
+    developer: "Z.ai",
+    providerSlug: "zai-org",
+    icon: GLMLogo,
+    tags: ["Flagship", "Reasoning · High-Precision Tool Calling · Enterprise"],
+    metrics: {
+      input: "$1.30",
+      cached: "$0.13",
+      output: "$4.20",
+      cacheHit: "28.1%",
+      speed: "185.0",
+      timeToFirst: "650",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.13 per 1M at that hit rate",
+    description: "GLM 5.3 is the flagship reasoning model from Z.ai, featuring deep multimodal comprehension, verifiable step-by-step logic, and complex multi-step tool execution.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text, images, and sensory streams",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "1,048,576 tokens",
+      maxRequestSize: "3.5 MB per request",
+      maxGeneratedOutput: "1,048,576 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP8, vendor-native release"
+      }
+    }
+  },
+  {
+    id: "ornith-1-5-35b",
+    name: "Ornith 1.5 35B",
+    developer: "Ornith",
+    providerSlug: "ornith-ai",
+    icon: OrnithLogo,
+    tags: ["Efficient", "Fast Reasoning · Low Latency · Agentic Workflows"],
+    metrics: {
+      input: "$0.10",
+      cached: "$0.01",
+      output: "$0.40",
+      cacheHit: "96.8%",
+      speed: "290.0",
+      timeToFirst: "380",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.01 per 1M at that hit rate",
+    description: "Ornith 1.5 35B is an ultra-lean high-throughput model built for real-time autonomous agent pipelines with rapid response times and minimal latency.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text, images, and sensory streams",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "256,000 tokens",
+      maxRequestSize: "2.0 MB per request",
+      maxGeneratedOutput: "32,768 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP8, vendor-native release"
+      }
+    }
+  },
+  {
+    id: "deepseek-v4-1-flash",
+    name: "DeepSeek V4.1 Flash",
+    developer: "DeepSeek",
+    providerSlug: "deepseek",
+    icon: DeepSeekLogo,
+    tags: ["High Speed", "Fast Coding · Low Cost · MoE Architecture"],
+    metrics: {
+      input: "$0.14",
+      cached: "$0.03",
+      output: "$0.58",
+      cacheHit: "29.2%",
+      speed: "340.0",
+      timeToFirst: "390",
+    },
+    speedLabel: "output tok/s, model only",
+    effectiveCost: "Effective input $0.03 per 1M at that hit rate",
+    description: "DeepSeek V4.1 Flash provides cost-efficient fast generation for coding and general reasoning tasks across large scale agent workflows.",
+    specs: {
+      apiCompatibility: "Mission-compatible Outcome Intents",
+      anthropicCompatibility: "Anthropic-compatible Messages, POST /v1/messages",
+      acceptedInput: "Text and code streams",
+      availability: "Available",
+      dataRetention: "Your state and execution memory are never stored or used for external model training.",
+      contextWindow: "128,000 tokens",
+      maxRequestSize: "2.5 MB per request",
+      maxGeneratedOutput: "16,384 tokens",
+      capabilities: {
+        toolCalling: "Supported",
+        jsonMode: "Supported",
+        streaming: "Supported",
+        precision: "FP8, vendor-native release"
+      }
+    }
+  },
   {
     id: "glm-5-3-flash",
     name: "GLM 5.3 Flash",

@@ -20,7 +20,13 @@ interface PageProps {
 
 export default async function CapabilityDetailPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const capability = CAPABILITIES.find(c => c.id === resolvedParams.developer);
+  const decoded = decodeURIComponent(resolvedParams.developer).toLowerCase();
+  const capability = CAPABILITIES.find(
+    c =>
+      c.id.toLowerCase() === decoded ||
+      c.name.toLowerCase() === decoded ||
+      c.developer.toLowerCase() === decoded
+  );
 
   if (!capability) {
     notFound();

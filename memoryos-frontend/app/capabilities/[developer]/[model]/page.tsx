@@ -23,7 +23,14 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
   const resolvedParams = await params;
   const decodedDeveloper = decodeURIComponent(resolvedParams.developer);
   const decodedModel = decodeURIComponent(resolvedParams.model);
-  const capability = CAPABILITIES.find(c => c.developer === decodedDeveloper && c.name === decodedModel);
+  const devLower = decodedDeveloper.toLowerCase();
+  const modelLower = decodedModel.toLowerCase();
+  const capability = CAPABILITIES.find(
+    c =>
+      (c.developer.toLowerCase() === devLower && c.name.toLowerCase() === modelLower) ||
+      c.id.toLowerCase() === modelLower ||
+      c.name.toLowerCase() === modelLower
+  );
 
   if (!capability) {
     notFound();
