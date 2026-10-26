@@ -102,7 +102,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                       onClick={() => setSelectedModel("horos")}
                       className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${
                         selectedModel === "horos"
-                          ? "bg-[#75bf00]/15 text-[#75bf00] border border-[#75bf00]/40 font-semibold"
+                          ? "bg-white/10 text-[#F0EFE2] border border-white/20 font-semibold"
                           : "text-[#888] hover:text-[#ccc] border border-transparent"
                       }`}
                     >
@@ -131,14 +131,14 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                       <div>
                         <div className="flex items-center gap-3 mb-2">
                           <span className="font-semibold text-[#F0EFE2] text-[17px]">Horos Argvis</span>
-                          <span className="bg-[#75bf00]/20 text-[#75bf00] border border-[#75bf00]/40 text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-xs">FRONTIER LAB</span>
+                          <span className="bg-white/10 text-[#F0EFE2] border border-white/15 text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-xs">FRONTIER LAB</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-3">
                           <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">128B MoE</span>
                           <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Spatial 3D</span>
                           <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Sensor Fusion</span>
-                          <span className="text-[12px] font-mono bg-[#75bf00]/10 border border-[#75bf00]/30 text-[#75bf00] px-1.5 rounded-sm">&lt;45ms TTFT</span>
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">&lt;45ms TTFT</span>
                         </div>
 
                         <div className="text-[12px] text-[#888] font-mono mb-1">
@@ -160,14 +160,14 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                       <div>
                         <div className="flex items-center gap-3 mb-2">
                           <span className="font-semibold text-[#F0EFE2] text-[17px]">DeepSeek V4 Flash</span>
-                          <span className="text-[#75bf00] text-[10px] font-mono uppercase font-bold tracking-wider mt-0.5">AVAILABLE</span>
+                          <span className="bg-white/10 text-[#F0EFE2] border border-white/15 text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-xs">AVAILABLE</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
                           <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Intelligence</span>
                           <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Vision</span>
                           <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Tool Use</span>
-                          <span className="text-[13px] font-mono bg-transparent border border-[#75bf00]/30 text-[#75bf00] px-1.5 rounded-sm">P99 SLA</span>
+                          <span className="text-[13px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">P99 SLA</span>
                         </div>
 
                         <div className="text-[12px] text-[#666] font-mono mb-1">
