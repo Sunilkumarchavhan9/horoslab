@@ -82,8 +82,8 @@ export function DeploymentOptionsSection() {
               <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-8 relative z-10">
                 Managed
               </div>
-              <div className="mb-6 flex items-center gap-3 text-[#F0EFE2] relative z-10">
-                <HorosLogo className="h-[48px]" />
+              <div className="mb-6 flex items-center gap-3 text-[#F0EFE2] relative z-10 min-h-[32px]">
+                <HorosLogo size={40} />
               </div>
               <h3 className="text-[#F0EFE2] text-lg font-semibold mb-3 relative z-10">
                 HOROS Cloud
