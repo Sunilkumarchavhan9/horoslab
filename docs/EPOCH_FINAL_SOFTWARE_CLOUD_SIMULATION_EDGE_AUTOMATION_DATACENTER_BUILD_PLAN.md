@@ -1756,3 +1756,724 @@ misrepresenting inherited weights as newly pretrained Horos weights.
 PRINCIPLE
 Use generalized training and environment orchestration patterns. Do not
 make Horos dependent on any single external platform.
+
+================================================================================
+HOROS FRONTIER AI RESEARCH & REALITY INFRASTRUCTURE
+DAY-ONE COMPREHENSIVE PRODUCTION BUILD SPECIFICATION (ZERO-MVP MANDATE)
+================================================================================
+
+AUTHORITATIVE ARCHITECTURAL SPECIFICATION:
+This document defines the complete, full-scale production engineering build plan for 
+HOROS: The Frontier AI Research Reality Infrastructure. In accordance with the 
+Day-One Zero-MVP Mandate, this plan rejects all throwaway prototypes, toy abstractions, 
+mock engines, and phased compromise roadmaps. Every subsystem, fabric, compiler, 
+foundation model family, evaluation harness, and physical hardware loop depicted 
+in the master architecture diagram is engineered and deployed in full fidelity from Day One.
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1.  EXECUTIVE MANDATE & THE ZERO-MVP ENGINEERING LAWS
+2.  HOROS INTELLIGENCE GRAPH ARCHITECTURE (TRIPARTITE REPOSITORY OF TRUTH)
+3.  CUSTOMER CONTROL PLANE & MISSION RUNTIME ENGINE
+4.  REALITY INTELLIGENCE FABRIC & WORLD PERCEPTION ENGINE
+5.  CAPABILITY INTELLIGENCE & MULTI-OBJECTIVE SYSTEM COMPOSER
+6.  HOROS FIRST-PARTY FRONTIER MODEL PROGRAM (5 FOUNDATION FAMILIES)
+7.  MODEL COMPILER, UNIVERSAL IR & AUTONOMOUS KERNEL SEARCH ENGINE
+8.  FRONTIER RESEARCH FABRIC & MODEL IMPROVEMENT ORCHESTRATOR
+9.  ACTIVE DATA ENGINE, GROUND TRUTH FACTORY & POST-TRAINING HARNESS
+10. EVALUATION FABRIC, VERIFIER INTEGRITY & PROMOTION GATE
+11. SYSTEM OPTIMIZATION, WORKLOAD INTELLIGENCE & INFERENCE RUNTIME
+12. SYNTHETIC REALITY LAB, RL FACTORY & SIM2REAL CONVERGENCE
+13. DECISION ENGINE, AUTONOMOUS GOVERNANCE & PRE-ACTUATION SANITY
+14. DEPLOYMENT RUNTIME & PHYSICAL EXECUTION FABRIC (EDGE / ROBOTICS / DATACENTER)
+15. MANAGED INFERENCE & REALITY MODEL APIS
+16. OBSERVATION FABRIC, CRYPTOGRAPHIC EVIDENCE & MISSION PROVENANCE
+17. EXPERIENCE INTELLIGENCE, TEACHING FABRIC & CONTINUOUS EVOLUTION
+18. CONCRETE REPOSITORY TOPOLOGY, MICROSERVICE SCHEMAS & PROTOCOLS
+19. PRODUCTION ACCEPTANCE CRITERIA & VERIFICATION PROTOCOL
+
+================================================================================
+SECTION 1: EXECUTIVE MANDATE & THE ZERO-MVP ENGINEERING LAWS
+================================================================================
+
+1.1 THE DAY-ONE FULL-SCOPE AXIOM
+HOROS is not an experimental wrapper, an agent framework, or an API proxy. HOROS 
+is a full-stack, closed-loop Frontier Intelligence Infrastructure engineered to 
+decode physical and digital reality, hypothesize solutions, compile optimal model-
+hardware runtimes, execute autonomously within bounded authority, collect immutable 
+cryptographic evidence, and compound intelligence through active ground-truth learning.
+
+Every component specified in the architecture diagram operates in production on Day One:
+- No stubbed mock endpoints or placeholder simulation fallbacks.
+- No single-model lock-in; complete multi-modal, multi-engine capability.
+- Full hardware support from multi-node H100/L40S datacenters to NVIDIA Jetson AGX Orin 
+  and DRIVE AGX edge vehicles.
+- Bidirectional integration connecting digital software repos, cloud infra, 
+  simulation sandboxes, and physical actuators.
+
+1.2 THE 7 INVARIANT OPERATIONAL PRINCIPLES
+1. INVARIANT OF COMPLETE TRACEABILITY: Every decision, token generated, kernel compiled, 
+   and actuation executed must map to a cryptographically signed SHA-256 evidence record 
+   with full provenance back to source data, model weights, and mission intent.
+2. INVARIANT OF EMPIRICAL VERIFICATION: An executing agent or model is NEVER the sole 
+   judge of its own outcome. All verification is performed by independent, isolated 
+   verifier harnesses cross-referenced against external telemetry and ground truth.
+3. INVARIANT OF BOUNDED AUTONOMY: Autonomy operates under strict, mathematical budget, 
+   policy, and blast-radius constraints (L1 Advisory to L5 Full Autonomy). State re-checks 
+   are executed immediately prior to actuation; if physical or digital reality has drifted 
+   from the planned world state, execution aborts and triggers rediscovery.
+4. INVARIANT OF REPRODUCIBILITY: All experiments, training recipes, and candidate evaluations 
+   are packaged as immutable, sealed artifacts containing exact code commits, data digests, 
+   seeds, hardware topology, and environmental parameters.
+5. INVARIANT OF CONTINUOUS COMPOUNDING: Every production failure, regression, edge case, 
+   and verified success automatically enters the Experience Engine, extracts causal lessons, 
+   passes through the Teaching-Data Admission Gate, and updates the models.
+6. INVARIANT OF FIRST-PARTY MODEL INDEPENDENCE: HOROS owns its 5 core foundation model 
+   families (Reality Decoder, World Dynamics, Code Intelligence, Voice Intelligence, 
+   Visual Generation) while maintaining universal compatibility with open-weight ecosystems.
+7. INVARIANT OF ZERO WASTE: Compute allocation is Pareto-optimized across Quality, Latency, 
+   Cost, and Energy. Systems are continuously compiled, quantized (FP8/AWQ/INT4), and 
+   autotuned to custom GPU/TPU/NPU hardware kernels.
+
+================================================================================
+SECTION 2: HOROS INTELLIGENCE GRAPH ARCHITECTURE (TRIPARTITE REPOSITORY OF TRUTH)
+================================================================================
+
+The Horos Intelligence Graph is the unified, distributed, time-travel-capable knowledge 
+and state repository that binds the entire platform. It is split into three tightly 
+coupled subgraphs:
+
+2.1 REALITY GRAPH (WORLD STATE & EMBODIED TELEMETRY)
+- Nodes:
+  * EntityNode: Physical objects, vehicles, compute servers, cloud clusters, APIs, databases.
+  * SpatialNode: 3D bounding volumes, coordinate transforms (SE3), spatial occupancy grids.
+  * SensorNode: Cameras, LiDARs, IMUs, CAN-Bus sniffers, OpenTelemetry agents, SCADA/PLC monitors.
+  * TelemetryNode: Time-series telemetry streams, vibration, thermal, power, latency, jitter metrics.
+  * RealityKnowledgeNode: Ground-truth facts, verified physical laws, causal invariants, friction/load bounds.
+- Edges:
+  * LOCATED_IN (spatial containment with 4D temporal validity intervals).
+  * INGESTS_FROM (sensor-to-entity data streaming bindings).
+  * CAUSES (directed causal dependencies between physical or digital state transitions).
+  * DRIFTED_FROM (detected divergence between expected state and observed reality).
+
+2.2 INTELLIGENCE GRAPH (CAPABILITIES, MODELS & RUNTIMES)
+- Nodes:
+  * ModelNode: Model architecture, parameter count, precision profiles (FP32, BF16, FP8, INT4), context window.
+  * ModelVersionNode: Checkpoint digest, tokenizer config, license, weights provenance, parent lineage.
+  * DatasetNode: Pretraining, SFT, DPO, GRPO, synthetic dataset manifests with verified licensing and integrity hashes.
+  * CapabilityNode: Concrete functional skills (e.g., "Marlin-AWQ CUDA kernel synthesis", "3D point-cloud bounding").
+  * RuntimeNode: Serving engines (vLLM, TensorRT-LLM, Horos Native C++ Engine, SGLang, Triton).
+  * SystemNode: Complete deployed compositions [Model + Precision + Runtime + Hardware + Policy].
+- Edges:
+  * DERIVED_FROM (adapter fine-tune or distillation lineage).
+  * COMPILED_FOR (model-to-hardware kernel optimization pairing).
+  * SATISFIES (system-to-outcome capability mapping).
+  * BENCHMARKED_ON (empirical latency, TTFT, throughput, and memory footprint profiles).
+
+2.3 HISTORY GRAPH (EXPERIENCE, LESSONS & LINEAGE DAG)
+- Nodes:
+  * MissionNode: Mission contracts, goals, user intent, hard constraints, authority limits.
+  * CheckpointNode: Deterministic world-state snapshots enabling full mission time-travel and rollback.
+  * ExperimentNode: Hypothesis, baseline, controlled variables, candidate interventions, raw measurements.
+  * EvidenceNode: Cryptographic proof packages containing SHA-256 receipts, verifier signatures, telemetry spans.
+  * LessonNode: Generalized causal heuristics derived from failure mining or operational breakthroughs.
+  * OutcomeNode: Final business, software, or physical mission results with quantitative deltas.
+- Edges:
+  * PRODUCED_BY (mission-to-evidence generation lineage).
+  * ATTRIBUTED_TO (causal attribution connecting intervention to outcome metric deltas).
+  * TEACHES (lesson-to-model/runtime update admission link).
+  * ROLLBACK_TO (safe recovery path for automated reversal).
+
+2.4 UNIFIED STORAGE & GRAPH ENGINE TOPOLOGY
+- Primary Property Graph: Distributed Neo4j / Apache HugeGraph cluster with Raft consensus.
+- Temporal State & Telemetry Tier: ClickHouse cluster handling 100M+ metric events/sec with 
+  ZSTD columnar compression and sub-10ms range scans.
+- Vector & Embedding Tier: Distributed Qdrant cluster storing multimodal embeddings 
+  (dense text, CLIP visual, 3D point-cloud, code graph embeddings) with HNSW indexing and scalar quantization.
+- Immutable Artifact Blob Tier: MinIO / S3 content-addressed storage (CAS) verified by Blake3 / SHA-256 hashes.
+
+================================================================================
+SECTION 3: CUSTOMER CONTROL PLANE & MISSION RUNTIME ENGINE
+================================================================================
+
+3.1 CUSTOMER CONTROL PLANE ARCHITECTURE
+The Customer Control Plane provides multi-tenant orchestration, cryptographic security, 
+and policy governance across enterprise missions:
+- Mission Management Service (Go / gRPC):
+  * Handles complete mission lifecycle: Create, Validate, Schedule, Pause, Resume, Checkpoint, Rollback, Abort.
+  * Implements durable state machines via Temporal / Horos Native Saga Engine.
+  * Provides real-time event streaming over WebSocket and gRPC streams with sub-5ms dispatch.
+- Universal Connector Subsystem (Rust):
+  * GitHub / GitLab: Bidirectional Git sync, PR generation, commit provenance, branch sandbox isolation.
+  * Cloud Providers: AWS (CUR, EC2, EKS, CloudWatch), GCP (GKE, Compute Engine), Azure (AKS).
+  * Databases & Stores: PostgreSQL, Snowflake, BigQuery, ClickHouse, Redis, S3/GCS.
+  * Industrial & IoT: OPC-UA, MQTT, ROS2 / DDS, Siemens S7 PLC, Modbus, CAN-Bus.
+- Governance & Policy Authority Engine (Rust):
+  * Enforces Autonomy Levels:
+    - L1 Advisory: Human reviews and executes all actions.
+    - L2 Supervised: Horos drafts plan; human executes with single-click authorization.
+    - L3 Bounded Prod: Horos executes automatically within pre-approved budget ($ cap), 
+      namespace blast-radius, and non-destructive action envelopes; auto-rolls back on anomaly.
+    - L4 High Autonomy: Autonomous multi-step execution with post-hoc verification and audit trails.
+    - L5 Unconstrained Frontier: Full autonomous system optimization, model retraining, and kernel deployment.
+  * Real-Time Budget Hard Cap: Rejects or pauses missions when spend velocity exceeds configured thresholds.
+  * Multi-Party Cryptographic Sign-Off: WebAuthn / hardware security key approvals for destructive operations.
+- Usage, Metering & Financial Accounting (Go):
+  * High-frequency token, GPU-millisecond, and API invocation metering with zero-loss durability.
+  * Real-time credit deduction, threshold alerts, and dynamic billing generation.
+
+3.2 MISSION RUNTIME & DECLARATIVE OUTCOME CONTRACT
+- Input Normalization Engine:
+  * Ingests heterogeneous inputs: Natural language prompts, cURL/API payloads, OpenTelemetry spans, 
+    video frames, sensor point-clouds, and SCADA alarms.
+  * Normalizes all inputs into typed `HorosSignal` structures with temporal and spatial stamps.
+- Intent Engine:
+  * Deconstructs raw signals into explicit, unambiguous operational intents.
+  * Computes Intent Ambiguity Score ($0.00$ to $1.00$). If ambiguity > $0.15$, executes automated 
+    clarification dialogues or counterfactual probing before binding compute.
+- Outcome Intelligence & The Outcome Contract:
+  * Generates an immutable, mathematically verifiable `OutcomeContract` protobuf before execution:
+    ```protobuf
+    syntax = "proto3";
+    package horos.mission.v1;
+
+    message OutcomeContract {
+      string contract_id = 1;
+      string mission_id = 2;
+      string intent_digest = 3;
+      
+      message Objective {
+        string metric_name = 1;
+        enum TargetType { MINIMIZE = 0; MAXIMIZE = 1; MAINTAIN_WITHIN = 2; REACH_EXACT = 3; }
+        TargetType target_type = 2;
+        double target_value = 3;
+        double tolerance = 4;
+        string unit = 5;
+      }
+      repeated Objective objectives = 4;
+
+      message Constraint {
+        string parameter = 1;
+        string operator = 2; // e.g., "<=", ">=", "=="
+        string threshold = 3;
+        bool is_hard_constraint = 4;
+      }
+      repeated Constraint constraints = 5;
+
+      message AuthorityEnvelope {
+        uint32 autonomy_level = 1; // 1 to 5
+        double max_spend_usd = 2;
+        repeated string allowed_namespaces = 3;
+        repeated string forbidden_actions = 4;
+        bool rollback_snapshot_required = 5;
+      }
+      AuthorityEnvelope authority = 6;
+
+      message VerificationSpecification {
+        repeated string verifier_ids = 1;
+        string independent_verifier_signature = 2;
+        uint32 required_cross_validations = 3;
+        double confidence_threshold = 4;
+      }
+      VerificationSpecification verification = 7;
+    }
+    ```
+
+================================================================================
+SECTION 4: REALITY INTELLIGENCE FABRIC & WORLD PERCEPTION ENGINE
+================================================================================
+
+Reality Intelligence is the layer that anchors Horos in empirical physical and digital truth. 
+It guarantees that AI systems never operate on hallucinated assumptions or stale system states.
+
+4.1 REALITY FABRIC ARCHITECTURE
+- Continuously ingests:
+  * Digital: Production Kubernetes pod states, memory usage, query latencies, network traces, CPU/GPU throttles.
+  * Physical: Multi-camera RGB-D streams (30-120 FPS), LiDAR point-clouds, IMU accelerations, wheel odometry.
+  * Model Runtimes: KV-cache allocations, batch latencies, token consumption, prefix cache hit ratios.
+- Aggregates state into a real-time `WorldStateSnapshot` with monotonic nanosecond timestamping.
+
+4.2 CONTEXT INTELLIGENCE SUBSYSTEM
+- Dense & Sparse Multi-Tier Retrieval: Hybrid BM25 + ColBERTv2 token-level late interaction + Dense HNSW search.
+- Dynamic Token Compression Engine:
+  * Auto-extracts semantic core vectors, stripping syntactic filler.
+  * Compresses 128k context windows into high-density 16k prompt tokens with >99.4% factual recall.
+- Episodic & Working Memory Engine:
+  * Maintains cross-session stateful context, mission histories, and user preference priors.
+  * Automatically purges unverified context; seals verified outcomes into persistent long-term storage.
+
+4.3 WORLD INTELLIGENCE & 4D KINEMATICS ENGINE
+- Spatial-Temporal Scene Graphs:
+  * Converts 2D/3D sensor feeds into explicit 3D bounding geometry, velocity vectors, and occlusion boundaries.
+  * Tracks dynamic obstacles, pedestrians, vehicles, and industrial mechanical linkages.
+- Causal World Dynamics Engine:
+  * Simulates physical interactions and forward state evolutions:
+    $$\hat{S}_{t+\Delta t} = f_{	heta}(S_t, A_t, 	ext{Env}_t)$$
+  * Predicts potential collisions, thermodynamic thermal spikes, or memory exhaustions up to 10 seconds ahead.
+  * Quantifies prediction confidence and uncertainty bounds ($\sigma^2$) for every prospective actuation.
+
+4.4 UNKNOWN ENGINE & KNOWLEDGE GAP ENGINE
+- Epistemic vs. Aleatoric Uncertainty Decomposition:
+  * Epistemic (reducible by data): Triggers automated knowledge acquisition queries, sensor zoom, or dataset retrieval.
+  * Aleatoric (inherent system noise): Enforces widened safety margins and conservative actuation boundaries.
+- Knowledge Gap Detection:
+  * Identifies missing runtime facts, unverified assumptions, or undocumented API interfaces.
+  * Automatically compiles a declarative `KnowledgeAcquisitionPlan` to resolve unknowns before committing execution.
+
+4.5 ACTIVE REALITY LEARNING & GROUND TRUTH FACTORY
+- Active Probing: Executes micro-benchmarks, ping probes, non-destructive API queries, and sensor calibrations.
+- Ground Truth Factory:
+  * Eliminates circular self-evaluation by marrying three independent truth channels:
+    1. Direct Physical Sensors (camera, tachometer, NVML power draw, cloud CUR cost invoices).
+    2. Formal Mathematical Verifiers (compiler type checks, AST equality, memory safety sanitizers).
+    3. Closed-Loop Execution Outcomes (unit test pass/fail, error exit codes, latency percentiles).
+- Reality Knowledge Base: Stores discovered truths as structured causal rules with Bayesian confidence weights.
+
+================================================================================
+SECTION 5: CAPABILITY INTELLIGENCE & MULTI-OBJECTIVE SYSTEM COMPOSER
+================================================================================
+
+5.1 CAPABILITY FABRIC & DISCOVERY
+The Capability Fabric models the entire space of computational and algorithmic tools available to Horos:
+- Models: All registered first-party and third-party foundation models, specialized task adapters, and quantized checkpoints.
+- Datasets: Verified training corpora, held-out golden eval suites, preference datasets, synthetic failure vaults.
+- Tools & Skills: Sandbox execution shells, API connectors, formal solvers (Z3, CVC5), debuggers, hardware compilers.
+- Capability Discovery Engine: Dynamically maps the mission's `OutcomeContract` to compatible capability subsets.
+
+5.2 COMPATIBILITY & GAP ENGINES
+- Compatibility Matrix: Validates that selected model precision (e.g., FP8) matches target GPU architecture 
+  (e.g., Ada Lovelace L40S or Hopper H100) and tensor core capabilities.
+- Capability Gap Engine:
+  * Compares required mission performance against available capability baseline.
+  * If a capability gap is detected, triggers automated improvement workflows:
+    - Data gap -> Schedules Active Data Engine synthesis.
+    - Model gap -> Schedules SFT / LoRA adaptation or GRPO reasoning tuning.
+    - Runtime gap -> Triggers Model Compiler kernel search.
+
+5.3 MULTI-DIMENSIONAL SYSTEM COMPOSER
+The System Composer deterministically solves the multi-variable composition equation:
+$$	ext{System} = 	ext{Model} \oplus 	ext{Data} \oplus 	ext{Context} \oplus 	ext{Tools} \oplus 	ext{Runtime} \oplus 	ext{Compute} \oplus 	ext{Environment}$$
+- Generates 3 to 5 candidate systems along the Pareto frontier (Maximum Quality vs. Minimum Latency vs. Minimum Cost).
+- Evaluates candidate systems against pre-flight simulation before allocating real hardware.
+
+================================================================================
+SECTION 6: HOROS FIRST-PARTY FRONTIER MODEL PROGRAM (5 FOUNDATION FAMILIES)
+================================================================================
+
+Horos implements, trains, and maintains 5 proprietary first-party foundation model families. 
+These are additive, deeply integrated models developed with reproducible recipes and strict lineage tracking:
+
+6.1 HOROS REALITY DECODER (R-DECODER)
+- Primary Task: Ingest raw, asynchronous multimodal sensor streams (RGB video, LiDAR point clouds, IMU, CAN-Bus, audio) 
+  and decode them into structured 4D world states (entities, 3D bounding geometry, velocities, affordances, physical properties).
+- Architecture:
+  * Spatio-Temporal Vision-Sensor Transformer with continuous time positional encodings.
+  * Hierarchical Cross-Attention fusing sensory tokens at native sample rates (LiDAR 10Hz, Camera 60Hz, IMU 200Hz).
+  * Direct 3D bounding box, depth, semantic segmentation, and surface normal prediction heads.
+- Sizes: R-Decoder-Tiny (3B Edge Jetson), R-Decoder-Base (8B), R-Decoder-Large (32B Datacenter).
+
+6.2 HOROS WORLD DYNAMICS MODEL (W-DYNAMICS)
+- Primary Task: Generative world dynamics and autoregressive future state simulation.
+- Capabilities:
+  * Predicts future world states given current state, historical trajectory, and candidate robot/system actions:
+    $$P(S_{t+1:t+K} \mid S_{\le t}, A_{t:t+K})$$
+  * Generates high-fidelity counterfactual simulations to evaluate "what-if" actions before physical execution.
+  * Estimates physical consequences: structural strain, collision probability, power consumption, trajectory divergence.
+- Architecture: Continuous Diffusion Transformer (DiT) operating over latent world-state tokens with flow matching.
+- Sizes: W-Dynamics-8B, W-Dynamics-34B.
+
+6.3 HOROS CODE INTELLIGENCE (C-INTEL)
+- Primary Task: Autonomous software engineering, system architecture, kernel synthesis, and formal verification.
+- Capabilities:
+  * Native understanding of system programming languages (Rust, Go, C++, CUDA, Triton, Python, TypeScript).
+  * Zero-shot CUDA / Triton kernel optimization based on target GPU memory hierarchies and warp structures.
+  * Automated bug reproduction, AST-aware refactoring, regression test generation, and formal specification synthesis.
+- Training: Multi-stage pretraining on 4T tokens of audited, permissible code, followed by execution-feedback RL (RFT/GRPO).
+- Sizes: C-Intel-8B, C-Intel-32B, C-Intel-70B MoE (8x8B active).
+
+6.4 HOROS VOICE INTELLIGENCE (V-INTEL)
+- Primary Task: Ultra-low latency, full-duplex conversational reasoning, streaming speech recognition, and expressive voice synthesis.
+- Capabilities:
+  * End-to-end speech-to-speech architecture eliminating cascading ASR -> LLM -> TTS latency.
+  * Glass-to-glass latency under 95ms on edge hardware.
+  * Concurrent background noise parsing, emotion/urgency detection, and acoustic room geometry estimation.
+- Architecture: Multi-codebook neural audio codec with continuous streaming audio transformer.
+- Sizes: V-Intel-4B (Edge/Vehicle), V-Intel-12B (Datacenter).
+
+6.5 HOROS VISUAL GENERATION (V-GEN)
+- Primary Task: Physics-grounded synthetic visual generation, photorealistic sensor replay, and simulation world synthesis.
+- Capabilities:
+  * Generates pixel-accurate, temporally consistent synthetic camera, LiDAR, and thermal sensor streams.
+  * Injects controllable edge cases: adverse weather (dense fog, blizzard, torrential rain), lens occlusion, sensor degradation.
+  * Serves as the synthetic sensory engine for the Synthetic Reality Lab and hardware-in-the-loop validation.
+- Architecture: Multi-Resolution Video DiT with 3D spatial-temporal attention and physical constraint loss penalties.
+- Sizes: V-Gen-14B.
+
+6.6 UNIFIED MODEL REGISTRY & 5-TIER LINEAGE GRAPH
+Every model checkpoint in Horos is cataloged in the Model Registry with an immutable Blake3 digest and assigned one of 
+five strict, non-negotiable lineage classifications:
+1. Tier 1: External Base Model (Unmodified third-party checkpoint, e.g., Meta-Llama-3.1-8B).
+2. Tier 2: Horos Adapter Derivative (LoRA, QLoRA, or task-specific head fine-tuned by Horos).
+3. Tier 3: Horos Continued-Pretraining Checkpoint (Adapted weights on Horos domain corpora).
+4. Tier 4: Horos Architecture Trained from Scratch (Full Horos first-party weights, zero third-party seed).
+5. Tier 5: Horos Distilled / Specialized Variant (Task-pruned, quantized, or student architecture).
+
+================================================================================
+SECTION 7: MODEL COMPILER, UNIVERSAL IR & AUTONOMOUS KERNEL SEARCH ENGINE
+================================================================================
+
+7.1 UNIVERSAL MODEL IR & COMPUTATION GRAPH OPTIMIZATION
+- Intermediate Representation:
+  * Lowers PyTorch / ONNX / JAX graphs into `HorosIR`, a SSA-form, hardware-agnostic computation graph.
+- Graph Optimizations:
+  * Operator Fusion: Fuses GEMM + Bias + GELU, RMSNorm + QKV Projection, and Rotary Position Embeddings (RoPE).
+  * Memory Planner: In-place buffer reuse, dynamic activation recomputation (checkpointing), zero redundant memory allocations.
+  * Quantization Transformations: Automates INT8/FP8 scale-factor calculation, dynamic outlier retention, AWQ channel scaling.
+
+7.2 AUTONOMOUS KERNEL SEARCH & GENERATION ENGINE
+- Custom Kernel Generation:
+  * Synthesizes Triton and native CUDA C++ kernels targeted to the physical GPU register file and shared memory layout.
+  * Implements FlashAttention-v3, FlashDecoding, and PagedAttention with customized thread-block tile sizes.
+- Search Space Auto-Tuning:
+  * Automatically benchmarks matrix multiplication tile sizes ($M_{	ext{tile}} \in [16, 256]$, $N_{	ext{tile}} \in [16, 256]$, 
+    $K_{	ext{tile}} \in [16, 128]$) across real hardware.
+  * Benchmarks hundreds of kernel configurations in an isolated sandbox, keeping only kernels that beat vendor baselines.
+- Verified Kernel Set:
+  * Locks winning kernels into an immutable `VerifiedKernelSet` library for production inference and training.
+
+================================================================================
+SECTION 8: FRONTIER RESEARCH FABRIC & MODEL IMPROVEMENT ORCHESTRATOR
+================================================================================
+
+The Frontier Research Fabric automates the continuous scientific discovery loop of AI research:
+
+8.1 NINE AUTONOMOUS RESEARCH PILLARS
+1. Model Research: Neural architecture search (NAS), sparse mixture-of-experts (MoE) routing, linear attention variants.
+2. Data Research: Automated data mixture weighting, curriculum optimization, synthetic data generation filters.
+3. Training Research: Distributed scaling topologies (3D parallelism: DP + TP + PP + ZeRO-3), fault-tolerant recovery.
+4. Post-Training Research: Advanced reinforcement learning algorithms (PPO, DPO, GRPO, KTO, RFT).
+5. Evaluation Research: Blind-spot discovery, adversarial prompt generation, automated evaluation rubric formulation.
+6. Inference Research: Speculative decoding architectures, continuous batching algorithms, multi-tenant KV-cache sharing.
+7. Test-Time Research: Monte Carlo tree search (MCTS) reasoning, dynamic compute scaling per difficulty tier.
+8. Compute Research: Thermal-aware workload placement, interconnect topology optimizations, carbon-aware scheduling.
+9. World Research: 4D neural radiance fields (NeRFs), 3D Gaussian splatting, physics engine differentiable integration.
+
+8.2 THE MODEL IMPROVEMENT ORCHESTRATOR
+- Coordinates training and evaluation runs without manual human intervention:
+  1. Compiles an immutable `ExperimentManifest` detailing checkpoints, data splits, hyperparameters, compute allocation.
+  2. Provisions isolated compute nodes via Slurm / Kubernetes RayCluster.
+  3. Deploys Rollout Workers to execute tasks and collect trajectory datasets.
+  4. Deploys Trainer Workers to compute gradients, synchronize weights, and write atomic checkpoints.
+  5. Automatically routes new candidate checkpoints to the Evaluation Fabric.
+
+================================================================================
+SECTION 9: ACTIVE DATA ENGINE, GROUND TRUTH FACTORY & POST-TRAINING HARNESS
+================================================================================
+
+9.1 ACTIVE DATA ENGINE
+- Capability-Driven Data Sampling: Automatically mines existing production logs and simulation databases for scenarios 
+  where model confidence was low or where verifier checks failed.
+- Deduplication & Quality Filtering:
+  * MinHash LSH and semantic embedding clustering eliminate redundant training samples.
+  * Quality classifiers score samples on factual density, reasoning complexity, and structural clarity.
+- Coverage Gap Explorer: Generates synthetic boundary cases to populate sparse regions of the task-state space.
+
+9.2 THE GROUND TRUTH FACTORY & TRAINING SIGNAL CONTRACT
+- Eliminates unverified training data. All candidate training records must conform to the `TrainingSignalRecord` schema:
+  * `task_id` and semantic environment hash.
+  * Full observation context and multi-turn action trace.
+  * Independent verifier outputs, formal proof status, and reward breakdown:
+    $$R_{	ext{total}} = w_1 R_{	ext{correctness}} + w_2 R_{	ext{efficiency}} + w_3 R_{	ext{safety}} - w_4 R_{	ext{complexity}}$$
+  * Cryptographic provenance tag confirming data ownership, GDPR/privacy compliance, and license admissibility.
+
+9.3 POST-TRAINING PIPELINE
+- Supervised Fine-Tuning (SFT): High-quality, curated demonstration datasets teaching structured tool use and format compliance.
+- Group Relative Policy Optimization (GRPO):
+  * Generates multiple candidate reasoning trajectories per prompt.
+  * Evaluates group-relative advantage without requiring a standalone critic model, optimizing reasoning depth with mathematical stability.
+- Direct Preference Optimization (DPO): Direct policy alignment against verified preference pairs.
+- Distillation & Specialization: Compresses large 70B teacher models into high-speed 8B student models with zero regression on task domain evals.
+
+================================================================================
+SECTION 10: EVALUATION FABRIC, VERIFIER INTEGRITY & PROMOTION GATE
+================================================================================
+
+10.1 TRI-PART EVALUATION ARCHITECTURE
+Every model, system candidate, and compiled artifact is evaluated across three strict dimensions:
+1. Capability Evaluation: Core reasoning, code generation accuracy, spatial perception, mathematical accuracy.
+2. Behavioral Evaluation: Safety policy adherence, prompt injection resistance, tool-calling robustness, graceful recovery.
+3. System Performance Evaluation: TTFT (Time to First Token), Inter-token latency, P95/P99 latency, VRAM footprint, cost per 1M tokens.
+
+10.2 THE VERIFIER FABRIC
+- Task Verifiers: Deterministic checks (e.g., does the generated code pass compiler checks and unit test suites?).
+- Trajectory Verifiers: Verifies that tool calls and intermediate state transitions obeyed security and budget boundaries.
+- Formal Verifiers: Integrates formal SMT solvers (Z3) to mathematically prove equivalence and invariant satisfaction.
+- Evaluator Fabric: Ensemble of multi-model LLM judges with randomized persona swapping and rubric anchoring.
+
+10.3 EVALUATION INTEGRITY & GAMING DEFENSE
+- Benchmark Decontamination Engine: Continuously scans training datasets for n-gram and embedding overlap with golden eval suites.
+- Reward-Hacking Detectors: Flags policies that generate overly verbose, repetitive, or vacuous outputs to game judge models.
+- Judge Bias Calibration: Measures and compensates for position bias, length bias, and self-enhancement bias in LLM evaluators.
+
+10.4 THE MODEL CANDIDATE PROMOTION GATE
+Promotion through the operational deployment stages requires passing verifiable gates:
+$$	ext{REJECT} \longrightarrow 	ext{REVISE} \longrightarrow 	ext{SHADOW} \longrightarrow 	ext{CANARY} \longrightarrow 	ext{PROMOTE}$$
+- Shadow Mode: Candidate runs alongside production traffic with zero user impact; outputs are compared offline.
+- Canary Mode: 1% -> 5% -> 25% traffic allocation with real-time error, latency, and drift monitoring.
+- Promote: Full production promotion only when statistical tests prove zero quality regression with equal or superior economics.
+
+================================================================================
+SECTION 11: SYSTEM OPTIMIZATION, WORKLOAD INTELLIGENCE & INFERENCE RUNTIME
+================================================================================
+
+11.1 WORKLOAD INTELLIGENCE & REPLAY SANDBOX
+- Continuously profiles production traffic shapes: request concurrency, input/output token length distributions, burstiness.
+- Replays recorded production traces in isolated test environments to benchmark runtime configurations under exact real-world stress.
+
+11.2 MULTI-OBJECTIVE PARETO SEARCH
+- Solves the multi-objective optimization problem:
+  $$\min_{	ext{config}} \left[ 	ext{Latency}_{	ext{P99}}, 	ext{Cost}_{	ext{per\_query}}, 	ext{Energy}_{	ext{watt\_per\_token}}, -	ext{Quality}_{	ext{score}} ight]$$
+- Explores combinations of:
+  * Model Checkpoints & Quantization Schemes (FP16, FP8, INT4 AWQ).
+  * Serving Engines & Schedulers (Continuous batching, chunked prefill, disaggregated serving).
+  * Compute Hardware (H100 NVL, L40S, A100 80GB, RTX 4090, Jetson Orin AGX).
+- Maps candidates onto the Pareto Frontier and selects the optimal configuration matching the mission's `OutcomeContract`.
+
+11.3 INFERENCE ENGINE & ADAPTIVE REASONING
+- Horos Native C++ High-Throughput Inference Engine:
+  * Paged Attention: Zero memory fragmentation in KV-cache storage.
+  * Prefix Caching: Instantaneous reuse of common system prompts and context embeddings.
+  * Disaggregated Prefill & Decode: Separates compute-heavy prefill nodes from memory-bandwidth-bound decode nodes.
+- Adaptive Reasoning Engine:
+  * Dynamic Task Difficulty Classification:
+    - Tier 1 (Simple queries): High-speed, quantized 8B model (TTFT < 15ms).
+    - Tier 2 (Moderate complexity): Standard 32B model with prefix caching.
+    - Tier 3 (Complex engineering/reasoning): 70B MoE model with chain-of-thought verification.
+    - Tier 4 (Extreme scientific discovery): Deep test-time compute search (MCTS / rollout tree verification).
+
+================================================================================
+SECTION 12: SYNTHETIC REALITY LAB, RL FACTORY & SIM2REAL CONVERGENCE
+================================================================================
+
+12.1 SYNTHETIC REALITY & WORLD LAB
+- Real-time physics-grounded simulation environments built on Isaac Sim / MuJoCo / Unreal Engine 5.
+- Programmatically generates millions of synthetic world scenarios:
+  * Dynamic lighting, weather, multi-agent traffic flows, factory floor anomalies.
+  * Physics parameter randomization: friction coefficients, mass distributions, sensor noise, latency jitter.
+
+12.2 RL ENVIRONMENT FACTORY
+- Sealed Task & Environment Contracts: Every RL environment is packaged as a versioned, reproducible OCI container.
+- Rollout & Trajectory Store:
+  * Persists every state, observation, action, reward component, and termination flag.
+  * Supports sub-millisecond random-access replay for training and failure analysis.
+
+12.3 SIM2REAL GAP ENGINE
+- Continuously compares simulated sensor traces with real-world sensor streams from deployed edge devices.
+- Quantifies the Sim2Real divergence metric ($D_{	ext{sim2real}}$).
+- When divergence exceeds threshold, the Unknown Engine automatically isolates the unmodeled physical factor 
+  (e.g., thermal tire degradation, camera sensor bloom) and injects it back into the simulation generator.
+
+================================================================================
+SECTION 13: DECISION ENGINE, AUTONOMOUS GOVERNANCE & PRE-ACTUATION SANITY
+================================================================================
+
+13.1 MULTI-CRITERIA DECISION ENGINE
+- Formulates autonomous operational decisions using utility optimization:
+  $$U(a) = \sum_{i} w_i \cdot \mathbb{E}[M_i \mid S_t, a] - \lambda \cdot 	ext{Risk}(a)$$
+  where $M_i$ represents quality, latency, cost, and safety metrics.
+
+13.2 AUTONOMOUS GOVERNANCE MATRIX
+- Permission Enforcement: Validates cryptographic signature, API token scope, and organization tenancy.
+- Hard Budget Enforcement: Hardware-enforced spend boundaries stop execution before cloud cost incursions occur.
+- Blast Radius Isolation: All non-production or experimental actions are confined to ephemeral sandboxes, 
+  network namespaces, and isolated staging clusters.
+
+13.3 PRE-ACTUATION STATE RE-CHECK
+- Critical Safety Invariant: Before any physical actuator motion or production deployment is initiated:
+  1. The Reality Fabric queries the target entity's live sensors and metrics.
+  2. The system compares Live State ($S_{	ext{live}}$) against Planned State ($S_{	ext{planned}}$).
+  3. If $|S_{	ext{live}} - S_{	ext{planned}}| > \epsilon$:
+     - Execution is instantly halted.
+     - The mission state machine transitions to `STATE_DRIFT_DETECTED`.
+     - Triggers an automated rediscovery and replanning cycle.
+
+================================================================================
+SECTION 14: DEPLOYMENT RUNTIME & PHYSICAL EXECUTION FABRIC
+================================================================================
+
+14.1 HETEROGENEOUS DEPLOYMENT TARGETS
+- Datacenter & Cloud Kubernetes:
+  * Automated provisioning of GPU nodes via Horos Kubernetes Operator (`HorosDeployment` CRD).
+  * Elastic autoscaling from zero (scale-to-zero) to hundreds of GPUs based on queue depth.
+- Bare Metal GPU Clusters:
+  * Direct InfiniBand / RoCE v2 RDMA orchestration with GPUDirect Storage (GDS).
+- Edge & Embedded Devices:
+  * Automated cross-compilation for ARM64, NVIDIA Jetson AGX Orin, DRIVE AGX, and industrial IPCs.
+  * Local edge runtime operates autonomously during complete network disconnects; syncs evidence upon reconnection.
+
+14.2 PHYSICAL EXECUTION FABRIC (ROBOTICS & EMBODIED SYSTEMS)
+- Hardware In The Loop (HIL):
+  * Hard-realtime safety co-processors (1000Hz watchdog) with deterministic hardware emergency stop (E-Stop).
+  * Direct interfaces to ROS2, EtherCAT, CANopen, and industrial PLCs.
+  * Physical boundary containment: software-enforced joint limits, velocity bounds, and dynamic collision envelopes.
+
+================================================================================
+SECTION 15: MANAGED INFERENCE & REALITY MODEL APIS
+================================================================================
+
+15.1 PRODUCTION REALITY MODEL API SPECIFICATION
+Horos exposes high-performance, enterprise-grade endpoints for inference, streaming perception, and autonomous mission control:
+- `/v1/reality/decode`: Streaming multi-modal sensor ingestion -> structured 4D world state JSON/Protobuf.
+- `/v1/reality/simulate`: Forward physics and dynamics simulation rollouts given candidate actions.
+- `/v1/chat/completions`: Full OpenAI-compatible chat API with deep test-time reasoning and verification tags.
+- `/v1/missions/launch`: Declarative mission execution with formal outcome contracts.
+- `/v1/missions/{id}/evidence`: Cryptographic evidence verification and SHA-256 receipt inspection.
+
+15.2 USAGE METERING & TELEMETRY
+- Real-time accounting per request:
+  * Input tokens, output tokens, cached prefix tokens, KV-cache utilization.
+  * GPU time (milliseconds), GPU power consumption (Joules), effective cost (USD).
+
+================================================================================
+SECTION 16: OBSERVATION FABRIC, CRYPTOGRAPHIC EVIDENCE & MISSION PROVENANCE
+================================================================================
+
+16.1 CONTINUOUS OBSERVATION FABRIC
+- Non-invasive instrumentation across every tier:
+  * OpenTelemetry tracing on every internal function call and microservice boundary.
+  * eBPF kernel monitors tracking disk I/O, socket connections, and memory allocations.
+  * Hardware sensors tracking GPU temperatures, clock throttling, and PCIe bandwidth.
+
+16.2 CRYPTOGRAPHIC EVIDENCE & CLAIMS VERIFICATION
+- The Evidence Engine converts observations into unforgeable mathematical proofs:
+  * Cryptographic Receipt Structure:
+    - `mission_id`: Unique UUID.
+    - `timestamp_nanoseconds`: Hardware-clock UTC timestamp.
+    - `model_weights_digest`: Blake3 hash of the exact model weights used.
+    - `runtime_config_digest`: Hash of serving and kernel parameters.
+    - `telemetry_merkle_root`: Merkle tree root of all sensor and metric spans.
+    - `verifier_signatures`: Ed25519 signatures from independent verifiers.
+    - `receipt_hash`: SHA-256 hash sealing the entire record.
+- Claims Engine: Automatically validates claims such as "-79% latency drop" or "98.9% accuracy" by calculating 
+  exact empirical deltas against baseline logs.
+
+================================================================================
+SECTION 17: EXPERIENCE INTELLIGENCE, TEACHING FABRIC & CONTINUOUS EVOLUTION
+================================================================================
+
+17.1 THE MODEL EXPERIENCE RECORD
+Every completed mission generates an immutable `ModelExperienceRecord` cataloging:
+- The initial mission intent and outcome contract.
+- The full sequence of actions, world states, and tool invocations.
+- The verified real-world consequences and metric deltas.
+- Discovered failures, regressions, and root causes.
+
+17.2 FAILURE MINING & LESSON EXTRACTION
+- Failure Mining Engine:
+  * Continuously clusters missions where objectives were missed or anomalies were flagged.
+  * Performs automated causal root-cause analysis:
+    $$\Delta M = 	ext{Attribution}(	ext{ModelFailure}) + 	ext{Attribution}(	ext{EnvironmentDrift}) + 	ext{Attribution}(	ext{ToolError})$$
+- Lesson Engine:
+  * Synthesizes abstract, reusable lessons (e.g., "Marlin-AWQ quant requires L40S warp re-alignment when batch size > 64").
+  * Converts lessons into automated unit tests, runtime heuristics, and verifier rules.
+
+17.3 THE TEACHING FABRIC & CONTINUOUS EVOLUTION LOOP
+- Model Teaching: Automatically admits curated failure lessons into active learning queues for SFT and GRPO tuning.
+- Runtime Teaching: Updates the Inference Optimizer's routing tables and kernel configurations.
+- System Teaching: Updates the System Composer's hardware-model compatibility weights.
+- Continuous Evolution: Completes the full loop from production observation to improved foundation models, 
+  powering the next mission with compounded intelligence.
+
+================================================================================
+SECTION 18: CONCRETE REPOSITORY TOPOLOGY, MICROSERVICE SCHEMAS & PROTOCOLS
+================================================================================
+
+18.1 MICROSERVICE DIRECTORY TOPOLOGY
+```
+/
+├── cmd/
+│   ├── horos-control-plane/       # Go: API gateway, mission orchestrator, tenant manager
+│   ├── horos-reality-fabric/      # Rust: Real-time sensor ingest, telemetry aggregator
+│   ├── horos-compiler/            # C++ / Python: Universal IR, Triton kernel generator
+│   ├── horos-inference-engine/    # C++: Native high-throughput serving runtime
+│   ├── horos-model-orchestrator/  # Python: Slurm / Ray distributed training manager
+│   ├── horos-verifier-fabric/     # Go / Rust: Independent formal & empirical verifiers
+│   └── horos-edge-daemon/         # Rust: Embedded Jetson / IPC agent for physical execution
+├── pkg/
+│   ├── proto/v1/                  # Protobuf definitions for all internal & external APIs
+│   ├── intelligence-graph/        # Client library for tripartite graph queries
+│   ├── outcome-contract/          # Declarative contract parser & validator
+│   └── cryptographic-evidence/    # SHA-256 / Ed25519 receipt generation & verification
+├── models/
+│   ├── reality-decoder/           # Architecture, tokenizer & recipes for Horos R-Decoder
+│   ├── world-dynamics/            # Architecture & recipes for Horos W-Dynamics
+│   ├── code-intelligence/         # Architecture & recipes for Horos C-Intel
+│   ├── voice-intelligence/        # Architecture & recipes for Horos V-Intel
+│   └── visual-generation/         # Architecture & recipes for Horos V-Gen
+├── memoryos-frontend/             # Next.js 16 (Turbopack) Full Enterprise Web Console
+│   ├── app/                       # App router pages (Console, Missions, Capabilities)
+│   ├── components/landing/        # Feature showcase, architecture canvas, interactive cards
+│   └── components/horos/          # Token composer, model telemetry charts, verifier badges
+└── deployments/
+    ├── kubernetes/                # Helm charts, CRDs (HorosDeployment, HorosMission)
+    ├── docker/                    # Sealed, reproducible OCI container buildfiles
+    └── terraform/                 # Multi-cloud infrastructure as code (AWS, GCP, Equinix)
+```
+
+18.2 CRITICAL PROTOBUF SERVICE DEFINITIONS
+```protobuf
+syntax = "proto3";
+package horos.services.v1;
+
+service MissionOrchestrator {
+  rpc CreateMission(CreateMissionRequest) returns (MissionResponse);
+  rpc StreamMissionEvents(MissionEventRequest) returns (stream MissionEvent);
+  rpc PauseMission(PauseMissionRequest) returns (MissionResponse);
+  rpc ResumeMission(ResumeMissionRequest) returns (MissionResponse);
+  rpc VerifyMissionOutcome(VerifyOutcomeRequest) returns (VerificationResponse);
+}
+
+service RealityFabricService {
+  rpc IngestTelemetryStream(stream TelemetryPacket) returns (IngestSummary);
+  rpc GetLiveWorldState(WorldStateRequest) returns (WorldStateSnapshot);
+  rpc SimulateFutureDynamics(SimulationRequest) returns (SimulationTrajectory);
+}
+
+service ModelCompilerService {
+  rpc CompileModel(CompileRequest) returns (CompileResponse);
+  rpc AutoTuneKernels(AutoTuneRequest) returns (AutoTuneResult);
+  rpc GetVerifiedKernelSet(KernelSetRequest) returns (KernelSetResponse);
+}
+
+service VerifierFabricService {
+  rpc ExecuteVerification(VerificationTask) returns (VerificationResult);
+  rpc GenerateEvidenceReceipt(ReceiptRequest) returns (CryptographicReceipt);
+}
+```
+
+================================================================================
+SECTION 19: PRODUCTION ACCEPTANCE CRITERIA & ZERO-MVP VERIFICATION PROTOCOL
+================================================================================
+
+The Horos Frontier AI Research Reality Infrastructure is accepted into production 
+when and only when the following criteria are empirically verified on live clusters:
+1. TRIPARTITE GRAPH INTEGRITY: Reality, Intelligence, and History subgraphs queryable 
+   with <12ms P95 latency across 100M+ entities and edges.
+2. OUTCOME CONTRACT COMPLIANCE: 100% of executed missions produce an immutable `OutcomeContract`, 
+   enforce hard spend boundaries, and record cryptographic evidence receipts.
+3. KERNEL SEARCH SUPERIORITY: Model Compiler custom Triton/CUDA kernels demonstrate a 
+   minimum 20% latency reduction or throughput increase over un-tuned vendor baselines on L40S/H100.
+4. INDEPENDENT VERIFIER ENFORCEMENT: Zero unverified outputs admitted to production; 
+   all claims backed by multi-source cross-validation.
+5. PRE-ACTUATION SAFETY INTERLOCK: Live vs. Planned state discrepancy check halts 
+   execution and triggers replan within 5ms of detected reality drift.
+6. CONTINUOUS LEARNING CONVERGENCE: Production failures mined by the Experience Engine 
+   pass the Teaching-Data Admission Gate and demonstrably improve candidate model evaluations.
+7. FIRST-PARTY MODEL SUITE READINESS: All 5 Horos foundation model architectures 
+   (R-Decoder, W-Dynamics, C-Intel, V-Intel, V-Gen) registered with cryptographically signed 
+   checkpoints, lineage DAGs, and evaluation benchmarks.
+
+================================================================================
+END OF SPECIFICATION — DAY-ONE FULL PRODUCTION BUILD ACTIVE
+================================================================================
