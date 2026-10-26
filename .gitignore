@@ -88,3 +88,7 @@ __pycache__/
 !/.codex/
 !/.codex/skills/
 !/.codex/skills/**
+
+# local build plan (kept on local machine, not pushed to repo)
+docs/EPOCH_FINAL_SOFTWARE_CLOUD_SIMULATION_EDGE_AUTOMATION_DATACENTER_BUILD_PLAN.md
+
