@@ -457,7 +457,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
   }, []);
 
   return (
-    <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-mono select-none">
+    <section id="feature-showcase-section" className="relative w-full bg-[#151515] text-[#F0EFE2] font-mono select-none">
 
       {/* 4 Continuous Margin Dashed Vertical Lines */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">

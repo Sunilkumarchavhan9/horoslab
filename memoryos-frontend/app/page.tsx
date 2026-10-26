@@ -48,8 +48,51 @@ export default function Home() {
       const composerElement = composerWrapperRef.current;
 
       if (composerElement) {
+        if (isFloatingComposerDismissed) {
+          gsap.to(composerElement, {
+            opacity: 0,
+            pointerEvents: "none",
+            duration: 0.2,
+            overwrite: "auto",
+          });
+          return;
+        }
 
-        // Default floating behavior (bottom center)
+        const showcase = document.getElementById("feature-showcase-section");
+
+        if (showcase) {
+          const showcaseRect = showcase.getBoundingClientRect();
+          const showcaseBottomInDoc = window.scrollY + showcaseRect.bottom;
+          const composerHeight = composerElement.offsetHeight || 72;
+          const bottomMargin = 24; // 1.5rem (bottom-6)
+          const dockTop = showcaseBottomInDoc - composerHeight - bottomMargin;
+
+          // When reaching or passing the end of FeatureShowcase, lock the composer at the bottom of the section
+          if (showcaseRect.bottom <= window.innerHeight) {
+            // Once scrolled completely past FeatureShowcase (into ModelApisSection and below), hide it
+            const isPastShowcase = showcaseRect.bottom <= 0;
+
+            gsap.to(composerElement, {
+              position: "absolute",
+              xPercent: -50,
+              x: 0,
+              y: 0,
+              left: "50%",
+              top: dockTop,
+              bottom: "auto",
+              width: "100%",
+              maxWidth: "56rem",
+              opacity: isPastShowcase ? 0 : 1,
+              pointerEvents: isPastShowcase ? "none" : "auto",
+              duration: 0.25,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+            return;
+          }
+        }
+
+        // Default floating behavior (bottom center) before reaching end of FeatureShowcase
         gsap.to(composerElement, {
           position: "fixed",
           xPercent: -50,
@@ -60,8 +103,10 @@ export default function Home() {
           bottom: "1.5rem", // 24px (bottom-6)
           width: "100%",
           maxWidth: "56rem", // max-w-4xl
-          duration: 0.4,
-          ease: "power3.out",
+          opacity: 1,
+          pointerEvents: "auto",
+          duration: 0.25,
+          ease: "power2.out",
           overwrite: "auto",
         });
       }
@@ -154,7 +199,7 @@ export default function Home() {
   }, [showFloatingComposer, isFloatingComposerDismissed]);
 
   return (
-    <div className="min-h-screen bg-[#151515] text-[#F0EFE2] font-mono selection:bg-[#75bf00] selection:text-black">
+    <div className="relative min-h-screen bg-[#151515] text-[#F0EFE2] font-mono selection:bg-[#75bf00] selection:text-black">
       <PixelFilter />
 
       {/* Top Header Navbar */}
@@ -238,8 +283,9 @@ export default function Home() {
       {/* Global Floating Composer that appears on scroll and docks using GSAP */}
       <div
         ref={composerWrapperRef}
-        className="fixed z-50 pointer-events-none"
+        className="z-50 pointer-events-none"
         style={{
+          position: "fixed",
           left: "50%",
           bottom: "1.5rem",
           width: "100%",
