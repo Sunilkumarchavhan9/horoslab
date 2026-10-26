@@ -83,7 +83,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "concurrently": "^10.0.6",
     "eslint": "^10",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.2",
     "typescript": "^7"
   }
 }
