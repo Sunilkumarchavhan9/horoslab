@@ -58,41 +58,38 @@ function TargetNode({
   return (
     <motion.div
       whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-      className={`flex items-center gap-4 px-5 py-3.5 rounded-xl border w-56 min-h-[56px] relative z-10 transition-colors ${active ? 'border-[#75bf00] bg-[#1a2600]' : 'border-transparent bg-[#222] hover:bg-[#2a2a2a]'} ${className}`}
+      className={`flex items-center gap-3 px-4 py-2 rounded-lg border w-44 min-h-[44px] relative z-10 transition-colors ${active ? 'border-[#75bf00] bg-[#1a2600]' : 'border-transparent bg-[#222] hover:bg-[#2a2a2a]'} ${className}`}
     >
       {icon && (
-        <div className="flex items-center justify-center w-6 h-6 shrink-0">
+        <div className="flex items-center justify-center w-5 h-5 shrink-0">
           {icon}
         </div>
       )}
-      <span className="font-semibold text-[15px] tracking-tight">{title}</span>
+      <span className="font-semibold text-[13px] tracking-tight">{title}</span>
     </motion.div>
   );
 }
 
 const FLOWING_LOGOS = [
-  <QwenLogo size={20} key="1" />,
-  <MistralLogo size={20} key="2" />,
-  <MetaLogo size={20} key="3" />,
-  <AnthropicLogo size={20} key="4" />,
-  <GoogleLogo size={20} key="5" />,
-  <BAAILogo size={20} key="6" />,
+  <QwenLogo size={16} key="1" />,
+  <MistralLogo size={16} key="2" />,
+  <MetaLogo size={16} key="3" />,
+  <AnthropicLogo size={16} key="4" />,
+  <GoogleLogo size={16} key="5" />,
+  <BAAILogo size={16} key="6" />,
 ];
-
-
-
 
 // Param node inside the branches
 function ParamNode({ title, subtitle, active = false }: { title: string, subtitle: string, active?: boolean }) {
   return (
-    <div className={`flex flex-col px-3 py-1.5 rounded-md border w-28 relative z-10 bg-[#1c1c1c] transition-colors ${active ? 'border-[#75bf00]' : 'border-[#333] hover:border-[#555]'}`}>
-      <span className="text-[12px] font-semibold text-[#F0EFE2]">{title}</span>
-      <span className="text-[10px] text-[#C8C7BA]">{subtitle}</span>
+    <div className={`flex flex-col px-2.5 py-1 rounded-md border w-24 relative z-10 bg-[#1c1c1c] transition-colors ${active ? 'border-[#75bf00]' : 'border-[#333] hover:border-[#555]'}`}>
+      <span className="text-[11px] font-semibold text-[#F0EFE2] leading-tight">{title}</span>
+      <span className="text-[9px] text-[#C8C7BA] leading-tight">{subtitle}</span>
     </div>
   );
 }
 
-const TARGET_Y = [-144, -72, 0, 72, 144];
+const TARGET_Y = [-112, -56, 0, 56, 112];
 
 const generateKeyframes = (spineX: number) => {
   return TARGET_Y.map((y, i) => {
@@ -101,18 +98,18 @@ const generateKeyframes = (spineX: number) => {
 
     let pTurn = 75;
     if (y !== 0) {
-      pTurn = 75 + (Math.abs(y) / (Math.abs(y) + 40)) * 25;
+      pTurn = 75 + (Math.abs(y) / (Math.abs(y) + 30)) * 25;
     }
     const pFadeOut = pTurn + 0.5 * (100 - pTurn);
 
     return `
       @keyframes global-flow-path-${i} {
         0% { transform: translate(0px, 0px) scale(0.5); opacity: 0; }
-        ${pFadeIn}% { transform: translate(25px, 0px) scale(1); opacity: 1; }
+        ${pFadeIn}% { transform: translate(20px, 0px) scale(1); opacity: 1; }
         ${pSpine}% { transform: translate(${spineX}px, 0px) scale(1); opacity: 1; }
         ${pTurn}% { transform: translate(${spineX}px, ${y}px) scale(1); opacity: 1; }
-        ${pFadeOut}% { transform: translate(${spineX + 20}px, ${y}px) scale(1); opacity: 1; }
-        100% { transform: translate(${spineX + 40}px, ${y}px) scale(0.5); opacity: 0; }
+        ${pFadeOut}% { transform: translate(${spineX + 16}px, ${y}px) scale(1); opacity: 1; }
+        100% { transform: translate(${spineX + 32}px, ${y}px) scale(0.5); opacity: 0; }
       }
     `;
   }).join('\n');
@@ -122,28 +119,28 @@ const NUM_PARTICLES = 4;
 const DURATION = 6; // 6 seconds loop
 
 const PARTICLES = Array.from({ length: NUM_PARTICLES }).map((_, i) => {
-  const targetIndex = (i * 3 + 1) % 7;
+  const targetIndex = (i * 2 + 1) % TARGET_Y.length;
   const delay = (DURATION / NUM_PARTICLES) * i;
   return { id: i, logoIndex: i % 6, targetIndex, delay };
 });
 
 function GlobalParticleSystem({ hoveredNode }: { hoveredNode: 'none' | 'hf' | 'horos' }) {
-  // The total horizontal distance from the start of the particle wrapper (right edge of HF) to the vertical spine (left edge of Targets).
-  // Layout width: Left Connector (260 - 8 = 252) + HOROS (156) + Right Connector (260 - 8 = 252) = 660px.
-  const spineX = 660;
+  // Total horizontal distance from right edge of HF card to left edge of Targets column (the vertical spine):
+  // Left Connector (200 - 8 = 192) + HOROS (112) + Right Connector (200 - 8 = 192) = 496px.
+  const spineX = 496;
 
   return (
-    <div className={`absolute left-[192px] top-1/2 w-0 h-0 z-0 pointer-events-none transition-opacity duration-300 ${hoveredNode !== 'none' ? 'opacity-0' : 'opacity-100'}`}>
+    <div className={`absolute left-[160px] top-1/2 w-0 h-0 z-0 pointer-events-none transition-opacity duration-300 ${hoveredNode !== 'none' ? 'opacity-0' : 'opacity-100'}`}>
       <style>{generateKeyframes(spineX)}</style>
       {PARTICLES.map(p => {
         const logo = FLOWING_LOGOS[p.logoIndex];
         return (
           <div
             key={p.id}
-            className="absolute top-0 left-0 flex items-center justify-center w-8 h-8 bg-[#111] border border-[#333] rounded-[6px] shadow-lg"
+            className="absolute top-0 left-0 flex items-center justify-center w-7 h-7 bg-[#111] border border-[#333] rounded-[5px] shadow-lg"
             style={{
-              marginTop: '-16px',
-              marginLeft: '-16px',
+              marginTop: '-14px',
+              marginLeft: '-14px',
               animationName: `global-flow-path-${p.targetIndex}`,
               animationDuration: `${DURATION}s`,
               animationDelay: `${p.delay}s`,
@@ -166,7 +163,7 @@ export function HardwareDeploymentSection() {
   return (
     <>
       <SectionDivider />
-      <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans select-none overflow-hidden py-24 ">
+      <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans select-none overflow-hidden py-12 lg:py-16">
       <style>{`
         .border-dashed.border-\\[\\#75bf00\\] {
           border: none !important;
@@ -237,7 +234,7 @@ export function HardwareDeploymentSection() {
       </div>
 
       {/* Header Section */}
-      <div className="w-full relative px-4 sm:px-6 md:px-8 lg:px-[calc(18%_+_120px)] mb-20 lg:mb-32 text-center">
+      <div className="w-full relative px-4 sm:px-6 md:px-8 lg:px-[calc(18%_+_120px)] mb-10 lg:mb-14 text-center">
         <h2 className="text-4xl sm:text-5xl font-medium tracking-tight mb-4 z-10 relative">
           Deploy and <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-sm inline-block leading-tight">verify</span> anywhere
         </h2>
@@ -247,9 +244,9 @@ export function HardwareDeploymentSection() {
       </div>
 
       {/* Diagram Container */}
-      <div className="w-full relative z-10 py-10 overflow-x-auto text-center no-scrollbar">
-        <div className="inline-block transform scale-[0.65] sm:scale-75 md:scale-90 lg:scale-100 origin-center transition-transform">
-          <div className="flex items-center text-left min-w-max px-8 transition-all duration-500 ease-in-out" style={{ transform: hoveredNode === 'hf' ? 'translateX(0px)' : 'translateX(0)' }}>
+      <div className="w-full relative z-10 py-4 overflow-x-auto text-center no-scrollbar">
+        <div className="inline-block transform scale-[0.8] sm:scale-90 md:scale-95 lg:scale-100 origin-center transition-transform">
+          <div className="flex items-center text-left min-w-max px-6 transition-all duration-500 ease-in-out" style={{ transform: hoveredNode === 'hf' ? 'translateX(0px)' : 'translateX(0)' }}>
 
             {/* Main Horizontal Spine passing through everything */}
             <div className="flex items-center relative">
@@ -258,25 +255,25 @@ export function HardwareDeploymentSection() {
               {/* 1. Source Node (Hugging Face) */}
               <motion.div
                 whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-                className={`flex flex-col items-center justify-center p-6 rounded-2xl border bg-[#222] w-48 relative z-10 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'hf' ? 'border-[#555]' : 'border-[#333]'}`}
+                className={`flex flex-col items-center justify-center p-4 rounded-xl border bg-[#222] w-40 relative z-10 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'hf' ? 'border-[#555]' : 'border-[#333]'}`}
                 onMouseEnter={() => setHoveredNode('hf')}
                 onMouseLeave={() => setHoveredNode('none')}
               >
-                <HuggingFaceLogo size={32} className="mb-3" />
-                <span className="font-semibold text-[#F0EFE2] text-[16px] mb-1">Hugging Face</span>
-                <span className="text-[12px] text-[#C8C7BA] mb-4">Any Hugging Face model</span>
+                <HuggingFaceLogo size={28} className="mb-2" />
+                <span className="font-semibold text-[#F0EFE2] text-[14px] mb-0.5">Hugging Face</span>
+                <span className="text-[11px] text-[#C8C7BA] mb-3">Any Hugging Face model</span>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
                   {[
-                    <QwenLogo size={14} />,
-                    <MistralLogo size={14} />,
-                    <MetaLogo size={14} />,
-                    <AnthropicLogo size={14} />,
-                    <BAAILogo size={14} />,
-                    <GLMLogo size={14} />,
-                    <GoogleLogo size={14} />
+                    <QwenLogo size={12} key="q" />,
+                    <MistralLogo size={12} key="m" />,
+                    <MetaLogo size={12} key="meta" />,
+                    <AnthropicLogo size={12} key="a" />,
+                    <BAAILogo size={12} key="b" />,
+                    <GLMLogo size={12} key="g" />,
+                    <GoogleLogo size={12} key="goog" />
                   ].map((logo, i) => (
-                    <div key={i} className="w-5 h-5 rounded-[4px] border border-[#444] bg-[#1a1a1a] flex items-center justify-center">
+                    <div key={i} className="w-4.5 h-4.5 rounded-[3px] border border-[#444] bg-[#1a1a1a] flex items-center justify-center">
                       {logo}
                     </div>
                   ))}
@@ -284,7 +281,7 @@ export function HardwareDeploymentSection() {
               </motion.div>
 
               {/* Left Connector (Fixed Width to prevent layout shift) */}
-              <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
+              <div className="flex items-center overflow-hidden -mx-1" style={{ width: '200px' }}>
                 {hoveredNode === 'none' ? (
                   /* Default direct connection */
                   <div className="flex items-center w-full min-w-[158px] relative">
@@ -378,17 +375,17 @@ export function HardwareDeploymentSection() {
               {/* 2. Center Node (RunInfra) */}
               <motion.div
                 whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-                className={`flex flex-col items-center justify-center p-4 rounded-2xl border bg-[#222] w-[156px] min-h-[156px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'horos' ? 'border-[#555]' : 'border-[#333]'}`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl border bg-[#222] w-[112px] min-h-[112px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'horos' ? 'border-[#555]' : 'border-[#333]'}`}
                 onMouseEnter={() => setHoveredNode('horos')}
                 onMouseLeave={() => setHoveredNode('none')}
               >
-                <div className="flex-1 flex items-center justify-center mb-1 rounded-sm overflow-hidden">
-                  <HorosLogo variant="stacked" size="2xl" className="text-[#F0EFE2]" />
+                <div className="flex-1 flex items-center justify-center mb-0.5 rounded-sm overflow-hidden">
+                  <HorosLogo variant="stacked" size="xl" className="text-[#F0EFE2]" />
                 </div>
               </motion.div>
 
               {/* Right Connector (Fixed Width to prevent layout shift) */}
-              <div className="flex items-center overflow-hidden -mx-1" style={{ width: '260px' }}>
+              <div className="flex items-center overflow-hidden -mx-1" style={{ width: '200px' }}>
                 {hoveredNode === 'horos' ? (
                   /* Expanded branches for HOROS hover */
                   <div className="flex items-center justify-center w-full">
@@ -434,33 +431,33 @@ export function HardwareDeploymentSection() {
               </div>
 
               {/* 3. Targets Column */}
-              <div className="flex flex-col gap-4 relative z-10 pl-10">
+              <div className="flex flex-col gap-3 relative z-10 pl-8">
                 {/* Vertical spine (flowing OUTWARDS from center to Target nodes) */}
-                <div className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[calc(50%-2rem)] border-l border-dashed border-[#75bf00] flow-up -z-10" />
-                <div className="absolute left-0 top-1/2 w-[1px] h-[calc(50%-2rem)] border-l border-dashed border-[#75bf00] flow-down -z-10" />
+                <div className="absolute left-0 top-1/2 -translate-y-full w-[1px] h-[112px] border-l border-dashed border-[#75bf00] flow-up -z-10" />
+                <div className="absolute left-0 top-1/2 w-[1px] h-[112px] border-l border-dashed border-[#75bf00] flow-down -z-10" />
 
                 <div className="relative">
-                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                  <TargetNode icon={<HorosLogo size={36} />} title="HOROS Cloud" />
+                  <div className="absolute top-1/2 left-[-2rem] w-[2rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<HorosLogo size={22} />} title="HOROS Cloud" />
                 </div>
 
                 <div className="relative">
-                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                  <TargetNode icon={<ModalLogo size={36} />} title="Modal" />
+                  <div className="absolute top-1/2 left-[-2rem] w-[2rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<ModalLogo size={22} />} title="Modal" />
                 </div>
 
                 <div className="relative">
-                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                  <TargetNode icon={<RunPodLogo size={36} />} title="RunPod" />
+                  <div className="absolute top-1/2 left-[-2rem] w-[2rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<RunPodLogo size={22} />} title="RunPod" />
                 </div>
 
                 <div className="relative">
-                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
-                  <TargetNode icon={<span className="text-[#3b82f6] font-bold text-[36px] leading-none">V</span>} title="Vast.ai" />
+                  <div className="absolute top-1/2 left-[-2rem] w-[2rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <TargetNode icon={<span className="text-[#3b82f6] font-bold text-[22px] leading-none">V</span>} title="Vast.ai" />
                 </div>
 
                 <div className="relative">
-                  <div className="absolute top-1/2 left-[-2.5rem] w-[2.5rem] h-[1px] border-t border-dashed border-[#75bf00]" />
+                  <div className="absolute top-1/2 left-[-2rem] w-[2rem] h-[1px] border-t border-dashed border-[#75bf00]" />
                   <TargetNode title="Local hardware" />
                 </div>
 
