@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Check,
@@ -430,6 +430,15 @@ export default function PricingPage() {
     setSubmitted(true);
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("apply") === "founding") {
+        openModal("Founding Cohort Track");
+      }
+    }
+  }, []);
+
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText("curl -fsSL https://memoryos.ai/setup.sh | bash");
     setCopiedPrompt(true);
@@ -446,8 +455,8 @@ export default function PricingPage() {
         <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 border-l border-dashed border-[#333]" />
       </div>
 
-      {/* Top Navbar */}
-      <LandingNavbar />
+      {/* Top Navbar with Founding Cohort Integration */}
+      <LandingNavbar onOpenFoundingCohort={() => openModal("Founding Cohort Track")} />
 
       {/* Main Container - Sits cleanly inside inner dashed lines with breathing room */}
       <main className="w-[92%] sm:w-[90%] md:w-[calc(72%_-_280px)] lg:w-[calc(64%_-_300px)] xl:w-[calc(64%_-_340px)] mx-auto pt-24 sm:pt-28 pb-32 relative z-10">

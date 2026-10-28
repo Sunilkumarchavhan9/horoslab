@@ -29,6 +29,7 @@ interface LandingNavbarProps {
   onOpenDashboard?: () => void;
   onOpenSignIn?: () => void;
   onOpenSignUp?: () => void;
+  onOpenFoundingCohort?: () => void;
   dark?: boolean;
 }
 
@@ -36,6 +37,7 @@ export function LandingNavbar({
   onOpenDashboard,
   onOpenSignIn,
   onOpenSignUp,
+  onOpenFoundingCohort,
   dark = true,
 }: LandingNavbarProps) {
   const [useCasesOpen, setUseCasesOpen] = useState(false);
@@ -46,17 +48,49 @@ export function LandingNavbar({
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      setIsScrolled(window.scrollY > 25);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className={`fixed left-0 right-0 z-[100] font-sans antialiased tracking-tight text-sm text-[#F0EFE2] transition-all duration-500 ease-out ${isScrolled
-      ? "top-4 mx-auto w-[96%] max-w-[1600px] border border-dashed border-[#555] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] bg-[#151515]/95 backdrop-blur-xl"
-      : "top-0 w-full border-b border-dashed border-[#333333] bg-[#151515]/90 backdrop-blur-md"
-      }`}>
+    <>
+      {/* Top Pre-launch Announcement Banner */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-[101] bg-[#0d120a] border-b border-dashed border-[#76b900]/30 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isScrolled
+            ? "-translate-y-full opacity-0 pointer-events-none"
+            : "translate-y-0 opacity-100"
+        }`}
+      >
+        <div className="h-[36px] px-4 flex items-center justify-center">
+          <Link
+            href="/pricing?apply=founding"
+            onClick={(e) => {
+              if (onOpenFoundingCohort) {
+                e.preventDefault();
+                onOpenFoundingCohort();
+              }
+            }}
+            className="group inline-flex items-center gap-2 hover:opacity-95 transition-opacity cursor-pointer"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#76b900] animate-pulse shrink-0" />
+            <span className="text-[#C8C7BA] font-normal text-xs sm:text-[13px]">
+              Founding compute cohort is open.
+            </span>
+            <span className="text-[#76b900] font-semibold text-xs sm:text-[13px] inline-flex items-center gap-1 group-hover:underline">
+              Apply now
+              <ArrowRight size={13} strokeWidth={2.5} className="text-[#76b900] transition-transform group-hover:translate-x-0.5 shrink-0" />
+            </span>
+          </Link>
+        </div>
+      </div>
+
+      <header className={`fixed left-0 right-0 z-[100] font-sans antialiased tracking-tight text-sm text-[#F0EFE2] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled
+        ? "top-4 mx-auto w-[96%] max-w-[1600px] border border-dashed border-[#555] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] bg-[#151515]/95 backdrop-blur-xl"
+        : "top-[36px] w-full border-b border-dashed border-[#333333] bg-[#151515]/90 backdrop-blur-md"
+        }`}>
 
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -488,5 +522,6 @@ export function LandingNavbar({
         </div>
       )}
     </header>
+    </>
   );
 }
