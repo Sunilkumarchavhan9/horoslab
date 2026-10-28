@@ -388,13 +388,13 @@ export function LandingNavbar({
               </span>
             </Link>
 
-            <Link href="#contact" className="transition-colors whitespace-nowrap">
+            <Link href="#contact" className="transition-colors whitespace-nowrap mr-1 xl:mr-2">
               Contact
             </Link>
           </nav>
 
           {/* Right Actions: Sign in & Get started (Desktop & Mobile) */}
-          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-2">
+          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-2 ml-3 xl:ml-5">
             <button
               type="button"
               onClick={onOpenSignUp || onOpenDashboard}
