@@ -54,7 +54,7 @@ function ZLogo({ size = 20 }: { size?: number }) {
   );
 }
 
-// Exact 8 models with per-1M token pricing, input/output rates, and cache discounts
+// Exact 8 models from Screenshot 1 & Screenshot 2
 const MODEL_APIS_DATA = [
   {
     id: "ornith-1-5-122b",
@@ -170,98 +170,103 @@ const MODEL_APIS_DATA = [
   },
 ];
 
-// Comparison matrix for Research Infrastructure & Research Collaboration
+// Exact comparison matrix for Frontier AI Research Infra & Frontier AI Lab
 const COMPARISON_ROWS = [
   {
-    feature: "Access Model",
-    payg: "Early Access application & preview cohorts",
-    enterprise: "Joint research collaboration & dedicated partnerships",
+    feature: "Pricing model",
+    payg: "Credit top-ups from $5, pay for compute consumed",
+    enterprise: "Custom volume, dedicated nodes, and contract terms",
     isText: true,
   },
   {
-    feature: "Research Direction",
-    payg: "Foundation models, evaluation & inference exploration",
-    enterprise: "Co-development, optimization & physical AI research",
+    feature: "Balance",
+    payg: "One unified balance for Model APIs & reasoning",
+    enterprise: "Shared research balance with custom quota controls",
     isText: true,
   },
   {
-    feature: "Seats & Teams",
-    payg: "Open to individual researchers & engineers",
-    enterprise: "Multi-disciplinary labs & institutional teams",
+    feature: "Seats",
+    payg: "Zero per-seat licensing fees",
+    enterprise: "Unlimited researchers & engineers, zero seat fees",
     isText: true,
   },
   {
-    feature: "Standardized APIs & Schemas",
+    feature: "OpenAI- and Anthropic-compatible APIs",
     payg: true,
     enterprise: true,
     isText: false,
   },
   {
-    feature: "Audit logs, RBAC & Governance",
-    payg: "Included in research workspace settings",
+    feature: "Audit logs and RBAC",
+    payg: "Free with a Business account (Settings)",
     enterprise: true,
     isText: "mixed",
   },
   {
-    feature: "Security & Compliance Controls",
+    feature: "SOC 2 Type II",
     payg: false,
     enterprise: true,
     isText: false,
   },
   {
-    feature: "Compute Access",
-    payg: "Shared high-throughput research cluster",
-    enterprise: "Dedicated compute nodes & cluster isolation",
+    feature: "SLA",
+    payg: "High-availability cloud cluster",
+    enterprise: "Contractual SLA up to 99.99%",
     isText: true,
   },
   {
-    feature: "Technical Collaboration",
-    payg: "Developer community & research office hours",
-    enterprise: "Direct collaboration with Horos scientists & Slack",
+    feature: "Support",
+    payg: "Priority research engineering email",
+    enterprise: "Dedicated AI research engineer and private Slack",
     isText: true,
   },
 ];
 
 const CODING_PLAN_FAQS = [
   {
-    question: "What is Founding Access?",
+    question: "What happens at a limit?",
     answer:
-      "Founding Access is our collaborative program for early researchers, developers, and teams building frontier AI systems. Access is granted in cohorts as new compute clusters, foundation models, and evaluation tools become available.",
+      "If you turned on Keep full speed on credits, credits pay with your choice of a cap per billing period or no limit. When credits cannot pay, free Standby serves chat. Choose at checkout and change it in your Frontier Lab plan settings. If neither can serve a request, it stops with the reason, reset time and next step.",
   },
   {
-    question: "What does Founding Access cover?",
+    question: "What does my plan cover?",
     answer:
-      "Access provides early exploration of Horos models, reasoning architectures, and research prototypes across digital and physical intelligence. You'll have direct avenues to test capabilities and provide architectural feedback.",
+      "Your plan covers all frontier models, coding agents, and reasoning workflows up to your 5-hour and weekly limits. Standby chat remains free when limits are reached, so your research and development are never interrupted.",
   },
   {
-    question: "Are there subscription fees during early access?",
+    question: "Can I cancel?",
     answer:
-      "No. We are currently in active research and infrastructure development. Live commercial subscriptions and billing will only launch once APIs, model weights, and production verification gates are fully operational.",
+      "Yes, you can cancel at any time with one click from your developer console. Your plan benefits remain active until the end of your current billing period.",
   },
   {
-    question: "How are access cohorts selected?",
+    question: "When do the limits reset?",
     answer:
-      "We prioritize researchers, engineers, and labs working on ambitious frontier AI problems including autonomous agents, world models, scientific discovery, and robotics.",
+      "Your 5-hour limit resets continuously on a rolling 5-hour window from your first request, and your weekly limit resets at the start of every calendar week.",
   },
   {
-    question: "How can we collaborate on research?",
+    question: "How is usage counted?",
     answer:
-      "Institutions and labs can apply for dedicated research collaboration to work directly with Horos on model development, specialized evaluation, and customized optimization pipelines.",
+      "Usage is calculated per token generated and test-time compute processed by your connected agent, discounted by automated prefix and context caching.",
   },
   {
     question: "What is Standby?",
     answer:
-      "Standby is our guaranteed fallback routing mode designed to ensure research sessions and agent tool workflows remain resilient during heavy cluster experimentation.",
+      "Standby is our free, guaranteed-fallback chat mode that allows coding sessions to continue at reduced concurrency when primary limits are reached.",
   },
   {
-    question: "When will public billing and self-serve APIs open?",
+    question: "When am I charged?",
     answer:
-      "Public billing and instant self-serve top-ups will open once model weights, verification safety checks, and high-throughput cluster nodes complete their evaluation phase.",
+      "Subscriptions are billed monthly on your signup anniversary. Any extra credits you enable are topped up automatically according to your cap.",
   },
   {
-    question: "What can I count on as a founding researcher?",
+    question: "What can I count on?",
     answer:
-      "You can count on direct technical collaboration with the Horos engineering team, transparent research updates, and early availability of next-generation AI infrastructure.",
+      "We guarantee 99.9% platform availability, high-throughput model endpoints, sub-second TTFT, and zero downtime across coding sessions.",
+  },
+  {
+    question: "What if a payment fails or is disputed?",
+    answer:
+      "If a payment fails, we retry up to three times over seven days. Your account transitions to Standby mode so your workflows are not abruptly severed.",
   },
 ];
 
@@ -429,19 +434,19 @@ export default function PricingPage() {
         <section className="mb-16">
           <div className="mb-6">
             <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-medium tracking-tight flex items-center gap-2 text-[#F0EFE2] leading-tight">
-              Frontier AI Research Infrastructure &{" "}
+              Frontier AI Research Infra &{" "}
               <span className="bg-[#76b900] text-[#151515] px-2 py-0.5 rounded-none font-semibold inline-block">
                 Lab
               </span>
             </h1>
             <p className="text-[#888] text-xs sm:text-sm md:text-base mt-2 font-normal">
-              One unified platform: Frontier AI Research Infrastructure + Frontier AI Lab, delivering high-throughput compute, foundation models, and research collaboration.
+              One unified platform: Frontier AI Research Infrastructure + Frontier AI Lab, delivering high-throughput compute, foundation models, and verified token pricing.
             </p>
           </div>
 
-          {/* Plan Selector Cards (Research Infrastructure vs Frontier Lab) */}
+          {/* Plan Selector Cards (Pay as you go vs Coding plan vs Platform) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
-            {/* Research Infrastructure Card */}
+            {/* Pay as you go Card */}
             <div
               onClick={() => setSelectedPlan("payg")}
               className={`border border-dashed p-4 sm:p-5 cursor-pointer transition-all ${selectedPlan === "payg"
@@ -450,7 +455,7 @@ export default function PricingPage() {
                 }`}
             >
               <div className="flex justify-between items-start mb-1.5">
-                <h2 className="text-lg font-medium text-[#F0EFE2]">Research Infrastructure</h2>
+                <h2 className="text-lg font-medium text-[#F0EFE2]">Research Infra (Pay as you go)</h2>
                 <div
                   className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedPlan === "payg" ? "border-[#76b900]" : "border-[#555]"
                     }`}
@@ -458,28 +463,22 @@ export default function PricingPage() {
                   {selectedPlan === "payg" && <div className="w-2 h-2 rounded-full bg-[#76b900]" />}
                 </div>
               </div>
-              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For developers and researchers building with frontier AI</p>
+              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For frontier model APIs, reasoning, and research workloads</p>
 
               <div className="text-xs sm:text-sm">
-                <p className="font-medium mb-1 text-[#F0EFE2]">Early Access</p>
-                <p className="text-[#888] text-xs mb-2.5 leading-relaxed">
-                  We're building infrastructure for model development, evaluation, optimization, and inference.
-                </p>
+                <p className="font-medium mb-2 text-[#F0EFE2]">Any amount from $5</p>
                 <ul className="space-y-1.5 text-xs text-[#aaa]">
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Explore emerging research infrastructure
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Pay per verified token & test-time compute
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Get early access as capabilities become available
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Help shape the next generation of AI tools
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Credits last a year across all workspaces
                   </li>
                 </ul>
               </div>
             </div>
 
-            {/* Frontier Lab Card */}
+            {/* Frontier Lab & Agent Plan Card */}
             <div
               onClick={() => setSelectedPlan("coding")}
               className={`border border-dashed p-4 sm:p-5 cursor-pointer transition-all ${selectedPlan === "coding"
@@ -488,7 +487,7 @@ export default function PricingPage() {
                 }`}
             >
               <div className="flex justify-between items-start mb-1.5">
-                <h2 className="text-lg font-medium text-[#F0EFE2]">Frontier Lab</h2>
+                <h2 className="text-lg font-medium text-[#F0EFE2]">Frontier Lab & Agent Plan</h2>
                 <div
                   className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${selectedPlan === "coding" ? "border-[#76b900]" : "border-[#555]"
                     }`}
@@ -496,22 +495,16 @@ export default function PricingPage() {
                   {selectedPlan === "coding" && <div className="w-2 h-2 rounded-full bg-[#76b900]" />}
                 </div>
               </div>
-              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">Advancing intelligence across the physical and digital worlds</p>
+              <p className="text-[#888] text-xs sm:text-[13px] mb-4 font-normal">For autonomous agents, lab researchers & intelligence tools</p>
 
               <div className="text-xs sm:text-sm">
-                <p className="font-medium mb-1 text-[#F0EFE2]">Founding Access</p>
-                <p className="text-[#888] text-xs mb-2.5 leading-relaxed">
-                  Join the early community exploring Horos models, research, and new capabilities.
-                </p>
+                <p className="font-medium mb-2 text-[#F0EFE2]">From $10 a month</p>
                 <ul className="space-y-1.5 text-xs text-[#aaa]">
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Early access to select Horos models as they become available
+                    <Check size={13} className="text-[#76b900] shrink-0" /> Included frontier reasoning & agent compute, resets every 5h and weekly
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Opportunities to explore new model capabilities
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check size={13} className="text-[#76b900] shrink-0" /> Direct technical collaboration with the Horos team
+                    <Check size={13} className="text-[#76b900] shrink-0" /> At a limit, continue with credits or free Standby
                   </li>
                 </ul>
               </div>
@@ -522,107 +515,133 @@ export default function PricingPage() {
 
         {selectedPlan === "payg" ? (
           <>
-            {/* Selected Plan Details & Research Collaboration Split Box */}
+            {/* Selected Plan Details & Enterprise Split Box */}
             <section className="mb-16">
               <div className="border border-dashed border-[#333] bg-[#181818]/60 flex flex-col md:flex-row">
-                {/* Left Column: Research Infrastructure */}
+                {/* Left Column: Pay as you go */}
                 <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Research Infrastructure</h2>
+                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2]">Research Infra (PAYG)</h2>
                       <span className="text-[11px] font-mono tracking-wide bg-[#222] border border-[#333] px-2 py-0.5 text-[#aaa] flex items-center gap-1.5">
-                        <span className="text-[#76b900]">#</span> Early access
+                        <span className="text-[#76b900]">#</span> No subscription
                       </span>
                     </div>
                     <p className="text-[#aaa] text-xs sm:text-[13px] mb-6">
-                      We're building infrastructure for model development, evaluation, optimization, and inference.
+                      Frontier research model APIs, per token, on one unified prepaid balance.
                     </p>
 
-                    <div className="mb-6 p-4 border border-dashed border-[#333] bg-[#141414]/80">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] text-[#76b900] font-mono uppercase tracking-widest font-semibold flex items-center gap-1.5">
-                          <Sparkles size={13} /> Cohort Applications Open
-                        </span>
-                        <span className="text-[10px] text-[#888] font-mono border border-[#333] px-2 py-0.5">
-                          Research Preview
-                        </span>
+                    <div className="mb-6">
+                      <label className="text-[10px] text-[#777] font-semibold uppercase tracking-widest mb-2.5 block">
+                        AMOUNT IN DOLLARS
+                      </label>
+
+                      {/* Quick amount presets */}
+                      <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+                        {[5, 20, 50, 100, 250].map((amt) => (
+                          <button
+                            key={amt}
+                            type="button"
+                            onClick={() => setCreditAmount(amt)}
+                            className={`text-xs px-2.5 py-1 font-mono transition-colors border ${creditAmount === amt
+                              ? "bg-[#76b900] text-black border-[#76b900] font-semibold"
+                              : "bg-[#222] text-[#888] border-[#333] hover:text-white"
+                              }`}
+                          >
+                            ${amt}
+                          </button>
+                        ))}
                       </div>
-                      <p className="text-xs sm:text-[13px] text-[#C8C7BA] leading-relaxed">
-                        Join developers and researchers testing emerging model development, evaluation, optimization, and inference infrastructure before public release.
-                      </p>
+
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-base">
+                          $
+                        </span>
+                        <input
+                          type="number"
+                          min="5"
+                          value={creditAmount}
+                          onChange={(e) => setCreditAmount(Math.max(0, Number(e.target.value)))}
+                          className="w-full bg-[#121212] border border-dashed border-[#333] rounded-none py-2.5 pl-8 pr-3 text-[#F0EFE2] font-mono text-base focus:outline-none focus:border-[#76b900] transition-colors"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between mt-2 text-[11px] text-[#777]">
+                        <span>$5 minimum top-up. Pay per token.</span>
+                        <span className="text-[#76b900]">~{Math.round((creditAmount / 0.15) * 10) / 10}M tokens estimate</span>
+                      </div>
                     </div>
 
                     <div className="mb-6">
                       <h3 className="font-medium text-xs sm:text-sm text-[#F0EFE2] mb-3">What's included</h3>
-                      <div className="space-y-2.5 text-xs text-[#bbb]">
+                      <div className="space-y-2 text-xs text-[#bbb]">
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Explore emerging research infrastructure</span>
+                          <span>OpenAI- and Anthropic-compatible research endpoints</span>
                         </div>
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Get early access as capabilities become available</span>
+                          <span>Per-token pricing with verified prefix & KV-cache discounts</span>
                         </div>
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Help shape the next generation of AI tools</span>
+                          <span>Session-aware routing keeps replays & simulation states warm</span>
                         </div>
                         <div className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Direct technical collaboration on model development and optimization</span>
+                          <span>One unified research balance, no per-seat licensing fees</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="pt-1">
                       <p className="text-center text-[11px] text-[#777] mb-3">
-                        Early access cohorts are onboarded continuously as compute clusters expand.
+                        New research accounts start with $1 free compute to test model endpoints.
                       </p>
-                      <a
-                        href={`mailto:${founderEmail}?subject=HOROS%20Research%20Infrastructure%20Early%20Access%20Application`}
+                      <Link
+                        href="/developer-console"
                         className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm"
                       >
-                        Apply for Early Access <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
-                      </a>
+                        Add credits <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
+                      </Link>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Column: Research Collaboration */}
+                {/* Right Column: Enterprise */}
                 <div className="w-full md:w-1/2 flex flex-col justify-between p-5 sm:p-6 lg:p-7 border-t md:border-t-0 md:border-l border-dashed border-[#333]">
                   <div>
                     <div className="mb-6">
-                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] mb-1.5">Research Collaboration</h2>
+                      <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] mb-1.5">Enterprise & Frontier Lab</h2>
                       <p className="text-[#aaa] text-xs sm:text-[13px] leading-relaxed">
-                        Work with Horos on model development, optimization, and research, not selling service plans.
+                        Dedicated cluster infrastructure, private model weights, and custom research contracts.
                       </p>
                     </div>
 
                     <div className="mb-6">
-                      <div className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] font-mono mb-2">Collaborative Research</div>
+                      <div className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] font-mono mb-2">Custom pricing</div>
                       <p className="text-xs sm:text-sm font-medium text-[#F0EFE2] mt-5 mb-3">
-                        Partner directly with our research scientists and engineers:
+                        Everything in self-serve research infrastructure, plus:
                       </p>
                       <ul className="space-y-2.5 text-xs text-[#bbb]">
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Co-development and evaluation of frontier foundation models</span>
+                          <span>Private cluster nodes, VPC peering, and custom weights isolation</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Joint research on physical AI, reasoning, and world models</span>
+                          <span>Audit logs, role-based access control (RBAC), and governance</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Custom optimization, pre-training, and fine-tuning pipelines</span>
+                          <span>Contractual high-throughput SLAs up to 99.99% across clusters</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Dedicated research compute clusters and isolated infrastructure</span>
+                          <span>SOC 2 Type II attestation and enterprise compliance controls</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>Direct technical collaboration with the Horos team</span>
+                          <span>Dedicated AI research engineer, custom SLA, and direct Slack</span>
                         </li>
                       </ul>
                     </div>
@@ -630,10 +649,10 @@ export default function PricingPage() {
 
                   <div className="pt-2">
                     <a
-                      href={`mailto:${founderEmail}?subject=HOROS%20Research%20Collaboration`}
+                      href={`mailto:${founderEmail}?subject=HOROS%20Enterprise%20Inquiry`}
                       className="w-full bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-3 flex items-center justify-center transition-colors"
                     >
-                      Initiate Research Collaboration <ChevronRight size={15} strokeWidth={2} className="ml-1 text-[#888]" />
+                      Request a demo <ChevronRight size={15} strokeWidth={2} className="ml-1 text-[#888]" />
                     </a>
                   </div>
                 </div>
@@ -739,31 +758,31 @@ export default function PricingPage() {
               </div>
             </section>
 
-            {/* SECTION 3: Comparison Section */}
+            {/* SECTION 3: Exact Screenshot 2 & 3 Comparison Section */}
             <section className="mb-20">
               <div className="w-full border border-dashed border-[#333] bg-[#151515] flex flex-col">
                 {/* Header Description Box */}
                 <div className="p-4 sm:p-6 border-b border-dashed border-[#333]">
                   <h2 className="text-lg sm:text-xl font-semibold text-[#F0EFE2] mb-1.5 tracking-tight">
-                    Compare Research Infrastructure and Research Collaboration
+                    Compare Research Infra and Frontier Lab Enterprise
                   </h2>
                   <p className="text-xs sm:text-[13px] text-[#888] max-w-2xl leading-relaxed">
-                    Research Infrastructure provides early access to model development, evaluation, and inference tools. Research Collaboration offers direct joint development, co-training, and dedicated cluster compute.
+                    Self-serve research infrastructure is funded by flexible credit top-ups. Frontier Lab Enterprise adds private cluster compute, custom fine-tuned weights, compliance, and custom terms.
                   </p>
                 </div>
 
                 {/* Table Matrix Header */}
                 <div className="grid grid-cols-[1.2fr_1.4fr_1.4fr] divide-x divide-dashed divide-[#333] border-b border-dashed border-[#333] bg-[#181818]/80">
                   <div className="p-4 sm:p-5 flex items-end">
-                    <span className="text-xs font-medium text-[#777]">Focus & Capabilities</span>
+                    <span className="text-xs font-medium text-[#777]">Feature</span>
                   </div>
                   <div className="p-4 sm:p-5 flex flex-col justify-end">
-                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Research Infrastructure</span>
-                    <span className="text-[11px] text-[#76b900] mt-0.5">Early Access</span>
+                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Research Infra</span>
+                    <span className="text-[11px] text-[#777] mt-0.5">from a $5 top-up</span>
                   </div>
                   <div className="p-4 sm:p-5 flex flex-col justify-end">
-                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Research Collaboration</span>
-                    <span className="text-[11px] text-[#76b900] mt-0.5">Joint Research</span>
+                    <span className="text-sm sm:text-base font-semibold text-[#F0EFE2]">Frontier Lab Enterprise</span>
+                    <span className="text-[11px] text-[#777] mt-0.5">Custom</span>
                   </div>
                 </div>
 
@@ -805,14 +824,14 @@ export default function PricingPage() {
 
               {/* Bottom Callout */}
               <div className="mt-6 text-xs sm:text-sm text-[#888]">
-                Explore compute architectures, physical sensor interfaces, and datacenter hardware.{" "}
+                Compare pay-as-you-go API costs with renting GPUs.{" "}
                 <Link
                   href="/economics"
                   className="underline decoration-[#76b900] decoration-1 underline-offset-4 text-[#F0EFE2] hover:text-[#76b900] font-medium transition-colors"
                 >
-                  View datacenter power, cluster compute, and economics projections
+                  Compare GPU fit, rental costs, idle time and API costs
                 </Link>{" "}
-                for frontier workloads.
+                for your model and traffic.
               </div>
             </section>
 
@@ -827,7 +846,7 @@ export default function PricingPage() {
               <p className="text-[#888] text-xs sm:text-sm mb-8 text-center">
                 Need something else?{" "}
                 <a href={`mailto:${founderEmail}`} className="text-[#76b900] hover:underline">
-                  Contact our research team
+                  Contact our team
                 </a>
                 .
               </p>
@@ -839,14 +858,14 @@ export default function PricingPage() {
                   className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${faqTab === "payg" ? "bg-[#76b900] text-[#151515]" : "text-[#888] hover:text-[#F0EFE2]"
                     }`}
                 >
-                  Research Infrastructure
+                  Pay as you go
                 </button>
                 <button
                   onClick={() => setFaqTab("enterprise")}
                   className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${faqTab === "enterprise" ? "bg-[#76b900] text-[#151515]" : "text-[#888] hover:text-[#F0EFE2]"
                     }`}
                 >
-                  Research Collaboration
+                  Enterprise & Batch
                 </button>
               </div>
 
@@ -859,10 +878,10 @@ export default function PricingPage() {
                         <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                           <div className="w-1.5 h-1.5 bg-[#76b900]" />
                         </div>
-                        What is the Research Infrastructure early access program?
+                        How does cached input pricing work?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        We are actively building high-throughput infrastructure for model development, evaluation, optimization, and inference. The early access program lets developers and researchers test emerging capabilities before public release.
+                        When you submit prompts with repeated context (such as large codebases, research papers, sensory state, or conversation memory), our infrastructure detects the cached prefix and discounts input tokens by up to 90% or serves it free during promotional windows.
                       </p>
                     </div>
 
@@ -871,10 +890,10 @@ export default function PricingPage() {
                         <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                           <div className="w-1.5 h-1.5 bg-[#76b900]" />
                         </div>
-                        How do early access cohorts work?
+                        How do credit top-ups work?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        Researchers and engineers are accepted in rolling cohorts as compute capacity and model capabilities expand. You will receive direct access to endpoints, evaluation tools, and technical documentation.
+                        You can fund your prepaid balance with any amount starting from $5. You only pay for the tokens generated and test-time compute consumed by your models. Unused credits remain valid for 12 months across all research workspaces.
                       </p>
                     </div>
 
@@ -883,10 +902,10 @@ export default function PricingPage() {
                         <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                           <div className="w-1.5 h-1.5 bg-[#76b900]" />
                         </div>
-                        When will public billing and self-serve APIs open?
+                        Are there per-seat or per-user fees?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        Live per-token billing, self-serve credit top-ups, and commercial subscriptions will open once model weights, verification safety checks, and high-throughput cluster nodes complete their evaluation phase.
+                        No. Our frontier AI research infrastructure is charged strictly by token consumption and compute, allowing your entire research team or product application to share one single balance without seat penalties.
                       </p>
                     </div>
                   </>
@@ -897,10 +916,10 @@ export default function PricingPage() {
                         <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                           <div className="w-1.5 h-1.5 bg-[#76b900]" />
                         </div>
-                        What does a research collaboration include?
+                        What SLA options are available for Enterprise?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        Research collaborations are tailored partnerships with Horos scientists and engineers focused on joint model development, customized pre-training/fine-tuning, dedicated cluster nodes, and co-evaluation.
+                        We offer contractual SLAs up to 99.99% uptime with guaranteed throughput reservations and sub-second failover routing across dedicated frontier cluster hardware.
                       </p>
                     </div>
 
@@ -909,10 +928,10 @@ export default function PricingPage() {
                         <div className="w-3 h-3 border border-[#76b900] flex items-center justify-center shrink-0">
                           <div className="w-1.5 h-1.5 bg-[#76b900]" />
                         </div>
-                        Can labs deploy custom models on Horos infrastructure?
+                        Can we run private dedicated deployments?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        Yes. Collaborative research partners can deploy private weights, custom tokenizers, and domain-specific architectures onto isolated GPU/TPU nodes with dedicated cluster isolation.
+                        Yes. Frontier Lab Enterprise contracts support private VPC peering, on-prem datacenter integration, SOC 2 Type II controls, and custom model weights loaded into isolated GPU/TPU nodes.
                       </p>
                     </div>
                   </>
@@ -925,115 +944,115 @@ export default function PricingPage() {
             {/* SECTION 1: 3-Tier Coding Plan Cards & Models Context (Screenshot 1) */}
             <section className="mb-14">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                {/* Founding Developer Card */}
+                {/* Starter Card */}
                 <div className="border border-dashed border-[#333] bg-[#181818]/70 p-5 sm:p-6 flex flex-col justify-between hover:border-[#555] transition-colors">
                   <div>
-                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Founding Developer</h3>
-                    <div className="text-2xl sm:text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-2">
-                      Founding Access <span className="text-[11px] font-normal text-[#76b900] border border-[#76b900]/40 px-1.5 py-0.5">Early Cohort</span>
+                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Starter</h3>
+                    <div className="text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-1.5">
+                      $10 <span className="text-xs font-normal text-[#888]">a month</span>
                     </div>
-                    <p className="text-xs text-[#888] mt-1 mb-6">Join the early community exploring Horos models, research, and new capabilities.</p>
+                    <p className="text-xs text-[#888] mt-1 mb-6">About $12 of usage a month</p>
 
                     <div className="space-y-3 text-xs mb-8">
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Model access</span>
-                        <span className="font-medium text-[#F0EFE2]">Select Horos models as available</span>
+                        <span className="text-[#888]">5-hour limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$1.11</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Capabilities</span>
-                        <span className="font-medium text-[#F0EFE2]">Early test-time reasoning</span>
+                        <span className="text-[#888]">Weekly limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$2.77</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Collaboration</span>
-                        <span className="font-medium text-[#F0EFE2]">Direct technical collaboration</span>
+                        <span className="text-[#888]">Free Standby</span>
+                        <span className="font-medium text-[#F0EFE2]">Up to $0.20 of chat a day</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5">
-                        <span className="text-[#888] pr-2">Compute queue</span>
-                        <span className="font-semibold text-[#76b900] shrink-0 font-mono">Continuous early access</span>
+                        <span className="text-[#888] pr-2">Requests at once per model, when busy</span>
+                        <span className="font-semibold text-[#F0EFE2] shrink-0 font-mono">4 to 48</span>
                       </div>
                     </div>
                   </div>
 
-                  <a
-                    href={`mailto:${founderEmail}?subject=HOROS%20Founding%20Developer%20Access`}
+                  <Link
+                    href="/developer-console"
                     className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
                   >
-                    Apply for Founding Access <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
-                  </a>
+                    Choose Starter <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </Link>
                 </div>
 
-                {/* Research Lab Card */}
+                {/* Pro Card */}
                 <div className="border border-dashed border-[#333] bg-[#181818]/70 p-5 sm:p-6 flex flex-col justify-between hover:border-[#555] transition-colors">
                   <div>
-                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Research Lab</h3>
-                    <div className="text-2xl sm:text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-2">
-                      Lab Access <span className="text-[11px] font-normal text-[#76b900] border border-[#76b900]/40 px-1.5 py-0.5">Active Cohort</span>
+                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Pro</h3>
+                    <div className="text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-1.5">
+                      $29 <span className="text-xs font-normal text-[#888]">a month</span>
                     </div>
-                    <p className="text-xs text-[#888] mt-1 mb-6">Advancing intelligence across physical and digital worlds with dedicated research groups.</p>
+                    <p className="text-xs text-[#888] mt-1 mb-6">About $35 of usage a month</p>
 
                     <div className="space-y-3 text-xs mb-8">
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Model access</span>
-                        <span className="font-medium text-[#F0EFE2]">Expanded Horos model suite</span>
+                        <span className="text-[#888]">5-hour limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$3.23</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Capabilities</span>
-                        <span className="font-medium text-[#F0EFE2]">Autonomous agentic workflows</span>
+                        <span className="text-[#888]">Weekly limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$8.08</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Collaboration</span>
-                        <span className="font-medium text-[#F0EFE2]">Weekly technical sync & review</span>
+                        <span className="text-[#888]">Free Standby</span>
+                        <span className="font-medium text-[#F0EFE2]">Up to $0.58 of chat a day</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5">
-                        <span className="text-[#888] pr-2">Compute queue</span>
-                        <span className="font-semibold text-[#76b900] shrink-0 font-mono">High-priority queue</span>
+                        <span className="text-[#888] pr-2">Requests at once per model, when busy</span>
+                        <span className="font-semibold text-[#F0EFE2] shrink-0 font-mono">5 to 48</span>
                       </div>
                     </div>
                   </div>
 
-                  <a
-                    href={`mailto:${founderEmail}?subject=HOROS%20Research%20Lab%20Access`}
+                  <Link
+                    href="/developer-console"
                     className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
                   >
-                    Apply for Founding Access <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
-                  </a>
+                    Choose Pro <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </Link>
                 </div>
 
-                {/* Institutional Partner Card */}
+                {/* Team Card */}
                 <div className="border border-dashed border-[#333] bg-[#181818]/70 p-5 sm:p-6 flex flex-col justify-between hover:border-[#555] transition-colors">
                   <div>
-                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Institutional Partner</h3>
-                    <div className="text-2xl sm:text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-2">
-                      Partner Access <span className="text-[11px] font-normal text-[#76b900] border border-[#76b900]/40 px-1.5 py-0.5">Institutional</span>
+                    <h3 className="text-lg font-medium text-[#F0EFE2] mb-1">Team</h3>
+                    <div className="text-3xl font-semibold text-[#F0EFE2] font-mono tracking-tight flex items-baseline gap-1.5">
+                      $99 <span className="text-xs font-normal text-[#888]">a month</span>
                     </div>
-                    <p className="text-xs text-[#888] mt-1 mb-6">Joint research on model development, optimization, and foundational architectures.</p>
+                    <p className="text-xs text-[#888] mt-1 mb-6">About $119 of usage a month</p>
 
                     <div className="space-y-3 text-xs mb-8">
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Model access</span>
-                        <span className="font-medium text-[#F0EFE2]">Custom weights & private nodes</span>
+                        <span className="text-[#888]">5-hour limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$10.98</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Capabilities</span>
-                        <span className="font-medium text-[#F0EFE2]">Full frontier architecture suite</span>
+                        <span className="text-[#888]">Weekly limit</span>
+                        <span className="font-semibold text-[#F0EFE2] font-mono">$27.46</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5 border-b border-dashed border-[#262626]">
-                        <span className="text-[#888]">Collaboration</span>
-                        <span className="font-medium text-[#F0EFE2]">Co-development & co-authorship</span>
+                        <span className="text-[#888]">Free Standby</span>
+                        <span className="font-medium text-[#F0EFE2]">Up to $1.98 of chat a day</span>
                       </div>
                       <div className="flex items-center justify-between py-1.5">
-                        <span className="text-[#888] pr-2">Compute queue</span>
-                        <span className="font-semibold text-[#76b900] shrink-0 font-mono">Dedicated cluster</span>
+                        <span className="text-[#888] pr-2">Requests at once per model, when busy</span>
+                        <span className="font-semibold text-[#F0EFE2] shrink-0 font-mono">8 to 48</span>
                       </div>
                     </div>
                   </div>
 
-                  <a
-                    href={`mailto:${founderEmail}?subject=HOROS%20Institutional%20Partnership`}
+                  <Link
+                    href="/developer-console"
                     className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
                   >
-                    Apply for Founding Access <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
-                  </a>
+                    Choose Team <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </Link>
                 </div>
               </div>
 
@@ -1080,13 +1099,13 @@ export default function PricingPage() {
               <div className="border-t border-dashed border-[#282828] pt-4 mb-4">
                 <div className="text-xs text-[#777] mb-1 font-medium">Cached context</div>
                 <p className="text-xs sm:text-[13px] text-[#aaa]">
-                  Up to <span className="font-bold text-[#F0EFE2]">99.6%</span> cache hit rate across research evaluations.{" "}
-                  Optimized <span className="font-bold text-[#F0EFE2]">prefix and KV-cache reuse</span> enabled across all cohorts, so research capacity goes further.
+                  Up to <span className="font-bold text-[#F0EFE2]">99.6%</span> cache hit rate, last 24 hours.{" "}
+                  From <span className="font-bold text-[#F0EFE2]">$0.01 per 1M cached input tokens</span>, so your plan goes further.
                 </p>
               </div>
 
               <p className="text-xs text-[#777]">
-                Every cohort allocation is shared by its research workspace, not per member.
+                Every plan is shared by its workspace, not per member.
               </p>
             </section>
 
@@ -1097,10 +1116,10 @@ export default function PricingPage() {
 
             <section className="mb-20">
               <div className="text-[#76b900] text-xs font-mono font-medium tracking-[0.2em] uppercase mb-2">
-                CAPACITY ALLOCATION
+                LIMITS
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#F0EFE2] tracking-tight mb-8">
-                Compute cycles allocated for research every 5 hours and every{" "}
+                Limits that reset every 5 hours and every{" "}
                 <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-none font-semibold inline-block">
                   week
                 </span>
@@ -1113,7 +1132,7 @@ export default function PricingPage() {
                     <RotateCw size={16} className="text-[#76b900]" />
                   </div>
                   <div>
-                    <div className="text-xs text-[#777] mb-3 font-medium">Allocation resets</div>
+                    <div className="text-xs text-[#777] mb-3 font-medium">Limits reset</div>
                     <div className="space-y-3">
                       <div>
                         <div className="text-xs font-semibold text-[#F0EFE2] mb-1.5">Every 5 hours</div>
@@ -1138,22 +1157,21 @@ export default function PricingPage() {
 
                 {/* Right Column: Flow */}
                 <div className="w-full lg:w-auto">
-                  <div className="text-xs text-[#777] mb-4 font-medium">Research capacity flow</div>
+                  <div className="text-xs text-[#777] mb-4 font-medium">What happens at a limit</div>
                   <div className="flex items-start gap-3 sm:gap-4 overflow-x-auto pb-2">
-                    {/* Step: Cohort */}
+                    {/* Step: Plan */}
                     <div className="flex flex-col items-start min-w-[70px]">
                       <div className="w-2.5 h-2.5 bg-[#76b900] mb-2" />
-                      <span className="text-xs font-semibold text-[#F0EFE2]">Cohort</span>
-                      <span className="text-[11px] text-[#777] leading-tight mt-1">Active allocation</span>
+                      <span className="text-xs font-semibold text-[#F0EFE2]">Plan</span>
                     </div>
 
                     <div className="text-[#555] text-xs pt-0.5">→</div>
 
-                    {/* Step: Priority Queue */}
+                    {/* Step: Credits */}
                     <div className="flex flex-col items-start max-w-[120px]">
                       <div className="w-2.5 h-2.5 border border-[#76b900] mb-2" />
-                      <span className="text-xs font-semibold text-[#F0EFE2]">Research Queue</span>
-                      <span className="text-[11px] text-[#777] leading-tight mt-1">Dedicated priority queue</span>
+                      <span className="text-xs font-semibold text-[#F0EFE2]">Credits</span>
+                      <span className="text-[11px] text-[#777] leading-tight mt-1">Your choice: a cap, or no limit</span>
                     </div>
 
                     <div className="text-[#555] text-xs pt-0.5">→</div>
@@ -1162,16 +1180,16 @@ export default function PricingPage() {
                     <div className="flex flex-col items-start max-w-[110px]">
                       <div className="w-2.5 h-2.5 bg-[#76b900] mb-2" />
                       <span className="text-xs font-semibold text-[#F0EFE2]">Standby</span>
-                      <span className="text-[11px] text-[#777] leading-tight mt-1">Standard baseline queue</span>
+                      <span className="text-[11px] text-[#777] leading-tight mt-1">Free, slower chat</span>
                     </div>
 
                     <div className="text-[#555] text-xs pt-0.5">→</div>
 
-                    {/* Step: Reset */}
+                    {/* Step: Stop */}
                     <div className="flex flex-col items-start max-w-[90px]">
                       <div className="w-2.5 h-2.5 border border-[#666] mb-2" />
-                      <span className="text-xs font-semibold text-[#F0EFE2]">Cycle Reset</span>
-                      <span className="text-[11px] text-[#777] leading-tight mt-1">Replenished automatically</span>
+                      <span className="text-xs font-semibold text-[#F0EFE2]">Stop</span>
+                      <span className="text-[11px] text-[#777] leading-tight mt-1">Until a reset</span>
                     </div>
                   </div>
                 </div>
@@ -1191,13 +1209,13 @@ export default function PricingPage() {
               <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-10">
                 <div className="max-w-md">
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#F0EFE2] tracking-tight mb-3">
-                    Connecting AI agents to{" "}
+                    Connect your agents to{" "}
                     <span className="bg-[#76b900] text-black px-2 py-0.5 rounded-none font-semibold inline-block">
-                      Frontier Infrastructure
+                      Frontier Lab
                     </span>
                   </h2>
                   <p className="text-xs sm:text-sm text-[#888]">
-                    Route any coding agent, research CLI, or experimental workflow directly through our Horos foundation models and emerging compute infrastructure.
+                    Route any coding agent, research CLI, or IDE directly through our Frontier Lab foundation models and high-throughput compute.
                   </p>
                 </div>
 
@@ -1239,10 +1257,10 @@ export default function PricingPage() {
                   </div>
 
                   <Link
-                    href="/horos"
-                    className="text-xs sm:text-[13px] text-[#76b900] underline font-medium mt-3 inline-flex items-center gap-1 hover:opacity-80"
+                    href="/developer-console"
+                    className="text-xs sm:text-[13px] text-[#76b900] underline font-medium mt-3 inline-block hover:opacity-80"
                   >
-                    Follow our research <ChevronRight size={13} />
+                    Set up with your coding agent
                   </Link>
                 </div>
               </div>
@@ -1365,32 +1383,32 @@ export default function PricingPage() {
               {/* Bottom: Choose a plan */}
               <div className="mt-12">
                 <h3 className="text-base sm:text-lg font-medium text-[#F0EFE2] mb-3 flex items-center gap-1.5">
-                  Explore{" "}
+                  Choose a{" "}
                   <span className="bg-[#76b900] text-black px-1.5 py-0.5 font-semibold inline-block">
-                    research cohorts
+                    plan
                   </span>
                 </h3>
 
                 {/* 3 Action Buttons */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                  <a
-                    href={`mailto:${founderEmail}?subject=HOROS%20Founding%20Developer%20Access`}
+                  <Link
+                    href="/developer-console"
                     className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
                   >
-                    Apply for Founding Access <ChevronRight size={13} className="text-[#888]" />
-                  </a>
-                  <a
-                    href={`mailto:${founderEmail}?subject=HOROS%20Research%20Lab%20Access`}
+                    Choose Starter, $10 a month <ChevronRight size={13} className="text-[#888]" />
+                  </Link>
+                  <Link
+                    href="/developer-console"
                     className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
                   >
-                    Explore Lab Collaboration <ChevronRight size={13} className="text-[#888]" />
-                  </a>
-                  <a
-                    href={`mailto:${founderEmail}?subject=HOROS%20Institutional%20Partnership`}
+                    Choose Pro, $29 a month <ChevronRight size={13} className="text-[#888]" />
+                  </Link>
+                  <Link
+                    href="/developer-console"
                     className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
                   >
-                    Institutional Research <ChevronRight size={13} className="text-[#888]" />
-                  </a>
+                    Choose Team, $99 a month <ChevronRight size={13} className="text-[#888]" />
+                  </Link>
                 </div>
 
                 {/* 4 Security Badges */}
