@@ -114,9 +114,9 @@ export function LandingNavbar({
       </div>
 
       <div className="w-full flex justify-center h-14 relative z-10 pointer-events-none">
-        <div className="flex items-center justify-between w-[96%] sm:w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-4 lg:px-8">
+        <div className="flex items-center justify-between w-[96%] sm:w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-3 sm:px-4 lg:px-4">
           {/* Left: Official Vector Brand Logo */}
-          <div className="flex items-center shrink-0 h-14 mr-6 xl:mr-10">
+          <div className="flex items-center shrink-0 h-14 mr-4 xl:mr-7">
             <Link href="/" className="flex items-center group shrink-0 whitespace-nowrap">
               <HorosLogo variant="wordmark" size="xl" className="text-[#F0EFE2]" />
             </Link>
@@ -394,11 +394,11 @@ export function LandingNavbar({
           </nav>
 
           {/* Right Actions: Sign in & Get started (Desktop & Mobile) */}
-          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-2 ml-3 xl:ml-5">
+          <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-1 ml-2 xl:ml-4">
             <button
               type="button"
               onClick={onOpenSignUp || onOpenDashboard}
-              className="hidden sm:flex items-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-2.5 py-1 rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
+              className="hidden sm:flex items-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-3.5 py-1.5 rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
             >
               <span>Sign up</span>
             </button>
@@ -406,7 +406,7 @@ export function LandingNavbar({
             <button
               type="button"
               onClick={onOpenSignIn || onOpenDashboard}
-              className="flex items-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-2.5 py-1 rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
+              className="flex items-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-3.5 py-1.5 rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
             >
               <span>Demo</span>
             </button>
