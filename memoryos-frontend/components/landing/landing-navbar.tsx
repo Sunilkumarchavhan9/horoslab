@@ -58,7 +58,7 @@ export function LandingNavbar({
     <>
       {/* Top Pre-launch Announcement Banner */}
       <div
-        className={`fixed top-0 left-0 right-0 z-[101] bg-[#121212] border-b border-[#262626] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed top-0 left-0 right-0 z-[101] bg-[#151515] border-b border-dashed border-[#333333] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isScrolled
             ? "-translate-y-full opacity-0 pointer-events-none"
             : "translate-y-0 opacity-100"
