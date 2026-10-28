@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { HorosLogo, ModalLogo, RunPodLogo, K8sFaviconLogo, AMDLogo, AWSLogo } from "../horos/primitives/brand-icons";
+import { HorosLogo, ModalLogo, RunPodLogo, K8sFaviconLogo, AMDLogo, AWSLogo, NvidiaLogo, UnitreeLogo } from "../horos/primitives/brand-icons";
 
 // Helper component for the horizontal borders with corner intersection dots
 function HorizontalDivider({ position = "top", infinite = false }: { position?: "top" | "bottom", infinite?: boolean }) {
@@ -105,8 +105,8 @@ export function DeploymentOptionsSection() {
               <div className="mb-6 flex items-center gap-4 relative z-10">
                 <RunPodLogo size={28} />
                 <ModalLogo size={28} />
-                <span className="text-[#3b82f6] font-bold text-[28px] leading-none">V</span>
-                <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://www.coreweave.com/&size=256" alt="CoreWeave" width={28} height={28} className="object-contain rounded-[4px] ml-1" referrerPolicy="no-referrer" />
+                <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://vast.ai/&size=256" alt="Vast.ai" width={26} height={26} className="object-contain rounded-xs" />
+                <img src="/brand-logos/coreweave.svg" alt="CoreWeave" width={100} height={22} className="object-contain h-6" />
               </div>
               <h3 className="text-[#F0EFE2] text-lg font-semibold mb-3 relative z-10">
                 RunPod, Modal, Vast & CoreWeave
@@ -136,19 +136,17 @@ export function DeploymentOptionsSection() {
               </div>
               <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-3 text-[#C8C7BA] relative z-10">
                 <K8sFaviconLogo size={28} />
-                <AWSLogo size={28} />
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" alt="Azure" width={28} height={28} className="object-contain" />
-                <div className="font-bold text-[14px] text-[#F0EFE2]">Q1</div>
-                <div className="flex items-center gap-1">
-                  <AMDLogo size={24} />
-                  <span className="font-bold text-[14px] text-[#F0EFE2]">APU</span>
-                </div>
+                <AWSLogo size={30} />
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" alt="Azure" width={26} height={26} className="object-contain" />
+                <NvidiaLogo size={28} className="text-[#76b900]" />
+                <AMDLogo size={32} />
+                <UnitreeLogo size={26} />
               </div>
               <h3 className="text-[#F0EFE2] text-lg font-semibold mb-3 relative z-10">
                 Local Hardware & Robotics
               </h3>
               <p className="text-[#C8C7BA] text-[13px] leading-relaxed relative z-10">
-                The deployment kit runs the exact same intelligence stack on anything you own. We manage the synchronization and state whether you deploy to AWS clusters, Azure confidential compute, local Q1 hardware, edge APUs, or physical robots.
+                The deployment kit runs the exact same intelligence stack on anything you own. We manage the synchronization and state whether you deploy to AWS clusters, Azure confidential compute, NVIDIA edge GPUs, AMD APUs, or physical robots.
               </p>
             </div>
 
