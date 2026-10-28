@@ -407,6 +407,28 @@ export default function PricingPage() {
   const [faqTab, setFaqTab] = useState<"payg" | "enterprise">("payg");
   const [codingFaqActive, setCodingFaqActive] = useState(0);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalPlan, setModalPlan] = useState("Research Infra (PAYG)");
+  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    org: "",
+    workload: "Autonomous Agents",
+    volume: "10M - 100M tokens/month",
+    notes: "",
+  });
+
+  const openModal = (planName: string) => {
+    setModalPlan(planName);
+    setSubmitted(false);
+    setModalOpen(true);
+  };
+
+  const handleSubmitApplication = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText("curl -fsSL https://memoryos.ai/setup.sh | bash");
@@ -442,6 +464,23 @@ export default function PricingPage() {
             <p className="text-[#888] text-xs sm:text-sm md:text-base mt-2 font-normal">
               One unified platform: Frontier AI Research Infrastructure + Frontier AI Lab, delivering high-throughput compute, foundation models, and verified token pricing.
             </p>
+          </div>
+
+          {/* Pre-launch Cohort Transparency Banner */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3.5 py-2.5 border border-dashed border-[#76b900]/40 bg-[#161b12] text-xs mb-6">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-[#76b900] animate-pulse shrink-0" />
+              <span className="font-mono text-[#76b900] font-semibold uppercase tracking-wider text-[11px] whitespace-nowrap">
+                FOUNDING COHORT ONBOARDING
+              </span>
+              <span className="text-[#555] hidden sm:inline">•</span>
+              <span className="text-[#bbb] text-xs">
+                Model endpoints and compute clusters are rolling out in active cohorts. Lock in founding pricing and priority cluster allocation below.
+              </span>
+            </div>
+            <span className="text-[10px] font-mono text-[#76b900] border border-[#76b900]/40 px-2 py-0.5 shrink-0 self-start sm:self-auto">
+              PRE-LAUNCH ACCESS
+            </span>
           </div>
 
           {/* Plan Selector Cards (Pay as you go vs Coding plan vs Platform) */}
@@ -597,12 +636,13 @@ export default function PricingPage() {
                       <p className="text-center text-[11px] text-[#777] mb-3">
                         New research accounts start with $1 free compute to test model endpoints.
                       </p>
-                      <Link
-                        href="/developer-console"
-                        className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm"
+                      <button
+                        type="button"
+                        onClick={() => openModal(`Research Infra (PAYG - $${creditAmount})`)}
+                        className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
                       >
-                        Add credits <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
-                      </Link>
+                        Apply for Early Access <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -648,12 +688,13 @@ export default function PricingPage() {
                   </div>
 
                   <div className="pt-2">
-                    <a
-                      href={`mailto:${founderEmail}?subject=HOROS%20Enterprise%20Inquiry`}
-                      className="w-full bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-3 flex items-center justify-center transition-colors"
+                    <button
+                      type="button"
+                      onClick={() => openModal("Enterprise & Frontier Lab")}
+                      className="w-full bg-[#202020] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-3 flex items-center justify-center transition-colors cursor-pointer"
                     >
-                      Request a demo <ChevronRight size={15} strokeWidth={2} className="ml-1 text-[#888]" />
-                    </a>
+                      Apply for Enterprise Cohort <ChevronRight size={15} strokeWidth={2} className="ml-1 text-[#888]" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -973,12 +1014,13 @@ export default function PricingPage() {
                     </div>
                   </div>
 
-                  <Link
-                    href="/developer-console"
-                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
+                  <button
+                    type="button"
+                    onClick={() => openModal("Starter Plan ($10/month)")}
+                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
                   >
-                    Choose Starter <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
-                  </Link>
+                    Apply for Starter Cohort <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </button>
                 </div>
 
                 {/* Pro Card */}
@@ -1010,12 +1052,13 @@ export default function PricingPage() {
                     </div>
                   </div>
 
-                  <Link
-                    href="/developer-console"
-                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
+                  <button
+                    type="button"
+                    onClick={() => openModal("Pro Plan ($29/month)")}
+                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
                   >
-                    Choose Pro <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
-                  </Link>
+                    Apply for Pro Cohort <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </button>
                 </div>
 
                 {/* Team Card */}
@@ -1047,12 +1090,13 @@ export default function PricingPage() {
                     </div>
                   </div>
 
-                  <Link
-                    href="/developer-console"
-                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm"
+                  <button
+                    type="button"
+                    onClick={() => openModal("Team Plan ($99/month)")}
+                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-[#151515] font-semibold text-xs sm:text-sm py-2.5 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
                   >
-                    Choose Team <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
-                  </Link>
+                    Apply for Team Cohort <ChevronRight size={14} strokeWidth={2.5} className="ml-1" />
+                  </button>
                 </div>
               </div>
 
@@ -1391,24 +1435,27 @@ export default function PricingPage() {
 
                 {/* 3 Action Buttons */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                  <Link
-                    href="/developer-console"
-                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
+                  <button
+                    type="button"
+                    onClick={() => openModal("Starter Plan ($10/month)")}
+                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors cursor-pointer"
                   >
-                    Choose Starter, $10 a month <ChevronRight size={13} className="text-[#888]" />
-                  </Link>
-                  <Link
-                    href="/developer-console"
-                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
+                    Apply for Starter, $10 a month <ChevronRight size={13} className="text-[#888]" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openModal("Pro Plan ($29/month)")}
+                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors cursor-pointer"
                   >
-                    Choose Pro, $29 a month <ChevronRight size={13} className="text-[#888]" />
-                  </Link>
-                  <Link
-                    href="/developer-console"
-                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors"
+                    Apply for Pro, $29 a month <ChevronRight size={13} className="text-[#888]" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openModal("Team Plan ($99/month)")}
+                    className="border border-[#333] bg-[#1a1a1a] hover:bg-[#222] hover:border-[#76b900] text-xs sm:text-[13px] text-[#F0EFE2] font-medium py-3 px-4 flex items-center justify-center gap-1 transition-colors cursor-pointer"
                   >
-                    Choose Team, $99 a month <ChevronRight size={13} className="text-[#888]" />
-                  </Link>
+                    Apply for Team, $99 a month <ChevronRight size={13} className="text-[#888]" />
+                  </button>
                 </div>
 
                 {/* 4 Security Badges */}
@@ -1445,6 +1492,190 @@ export default function PricingPage() {
           </div>
         )}
       </main>
+
+      {/* Founding Cohort Application Modal */}
+      {modalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-xl border border-dashed border-[#444] bg-[#161616] shadow-2xl p-6 sm:p-7 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between mb-5">
+              <div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#76b900] animate-pulse" />
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#76b900] font-semibold">
+                    Founding Cohort Application
+                  </span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-medium text-[#F0EFE2] tracking-tight">
+                  Apply for Early Compute Access
+                </h2>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <span className="text-xs text-[#888]">Selected Track:</span>
+                  <span className="text-xs font-mono px-2 py-0.5 bg-[#202020] border border-[#333] text-[#76b900] font-medium">
+                    {modalPlan}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="text-[#888] hover:text-white p-1 hover:bg-[#222] transition-colors rounded-none cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {submitted ? (
+              <div className="py-6 text-center space-y-4">
+                <div className="w-12 h-12 rounded-full bg-[#76b900]/10 border border-[#76b900] flex items-center justify-center mx-auto text-[#76b900]">
+                  <Check size={24} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-[#F0EFE2]">Application Received</h3>
+                  <p className="text-xs text-[#aaa] mt-1.5 max-w-md mx-auto leading-relaxed">
+                    Thank you, <span className="text-[#F0EFE2] font-semibold">{formData.name || "Researcher"}</span>. Your priority founding access request for <span className="text-[#76b900] font-mono">{modalPlan}</span> has been logged.
+                  </p>
+                </div>
+                <div className="p-3.5 bg-[#1a1a1a] border border-dashed border-[#333] text-left text-xs space-y-2 max-w-md mx-auto">
+                  <div className="text-[11px] font-mono text-[#76b900] uppercase font-semibold">What happens next:</div>
+                  <p className="text-[#888] leading-relaxed">
+                    1. Our engineering team reviews cluster capacity and workload fit within 24 hours.
+                  </p>
+                  <p className="text-[#888] leading-relaxed">
+                    2. We will email API endpoint keys and sandbox onboarding instructions directly to <span className="text-[#F0EFE2]">{formData.email || "your provided address"}</span>.
+                  </p>
+                  <p className="text-[#888] leading-relaxed">
+                    3. Direct founder line:{" "}
+                    <a href={`mailto:${founderEmail}`} className="underline text-[#76b900] hover:text-[#85cc00]">
+                      {founderEmail}
+                    </a>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="bg-[#76b900] hover:bg-[#85cc00] text-black font-semibold text-xs px-6 py-2.5 transition-colors cursor-pointer"
+                >
+                  Close & Return
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitApplication} className="space-y-4">
+                <div className="p-3 border border-dashed border-[#76b900]/30 bg-[#161b12] text-xs text-[#aaa] leading-relaxed">
+                  <span className="text-[#76b900] font-semibold">Pre-launch note:</span> We are currently rolling out verified compute access to research labs & engineering teams in phased cohorts. Submitting this form locks in your founding price tier and places you in the next active deployment batch.
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-[#888] mb-1.5">
+                      Full Name *
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="Ada Lovelace"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full bg-[#121212] border border-[#333] focus:border-[#76b900] px-3 py-2 text-xs text-[#F0EFE2] outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-[#888] mb-1.5">
+                      Work / Lab Email *
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      placeholder="researcher@lab.org"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full bg-[#121212] border border-[#333] focus:border-[#76b900] px-3 py-2 text-xs text-[#F0EFE2] outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-[#888] mb-1.5">
+                      Company / Lab / Institute
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Frontier AI Lab / Independent"
+                      value={formData.org}
+                      onChange={(e) => setFormData({ ...formData, org: e.target.value })}
+                      className="w-full bg-[#121212] border border-[#333] focus:border-[#76b900] px-3 py-2 text-xs text-[#F0EFE2] outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-[#888] mb-1.5">
+                      Estimated Monthly Volume
+                    </label>
+                    <select
+                      value={formData.volume}
+                      onChange={(e) => setFormData({ ...formData, volume: e.target.value })}
+                      className="w-full bg-[#121212] border border-[#333] focus:border-[#76b900] px-2.5 py-2 text-xs text-[#F0EFE2] outline-none transition-colors cursor-pointer"
+                    >
+                      <option value="Under 10M tokens/month">Under 10M tokens / month</option>
+                      <option value="10M - 100M tokens/month">10M - 100M tokens / month</option>
+                      <option value="100M - 1B tokens/month">100M - 1B tokens / month</option>
+                      <option value="1B+ tokens/month (Dedicated)">1B+ tokens / month (Dedicated)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#888] mb-1.5">
+                    Primary Workload Focus
+                  </label>
+                  <select
+                    value={formData.workload}
+                    onChange={(e) => setFormData({ ...formData, workload: e.target.value })}
+                    className="w-full bg-[#121212] border border-[#333] focus:border-[#76b900] px-2.5 py-2 text-xs text-[#F0EFE2] outline-none transition-colors cursor-pointer"
+                  >
+                    <option value="Autonomous Agents & Memory Systems">Autonomous Agents & Memory Systems</option>
+                    <option value="Reasoning & RL Test-Time Compute">Reasoning & RL Test-Time Compute</option>
+                    <option value="Frontier Coding & Synthetic Data">Frontier Coding & Synthetic Data</option>
+                    <option value="Physical Intelligence / Robotics Simulation">Physical Intelligence / Robotics Simulation</option>
+                    <option value="High-Throughput Production Inference">High-Throughput Production Inference</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#888] mb-1.5">
+                    Research or Application Details (Optional)
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Briefly describe your stack, models needed, or cluster SLA requirements..."
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    className="w-full bg-[#121212] border border-[#333] focus:border-[#76b900] px-3 py-2 text-xs text-[#F0EFE2] outline-none transition-colors resize-none"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="w-full bg-[#76b900] hover:bg-[#85cc00] text-black font-semibold text-xs sm:text-sm py-3 transition-colors flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+                  >
+                    Submit Founding Cohort Application <ArrowRight size={15} strokeWidth={2.5} />
+                  </button>
+                  <p className="text-[10px] text-center text-[#666] mt-2">
+                    Review turnaround within 24 hours. No upfront payment required until cluster access is activated.
+                  </p>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Global Footer */}
       <GlobalFooter />
