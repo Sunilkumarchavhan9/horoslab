@@ -398,7 +398,7 @@ export function LandingNavbar({
             <button
               type="button"
               onClick={onOpenSignUp || onOpenDashboard}
-              className="hidden sm:flex items-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-3.5 py-1.5 rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
+              className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-5 py-2 min-h-[34px] rounded-xs transition-colors cursor-pointer text-xs sm:text-[13px] font-semibold whitespace-nowrap"
             >
               <span>Sign up</span>
             </button>
@@ -406,7 +406,7 @@ export function LandingNavbar({
             <button
               type="button"
               onClick={onOpenSignIn || onOpenDashboard}
-              className="flex items-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-3.5 py-1.5 rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
+              className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-5 py-2 min-h-[34px] rounded-xs transition-all cursor-pointer text-xs sm:text-[13px] whitespace-nowrap shadow-sm"
             >
               <span>Demo</span>
             </button>
