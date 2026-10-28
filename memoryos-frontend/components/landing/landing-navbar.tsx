@@ -397,18 +397,18 @@ export function LandingNavbar({
           <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-2">
             <button
               type="button"
-              onClick={onOpenSignIn || onOpenDashboard}
+              onClick={onOpenSignUp || onOpenDashboard}
               className="hidden sm:flex items-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-2.5 py-1 rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
             >
-              <span>Demo</span>
+              <span>Sign up</span>
             </button>
 
             <button
               type="button"
-              onClick={onOpenSignUp || onOpenDashboard}
+              onClick={onOpenSignIn || onOpenDashboard}
               className="flex items-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-2.5 py-1 rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
             >
-              <span>Request Access</span>
+              <span>Demo</span>
             </button>
 
             {/* Mobile Hamburger Menu Button */}
@@ -467,21 +467,21 @@ export function LandingNavbar({
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  if (onOpenSignIn) onOpenSignIn();
+                  if (onOpenSignUp) onOpenSignUp();
                 }}
                 className="flex-1 py-2 text-center bg-[#1e1e1e] border border-[#333] text-[#F0EFE2] rounded-xs"
               >
-                Sign in
+                Sign up
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  if (onOpenSignUp) onOpenSignUp();
+                  if (onOpenSignIn) onOpenSignIn();
                 }}
                 className="flex-1 py-2 text-center bg-[#75bf00] text-black font-extrabold rounded-xs"
               >
-                Get started
+                Demo
               </button>
             </div>
           </div>
