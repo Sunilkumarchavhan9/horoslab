@@ -54,16 +54,20 @@ function ZLogo({ size = 20 }: { size?: number }) {
   );
 }
 
-// Exact 8 models showing research direction & foundation architectures
+// Exact 8 models with per-1M token pricing, input/output rates, and cache discounts
 const MODEL_APIS_DATA = [
   {
     id: "ornith-1-5-122b",
     name: "Ornith 1.5 122B",
     developer: "Ornith",
     icon: OrnithLogo,
-    domain: "Physical AI & Robotics",
-    architecture: "122B MoE Foundation",
-    status: "Active Research",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$0.20",
+    strikethroughCached: "$0.05",
+    cachedPrice: "Free",
+    cacheHitRate: "94.6% cache hit,\nlast 24 hours",
+    outputPrice: "$0.80",
     link: "/capabilities/Ornith/Ornith%201.5%20122B",
   },
   {
@@ -71,9 +75,13 @@ const MODEL_APIS_DATA = [
     name: "DeepSeek V4.1 Flash 1017",
     developer: "DeepSeek",
     icon: DeepSeekLogo,
-    domain: "Mathematical Reasoning",
-    architecture: "Sparse Attention MoE",
-    status: "Research Preview",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$0.15",
+    strikethroughCached: "$0.01",
+    cachedPrice: "Free",
+    cacheHitRate: "29.7% cache hit,\nlast 24 hours",
+    outputPrice: "$0.60",
     link: "/capabilities/DeepSeek/DeepSeek%20V4.1%20Flash%201017",
   },
   {
@@ -81,9 +89,13 @@ const MODEL_APIS_DATA = [
     name: "GLM 5.3",
     developer: "Z.ai",
     icon: ZLogo,
-    domain: "Multimodal Agent Cognition",
-    architecture: "Bilingual Foundation",
-    status: "Active Research",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$1.30",
+    strikethroughCached: "$0.13",
+    cachedPrice: "Free",
+    cacheHitRate: "28.1% cache hit,\nlast 24 hours",
+    outputPrice: "$4.20",
     link: "/capabilities/Z.ai/GLM%205.3",
   },
   {
@@ -91,9 +103,13 @@ const MODEL_APIS_DATA = [
     name: "GLM 5.3 Flash",
     developer: "Z.ai",
     icon: ZLogo,
-    domain: "Low-Latency Inference",
-    architecture: "Distilled Dense",
-    status: "Research Preview",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$0.11",
+    strikethroughCached: "$0.03",
+    cachedPrice: "Free",
+    cacheHitRate: "98.1% cache hit,\nlast 24 hours",
+    outputPrice: "$0.45",
     link: "/capabilities/Z.ai/GLM%205.3%20Flash",
   },
   {
@@ -101,9 +117,13 @@ const MODEL_APIS_DATA = [
     name: "Nemotron 3.5 Lightning 30B",
     developer: "NVIDIA",
     icon: NvidiaLogo,
-    domain: "Autonomous Systems",
-    architecture: "30B Optimized Backbone",
-    status: "Benchmark Evaluation",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$0.05",
+    strikethroughCached: "$0.01",
+    cachedPrice: "Free",
+    cacheHitRate: "99.2% cache hit,\nlast 24 hours, DeepSeek\nV4.1 Flash's rate",
+    outputPrice: "$0.15",
     link: "/capabilities/NVIDIA/Nemotron%203.5%20Lightning%2030B",
   },
   {
@@ -111,9 +131,13 @@ const MODEL_APIS_DATA = [
     name: "Qwen3.8 27B",
     developer: "Alibaba Cloud",
     icon: QwenLogo,
-    domain: "Scientific Discovery & Code",
-    architecture: "27B Dense Architecture",
-    status: "Research Preview",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$0.10",
+    strikethroughCached: "$0.01",
+    cachedPrice: "Free",
+    cacheHitRate: "97.1% cache hit,\nlast 24 hours",
+    outputPrice: "$0.40",
     link: "/capabilities/Alibaba%20Cloud/Qwen3.8%2027B",
   },
   {
@@ -121,9 +145,13 @@ const MODEL_APIS_DATA = [
     name: "Ornith 1.5 35B",
     developer: "Ornith",
     icon: OrnithLogo,
-    domain: "Embodied Decision Making",
-    architecture: "35B Multimodal",
-    status: "Active Research",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$0.10",
+    strikethroughCached: "$0.01",
+    cachedPrice: "Free",
+    cacheHitRate: "96.8% cache hit,\nlast 24 hours",
+    outputPrice: "$0.40",
     link: "/capabilities/Ornith/Ornith%201.5%2035B",
   },
   {
@@ -131,9 +159,13 @@ const MODEL_APIS_DATA = [
     name: "DeepSeek V4.1 Flash",
     developer: "DeepSeek",
     icon: DeepSeekLogo,
-    domain: "Code Verification & Logic",
-    architecture: "Fast Reasoning Core",
-    status: "Research Preview",
+    promo: "Free cached input",
+    promoUntil: "until Oct 31, 2026, 11:59 PM UTC",
+    inputPrice: "$0.14",
+    strikethroughCached: "$0.03",
+    cachedPrice: "Free",
+    cacheHitRate: "29.2% cache hit,\nlast 24 hours",
+    outputPrice: "$0.58",
     link: "/capabilities/DeepSeek/DeepSeek%20V4.1%20Flash",
   },
 ];
@@ -616,20 +648,20 @@ export default function PricingPage() {
             <section id="model-apis-pricing" className="mb-24 scroll-mt-20">
               {/* Header & Category Badge */}
               <div className="text-[#76b900] text-xs font-mono font-medium tracking-[0.2em] uppercase mb-3">
-                FRONTIER MODELS & RESEARCH ROADMAP
+                FRONTIER MODEL APIS & LAB WEIGHTS
               </div>
 
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
                 <h2 className="text-xl sm:text-2xl md:text-[28px] font-semibold text-[#F0EFE2] tracking-tight flex items-center gap-2 flex-wrap">
-                  Our research direction across foundation{" "}
+                  Pay for model tokens, not idle{" "}
                   <span className="bg-[#76b900] text-[#0e0f12] px-2 py-0.5 rounded-none font-semibold leading-tight inline-block">
-                    models
+                    capacity
                   </span>
                 </h2>
 
                 <div className="shrink-0">
                   <span className="text-[11px] text-[#888] font-mono font-medium border border-dashed border-[#333] bg-[#1a1a1a] px-3 py-1 rounded-none inline-block">
-                    Research Preview
+                    Price per 1M tokens
                   </span>
                 </div>
               </div>
@@ -638,11 +670,11 @@ export default function PricingPage() {
               <div className="w-full border border-dashed border-[#333] bg-[#151515] overflow-x-auto">
                 <div className="min-w-[700px]">
                   {/* Header Row */}
-                  <div className="grid grid-cols-[2.8fr_2fr_1.8fr_1.3fr_1.1fr] px-4 sm:px-5 py-3 border-b border-dashed border-[#333] text-xs font-medium text-[#777]">
+                  <div className="grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3 border-b border-dashed border-[#333] text-xs font-medium text-[#777]">
                     <div>Model</div>
-                    <div>Research Domain</div>
-                    <div>Architecture</div>
-                    <div>Status</div>
+                    <div>Input</div>
+                    <div>Cached input</div>
+                    <div>Output</div>
                     <div></div>
                   </div>
 
@@ -653,10 +685,10 @@ export default function PricingPage() {
                       <Link
                         key={model.id}
                         href={model.link}
-                        className={`grid grid-cols-[2.8fr_2fr_1.8fr_1.3fr_1.1fr] px-4 sm:px-5 py-3.5 sm:py-4 items-center group hover:bg-[#1c1c1c] transition-colors ${idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
+                        className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3.5 sm:py-4 items-center group hover:bg-[#1c1c1c] transition-colors ${idx < MODEL_APIS_DATA.length - 1 ? "border-b border-dashed border-[#262626]" : ""
                           }`}
                       >
-                        {/* Model Icon + Title */}
+                        {/* Model Icon + Title (clean row background, no icon border or box) */}
                         <div className="flex items-center gap-3 pr-3">
                           <div className="w-6 h-6 flex items-center justify-center shrink-0">
                             <IconComponent size={20} />
@@ -666,27 +698,33 @@ export default function PricingPage() {
                           </span>
                         </div>
 
-                        {/* Research Domain */}
-                        <div className="text-xs text-[#ccc] font-medium pr-2">
-                          {model.domain}
+                        {/* Input Price */}
+                        <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
+                          {model.inputPrice}
                         </div>
 
-                        {/* Architecture */}
-                        <div className="text-xs text-[#aaa] font-mono pr-2">
-                          {model.architecture}
-                        </div>
-
-                        {/* Status */}
-                        <div>
-                          <span className="text-[11px] font-mono px-2 py-0.5 bg-[#1e1e1e] border border-[#333] text-[#76b900] whitespace-nowrap">
-                            {model.status}
+                        {/* Cached Input */}
+                        <div className="flex flex-col justify-center">
+                          <span className="line-through text-[#666] text-[11px] font-mono leading-none mb-0.5">
+                            {model.strikethroughCached}
                           </span>
+                          <span className="font-bold text-[#F0EFE2] text-sm leading-tight">
+                            {model.cachedPrice}
+                          </span>
+                          <span className="text-[10px] text-[#666] leading-snug mt-0.5 whitespace-pre-line pr-2">
+                            {model.cacheHitRate}
+                          </span>
+                        </div>
+
+                        {/* Output Price */}
+                        <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
+                          {model.outputPrice}
                         </div>
 
                         {/* View Model Link */}
                         <div className="flex justify-end">
                           <span className="text-xs text-[#aaa] group-hover:text-[#F0EFE2] flex items-center gap-1 font-medium transition-colors">
-                            View details <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                            View model <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
                           </span>
                         </div>
                       </Link>
@@ -697,7 +735,7 @@ export default function PricingPage() {
 
               {/* Subtext below table */}
               <div className="mt-3 text-xs text-[#777]">
-                Models are currently in active research, internal evaluation, and capability benchmarking. Public API endpoints, token allocations, and billing will open as models complete safety and verification gates.
+                Served via Frontier Research Fabric. Context windows, token throughput, and lab evaluation benchmarks are listed on each model page.
               </div>
             </section>
 
