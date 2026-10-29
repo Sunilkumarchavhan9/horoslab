@@ -488,7 +488,7 @@ export function ModelDetailView({
   };
 
   return (
-    <div className="w-full bg-[#111111] min-h-screen text-[#F0EFE2] font-sans pb-32">
+    <div className="w-full bg-transparent min-h-screen text-[#F0EFE2] font-sans pb-32">
       <div className="max-w-[1120px] mx-auto px-6 pt-8">
         
         {/* Navigation Breadcrumb / Back button */}
@@ -503,8 +503,8 @@ export function ModelDetailView({
         {/* Top Header Block matching Image 2 */}
         <div className="flex items-center justify-between pb-6">
           <div className="flex items-center gap-3.5">
-            {/* Dark logo container */}
-            <div className="w-[38px] h-[38px] rounded-[5px] bg-[#181818] border border-[#282828] flex items-center justify-center shrink-0">
+            {/* Clean transparent logo container */}
+            <div className="w-[32px] h-[32px] flex items-center justify-center shrink-0">
               {getBrandLogo(modelName)}
             </div>
 

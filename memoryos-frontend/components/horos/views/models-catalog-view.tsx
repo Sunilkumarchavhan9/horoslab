@@ -535,7 +535,7 @@ export function ModelsCatalogView({
   }, [sourceModels, searchQuery]);
 
   return (
-    <div className="w-full bg-[#111111] min-h-screen text-[#F0EFE2] font-sans pb-32">
+    <div className="w-full bg-transparent min-h-screen text-[#F0EFE2] font-sans pb-32">
       <div className="max-w-[1320px] mx-auto px-6 pt-10">
         
         {/* Header Block matching Image 1 */}
@@ -617,8 +617,8 @@ export function ModelsCatalogView({
                 >
                   {/* Left Column (Logo + Name + Badges + Served ID + Capabilities) */}
                   <div className="flex-[2.5] min-w-0 pr-4 flex items-center gap-3.5">
-                    {/* Dark square icon container */}
-                    <div className="w-[36px] h-[36px] rounded-[5px] bg-[#181818] border border-[#282828] flex items-center justify-center shrink-0">
+                    {/* Clean transparent logo container */}
+                    <div className="w-[32px] h-[32px] flex items-center justify-center shrink-0">
                       {iconFor(m.brand, `${m.id} ${m.name}`)}
                     </div>
 
