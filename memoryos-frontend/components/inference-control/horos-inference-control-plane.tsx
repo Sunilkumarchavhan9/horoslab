@@ -531,6 +531,7 @@ export function HorosInferenceControlPlane({
                       });
                     }}
                     onManageKeys={() => handleNavigate("settings-keys")}
+                    onNavigateToAnalytics={() => handleNavigate("analytics")}
                     dark={dark}
                   />
                 ) : (
