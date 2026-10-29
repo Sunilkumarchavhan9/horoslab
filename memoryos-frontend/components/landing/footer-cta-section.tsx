@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Lock, Shield, Server, FileCheck, ArrowRight, MessageSquare, Activity, Sun, Monitor, Moon, EyeOff, ShieldCheck } from "lucide-react";
 import {
   HorosLogo, HorosWordmarkLogo, MetaLogo, DeepSeekLogo, GoogleLogo, NvidiaLogo, MistralLogo,
@@ -78,13 +79,20 @@ export function FooterCtaSection() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex items-center gap-4 relative z-10 mb-16">
-          <button className="bg-[#75bf00] hover:bg-[#86d900] text-black font-bold text-[15px] px-8 py-3.5 transition-colors">
-            Start Building
-          </button>
-          <button className="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-[#F0EFE2] font-medium text-[15px] px-8 py-3.5 transition-colors">
-            View Pricing
-          </button>
+        <div className="flex flex-wrap items-center justify-center gap-4 relative z-10 mb-16">
+          <Link
+            href="/pricing?apply=founding"
+            className="group inline-flex items-center gap-2 bg-[#75bf00] hover:bg-[#86d900] text-black font-semibold text-[15px] px-8 py-3.5 transition-all shadow-sm rounded-xs cursor-pointer"
+          >
+            <span>Apply for Cohort</span>
+            <ArrowRight size={15} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
+          </Link>
+          <Link
+            href="/capabilities"
+            className="inline-flex items-center gap-2 bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-medium text-[15px] px-8 py-3.5 transition-colors rounded-xs cursor-pointer"
+          >
+            <span>Explore Capabilities</span>
+          </Link>
         </div>
 
         {/* Trust Badges */}
