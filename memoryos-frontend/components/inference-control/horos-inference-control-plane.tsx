@@ -23,7 +23,7 @@ import { ProgramsListView } from "../horos/views/programs-list-view";
 import { ProgramDetailView } from "../horos/views/program-detail-view";
 import { PipelineWorkspaceView } from "../horos/views/pipeline-workspace-view";
 import { NewProgramModal } from "../horos/views/new-program-modal";
-import { ModelsCatalogView } from "../horos/views/models-catalog-view";
+import { ModelsCatalogView, CANONICAL_HOSTED_MODELS } from "../horos/views/models-catalog-view";
 import { ModelDetailView } from "../horos/views/model-detail-view";
 import { RunsListView } from "../horos/views/runs-list-view";
 import { RunDetailView } from "../horos/views/run-detail-view";
@@ -360,8 +360,10 @@ export function HorosInferenceControlPlane({
     ? programs.find((p) => p.id === selectedProgramId)
     : null;
 
+  const allAvailableModels = models.length > 0 ? models : CANONICAL_HOSTED_MODELS;
+
   const selectedModel = selectedModelId
-    ? models.find((m) => m.id === selectedModelId) ?? null
+    ? allAvailableModels.find((m) => m.id === selectedModelId) ?? null
     : null;
 
   const selectedRun = selectedRunId
@@ -533,7 +535,7 @@ export function HorosInferenceControlPlane({
                   />
                 ) : (
                   <ModelsCatalogView
-                    models={models}
+                    models={allAvailableModels}
                     onSelectModel={handleSelectModel}
                     onSearchModels={(query) => horosAdapter.searchHuggingFaceModels(workspaceId, query)}
                     onOpenImport={() => {

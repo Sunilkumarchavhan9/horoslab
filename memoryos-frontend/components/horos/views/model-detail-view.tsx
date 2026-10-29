@@ -17,6 +17,7 @@ import {
   QwenLogo,
   KimiLogo,
   MicrosoftLogo,
+  OrnithLogo,
 } from "../primitives/brand-icons";
 
 interface ModelDetailViewProps {
@@ -36,34 +37,35 @@ export function ModelDetailView({
   const [specExpanded, setSpecExpanded] = useState(false);
   const [copiedId, setCopiedId] = useState(false);
 
-  const modelId = model?.hfIdentity?.repositoryId ?? model?.name ?? "meta-llama/Llama-3.1-8B-Instruct";
-  const servedModelId = model?.name ?? modelId;
+  const modelId = model?.hfIdentity?.repositoryId ?? model?.id ?? "zai-org/GLM-5.3-Flash";
+  const servedModelId = model?.hfIdentity?.repositoryId ?? model?.id ?? modelId;
   const modelName = model?.name ?? "GLM 5.3 Flash";
-  const providerDisplay = "z.ai-org/GLM-5.3-Flash"; // From screenshot
+  const providerDisplay = model?.hfIdentity?.repositoryId ?? (model?.provider ? `${model.provider}/${model.name}` : "zai-org/GLM-5.3-Flash");
+  const providerName = model?.provider || "Hosted";
   
-  // From screenshot image 2:
-  const inputPrice = "$0.10";
-  const cachedInputPrice = "$0.01";
-  const outputPrice = "$0.40";
+  const inputPrice = model?.pricing?.inputPricePer1M !== undefined ? model.pricing.inputPricePer1M.toFixed(2) : "0.10";
+  const cachedInputPrice = model?.pricing?.cachedInputPricePer1M !== undefined ? model.pricing.cachedInputPricePer1M.toFixed(2) : "0.01";
+  const outputPrice = model?.pricing?.outputPricePer1M !== undefined ? model.pricing.outputPricePer1M.toFixed(2) : "0.40";
   const outputSpeed = "254.1";
   const ttf = "703";
   const cacheHit = "99.6%";
 
   function getBrandLogo(rawName: string) {
     const raw = rawName.toLowerCase();
+    if (raw.includes("ornith")) return <OrnithLogo size={42} />;
+    if (raw.includes("deepseek")) return <DeepSeekLogo size={42} />;
+    if (raw.includes("glm") || raw.includes("zhipu") || raw.includes("zai")) return <GLMLogo size={42} />;
+    if (raw.includes("nvidia") || raw.includes("nemotron")) return <NvidiaLogo size={42} />;
+    if (raw.includes("qwen") || raw.includes("alibaba")) return <QwenLogo size={42} />;
     if (raw.includes("microsoft")) return <MicrosoftLogo size={42} />;
     if (raw.includes("llama") || raw.includes("meta")) return <MetaLogo size={42} />;
     if (raw.includes("mistral")) return <MistralLogo size={42} />;
-    if (raw.includes("qwen") || raw.includes("alibaba")) return <QwenLogo size={42} />;
-    if (raw.includes("deepseek")) return <DeepSeekLogo size={42} />;
     if (raw.includes("claude") || raw.includes("anthropic")) return <AnthropicLogo size={42} />;
     if (raw.includes("gpt") || raw.includes("openai")) return <OpenAILogo size={42} />;
     if (raw.includes("gemini") || raw.includes("google")) return <GoogleLogo size={42} />;
-    if (raw.includes("nvidia")) return <NvidiaLogo size={42} />;
-    if (raw.includes("glm") || raw.includes("zhipu")) return <GLMLogo size={42} />;
     if (raw.includes("bge") || raw.includes("baai")) return <BAAILogo size={42} />;
     if (raw.includes("kimi") || raw.includes("moonshot")) return <KimiLogo size={42} />;
-    return <GLMLogo size={42} />; // Default to GLM logo based on the image
+    return <GLMLogo size={42} />;
   }
 
   const curlCode = `CLIENT_REQUEST_ID="$(uuidgen)"
@@ -72,7 +74,7 @@ curl -X POST "https://api.horos.ai/v1/chat/completions" \\
   -H "Authorization: Bearer $HOROS_GATEWAY_KEY" \\
   -H "X-Client-Request-Id: $CLIENT_REQUEST_ID" \\
   -H "Content-Type: application/json" \\
-  -d '{"model":"glm-5-3-flash","messages":[{"role":"user","content":"Hello"}],"max_tokens":2048}'`;
+  -d '{"model":"${model?.id || "glm-5-3-flash"}","messages":[{"role":"user","content":"Hello"}],"max_tokens":2048}'`;
 
   return (
     <div className="w-full text-[#F0EFE2] font-sans pb-16">
@@ -82,9 +84,9 @@ curl -X POST "https://api.horos.ai/v1/chat/completions" \\
         <div className="flex items-center gap-2 text-[13px] text-[#666] mb-8 font-medium">
           <button onClick={onBack} className="hover:text-[#F0EFE2] transition-colors">Model Library</button>
           <span>/</span>
-          <span>Z.ai</span>
+          <span>{providerName}</span>
           <span>/</span>
-          <span className="text-[#F0EFE2]">GLM 5.3 Flash</span>
+          <span className="text-[#F0EFE2]">{modelName}</span>
         </div>
 
         {/* Header Block */}
@@ -113,7 +115,7 @@ curl -X POST "https://api.horos.ai/v1/chat/completions" \\
             </div>
 
             <p className="text-[#888] text-[14px] leading-relaxed max-w-4xl">
-              GLM 5.3 Flash is an LLM listed in HOROS Model APIs. HOROS serves it as zai-org/GLM-5.3-Flash at $0.10 per 1M input tokens and $0.40 per 1M output tokens. Its context window is 1,048,576 tokens. The API provides OpenAI-compatible chat completions and Anthropic-compatible Messages, POST /v1/messages.
+              {model?.description || `${modelName} is an LLM listed in Model APIs. Served as ${servedModelId} at $${inputPrice} per 1M input tokens and $${outputPrice} per 1M output tokens. Its context window is ${(model?.contextWindow || 262144).toLocaleString()} tokens.`}
             </p>
           </div>
         </div>
