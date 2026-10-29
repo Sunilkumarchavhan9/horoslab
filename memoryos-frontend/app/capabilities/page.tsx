@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Search, ChevronDown, ArrowRight, ArrowUpRight, Sun, Monitor, Moon, SearchCode, Database, Zap, ArrowRightCircle } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
-import { HorosLogo } from "@/components/horos/primitives/horos-logo";
 import { 
   QwenLogo, 
   DeepSeekLogo, 

@@ -708,7 +708,7 @@ const FAQ_DATA = [
   },
   {
     question: "Does Horos support 2D/3D spatial grounding and object coordinate prediction?",
-    answer: "Yes. Horos models output normalized bounding boxes [ymin, xmin, ymax, xmax], point coordinates, and polygonal segmentation masks. The runtime translates model token coordinates directly into pixel coordinates and spatial vector layers for downstream computer vision pipelines."
+    answer: "Yes. Supported vision models output normalized bounding boxes [ymin, xmin, ymax, xmax], point coordinates, and polygonal segmentation masks. The runtime translates model token coordinates directly into pixel coordinates and spatial vector layers for downstream computer vision pipelines."
   },
   {
     question: "How does multimodal OCR and structured document extraction work?",

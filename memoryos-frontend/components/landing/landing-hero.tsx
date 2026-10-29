@@ -9,7 +9,7 @@ import { CellularRevealBackground } from "@/components/horos/primitives/cellular
 import { LeftFeedStrip, RightFeedStrip } from "./side-feed-strips";
 import { HeroGlitchImage } from "./hero-glitch-image";
 import { FloatingBrandGrid } from "./floating-brand-grid";
-import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo, HorosLogo } from "@/components/horos/primitives/brand-icons";
+import { MetaLogo, QwenLogo, DeepSeekLogo, VLLMLogo, OpenAILogo, BAAILogo, NvidiaLogo, PhysicalIntelligenceLogo } from "@/components/horos/primitives/brand-icons";
 
 interface LandingHeroProps {
   onLaunchPrompt?: (params: any) => void;
@@ -41,8 +41,8 @@ const ALL_14_WORKLOADS = [
   {
     label: "Decode reality",
     title: "Run",
-    target: "Horos Argvis on Edge Mesh",
-    icon: <HorosLogo size={12} />,
+    target: "Physical Intelligence pi0 on Edge Mesh",
+    icon: <PhysicalIntelligenceLogo size={12} />,
   },
   {
     label: "Optimize workload",

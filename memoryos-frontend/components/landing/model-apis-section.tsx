@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Box, Cloud, Radio, Server } from "lucide-react";
-import { VLLMLogo, NvidiaLogo, DeepSeekLogo, HorosLogo, RunPodLogo, TeslaLogo, OneXLogo, OpenTelemetryLogo, ModalLogo, K8sFaviconLogo, SGLangLogo } from "../horos/primitives/brand-icons";
+import { VLLMLogo, NvidiaLogo, DeepSeekLogo, QwenLogo, RunPodLogo, TeslaLogo, OneXLogo, OpenTelemetryLogo, ModalLogo, K8sFaviconLogo, SGLangLogo } from "../horos/primitives/brand-icons";
 import { SectionDivider } from "@/components/landing/section-divider";
 
 interface ModelApisSectionProps {
@@ -11,7 +11,7 @@ interface ModelApisSectionProps {
 }
 
 export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
-  const [selectedModel, setSelectedModel] = useState<"horos" | "deepseek">("horos");
+  const [selectedModel, setSelectedModel] = useState<"qwen" | "deepseek">("qwen");
 
   return (
     <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans select-none overflow-hidden pb-16">
@@ -99,15 +99,15 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                   <div className="flex items-center gap-2 mb-4">
                     <button
                       type="button"
-                      onClick={() => setSelectedModel("horos")}
+                      onClick={() => setSelectedModel("qwen")}
                       className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${
-                        selectedModel === "horos"
+                        selectedModel === "qwen"
                           ? "bg-white/10 text-[#F0EFE2] border border-white/20 font-semibold"
                           : "text-[#888] hover:text-[#ccc] border border-transparent"
                       }`}
                     >
-                      <HorosLogo size={12} />
-                      Horos Argvis (Lab)
+                      <QwenLogo size={12} />
+                      Qwen 2.5 Coder (Mesh)
                     </button>
                     <button
                       type="button"
@@ -123,32 +123,32 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                     </button>
                   </div>
 
-                  {selectedModel === "horos" ? (
+                  {selectedModel === "qwen" ? (
                     <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0 text-[#F0EFE2]">
-                        <HorosLogo size={20} />
+                      <div className="w-10 h-10 rounded-[2px] bg-[#151515] border border-dashed border-[#333] flex items-center justify-center shrink-0">
+                        <QwenLogo size={20} className="text-[#8b5cf6]" />
                       </div>
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-[#F0EFE2] text-[17px]">Horos Argvis</span>
-                          <span className="bg-white/10 text-[#F0EFE2] border border-white/15 text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-xs">FRONTIER LAB</span>
+                          <span className="font-semibold text-[#F0EFE2] text-[17px]">Qwen 2.5 Coder 32B</span>
+                          <span className="bg-white/10 text-[#F0EFE2] border border-white/15 text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-xs">AVAILABLE</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-3">
-                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">128B MoE</span>
-                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Spatial 3D</span>
-                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Sensor Fusion</span>
-                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">&lt;45ms TTFT</span>
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">32B Dense</span>
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">Code Intel</span>
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">AST Verifiers</span>
+                          <span className="text-[12px] text-[#C8C7BA] font-mono bg-[#222] px-1.5 rounded-sm">&lt;35ms TTFT</span>
                         </div>
 
                         <div className="text-[12px] text-[#888] font-mono mb-1">
-                          horos-lab/argvis-v1
+                          Qwen/Qwen2.5-Coder-32B-Instruct
                         </div>
                         <div className="text-[12px] text-[#C8C7BA] mb-2 leading-relaxed">
-                          Multi-camera spatial depth, point clouds & industrial telemetry perception
+                          Specialized code generation, repository refactoring, automated testing & contract synthesis
                         </div>
                         <div className="text-[12px] text-[#888] flex items-center gap-2">
-                          Served natively via Horos Reality Fabric & Edge Mesh
+                          Served via <ModalLogo size={14} /> Modal, AWS & Edge Mesh
                         </div>
                       </div>
                     </div>
@@ -194,28 +194,28 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                 <div className="grid grid-cols-3 divide-x divide-dashed divide-[#333] border-b border-dashed border-[#333]">
                   <div className="p-6 lg:px-8 flex flex-col justify-center">
                     <div className="text-[#F0EFE2] font-semibold text-[17px]">
-                      {selectedModel === "horos" ? "$0.01" : "$0.13"}
+                      {selectedModel === "qwen" ? "$0.08" : "$0.13"}
                     </div>
                     <div className="text-[#C8C7BA] text-[12px] mt-1">
-                      {selectedModel === "horos" ? "per 1M cached tokens" : "per 1M input tokens"}
+                      {selectedModel === "qwen" ? "per 1M cached tokens" : "per 1M input tokens"}
                     </div>
                   </div>
                   <div className="p-6 lg:px-8 flex flex-col justify-center">
                     <div className="text-[#F0EFE2] font-semibold text-[17px]">
-                      {selectedModel === "horos" ? "$0.24" : "$0.27"}
+                      {selectedModel === "qwen" ? "$0.24" : "$0.27"}
                     </div>
                     <div className="text-[#C8C7BA] text-[12px] mt-1">per 1M output tokens</div>
                   </div>
                   <div className="p-6 lg:px-8 flex flex-col justify-center">
-                    <div className="text-[#F0EFE2] font-semibold text-[17px]">1,048,576 <span className="text-[#C8C7BA] text-[12px] font-normal">tokens</span></div>
+                    <div className="text-[#F0EFE2] font-semibold text-[17px]">{selectedModel === "qwen" ? "131,072" : "1,048,576"} <span className="text-[#C8C7BA] text-[12px] font-normal">tokens</span></div>
                     <div className="text-[#C8C7BA] text-[12px] mt-1">Context window</div>
                   </div>
                 </div>
 
                 {/* --- ROW 4 --- */}
                 <div className="flex items-center p-6 lg:px-8 xl:px-[120px]">
-                  <Link href="/horos#intelligence-optimization" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
-                    Explore Horos Foundation Models
+                  <Link href="/capabilities" className="inline-flex items-center gap-2 text-[#75bf00] hover:text-[#F0EFE2] transition-colors text-[13px] font-medium group">
+                    Explore Supported Foundation Models
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>

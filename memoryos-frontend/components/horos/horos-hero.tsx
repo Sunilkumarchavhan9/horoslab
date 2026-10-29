@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { ChevronRight, Play, Pause, ChevronLeft } from "lucide-react";
 import { NvidiaLogo, QwenLogo, MetaLogo, MistralLogo, GLMLogo, DeepSeekLogo, PhysicalIntelligenceLogo } from "@/components/horos/primitives/brand-icons";
-import HorosLogo from "@/components/horos/primitives/horos-logo";
 
 // Helper to generate a dot object
 const createDot = (x: string, y: string, speed: number, cost: string, cacheHit: string) => ({
@@ -11,31 +10,6 @@ const createDot = (x: string, y: string, speed: number, cost: string, cacheHit: 
 });
 
 const HERO_MODELS = [
-  {
-    id: "horos-argvis",
-    name: "Horos Argvis",
-    icon: <HorosLogo variant="icon" size="sm" className="w-5 h-auto text-[#F0EFE2]" />,
-    speed: 310,
-    cost: "$0.01",
-    cacheHit: "99.4%",
-    yPos: "4%",
-    xPos: "18%",
-    xAxisLabels: ["$0", "$0.02", "$0.05", "$0.10"],
-    yAxisLabels: ["300", "200", "100", "0"],
-    bgDots: [
-      createDot("20%", "45%", 72, "$0.048", "65.2%"),
-      createDot("20%", "50%", 80, "$0.048", "61.0%"),
-      createDot("20%", "55%", 88, "$0.048", "58.4%"),
-      createDot("20%", "60%", 96, "$0.048", "55.1%"),
-      createDot("12%", "35%", 56, "$0.030", "71.9%"),
-      createDot("38%", "20%", 32, "$0.091", "45.0%"),
-      createDot("38%", "40%", 64, "$0.091", "41.5%"),
-      createDot("58%", "40%", 64, "$0.139", "33.2%"),
-      createDot("58%", "60%", 96, "$0.139", "30.1%"),
-      createDot("90%", "60%", 96, "$0.216", "22.5%")
-    ],
-    trendLine: { x1: "12%", y1: "35%", x2: "20%", y2: "55%" }
-  },
   {
     id: "qwen-vl",
     name: "Qwen2.5-VL 7B",

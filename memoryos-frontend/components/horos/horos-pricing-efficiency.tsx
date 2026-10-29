@@ -3,38 +3,11 @@
 import React, { useState } from "react";
 import { Search, ArrowRight, Zap, Banknote, Activity } from "lucide-react";
 import Link from "next/link";
-import { GLMLogo, NvidiaLogo, QwenLogo, AuthorMonogram, DeepSeekLogo, MetaLogo, MistralLogo, PhysicalIntelligenceLogo, HorosLogo } from "@/components/horos/primitives/brand-icons";
+import { GLMLogo, NvidiaLogo, QwenLogo, AuthorMonogram, DeepSeekLogo, MetaLogo, MistralLogo, PhysicalIntelligenceLogo } from "@/components/horos/primitives/brand-icons";
 import { CAPABILITIES } from "@/lib/capabilities-data";
 
 // Extended Mock data for multi-dimensional optimization
 const MODELS = [
-  {
-    id: "horos-argvis",
-    name: "Horos Argvis",
-    brand: <HorosLogo size={28} className="text-[#F0EFE2]" />,
-
-    // Cost
-    listPrice: 0.12,
-    effectivePrice: 0.010,
-    multiplier: "12.0x",
-    cacheHit: 99.4,
-    cachedInputPrice: 0.01,
-    outputPrice: 0.24,
-
-    // Latency (TTFT)
-    standardLatency: 420,
-    optimizedLatency: 42,
-    latencyMultiplier: "10.0x",
-
-    // Throughput (tok/s)
-    standardThroughput: 32,
-    optimizedThroughput: 310.0,
-    throughputMultiplier: "9.7x",
-
-    tags: ["Frontier Lab", "Physical Control", "Spatial Reasoning", "Multimodal"],
-    trending: true,
-    frontierLab: true,
-  },
   {
     id: "glm-5-3-flash",
     name: "GLM-4-9B",
