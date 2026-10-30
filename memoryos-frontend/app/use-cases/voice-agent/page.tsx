@@ -597,13 +597,6 @@ export default function RagSearchPage() {
     setActiveMainTab("code");
   };
 
-  const replayAnimation = () => {
-    setIsAutoPlay(true);
-    setTypedMsg1("");
-    setTypedMsg2("");
-    setVisibleStep(0);
-  };
-
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [models, setModels] = useState<any[]>(DEFAULT_MODELS);
@@ -1055,14 +1048,6 @@ export default function RagSearchPage() {
                     </button>
                   </div>
                   <div className="flex items-center gap-3 mt-4">
-                    <button
-                      onClick={replayAnimation}
-                      className="flex items-center gap-1.5 text-[10px] font-mono text-[#C8C7BA] hover:text-[#75bf00] bg-[#1a1a1a] border border-[#252525] hover:border-[#75bf00]/40 px-2 py-1 rounded transition-all cursor-pointer group"
-                      title="Replay Execution Sequence"
-                    >
-                      <Zap size={11} className={visibleStep < 7 ? "animate-spin text-[#75bf00]" : "text-[#75bf00] group-hover:rotate-12 transition-transform"} />
-                      <span>{visibleStep < 7 ? `Executing... (${visibleStep}/7)` : "Replay Sequence"}</span>
-                    </button>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
                       <span className="text-[10px] font-bold text-[#75bf00] tracking-widest uppercase">Live</span>
