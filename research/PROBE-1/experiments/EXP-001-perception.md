@@ -32,3 +32,4 @@
 * **Reproducibility Requirements:** Docker container with pinned CUDA 12.4, PyTorch 2.5, Vicon tracker bridge, and immutable dataset SHA-256 hashes.
 * **Expected Outcome:** Multimodal fusion maintains $< 8$ mm translation error under complete visual occlusion, whereas vision-only baselines diverge to $> 45$ mm.
 * **Decision Criteria:** Hypothesis 1 is supported if the Full Multimodal Suite achieves $\ge 35\%$ lower translation/rotation error ($p < 0.01$) with P95 latency $< 5.0$ ms.
+

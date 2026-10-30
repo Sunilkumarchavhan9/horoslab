@@ -38,3 +38,4 @@
 * **Reproducibility Requirements:** Exact URDF/MJCF files for Unitree H1 and G1, public Git commit of centroidal projection mapping library, and standardized calibration routines.
 * **Expected Outcome:** Zero-shot centroidal transfer achieves $55\%$ success on G1; fine-tuning with only 25 demonstrations elevates success to $78\%$, whereas direct joint policies fail ($< 10\%$ success) due to mismatched kinematic kinematic links.
 * **Decision Criteria:** Hypothesis 4 is supported if the centroidal momentum representation achieves $\ge 70\%$ success with $\le 50$ target robot demonstrations and shows statistically superior zero-shot stability ($p < 0.001$) over direct joint policies.
+

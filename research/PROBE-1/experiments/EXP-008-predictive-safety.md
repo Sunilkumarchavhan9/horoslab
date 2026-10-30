@@ -39,3 +39,4 @@
 * **Reproducibility Requirements:** Deterministic seed suite for obstacle trajectories, open-source C++ implementation of ProxSuite p-CBF filter, and logged sensor telemetry at 1 kHz.
 * **Expected Outcome:** Predictive CBF anticipates dynamic tipping and collision $80\text{ ms}$ earlier than reactive filters, reducing critical hardware violations from $28\%$ to $< 4\%$ with P99 solve time of $0.65\text{ ms}$.
 * **Decision Criteria:** Hypothesis 6 is supported if the predictive CBF supervisor reduces physical safety violations by $\ge 60\%$ relative to reactive baselines ($p < 0.001$) while maintaining false intervention rates $< 5\%$ and strict real-time determinism ($t_{\text{QP}} \le 1.0\text{ ms}$).
+

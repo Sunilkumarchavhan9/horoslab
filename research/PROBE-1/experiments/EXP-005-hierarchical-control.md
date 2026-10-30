@@ -39,3 +39,4 @@
 * **Reproducibility Requirements:** Pinned simulation config files with exact Isaac Sim 4.2 physics stepping parameters ($dt = 0.005\text{ s}$), real-time Linux kernel (PREEMPT_RT), and open-source EtherCAT master logging.
 * **Expected Outcome:** The $5\text{ Hz}$ high-level + $200\text{ Hz}$ low-level Cartesian impedance hierarchy achieves $> 90\%$ recovery rate, whereas monolithic $10\text{ Hz}$ policies fall in over $60\%$ of impact trials due to phase lag.
 * **Decision Criteria:** Architecture Candidate A/E hierarchical design is validated if the decoupled $5\text{ Hz} / 200\text{ Hz}$ controller demonstrates statistically superior disturbance recovery ($p < 0.01$) compared to monolithic baselines without degrading steady-state task completion accuracy.
+

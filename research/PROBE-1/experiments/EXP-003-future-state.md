@@ -32,3 +32,4 @@
 * **Reproducibility Requirements:** Pinned random seeds for rollout initialization; deterministic Isaac Sim physics stepper ($dt = 0.005$ s).
 * **Expected Outcome:** Unconstrained baselines drift to $\text{NFPE} \approx 32\text{--}45\%$ by step 50 with frequent object merging, while PROBE-1 maintains $\text{NFPE} \le 12.8\%$ with zero penetration.
 * **Decision Criteria:** Hypothesis 3 is supported if $\text{NFPE}(H=50) \le 0.150$ and penetration violations occur in $< 0.1\%$ of rollout steps ($p < 0.001$).
+

@@ -36,3 +36,4 @@
 * **Reproducibility Requirements:** Deterministic state logging, immutable sequence order of novel challenges, and serialized FAISS memory index files with timestamp verification.
 * **Expected Outcome:** Epistemic memory achieves $88\%$ one-shot mistake immunity on re-encountered obstacles with $0.0\%$ degradation on the 50 base tasks, while online LoRA updates suffer $14\%$ catastrophic forgetting on base tasks due to gradient interference.
 * **Decision Criteria:** Hypothesis 7 is supported if the non-parametric epistemic memory module achieves $\ge 85\%$ mistake immunity on identical re-encounters without gradient updates, while maintaining backward transfer degradation $\le 3\%$ ($p < 0.001$) and memory lookup latency $\le 2.0\text{ ms}$.
+

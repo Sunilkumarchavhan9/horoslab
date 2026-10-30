@@ -37,3 +37,4 @@
   * EXP-004a: Flow matching achieves $88.5\%$ success at P99 latency $= 7.8$ ms (vs. $215$ ms for OpenVLA and $62$ ms for Diffusion).
   * EXP-004b: Bilateral residual adaptation reaches $83.0\%$ success on 0.5 mm clearance pegs with only 2 hours of real data (vs. $22\%$ for zero-shot sim).
 * **Decision Criteria:** Supported if Flow Matching achieves $\ge 85\%$ success with P99 latency $< 10.0$ ms, and residual adaptation achieves $> 80\%$ success ($p < 0.01$).
+

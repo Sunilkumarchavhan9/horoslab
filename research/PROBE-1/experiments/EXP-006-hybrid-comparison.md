@@ -52,3 +52,4 @@
     2. Candidate E experiences $\ge 30\%$ fewer catastrophic slip/drop events.
     3. P95 end-to-end inference latency remains $\le 30.0\text{ ms}$.
   * **Otherwise (Fallback):** If Candidate E fails these criteria, the PROBE-1 architecture defaults to Candidate D (Continuous Flow Policy) or Candidate A (Hierarchical VLA), and world modeling is relegated to offline data synthesis rather than runtime policy inference.
+

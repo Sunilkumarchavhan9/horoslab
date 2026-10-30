@@ -31,3 +31,4 @@
 * **Reproducibility Requirements:** Raw load cell CSV traces, tactile video clips, and model weights archived with deterministic test scripts.
 * **Expected Outcome:** PROBE-1 detects impending slip $28\text{--}35$ ms before physical displacement occurs, eliminating drops during dynamic motion.
 * **Decision Criteria:** Hypothesis 2 is supported if grasp stability increases by $\ge 40\%$ and mean slip lead time is $\ge 25$ ms ($p < 0.01$) without crushing delicate objects.
+
