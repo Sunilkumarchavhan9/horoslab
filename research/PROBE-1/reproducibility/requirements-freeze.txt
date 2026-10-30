@@ -1,0 +1,19 @@
+# HOROS PROBE-1 Canonical Frozen Dependencies
+torch==2.5.1+cu124
+torchvision==0.20.1+cu124
+torchaudio==2.5.1+cu124
+transformers==4.46.2
+accelerate==1.1.1
+datasets==3.1.0
+huggingface-hub==0.26.2
+h5py==3.12.1
+zstandard==0.23.0
+proxsuite==0.6.4
+numpy==1.26.4
+scipy==1.14.1
+timm==1.0.11
+einops==0.8.0
+opencv-python-headless==4.10.0.84
+pydantic==2.9.2
+pytest==8.3.3
+pytest-asyncio==0.24.0

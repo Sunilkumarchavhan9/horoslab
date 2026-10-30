@@ -1,0 +1,53 @@
+{
+  "dataset_name": "PhysicalAI-Robotics-GR00T-Teleop-G1",
+  "source_repository": "https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-GR00T-Teleop-G1",
+  "pinned_commit_hash": "a78f30b2c89d81d227448378d3885e7836171ef9",
+  "content_tree_sha256": "e5b7c02418a66719b581db24b34b677a2889c2b3e89659b81b22db95c7aa77c1",
+  "license": "CC-BY-4.0",
+  "commercial_use_permitted": true,
+  "pretraining_tier": "Tier 1 (Immediately Accessible Real Data)",
+  "is_pretrain_eligible": true,
+  "robot_embodiment": "Unitree G1 Humanoid",
+  "total_episodes": 1000,
+  "approximate_duration_hours": 15.0,
+  "sensor_modalities": {
+    "head_rgb": {
+      "available": true,
+      "resolution": [224, 224, 3],
+      "frequency_hz": 30.0,
+      "channel_dtype": "uint8"
+    },
+    "wrist_left_rgb": {
+      "available": true,
+      "resolution": [224, 224, 3],
+      "frequency_hz": 30.0,
+      "channel_dtype": "uint8"
+    },
+    "wrist_right_rgb": {
+      "available": true,
+      "resolution": [224, 224, 3],
+      "frequency_hz": 30.0,
+      "channel_dtype": "uint8"
+    },
+    "joint_proprioception": {
+      "available": true,
+      "degrees_of_freedom": 29,
+      "frequency_hz": 100.0,
+      "channel_dtype": "float32"
+    },
+    "tactile_sensor_arrays": {
+      "available": false,
+      "availability_flag": 0.0,
+      "note": "Physical tactile array measurements not present in dataset"
+    },
+    "wrist_force_torque": {
+      "available": false,
+      "availability_flag": 0.0
+    }
+  },
+  "action_space": {
+    "chunk_horizon_steps": 32,
+    "action_dimension": 26,
+    "format": "delta_joint_position_plus_gripper_effort"
+  }
+}

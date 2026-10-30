@@ -1,0 +1,37 @@
+# Canonical HOROS PROBE-1 Reproducibility Container
+# Base Image: Ubuntu 22.04 LTS with CUDA 12.4.1 Development Toolchain
+# Immutable Base Image Digest: sha256:d8c3653158b4eb99f2a7db76efbc52df713f0a595cb07b0eb3c46e01bc6c07be
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04@sha256:d8c3653158b4eb99f2a7db76efbc52df713f0a595cb07b0eb3c46e01bc6c07be
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV TZ=UTC
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    git \
+    git-lfs \
+    curl \
+    ca-certificates \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libhdf5-dev \
+    pkg-config \
+    libeigen3-dev \
+    python3.11 \
+    python3.11-dev \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git lfs install
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+
+WORKDIR /workspace/probe1
+
+COPY requirements-freeze.txt /workspace/probe1/
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements-freeze.txt
+
+CMD ["/bin/bash"]

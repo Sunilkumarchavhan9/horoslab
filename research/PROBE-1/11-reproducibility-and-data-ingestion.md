@@ -66,15 +66,17 @@ To enforce intellectual property compliance and prevent data leakage:
 ## 3. Pinned Reproducibility Environment
 
 ### 3.1 Base Operating System & Hardware Specification
-* **Operating System:** Ubuntu 22.04.4 LTS / Ubuntu 24.04 LTS (x86_64 or aarch64).
-* **Kernel:** `Linux 6.8.0-45-generic` with `PREEMPT_RT` real-time tree patch.
-* **NVIDIA Driver:** Version `550.54.15` (or newer Enterprise Production Branch).
+* **Canonical Host OS:** Ubuntu 22.04.4 LTS (x86_64).
+* **Canonical Base Image:** `nvidia/cuda:12.4.1-devel-ubuntu22.04@sha256:d8c3653158b4eb99f2a7db76efbc52df713f0a595cb07b0eb3c46e01bc6c07be`
+* **Real-Time Host Kernel:** `Linux 6.8.0-45-generic` with `PREEMPT_RT` patch.
+* **NVIDIA Driver:** Version `550.54.15` (Data Center Production Branch).
 * **CUDA Toolkit:** Version `12.4.1` (cuDNN 9.1.0).
 
 ### 3.2 Standard Container Definition (`Dockerfile.probe1`)
 ```dockerfile
 # Canonical PROBE-1 Reproducibility Container
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+# Pinned Base Image Digest: sha256:d8c3653158b4eb99f2a7db76efbc52df713f0a595cb07b0eb3c46e01bc6c07be
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04@sha256:d8c3653158b4eb99f2a7db76efbc52df713f0a595cb07b0eb3c46e01bc6c07be
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -201,8 +203,9 @@ class GrootTeleopG1Dataset(Dataset):
         
         actions = torch.from_numpy(action_chunk).float()
 
-        # Tactile Mask (GR00T-Teleop-G1 lacks physical tactile arrays)
-        tactile_mask = torch.tensor(1.0) # 1.0 = Fully Masked Modality
+        # Tactile Availability Flag (GR00T-Teleop-G1 lacks physical tactile arrays)
+        # 0.0 = Modality NOT observed/available; downstream models MUST NOT ingest as active data.
+        tactile_available = torch.tensor(0.0) 
 
         return {
             "head_rgb": head_tensor,
@@ -210,7 +213,7 @@ class GrootTeleopG1Dataset(Dataset):
             "wrist_right_rgb": wrist_r_tensor,
             "proprioception": proprio,
             "action_chunk": actions,
-            "tactile_mask": tactile_mask
+            "tactile_available": tactile_available
         }
 ```
 
@@ -244,8 +247,8 @@ def test_groot_teleop_schema_integrity(dataset_path="/tmp/groot_teleop_g1"):
     assert sample["action_chunk"].shape == (32, 26), "Action chunk dimension mismatch."
     
     # 2. Modality Availability Verification
-    # Assert tactile is formally tracked as missing/masked in open dataset
-    assert sample["tactile_mask"] == 1.0, "Tactile mask must assert true for uninstrumented dataset."
+    # Assert tactile is formally tracked as unavailable (0.0) in open dataset
+    assert sample["tactile_available"] == 0.0, "Tactile availability must assert 0.0 (unavailable) for GR00T-Teleop-G1."
     
     # 3. Numerical Value Bounds
     assert torch.all(sample["head_rgb"] >= 0.0) and torch.all(sample["head_rgb"] <= 1.0)
@@ -374,3 +377,4 @@ With this specification finalized, the HOROS PROBE-1 engineering workflow is est
 2. **Modality Audit:** Strict masking assertions for uninstrumented tactile data.
 3. **EXP-001 Reproducibility:** Deterministic occlusion sweeps logging machine-readable JSON artifacts.
 4. **Foundation Pretraining Trigger:** The 3.8B MoE training run will remain gated until EXP-001 and EXP-002 baseline evaluation results are physically committed and reviewed.
+
