@@ -21,7 +21,7 @@ export function CalculatorResults({
   const [isSourcesOpen, setIsSourcesOpen] = useState(false);
   const [isShareBadgeOpen, setIsShareBadgeOpen] = useState(false);
   const [isConfigOpen, setIsConfigOpen] = useState(true);
-  
+
   const [activeModel, setActiveModel] = useState(model);
   const [activeGpu, setActiveGpu] = useState(gpu);
   const [activeQuant, setActiveQuant] = useState(quantization);
@@ -57,21 +57,21 @@ export function CalculatorResults({
     if (lName.match(/(\d+\.?\d*)b/)) {
       parameters = parseFloat(lName.match(/(\d+\.?\d*)b/)?.[1] || "15");
     }
-    
+
     let bytesPerParam = 2; // FP16/BF16
     if (activeQuant.includes("INT8") || activeQuant.includes("FP8")) bytesPerParam = 1;
     if (activeQuant.includes("INT4")) bytesPerParam = 0.5;
-    
+
     // Weights GB
     const weightsGB = parameters * bytesPerParam;
-    
+
     // KV Cache GB
     // Exact transformer shape: 28 layers, 8 KV heads, 128 head dim
     // = 28672 params per token * 2 bytes = 57344 bytes per token
     const ctx = parseInt(activeContext.replace(/,/g, "")) || 8192;
     const kvCacheBytes = ctx * 57344;
     const kvCacheGB = kvCacheBytes / Math.pow(1024, 3);
-    
+
     return {
       weights: weightsGB,
       kvCache: kvCacheGB,
@@ -83,7 +83,7 @@ export function CalculatorResults({
   const requiredGB = memReq.total.toFixed(1);
   const weightsGB = memReq.weights.toFixed(1);
   const kvCacheGB = memReq.kvCache.toFixed(1);
-  
+
   const numUnits = parseInt(activeUnits) || 1;
   const totalAvailableGB = gpuMem * numUnits;
   const usableGB = parseFloat((totalAvailableGB * 0.9).toFixed(1));
@@ -104,7 +104,7 @@ export function CalculatorResults({
   };
   const baseRate = Object.entries(baseRates).find(([k]) => activeGpu.includes(k))?.[1] || 1.0;
   const hourlyRate = baseRate * numUnits;
-  
+
   // Real Throughput Math (Bandwidth Ceiling)
   const bandwidthGBps: Record<string, number> = {
     "H100 SXM 80 GB": 3350,
@@ -315,7 +315,7 @@ export function CalculatorResults({
                 </p>
               </div>
             </div>
-            
+
             <div className="px-6 lg:px-8 py-8 border-t border-dashed border-[#333] flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-3xl font-medium text-[#F0EFE2]">{decodeCeiling.toLocaleString()} output tok/s</span>

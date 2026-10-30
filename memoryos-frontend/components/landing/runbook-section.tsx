@@ -35,7 +35,7 @@ const ENGINES = [
 
 function EngineScroller() {
   const [index, setIndex] = useState(0);
-  
+
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((i) => (i + 1) % ENGINES.length);
@@ -45,7 +45,7 @@ function EngineScroller() {
 
   return (
     <div className="mt-1.5 mb-1.5 h-10 overflow-hidden relative inline-block align-middle">
-      <div 
+      <div
         className="flex flex-col transition-transform duration-500 ease-in-out"
         style={{ transform: `translateY(-${index * 40}px)` }}
       >
@@ -107,7 +107,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
         <div className="relative p-6 lg:p-10 flex flex-col justify-start h-[580px] font-sans text-[#cccccc] z-10 w-full">
           {/* Inner dashed bounding box for the dashboard content */}
           <div className="w-full flex flex-col border border-dashed border-[#333333] bg-[#121212] rounded-[1px]">
-            
+
             {/* Header */}
             <div className="flex items-start justify-between p-5 lg:p-6 border-b border-dashed border-[#333333]">
               <div className="flex items-start gap-4">
@@ -149,7 +149,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
 
               {/* 2-Column Grid for Phases */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-4">
-                
+
                 {/* Column 1 */}
                 <div className="space-y-4">
                   <PhaseItem num="01" title="Input Normalization" desc="Process text, telemetry & sensors" status="ready" />

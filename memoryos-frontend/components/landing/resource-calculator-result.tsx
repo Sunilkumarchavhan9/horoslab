@@ -210,18 +210,18 @@ export function ResourceCalculatorResult({
         </div>
 
         <div className="p-6 flex flex-col gap-4">
-          <button 
+          <button
             onClick={() => setShowChartMeaning(!showChartMeaning)}
             className="text-[13px] md:text-[14px] lg:text-[15px] text-[#C8C7BA] font-medium flex items-center gap-2 hover:text-[#C8C7BA] transition-colors w-fit"
           >
-            <Plus 
-              size={16} 
+            <Plus
+              size={16}
               strokeWidth={4}
-              className={`text-[#76b900] transition-transform duration-300 ease-in-out ${showChartMeaning ? 'rotate-45' : 'rotate-0'}`} 
+              className={`text-[#76b900] transition-transform duration-300 ease-in-out ${showChartMeaning ? 'rotate-45' : 'rotate-0'}`}
             />
             What this chart means
           </button>
-          
+
           {showChartMeaning && (
             <p className="text-[12px] md:text-[13px] lg:text-[14px] text-[#C8C7BA] max-w-2xl pl-6">
               These are GPU-hour rental prices only. A monthly serving total requires throughput evidence and remains absent.
@@ -244,7 +244,7 @@ export function ResourceCalculatorResult({
             <Copy size={12} /> Copy command
           </button>
         </div>
-        
+
         <div className="p-6 overflow-x-auto bg-[#0a0a0a]">
           <code className="text-[11px] md:text-[12px] lg:text-[13px] text-[#C8C7BA] whitespace-nowrap font-mono">
             vllm serve 'Qwen/{model}' --dtype float16 --tensor-parallel-size 1 --max-model-len 8192 --gpu-memory-utilization 0.9
@@ -253,7 +253,7 @@ export function ResourceCalculatorResult({
       </div>
 
       <div className="border border-dashed border-[#333] mb-12 p-4 flex flex-col gap-4">
-        <button 
+        <button
           onClick={() => setShowOptimization(!showOptimization)}
           className="text-[12px] md:text-[13px] lg:text-[14px] text-[#888] hover:text-[#C8C7BA] font-medium flex items-center gap-2 transition-colors w-fit"
         >
@@ -283,7 +283,7 @@ export function ResourceCalculatorResult({
               <p className="text-[11px] md:text-[12px] lg:text-[13px] text-[#888]">12 sources, 6 caveats</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => setShowEvidence(!showEvidence)}
             className="text-[10px] md:text-[11px] lg:text-[12px] text-[#C8C7BA] border border-[#333] rounded-sm px-3 py-1.5 flex items-center gap-2 hover:bg-[#222] transition-colors shrink-0"
           >
@@ -352,7 +352,7 @@ export function ResourceCalculatorResult({
             <button className="border border-dashed border-[#333] px-4 py-2 rounded-sm flex items-center gap-2 text-[11px] md:text-[12px] lg:text-[13px] text-[#C8C7BA] hover:bg-[#222] w-fit bg-transparent">
               <Copy size={14} /> Copy link
             </button>
-            
+
             <div className="flex flex-col gap-2 mt-2">
               <div className="flex items-start gap-3">
                 <TriangleAlert size={20} className="text-[#888] shrink-0 mt-0.5" />
@@ -364,7 +364,7 @@ export function ResourceCalculatorResult({
             </div>
 
             <div className="mt-4 bg-[#262625] border border-dashed border-[#333] p-4 flex flex-col gap-2">
-              <button 
+              <button
                 onClick={() => setShowBadge(!showBadge)}
                 className="text-[12px] md:text-[13px] lg:text-[14px] text-[#C8C7BA] font-medium flex items-center gap-2 hover:text-[#C8C7BA] transition-colors w-fit"
               >
@@ -435,7 +435,7 @@ export function ResourceCalculatorResult({
       </div>
 
       <div className="mt-16 pt-8">
-        <button 
+        <button
           onClick={() => setShowConfig(!showConfig)}
           className="text-[12px] md:text-[13px] lg:text-[14px] text-[#888] font-medium flex items-center gap-2 hover:text-[#C8C7BA] transition-colors"
         >
@@ -445,48 +445,48 @@ export function ResourceCalculatorResult({
         {showConfig && (
           <div className="mt-4 border border-dashed border-[#333] bg-[#1a1a1a] grid grid-cols-1 md:grid-cols-2">
             <div className="p-6 border-b md:border-b border-dashed border-[#333] md:border-r">
-               <div className="flex flex-col gap-1">
-                 <Box className="text-[#888] mb-1" size={16} />
-                 <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Model</span>
-                 <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">Qwen/{model}</span>
-               </div>
+              <div className="flex flex-col gap-1">
+                <Box className="text-[#888] mb-1" size={16} />
+                <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Model</span>
+                <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">Qwen/{model}</span>
+              </div>
             </div>
             <div className="p-6 border-b border-dashed border-[#333]">
-               <div className="flex flex-col gap-1">
-                 <Boxes className="text-[#888] mb-1" size={16} />
-                 <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">GPU</span>
-                 <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">{gpu}</span>
-               </div>
+              <div className="flex flex-col gap-1">
+                <Boxes className="text-[#888] mb-1" size={16} />
+                <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">GPU</span>
+                <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">{gpu}</span>
+              </div>
             </div>
-            
+
             <div className="p-6 border-b border-dashed border-[#333] md:border-r">
-               <div className="flex flex-col gap-1">
-                 <Link2 className="text-[#888] mb-1" size={16} />
-                 <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Requests / Day</span>
-                 <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">50,000</span>
-               </div>
+              <div className="flex flex-col gap-1">
+                <Link2 className="text-[#888] mb-1" size={16} />
+                <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Requests / Day</span>
+                <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">50,000</span>
+              </div>
             </div>
             <div className="p-6 border-b border-dashed border-[#333]">
-               <div className="flex flex-col gap-1">
-                 <Layers className="text-[#888] mb-1" size={16} />
-                 <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">GPU Count</span>
-                 <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">1</span>
-               </div>
+              <div className="flex flex-col gap-1">
+                <Layers className="text-[#888] mb-1" size={16} />
+                <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">GPU Count</span>
+                <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">1</span>
+              </div>
             </div>
-            
+
             <div className="p-6 border-b md:border-b-0 border-dashed border-[#333] md:border-r">
-               <div className="flex flex-col gap-1">
-                 <Binary className="text-[#888] mb-1" size={16} />
-                 <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Quantization</span>
-                 <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">FP16</span>
-               </div>
+              <div className="flex flex-col gap-1">
+                <Binary className="text-[#888] mb-1" size={16} />
+                <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Quantization</span>
+                <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">FP16</span>
+              </div>
             </div>
             <div className="p-6">
-               <div className="flex flex-col gap-1">
-                 <Activity className="text-[#888] mb-1" size={16} />
-                 <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Tokens/Request</span>
-                 <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">500 in, 500 out</span>
-               </div>
+              <div className="flex flex-col gap-1">
+                <Activity className="text-[#888] mb-1" size={16} />
+                <span className="text-[#888] text-[9px] md:text-[10px] lg:text-[11px] font-medium tracking-wider uppercase">Tokens/Request</span>
+                <span className="text-[#C8C7BA] text-[12px] md:text-[13px] lg:text-[14px] font-medium">500 in, 500 out</span>
+              </div>
             </div>
           </div>
         )}

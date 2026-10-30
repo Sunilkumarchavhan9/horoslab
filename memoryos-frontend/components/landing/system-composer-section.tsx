@@ -141,8 +141,8 @@ export function SystemComposerSection() {
                     {system.id}
                   </div>
                   <div className={`text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[2px] border ${system.status === 'selected' ? 'border-[#75bf00]/50 text-[#75bf00] bg-[#75bf00]/10' :
-                      system.status === 'shadow' ? 'border-[#f59e0b]/50 text-[#f59e0b] bg-[#f59e0b]/10' :
-                        'border-[#333] text-[#666] bg-[#1a1a1a]'
+                    system.status === 'shadow' ? 'border-[#f59e0b]/50 text-[#f59e0b] bg-[#f59e0b]/10' :
+                      'border-[#333] text-[#666] bg-[#1a1a1a]'
                     }`}>
                     {system.status}
                   </div>

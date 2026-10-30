@@ -658,12 +658,12 @@ const HEADER_TOP_DOT_POSITIONS = ["18%", "calc(18% + 120px)", "calc(82% - 120px)
 // Exact 100% Mathematically Aligned Vertical Grid Positions:
 // Outer (18%) | Inner (18%+120px) | Card 1-2 (34%+60px) | Card 2-3 (50%) | Card 3-4 (66%-60px) | Inner (82%-120px) | Outer (82%)
 const ALL_VERTICAL_POSITIONS = [
-  "18%", 
-  "calc(18% + 120px)", 
-  "calc(34% + 60px)", 
-  "50%", 
-  "calc(66% - 60px)", 
-  "calc(82% - 120px)", 
+  "18%",
+  "calc(18% + 120px)",
+  "calc(34% + 60px)",
+  "50%",
+  "calc(66% - 60px)",
+  "calc(82% - 120px)",
   "82%"
 ];
 

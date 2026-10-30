@@ -8,15 +8,15 @@ import { HorosLogo, ModalLogo, RunPodLogo, K8sFaviconLogo, AMDLogo, AWSLogo, Nvi
 function HorizontalDivider({ position = "top", infinite = false }: { position?: "top" | "bottom", infinite?: boolean }) {
   return (
     <>
-      <div 
-        className={`absolute ${position}-0 ${infinite ? "left-1/2 -translate-x-1/2 w-[100vw]" : "left-0 w-full"} h-[1px] border-t border-dashed border-[#333] pointer-events-none z-0`} 
+      <div
+        className={`absolute ${position}-0 ${infinite ? "left-1/2 -translate-x-1/2 w-[100vw]" : "left-0 w-full"} h-[1px] border-t border-dashed border-[#333] pointer-events-none z-0`}
       />
       {/* Corner intersection dots at left-0 and right-0 of the container */}
-      <div 
-        className={`absolute ${position === "top" ? "top-[-2.5px]" : "bottom-[-2.5px]"} left-[-2.5px] w-[5px] h-[5px] bg-[#555] rounded-[1px] z-20 pointer-events-none`} 
+      <div
+        className={`absolute ${position === "top" ? "top-[-2.5px]" : "bottom-[-2.5px]"} left-[-2.5px] w-[5px] h-[5px] bg-[#555] rounded-[1px] z-20 pointer-events-none`}
       />
-      <div 
-        className={`absolute ${position === "top" ? "top-[-2.5px]" : "bottom-[-2.5px]"} right-[-2.5px] w-[5px] h-[5px] bg-[#555] rounded-[1px] z-20 pointer-events-none`} 
+      <div
+        className={`absolute ${position === "top" ? "top-[-2.5px]" : "bottom-[-2.5px]"} right-[-2.5px] w-[5px] h-[5px] bg-[#555] rounded-[1px] z-20 pointer-events-none`}
       />
     </>
   );
@@ -25,7 +25,7 @@ function HorizontalDivider({ position = "top", infinite = false }: { position?: 
 export function DeploymentOptionsSection() {
   return (
     <section className="relative w-full bg-[#151515] font-sans overflow-hidden flex justify-center">
-      
+
       {/* Outer Global Lines to match the Hardware section (6% and 94%) */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
@@ -34,7 +34,7 @@ export function DeploymentOptionsSection() {
 
       {/* Main Blueprint Container (aligned with the 120px inward margin on both sides) */}
       <div className="relative z-10 w-[92%] sm:w-[88%] lg:w-[calc(64%_-_240px)] flex flex-col pb-12 lg:pb-16">
-        
+
         {/* Absolute Bottom Infinite Horizontal Line */}
         <HorizontalDivider position="bottom" infinite={true} />
 
@@ -60,7 +60,7 @@ export function DeploymentOptionsSection() {
           {/* 2. The Constant Section */}
           <div className="w-full p-5 lg:p-10 relative z-10">
             <HorizontalDivider position="top" />
-            
+
             <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-3">
               The Constant
             </div>
@@ -78,7 +78,7 @@ export function DeploymentOptionsSection() {
               {/* Inner vertical alignment dashed line */}
               <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333] group-hover:border-[#75bf00] transition-colors duration-300" />
               <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] group-hover:bg-[#75bf00] rounded-[1px] transition-colors duration-300" />
-              
+
               <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-8 relative z-10">
                 Managed
               </div>
@@ -98,7 +98,7 @@ export function DeploymentOptionsSection() {
               {/* Inner vertical alignment dashed line */}
               <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333] group-hover:border-[#75bf00] transition-colors duration-300" />
               <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] group-hover:bg-[#75bf00] rounded-[1px] transition-colors duration-300" />
-              
+
               <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-8 relative z-10">
                 Your Cloud
               </div>
@@ -130,7 +130,7 @@ export function DeploymentOptionsSection() {
               {/* Inner vertical alignment dashed line */}
               <div className="absolute top-0 bottom-0 left-5 lg:left-10 w-[1px] border-l border-dashed border-[#333] group-hover:border-[#75bf00] transition-colors duration-300" />
               <div className="absolute top-[-2.5px] left-[calc(1.25rem-2.5px)] lg:left-[calc(2.5rem-2.5px)] w-[5px] h-[5px] bg-[#555] group-hover:bg-[#75bf00] rounded-[1px] transition-colors duration-300" />
-              
+
               <div className="text-[#75bf00] text-[10px] font-bold uppercase tracking-widest mb-8 relative z-10">
                 Your Hardware
               </div>
@@ -156,7 +156,7 @@ export function DeploymentOptionsSection() {
           <div className="w-full p-6 lg:p-8 flex items-center justify-center relative z-10 hover:bg-white/[0.04] transition-colors cursor-pointer group">
             <HorizontalDivider position="top" />
             <HorizontalDivider position="bottom" />
-            
+
             <span className="text-[13px] font-medium text-[#F0EFE2] group-hover:text-[#F0EFE2] transition-colors flex items-center gap-2 relative z-10">
               Read the security page <ArrowRight size={14} className="text-[#75bf00] opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
             </span>

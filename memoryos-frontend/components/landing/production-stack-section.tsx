@@ -27,7 +27,7 @@ const MODELS = [
 
 function ModelScroller() {
   const [index, setIndex] = useState(0);
-  
+
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((i) => (i + 1) % MODELS.length);
@@ -37,7 +37,7 @@ function ModelScroller() {
 
   return (
     <div className="mt-1.5 mb-1.5 h-10 overflow-hidden relative inline-block align-middle">
-      <div 
+      <div
         className="flex flex-col transition-transform duration-500 ease-in-out"
         style={{ transform: `translateY(-${index * 40}px)` }}
       >

@@ -537,7 +537,7 @@ export function ModelsCatalogView({
   return (
     <div className="w-full bg-transparent min-h-screen text-[#F0EFE2] font-sans pb-32">
       <div className="max-w-[1320px] mx-auto px-6 pt-10">
-        
+
         {/* Header Block matching Image 1 */}
         <div className="flex flex-col">
           <div className="flex items-center">

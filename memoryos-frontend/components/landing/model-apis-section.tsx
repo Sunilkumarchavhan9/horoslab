@@ -100,11 +100,10 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                     <button
                       type="button"
                       onClick={() => setSelectedModel("qwen")}
-                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${
-                        selectedModel === "qwen"
+                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${selectedModel === "qwen"
                           ? "bg-white/10 text-[#F0EFE2] border border-white/20 font-semibold"
                           : "text-[#888] hover:text-[#ccc] border border-transparent"
-                      }`}
+                        }`}
                     >
                       <QwenLogo size={12} />
                       Qwen 2.5 Coder (Mesh)
@@ -112,11 +111,10 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
                     <button
                       type="button"
                       onClick={() => setSelectedModel("deepseek")}
-                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${
-                        selectedModel === "deepseek"
+                      className={`text-[11px] font-mono font-medium px-2.5 py-1 rounded-[2px] transition-colors flex items-center gap-1.5 cursor-pointer ${selectedModel === "deepseek"
                           ? "bg-white/10 text-[#F0EFE2] border border-white/20 font-semibold"
                           : "text-[#888] hover:text-[#ccc] border border-transparent"
-                      }`}
+                        }`}
                     >
                       <DeepSeekLogo size={12} />
                       DeepSeek V4 Flash (Mesh)

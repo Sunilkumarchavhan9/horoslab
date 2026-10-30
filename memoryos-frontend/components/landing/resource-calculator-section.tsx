@@ -94,7 +94,7 @@ function ModelDropdown({ value, onChange }: any) {
         const query = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : "";
         const res = await fetch(`https://huggingface.co/api/models?limit=20&sort=downloads&direction=-1${query}`);
         const data = await res.json();
-        
+
         const formattedModels = data.map((m: any) => ({
           name: m.id,
           desc: [m.library_name, m.pipeline_tag].filter(Boolean).join(", ") || "model",
@@ -138,53 +138,54 @@ function ModelDropdown({ value, onChange }: any) {
         <div className="absolute top-[calc(100%+4px)] left-0 right-0 w-[480px] bg-[#151515] border border-[#333] rounded-[2px] z-50 shadow-2xl flex flex-col">
           <div className="p-3 border-b border-[#333]">
             <div className="relative flex items-center">
-               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                 <HuggingFaceLogo size={14} />
-               </div>
-               <input 
-                 autoFocus
-                 type="text" 
-                 placeholder="Search Hugging Face models or paste a repo id..."
-                 className="w-full bg-[#202020] border border-[#333] rounded-[2px] py-2.5 pl-9 pr-3 text-[13px] text-[#F0EFE2] focus:outline-none focus:border-[#555]"
-                 value={searchQuery}
-                 onChange={e => setSearchQuery(e.target.value)}
-               />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <HuggingFaceLogo size={14} />
+              </div>
+              <input
+                autoFocus
+                type="text"
+                placeholder="Search Hugging Face models or paste a repo id..."
+                className="w-full bg-[#202020] border border-[#333] rounded-[2px] py-2.5 pl-9 pr-3 text-[13px] text-[#F0EFE2] focus:outline-none focus:border-[#555]"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
-          
+
           <div className="p-3">
-             <div className="text-[11px] font-bold text-[#888] flex items-center gap-1.5 mb-2 uppercase tracking-wider">
-               <HuggingFaceLogo size={12} /> {searchQuery ? 'Search Results' : 'Popular on HuggingFace'} <span className="text-[#555] font-normal lowercase tracking-normal">{models.length}</span>
-               {isLoading && <RefreshCw size={10} className="animate-spin text-[#666] ml-2" />}
-             </div>
-             <div className="max-h-[300px] overflow-y-auto flex flex-col gap-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#444 #151515' }}>
-               {models.map(model => {
-                 const BrandLogo = getModelBrandLogo(model.name);
-                 return (
-                 <div
-                   key={model.name}
-                   onClick={() => { onChange(model.name); setIsOpen(false); }}
-                   className="flex items-center justify-between p-2 rounded-[2px] cursor-pointer hover:bg-[#202020] transition-colors"
-                 >
-                   <div className="flex items-start gap-3 overflow-hidden">
-                     <BrandLogo size={18} className="mt-0.5 shrink-0" />
-                     <div className="flex flex-col overflow-hidden">
-                       <span className="text-[13px] font-bold text-[#F0EFE2] truncate">{model.name}</span>
-                       <span className="text-[11px] text-[#888] truncate">{model.desc}</span>
-                     </div>
-                   </div>
-                   <div className="flex items-center gap-2 shrink-0 ml-4">
-                     <div className="flex items-center gap-1 text-[#888] border border-[#333] rounded-[2px] px-1.5 py-0.5 text-[10px]">
-                       <Download size={10} /> {model.downloads}
-                     </div>
-                     <div className="flex items-center gap-1 text-[#888] border border-[#333] rounded-[2px] px-1.5 py-0.5 text-[10px]">
-                       <Heart size={10} /> {model.likes}
-                     </div>
-                     <ExternalLink size={12} className="text-[#666] hover:text-[#ccc]" />
-                   </div>
-                 </div>
-               )})}
-             </div>
+            <div className="text-[11px] font-bold text-[#888] flex items-center gap-1.5 mb-2 uppercase tracking-wider">
+              <HuggingFaceLogo size={12} /> {searchQuery ? 'Search Results' : 'Popular on HuggingFace'} <span className="text-[#555] font-normal lowercase tracking-normal">{models.length}</span>
+              {isLoading && <RefreshCw size={10} className="animate-spin text-[#666] ml-2" />}
+            </div>
+            <div className="max-h-[300px] overflow-y-auto flex flex-col gap-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#444 #151515' }}>
+              {models.map(model => {
+                const BrandLogo = getModelBrandLogo(model.name);
+                return (
+                  <div
+                    key={model.name}
+                    onClick={() => { onChange(model.name); setIsOpen(false); }}
+                    className="flex items-center justify-between p-2 rounded-[2px] cursor-pointer hover:bg-[#202020] transition-colors"
+                  >
+                    <div className="flex items-start gap-3 overflow-hidden">
+                      <BrandLogo size={18} className="mt-0.5 shrink-0" />
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="text-[13px] font-bold text-[#F0EFE2] truncate">{model.name}</span>
+                        <span className="text-[11px] text-[#888] truncate">{model.desc}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 ml-4">
+                      <div className="flex items-center gap-1 text-[#888] border border-[#333] rounded-[2px] px-1.5 py-0.5 text-[10px]">
+                        <Download size={10} /> {model.downloads}
+                      </div>
+                      <div className="flex items-center gap-1 text-[#888] border border-[#333] rounded-[2px] px-1.5 py-0.5 text-[10px]">
+                        <Heart size={10} /> {model.likes}
+                      </div>
+                      <ExternalLink size={12} className="text-[#666] hover:text-[#ccc]" />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
       )}
@@ -235,7 +236,7 @@ export function ResourceCalculatorSection() {
 
   return (
     <section id="economics-cost" className="w-full relative z-10 text-sans">
-      
+
       {/* Static Header - Inside Constrained Container */}
       <div className="w-[88%] md:w-[calc(64%_-_240px)] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515]">
         <div className="px-6 lg:px-8 py-16 md:py-24">
@@ -248,7 +249,7 @@ export function ResourceCalculatorSection() {
                 Start with a Hugging Face model, GPU, and real traffic shape. The result keeps fit, utilization, idle capacity, provider dates, and every caveat visible.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-2 border border-dashed border-[#333] w-full lg:w-[420px] shrink-0 bg-[#151515]">
               <div className="p-5 flex flex-col gap-3 border-r border-b border-dashed border-[#333]">
                 <Cpu size={16} className="text-[#888]" />
@@ -286,7 +287,7 @@ export function ResourceCalculatorSection() {
       {/* Full-width Divider & Logo between Header and Form */}
       <div className="w-full relative z-20">
         <div className="absolute left-0 right-0 top-0 border-t border-dashed border-[#333]" />
-        
+
         {/* Crosses at intersections */}
         <div className="absolute hidden md:block left-[14%] lg:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
         <div className="absolute hidden md:block left-[86%] lg:left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
@@ -300,11 +301,11 @@ export function ResourceCalculatorSection() {
       </div>
 
       <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515]">
-        
+
         {/* Main Calculator Area */}
         <div className="px-6 lg:px-8 py-12 md:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8">
-            
+
             {/* Left Panel: Configure Workload */}
             <div className="border border-dashed border-[#333] flex flex-col bg-[#151515]">
               <div className="p-6 md:p-8 border-b border-dashed border-[#333]">
@@ -316,9 +317,9 @@ export function ResourceCalculatorSection() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="p-6 md:p-8 flex flex-col gap-6 md:gap-8 text-[13px]">
-                
+
                 {/* Row 1: Hugging Face model */}
                 <div className="flex flex-col gap-3 relative z-30">
                   <label className="text-[11px] font-semibold text-[#ccc] flex items-center gap-1.5">
@@ -384,7 +385,7 @@ export function ResourceCalculatorSection() {
                   <p className="text-[10px] text-[#777] leading-tight">Maximum combined prompt and generated tokens accepted by the server. This is capacity, not average request length.</p>
                 </div>
               </div>
-              
+
               <div className="p-6 md:p-8 border-t border-dashed border-[#333]">
                 <button onClick={handleCalculate} className="group bg-[#76b900] hover:bg-[#86dc00] text-black font-semibold text-[13px] px-4 py-2.5 flex items-center gap-2 transition-colors rounded-[2px] w-fit">
                   <Calculator size={14} /> Calculate this config <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform duration-200" />
@@ -403,28 +404,27 @@ export function ResourceCalculatorSection() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="p-6 md:p-8 flex flex-col gap-8">
                 <p className="text-[13px] text-[#ccc] leading-relaxed">
                   Derived utilization and idle share appear only after the engine has a throughput source. They are never shown as zero or as empty numeric placeholders.
                 </p>
-                
+
                 <div className="flex flex-col gap-4 mt-2">
                   <div className="flex justify-between items-end">
                     <span className="text-[12px] text-[#ccc] font-medium">Utilization assumption</span>
                     <span className="text-[28px] text-[#F0EFE2] font-semibold leading-none">{activeUtilization}</span>
                   </div>
-                  
+
                   <div className="grid grid-cols-4 border border-dashed border-[#333] rounded-[2px] overflow-hidden">
                     {["10%", "30%", "60%", "90%"].map((percent) => (
                       <button
                         key={percent}
                         onClick={() => setActiveUtilization(percent)}
-                        className={`py-2.5 text-[12px] font-medium transition-colors ${
-                          activeUtilization === percent
+                        className={`py-2.5 text-[12px] font-medium transition-colors ${activeUtilization === percent
                             ? "bg-[#76b900] text-black"
                             : "text-[#888] hover:text-[#ccc] border-l border-dashed border-[#333] first:border-l-0"
-                        }`}
+                          }`}
                       >
                         {percent}
                       </button>
@@ -506,7 +506,7 @@ function BrowseResultsAccordion() {
   return (
     <div className="mt-16 w-full border-t border-b border-dashed border-[#333] bg-[#151515]">
       {isMainOpen ? (
-        <div 
+        <div
           className="p-6 md:p-8 flex justify-between items-start border-b border-dashed border-[#333] cursor-pointer hover:bg-[#1a1a1a] transition-colors"
           onClick={() => setIsMainOpen(false)}
         >
@@ -521,7 +521,7 @@ function BrowseResultsAccordion() {
           </button>
         </div>
       ) : (
-        <div 
+        <div
           className="p-6 md:p-8 flex justify-between items-center cursor-pointer hover:bg-[#1a1a1a] transition-colors"
           onClick={() => setIsMainOpen(true)}
         >
@@ -534,40 +534,40 @@ function BrowseResultsAccordion() {
 
       {/* Accordion List */}
       {isMainOpen && (
-      <div className="flex flex-col">
-        {BROWSE_MODELS.map((model, idx) => {
-          const isOpen = openIndex === idx;
-          return (
-            <div key={model} className="border-b border-dashed border-[#333] last:border-b-0">
-              <div 
-                className="py-3 px-6 md:px-8 flex justify-between items-center cursor-pointer hover:bg-[#1a1a1a] transition-colors"
-                onClick={() => setOpenIndex(isOpen ? null : idx)}
-              >
-                <span className="text-[13px] font-medium text-[#F0EFE2]">{model}</span>
-                <button className="text-[#76b900] hover:text-[#86dc00] transition-colors text-[16px] leading-none mb-0.5">
-                  {isOpen ? "×" : "+"}
-                </button>
-              </div>
-              
-              {isOpen && (
-                <div className="p-6 md:p-8 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8">
-                  {GPU_RESULTS.map((gpu) => {
-                    const requiredGB = model.includes("0.5B") ? 1.3 : (model.includes("7B") || model.includes("8B") || model.includes("9B") ? 14.5 : (model.includes("14B") ? 28.0 : (model.includes("30B") || model.includes("32B") ? 64.0 : 140.0)));
-                    return (
-                      <div key={gpu.name} className="flex flex-col">
-                        <span className="text-[12px] font-medium text-[#ccc] inline-block border-b border-[#444] pb-[3px] w-fit">
-                          {gpu.name}: {requiredGB} GB required, {gpu.avail.toFixed(1)} GB available
-                        </span>
-                      </div>
-                    );
-                  })}
+        <div className="flex flex-col">
+          {BROWSE_MODELS.map((model, idx) => {
+            const isOpen = openIndex === idx;
+            return (
+              <div key={model} className="border-b border-dashed border-[#333] last:border-b-0">
+                <div
+                  className="py-3 px-6 md:px-8 flex justify-between items-center cursor-pointer hover:bg-[#1a1a1a] transition-colors"
+                  onClick={() => setOpenIndex(isOpen ? null : idx)}
+                >
+                  <span className="text-[13px] font-medium text-[#F0EFE2]">{model}</span>
+                  <button className="text-[#76b900] hover:text-[#86dc00] transition-colors text-[16px] leading-none mb-0.5">
+                    {isOpen ? "×" : "+"}
+                  </button>
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    )}
+
+                {isOpen && (
+                  <div className="p-6 md:p-8 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8">
+                    {GPU_RESULTS.map((gpu) => {
+                      const requiredGB = model.includes("0.5B") ? 1.3 : (model.includes("7B") || model.includes("8B") || model.includes("9B") ? 14.5 : (model.includes("14B") ? 28.0 : (model.includes("30B") || model.includes("32B") ? 64.0 : 140.0)));
+                      return (
+                        <div key={gpu.name} className="flex flex-col">
+                          <span className="text-[12px] font-medium text-[#ccc] inline-block border-b border-[#444] pb-[3px] w-fit">
+                            {gpu.name}: {requiredGB} GB required, {gpu.avail.toFixed(1)} GB available
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

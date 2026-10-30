@@ -25,7 +25,7 @@ export function FooterCtaSection() {
 
         {/* Top Infinite Horizontal Line to separate from FAQ section */}
         <div className="absolute top-0 left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
-        
+
         {/* Crosses at intersections */}
         <div className="absolute hidden md:block left-[14%] lg:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>
         <div className="absolute hidden md:block left-[86%] lg:left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>

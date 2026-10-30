@@ -490,7 +490,7 @@ export function ModelDetailView({
   return (
     <div className="w-full bg-transparent min-h-screen text-[#F0EFE2] font-sans pb-32">
       <div className="max-w-[1120px] mx-auto px-6 pt-8">
-        
+
         {/* Navigation Breadcrumb / Back button */}
         <button
           onClick={onBack}
@@ -625,8 +625,8 @@ export function ModelDetailView({
                       line.startsWith("#") || line.startsWith("//")
                         ? "text-[#777]"
                         : line.includes("https://")
-                        ? "text-[#93c5fd]"
-                        : "text-[#eee]"
+                          ? "text-[#93c5fd]"
+                          : "text-[#eee]"
                     }
                   >
                     {line}
