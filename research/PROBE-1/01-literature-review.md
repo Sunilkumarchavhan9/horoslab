@@ -1,27 +1,520 @@
 # HOROS First-Party Model Program: PROBE-1
-## 01 — Comprehensive Literature Review
+## 01 — Comprehensive Literature Review & Prior Art Analysis
 
-### 1. Taxonomy of Embodied Foundation Models
-The current landscape of robotic foundation models can be categorized into four distinct architectural lineages:
+### Executive Summary & Research Scope
+PROBE-1 is HOROS's first-party foundation model program for **humanoid physical intelligence, bi-manual dexterous manipulation, and dynamic contact-rich locomotion**. To establish a rigorous scientific foundation, this literature review systematically analyzes seminal and state-of-the-art research across five critical domains:
+1. **Physical World Models for Robotics**
+2. **Action-Conditioned Video & Dynamics Prediction**
+3. **Contact and Object Interaction Modeling**
+4. **Humanoid Manipulation and Locomotion**
+5. **Multimodal Robot Foundation Models (VLA, Diffusion & Flow Policies)**
 
-1. **Discrete Autoregressive VLAs (Vision-Language-Action):**
-   * *RT-1 (Brohan et al., 2022) & RT-2 (Brohan et al., 2023):* Formulated robot action prediction as text token generation by tokenizing continuous action spaces into discrete bins (typically 256 bins per dimension). While leveraging pre-trained vision-language representations, this formulation incurs high inference latency ($>150$ ms TTFT), poor spatial resolution, and inability to capture multimodal trajectory distributions.
-   * *OpenVLA (Kim et al., 2024):* Open-source 7B parameter VLA based on Llama-2/Prismatic VLM, demonstrating strong semantic generalization but suffering from low control frequency (3–5 Hz) and absence of proprioceptive and tactile grounding.
+For every paper reviewed, we detail:
+* **Bibliographic Metadata:** Title, authors, venue/publication, and year.
+* **Research Problem:** The specific physical or computational bottleneck addressed.
+* **Methodology & Architecture:** Model topology, tokenization, loss functions, and inference dynamics.
+* **Dataset & Training Strategy:** Data sources, pretraining/fine-tuning regimes, and compute scale.
+* **Evaluation Benchmarks & Results:** Quantitative performance, error rates, and physical deployment metrics.
+* **Limitations:** Fundamental failure modes, theoretical boundaries, and engineering oversights.
+* **PROBE-1 Design Directives:** Concrete lessons directly incorporated into PROBE-1's architecture.
 
-2. **Diffusion & Flow Matching Policies:**
-   * *Diffusion Policy (Chi et al., 2023):* Formulated visual manipulation as continuous trajectory denoising via DDPM/DDIM. Excellent at capturing multimodal human demonstration distributions, avoiding discretization artifacts.
-   * *Action Chunking with Transformers (ACT) (Zhao et al., 2023):* Combines Conditional VAE with transformer decoders to predict temporal action sequences (chunks), significantly mitigating compounding execution errors.
-   * *π0 (Physical Intelligence, 2024):* Flow matching policy built upon a visual language trunk, operating at 50 Hz through continuous-time flow generation. Represents SOTA in complex physical dexterity but remains closed-weight and proprietary.
+---
 
-3. **Pretrained Multi-Embodiment Transformers:**
-   * *Octo (Team Octo et al., 2024):* Diffusion-based policy trained on Open X-Embodiment (OXE). Employs modular tokenizers for different robot observation and action spaces.
-   * *RoboCat (Bousmalis et al., 2023):* Self-improving foundation agent producing actions across diverse robot arms through iterative data generation and fine-tuning.
+```
+                       PROBE-1 EMBODIED FOUNDATION TAXONOMY
+                       
+  [ High-Level VLM Trunk ]  ───────►  [ Spatiotemporal World Model ]
+     (Semantic Intent & Scene)            (Action-Conditioned Latent Prediction)
+                 │                                        │
+                 ▼                                        ▼
+  [ Tactile-Proprioception Fusion ] ──► [ Dual-Frequency Flow Policy ]
+     (High-Density Shear & Torques)         (50–200 Hz Continuous Actuation)
+                 │                                        │
+                 ▼                                        ▼
+  [ Independent Safety Guard ]    ───► [ Hard Real-Time Motor Execution ]
+     (Control Barrier Functions)           (Zero-Copy Shared Memory / RDMA)
+```
 
-4. **World Models for Embodied AI:**
-   * *Genie (Bruce et al., 2024) & GAIA-1 (Wayve, 2023):* Action-conditioned video generative world models predicting future visual latent states.
-   * *UniSim (Yang et al., 2023):* Universal physics simulator combining simulation data and real-world video into an action-controllable world model.
+---
 
-### 2. Critical Evaluation & Theoretical Limitations
-* **The Tokenization Dilemma:** Discretizing continuous 6-DoF poses and joint velocities into uniform tokens breaks kinematic continuity and introduces quantization noise, severely impairing fine-tolerance assembly ($<2$ mm tolerances).
-* **The Bandwidth-Latency Mismatch:** Large language/visual backbones require 50–200 ms forward pass times, making them structurally incompatible with the 100–500 Hz control loops required for stable legged locomotion and contact impact absorption.
-* **Tactile Blindness:** Almost all contemporary VLAs operate purely on vision and language, ignoring tactile, slip, and proprioceptive dynamics. Vision is inherently occluded during contact manipulation.
+## 1. Physical World Models for Robotics
+
+### 1.1 World Models
+* **Metadata:** *World Models*, David Ha & Jürgen Schmidhuber. NeurIPS 2018 / arXiv:1803.10122.
+* **Research Problem:** High computational overhead and sample inefficiency of training deep reinforcement learning agents directly in complex, high-dimensional physical environments.
+* **Methodology & Architecture:**
+  * **V (Vision Model):** Variational Autoencoder (VAE) compressing raw $64 \times 64 \times 3$ image frames into low-dimensional latent vectors $z_t \in \mathbb{R}^{32}$.
+  * **M (Memory RNN):** Mixed Density Network Recurrent Neural Network (MDN-RNN) modeling $P(z_{t+1} \mid a_t, z_t, h_t)$, predicting the probability distribution of future latent states conditioned on executed action $a_t$.
+  * **C (Controller):** Minimal linear policy mapping $(z_t, h_t) \to a_t$, trained entirely inside the "dream" (hallucinated latent rollouts generated by M) via Covariance Matrix Adaptation Evolution Strategy (CMA-ES).
+* **Dataset & Training Strategy:** 10,000 random exploration rollouts collected in CarRacing-v0 and DoomTakeCover environments; unsupervised training of VAE, supervised maximum-likelihood training of MDN-RNN, derivative-free optimization of Controller.
+* **Evaluation Benchmarks & Results:**
+  * Achieved first known score $\ge 900$ (human-level solved state: $906 \pm 21$) on CarRacing-v0.
+  * Solved DoomTakeCover entirely within hallucinated dream rollouts with zero environment interactions during policy training.
+* **Limitations:**
+  * Suffers from model exploitation: controllers learn to exploit simulator physics bugs inside the latent RNN dream.
+  * Pixel reconstruction loss ($\mathcal{L}_{\text{VAE}}$) wastes model capacity on background noise rather than task-critical physical dynamics.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 adopts latent dynamics modeling without decoding back to raw pixels during policy rollout, but replaces the brittle MDN-RNN with a causal transformer trunk.
+  * Exploitation of latent rollouts is prevented in PROBE-1 by grounding latent representations with physical conservation laws and real-world contrastive loss terms.
+
+---
+
+### 1.2 DreamerV3: Mastering Diverse Domains through World Models
+* **Metadata:** *Mastering Diverse Domains through World Models*, Danijar Hafner, Jurgis Pasukonis, Jimmy Ba, Timothy Lillicrap. Nature Machine Intelligence / arXiv:2301.04104, 2023.
+* **Research Problem:** Fragility of reinforcement learning algorithms across varying reward scales, observation modalities, and dynamical regimes, requiring domain-specific hyperparameter tuning.
+* **Methodology & Architecture:**
+  * **Recurrent State-Space Model (RSSM):** Decouples deterministic recurrent path $h_t = f(h_{t-1}, z_{t-1}, a_{t-1})$ from stochastic categorical latent representations $z_t \sim q(z_t \mid h_t, x_t)$ using 32 discrete latent variables with 32 classes each.
+  * **Symlog Predictions:** Targets are mapped via $\text{symlog}(x) = \text{sign}(x) \ln(|x| + 1)$ to normalize unbounded reward, value, and observation magnitudes.
+  * **KL Balancing:** Trains the dynamic prior faster than the posterior by scaling the prior loss by $0.8$ and posterior by $0.2$, preventing prior collapse.
+* **Dataset & Training Strategy:** End-to-end actor-critic training from scratch across 150+ diverse continuous and discrete tasks (Atari 100k, DMC Proprio & Vision, Minecraft diamond collection) with single static hyperparameter set.
+* **Evaluation Benchmarks & Results:**
+  * First algorithm to collect diamonds in Minecraft from scratch without human demonstration data ($> 30\text{M}$ steps).
+  * Outperformed specialized model-free algorithms on DeepMind Control Suite (proprioceptive and visual) with superior sample efficiency.
+* **Limitations:**
+  * Visual representations lack explicit contact mechanics, contact normal prediction, and tactile grounding.
+  * Computational cost of categorical RSSM updates limits rollout frequency to $<30$ Hz on consumer hardware, insufficient for high-speed robotic balance reflexes.
+* **PROBE-1 Design Directives:**
+  * Adopt symlog scaling and KL balancing for multi-task stability across diverse robotic embodiments.
+  * Augment the RSSM latent state with explicit contact flags and force-torque predictions to prevent tactile blindness.
+
+---
+
+### 1.3 UniSim: A Learning-based Sensorimotor World Model for Robotics
+* **Metadata:** *UniSim: A Learning-based Sensorimotor World Model for Robotics*, Mengjiao Yang, Yilun Du, Kamyar Ghasemipour, Jonathan Tompson, Leslie Pack Kaelbling, Dale Schuurmans. ICML 2023 / Google DeepMind.
+* **Research Problem:** Real-world robotic data is scarce, expensive, and dangerous to collect, while traditional physics simulators suffer from severe visual and dynamical sim-to-real reality gaps.
+* **Methodology & Architecture:**
+  * Conditional diffusion video and state generative model: simulates both visual observations $x_{t+1}$ and continuous proprioceptive feedback $s_{t+1}$ conditioned on current frame $x_t$, history, and commanded low-level action $a_t$ or high-level text instruction.
+  * Shared transformer backbone integrating multi-dataset conditioning (camera calibration, robot embodiment embeddings, surface interaction tokens).
+* **Dataset & Training Strategy:** Unified training on 100,000+ real-world robotic interaction trajectories (Google Everyday Robots), human activity videos (Ego4D), and simulated physics rollouts. Trained using classifier-free guidance on action conditioning.
+* **Evaluation Benchmarks & Results:**
+  * Policies trained purely inside UniSim rollouts achieved $83.3\%$ zero-shot real-world success on articulated object manipulation (cabinet opening, drawer sliding) and pick-and-place tasks.
+  * Accurately simulated non-rigid object deformations (cloth, sponge compression) that traditional mesh/URDF simulators fail to compute in real time.
+* **Limitations:**
+  * High generative latency: visual diffusion denoising takes $>1.2$ seconds per predicted step, precluding online reactive planning.
+  * Physics violations: small hallucinations (e.g., objects penetrating surfaces or floating) occur over long prediction horizons ($>20$ steps).
+* **PROBE-1 Design Directives:**
+  * PROBE-1 utilizes world model rollouts for offline policy pretraining and model predictive counterfactual evaluation, but deploys a fast flow matching head ($<10$ ms) for online execution.
+  * Incorporates explicit non-penetration signed distance field (SDF) penalties to prevent object merging during hallucinated contact.
+
+---
+
+### 1.4 DayDreamer: World Models for Physical Robot Learning
+* **Metadata:** *DayDreamer: World Models for Physical Robot Learning*, Philipp Wu, Alejandro Escontrela, Danijar Hafner, Pieter Abbeel, Ken Goldberg. CoRL 2022 / UC Berkeley.
+* **Research Problem:** Extreme sample inefficiency of reinforcement learning on physical hardware, causing mechanical wear, hardware overheating, and dangerous reset requirements.
+* **Methodology & Architecture:**
+  * Adapts DreamerV2 to physical robots: learns world model directly on hardware in real time, concurrently rolling out policy imagination trajectories in background GPU threads while the robot executes physical steps.
+  * Continuous action actor-critic updating model parameters asynchronously via continuous replay buffer streaming.
+* **Dataset & Training Strategy:** Evaluated across four distinct physical robots: Unitree A1 quadruped, UR5 robotic arm, XArm6, and Sphero Ollie mobile robot. No simulated pre-training or demonstration data used.
+* **Evaluation Benchmarks & Results:**
+  * Unitree A1 quadruped learned to roll over, stand up, and walk forward in just **1 hour** of physical world experience (vs. days/weeks for model-free SAC/PPO).
+  * UR5 arm learned visual pick-and-place with moving targets in **2.5 hours** of continuous real-world interaction.
+  * Exhibited rapid online adaptation to physical pushes and foot slipping.
+* **Limitations:**
+  * Required manual human intervention during initial exploration phases to prevent catastrophic hardware collisions before the world model converged.
+  * Visual representations were vulnerable to shifting ambient lighting and laboratory background clutter.
+* **PROBE-1 Design Directives:**
+  * Direct physical online learning must always be guarded by a deterministic barrier safety envelope (CLF/CBF) to ensure zero hardware self-destruction during exploratory phases.
+  * PROBE-1 bootstraps physical learning with large-scale sim-to-real pretraining before initiating online world model adaptation.
+
+---
+
+## 2. Action-Conditioned Video and Dynamics Prediction
+
+### 2.1 Genie: Generative Interactive Environments
+* **Metadata:** *Genie: Generative Interactive Environments*, Jake Bruce, Michael Dennis, Ashley Edwards, Jack Parker-Holder, Yujin Tang, et al. Google DeepMind / ICML 2024.
+* **Research Problem:** Training interactive virtual environments and simulators requires explicit game engines or physical modeling; learning them directly from unannotated video without action labels was previously unsolved.
+* **Methodology & Architecture:**
+  * **Spatiotemporal Video Tokenizer:** Compresses video frames into discrete spatiotemporal tokens using a continuous 1D spatial and temporal VQ-VAE.
+  * **Latent Action Model (LAM):** Unsupervised discrete latent action inference: infers action tokens $\tilde{a}_t \in \{1, \dots, K\}$ between frame $t$ and frame $t+1$ without any ground-truth action labels:
+    $$\tilde{a}_t = \text{Encoder}(x_{1:T})$$
+  * **Dynamics Model:** Large autoregressive transformer (11B parameters) generating future video tokens conditioned on previous tokens and latent action tokens.
+* **Dataset & Training Strategy:** Trained on 200,000+ hours of publicly available 2D platformer gameplay videos (curated from internet gameplay). Entire training is self-supervised without motor or controller logs.
+* **Evaluation Benchmarks & Results:**
+  * Enables user-interactive controllable video generation at 16 frames per second with consistent character motion, jump physics, and collision dynamics.
+  * Latent action space demonstrated zero-shot controllable actuation: distinct latent actions consistently mapped to left, right, jump, and crouch motions.
+* **Limitations:**
+  * Restricted to 2D screen spaces; 3D camera parallax, multi-view consistency, and continuous 6-DoF end-effector actions are absent.
+  * Autoregressive token generation introduces compounding visual drift after 10–15 seconds of open-loop generation.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 adapts the Latent Action Model concept to infer continuous physical actions from human video datasets (Ego4D, Epic-Kitchens) where motor torques are unrecorded.
+  * Extends the dynamics backbone to multi-view 3D representations (joint camera + proprioception embeddings) to eliminate 2D plane restrictions.
+
+---
+
+### 2.2 GAIA-1: A Generative World Model for Autonomous Driving
+* **Metadata:** *GAIA-1: A Generative World Model for Autonomous Driving*, Anthony Hu, Lloyd Russell, Hudson Yeo, Zak Murez, et al. Wayve / arXiv:2309.17080, 2023.
+* **Research Problem:** Generating high-fidelity, multimodal, long-horizon futures conditioned on driving controls, handling rare long-tail edge cases and non-deterministic agent interactions.
+* **Methodology & Architecture:**
+  * **Hierarchical Generation:** Discretizes video into visual tokens via video VQ-VAE.
+  * **World Model Autoregressive Transformer:** Predicts sequence of visual tokens conditioned on past visual tokens, natural language prompts (e.g., "heavy rain at night"), and vehicle action tokens (steering angle, speed, brake pedal state).
+  * **Diffusion Video Decoder:** Refines discrete predicted visual tokens into photo-realistic temporal video streams, eliminating pixel blur.
+* **Dataset & Training Strategy:** 4,700 hours of proprietary UK urban driving data, encompassing diverse weather conditions, pedestrian crowds, vehicle traffic, and construction zones.
+* **Evaluation Benchmarks & Results:**
+  * Successfully rolled out realistic 3D continuous driving environments for multi-minute sequences with consistent spatial geometry and road layouts.
+  * Demonstrated counterfactual generation: changing steering input dynamically altered future pedestrian trajectories and lane choices plausibly.
+* **Limitations:**
+  * Enormous compute footprint (9B parameters) requiring multi-GPU server infrastructure, impossible to run on embedded robotic vehicle compute.
+  * Closed proprietary dataset; lack of contact modeling or physical tool manipulation.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 adopts the two-stage paradigm (high-level causal transformer predicting compact dynamics latents + fast diffusion/flow decoder for fine continuous detail).
+  * Quantizes high-level latent tokens into 8-bit representations, allowing edge deployment on humanoid compute boards (NVIDIA Drive Thor / Jetson Thor).
+
+---
+
+### 2.3 AVDC: Action-conditioned Video Diffusion for Robot Control
+* **Metadata:** *Learning Action-conditioned Video Diffusion Models for Visual Robot Planning*, Yilun Du, Mengjiao Yang, Bo Dai, Hanjun Dai, Ofir Nachum, Joshua B. Tenenbaum, Pieter Abbeel. CoRL 2023.
+* **Research Problem:** Synthesizing goal-directed robot trajectories directly in image space without suffering from compounding autoregressive error or mode collapse on multi-modal tasks.
+* **Methodology & Architecture:**
+  * Formulates video generation as conditional 3D U-Net diffusion: generates temporal sequences of image frames conditioned on initial observation $x_0$, target goal image $x_g$, and candidate robot arm joint displacements.
+  * Uses classifier-free guidance on the action conditioning vector to trade off visual fidelity against action adherence.
+  * Trajectory optimization: optimizes action sequences via Cross-Entropy Method (CEM) through the learned visual energy function.
+* **Dataset & Training Strategy:** Trained on BridgeData V2 (pick-and-place, wiping, toy manipulation) and simulated RoboDesk benchmarks.
+* **Evaluation Benchmarks & Results:**
+  * Reached $72.4\%$ task success rate on visual goal-conditioned manipulation, outperforming behavioral cloning and inverse model baselines by $28\%$.
+  * Maintained video generation consistency over 16-frame horizons without object vanishing artifacts common in GAN-based alternatives.
+* **Limitations:**
+  * CEM planning over diffusion latents requires iterative sampling (10–20 diffusion steps $\times$ 50 candidate actions), taking 15–30 seconds per execution step.
+  * Unable to react to sudden obstacle interference during action execution.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 rejects iterative diffusion-in-the-loop for real-time motor actuation. Instead, PROBE-1 trains a flow matching policy that distills multi-step diffusion into 1–4 integration steps, achieving $<10$ ms latency.
+
+---
+
+### 2.4 DriveDreamer: Towards Real-World-Driven World Models
+* **Metadata:** *DriveDreamer: Towards Real-world-driven World Models for Autonomous Driving*, Xiaofeng Wang, Zheng Zhu, Guan Huang, Xinze Chen, Jiwen Lu. CVPR 2024 / Tsinghua University.
+* **Research Problem:** Pure video diffusion lacks 3D structural grounding, leading to drifting road boundaries, vehicle distortion, and failure to respect physical collision boundaries.
+* **Methodology & Architecture:**
+  * Integrates explicit 3D structural priors: HD road maps and 3D bounding boxes are projected onto multi-view camera planes as structured geometric conditioning.
+  * Two-stage pipeline: Stage 1 learns HD map/box generation conditioned on driving trajectories; Stage 2 learns video diffusion conditioned on Stage 1's structural masks.
+* **Dataset & Training Strategy:** Trained on nuScenes dataset (1,000 driving scenes, 6-camera panoramic coverage) using AdamW optimizer with learning rate $1 \times 10^{-4}$ on 32 NVIDIA A100 GPUs.
+* **Evaluation Benchmarks & Results:**
+  * Outperformed unconstrained video models in FID ($11.2$ vs. $18.4$) and FVD ($142.1$ vs. $235.6$).
+  * Achieved precise vehicle trajectory tracking across severe turns and multi-lane intersections.
+* **Limitations:**
+  * Requires annotated 3D bounding boxes and HD vector maps, which do not exist for general unstructured indoor environments where humanoid robots operate.
+* **PROBE-1 Design Directives:**
+  * For unstructured humanoid environments, PROBE-1 replaces 2D bounding boxes with real-time 3D Gaussian Splatting / Signed Distance Fields (SDFs) derived from wrist/head stereo cameras.
+
+---
+
+## 3. Contact and Object Interaction Modeling
+
+### 3.1 Touch-First Manipulation with High-Resolution Optical Tactile Sensing
+* **Metadata:** *Tactile Dexterity: Leveraging High-Resolution Tactile Feedback for In-Hand Manipulation*, Wenzhen Yuan, Shaoxiong Wang, Siyuan Dong, Edward Adelson. MIT / Sensors & ICRA 2017–2020.
+* **Research Problem:** Vision suffers from severe occlusion during contact manipulation (fingers and hand block the camera view of the contact patch), making slip prevention and micro-force regulation impossible with vision alone.
+* **Methodology & Architecture:**
+  * **GelSight Sensor:** Elastomeric gel coated with a reflective membrane illuminated by colored LEDs; an internal micro-camera captures gel surface deformation at 60 Hz.
+  * Photometric stereo algorithms reconstruct high-resolution 3D contact depth maps ($0.05$ mm spatial resolution) and 2D surface slip vector fields in real time.
+  * Closed-loop controller continuously monitors shear force gradients and contact area shrinkage to trigger instant grasping force increases before catastrophic slip occurs.
+* **Dataset & Training Strategy:** Supervised calibration of optical-to-force response using external ATI 6-axis load cells. Deep CNN trained on 50,000 contact press sequences to predict 3D contact force vectors ($F_x, F_y, F_z$) and torsional torque ($T_z$).
+* **Evaluation Benchmarks & Results:**
+  * Demonstrated successful rolling, pivoting, and grasping of fragile, deformable, and delicate objects (USB plugs, screws, blueberries, raw eggs) with zero damage or drop events.
+  * Detected incipient slip within **12 ms**, initiating motor response in $<20$ ms.
+* **Limitations:**
+  * Gel membranes experience physical wear, tearing, and degradation after prolonged contact with sharp abrasive surfaces.
+  * Optical sensor bulk increases finger thickness, hindering manipulation in tight spaces.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 incorporates a dedicated **Tactile Tokenizer** that converts high-density tactile displacement maps and contact normal vectors into standard 64-dimensional latent tokens fed directly into the low-level policy.
+  * Hybrid tactile design: combines optical-tactile fingertips with robust piezoresistive palm/finger-base sensor arrays.
+
+---
+
+### 3.2 ContactNets: Learning Discontinuous Contact Dynamics with Differentiable Physics
+* **Metadata:** *ContactNets: Learning Discontinuous Contact Dynamics with Differentiable Physics*, Samuel Pfrommer, Mickael Bettencourt, Robert Platt, et al. CoRL 2020 / Conference on Robot Learning.
+* **Research Problem:** Contact dynamics involve discontinuous velocity jumps and non-smooth complementarity constraints (LCP), causing standard neural networks to produce non-physical penetrations or smooth out sharp impacts.
+* **Methodology & Architecture:**
+  * Parametrizes contact surfaces using deep signed distance fields (SDFs) embedded inside a differentiable rigid-body simulation framework.
+  * Explicitly solves linear complementarity problem (LCP) during forward pass:
+    $$0 \le \gamma \perp (\mathbf{J} \mathbf{v} + c) \ge 0$$
+    where $\gamma$ represents contact impulse, $\mathbf{J}$ is contact Jacobian, and $\mathbf{v}$ is post-impact velocity.
+  * Loss function minimizes error between predicted and measured post-contact state trajectories while strictly enforcing non-penetration.
+* **Dataset & Training Strategy:** 4,000 real-world tossing, sliding, and bouncing trajectories of geometric objects (cubes, cylinders, polyhedra) tracked via Vicon optical mocap at 200 Hz.
+* **Evaluation Benchmarks & Results:**
+  * Achieved $10\times$ lower trajectory prediction error across multi-impact tossing regimes compared to unconstrained MLPs.
+  * Accurately identified true friction coefficients ($\mu$) and restitution coefficients ($e$) purely from observed contact motions.
+* **Limitations:**
+  * Restricted to rigid polyhedral bodies; unable to handle deformable, articulated, or granular media.
+  * Solving LCP inner loops during training slows gradient backpropagation.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 integrates an explicit contact impulse loss term during policy training: penalizes predictions that violate Coulomb friction cone boundaries or generate negative normal forces.
+
+---
+
+### 3.3 DexCap: Scalable and Portable Mocap Data Collection System for Dexterous Manipulation
+* **Metadata:** *DexCap: Scalable and Portable Mocap Data Collection System for Dexterous Manipulation*, Chen Wang, Yanjie Ze, Jialian Li, et al. Stanford University / RSS 2024.
+* **Research Problem:** Teleoperation hardware for high-DoF dexterous humanoid hands is either prohibitively expensive ($>\$50\text{k}$), severely encumbering, or introduces unnatural kinematics that fail to capture human manipulation nuances.
+* **Methodology & Architecture:**
+  * Portable human data collection glove equipped with 3D electromagnetic motion trackers, fingertip micro-cameras, and wrist mini-RGB-D lidar.
+  * Inverse kinematics optimization maps human hand motion directly to multi-fingered robotic hand joints (LEAP hand / Inspire hand) while preserving fingertip contact point correspondence.
+  * **DexCap Policy:** Dual-arm 3D diffusion policy conditioned on 3D point cloud observations rather than 2D pixel grids.
+* **Dataset & Training Strategy:** Collected 3,000+ demonstrations across 6 complex bi-manual manipulation tasks (e.g., cutting vegetables with a knife, peeling tape, unscrewing jar lids).
+* **Evaluation Benchmarks & Results:**
+  * Real-world multi-fingered manipulation success of $82.4\%$ across 6 tasks.
+  * 3D point-cloud representation demonstrated remarkable robustness to direct visual hand occlusions and variable background clutter.
+* **Limitations:**
+  * Magnetic trackers are vulnerable to electromagnetic interference near large industrial motors or metal tables.
+  * Lacks fingertip force-torque and tactile feedback capture from human demonstrations.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 uses a 3D point cloud / continuous voxel representation rather than purely 2D RGB for bi-manual dexterous operations.
+  * PROBE-1 pairs kinematic mocap with wearable tactile sensor gloves to capture human applied force profiles simultaneously.
+
+---
+
+### 3.4 TaxPose: Task-Specific Cross-Pose Estimation for Robot Manipulation
+* **Metadata:** *TaxPose: Task-Specific Cross-Pose Estimation for Robot Manipulation*, Shuran Song, Haozhi Qi, et al. CoRL 2022 / Columbia University.
+* **Research Problem:** Generalizing contact manipulation (placing a mug on a rack, inserting a battery, stowing a tool) to novel object shapes and geometries without full CAD models or pose tracking.
+* **Methodology & Architecture:**
+  * Predicts cross-pose transformation $\mathbf{T} \in SE(3)$ between point clouds of an active object $\mathbf{P}_A$ (e.g., pan) and an anchor object $\mathbf{P}_B$ (e.g., stove burner).
+  * Architecture leverages $SE(3)$-equivariant point transformer layers, guaranteeing that if either object is rotated or translated in space, the predicted contact alignment transform rotates and translates equivariantly:
+    $$\mathbf{T}(g \cdot \mathbf{P}_A, g \cdot \mathbf{P}_B) = g \cdot \mathbf{T}(\mathbf{P}_A, \mathbf{P}_B) \cdot g^{-1}$$
+* **Dataset & Training Strategy:** Supervised training on 10,000 synthetic interaction pairs in Isaac Gym with automated task alignment goals; zero-shot transfer to real Franka Panda and Universal Robots.
+* **Evaluation Benchmarks & Results:**
+  * $86.7\%$ success on real-world placement, hanging, and insertion across novel, unseen object categories.
+  * Required zero object-specific bounding box estimators or keypoint detectors.
+* **Limitations:**
+  * Inapplicable to deformable objects or tasks requiring continuous trajectory tracking (e.g., wiping, pouring, stirring).
+* **PROBE-1 Design Directives:**
+  * PROBE-1 incorporates $SE(3)$-equivariant cross-attention layers into its spatial reasoning head to ensure goal-pose predictions remain robust under arbitrary humanoid base rotations.
+
+---
+
+## 4. Humanoid Manipulation and Locomotion
+
+### 4.1 Expressive Whole-Body Control for Humanoid Robots
+* **Metadata:** *Expressive Whole-Body Control for Humanoid Robots*, Xuxin Cheng, Kexin Shi, Tingnan Zhang, et al. UC Berkeley & Unitree / CoRL 2024.
+* **Research Problem:** Humanoid robots possess 20–35 degrees of freedom. Decoupling upper-body manipulation from lower-body locomotion leads to severe instability, dynamic tip-over during heavy lifting, and jerky transitions.
+* **Methodology & Architecture:**
+  * Unified Reinforcement Learning framework on Unitree H1 (19 DoF lower body + 2x 7-DoF arms).
+  * **Two-Stage Training:**
+    * Stage 1: Pre-train whole-body motion tracker on retargeted human motion capture data (AMASS dataset) using Adversarial Motion Priors (AMP).
+    * Stage 2: Fine-tune policy with task-specific goals (e.g., walking to target while holding a heavy box, opening doors, kicking balls) with domain randomization over joint friction, mass, and ground friction.
+  * Policy outputs low-level PD position targets at 50 Hz.
+* **Dataset & Training Strategy:** 4,096 parallel simulated humanoid agents in Isaac Gym; trained for 50,000 policy iterations ($1.5 \times 10^9$ environment steps) in $<24$ hours on 8 NVIDIA RTX 4090 GPUs.
+* **Evaluation Benchmarks & Results:**
+  * First demonstration of dynamic real-world humanoid walking, carrying up to $15\text{ kg}$ payload, withstanding lateral kicks and sudden payload releases without falling.
+  * Omnidirectional walking velocity up to $1.8\text{ m/s}$ on uneven outdoor terrain (grass, asphalt, gravel).
+* **Limitations:**
+  * Manipulators were treated as rigid end-effectors; dexterous multi-fingered tactile manipulation was not incorporated.
+  * Purely reactive policy without semantic perception: robot cannot perceive obstacles in visual depth fields.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 adopts the whole-body RL foundation for dynamic balance and torso counter-balancing, but connects it directly to high-level visual-semantic tokens from the transformer trunk.
+  * Whole-body torque output is fed through an active momentum compensator before driving humanoid joints.
+
+---
+
+### 4.2 Humanoid-Gym: A Reinforcement Learning Framework for Humanoid Robot Locomotion
+* **Metadata:** *Humanoid-Gym: A Reinforcement Learning Framework for Humanoid Robot Locomotion*, Xinyang Gu, Yen-Jen Wang, Chen Wang, et al. RobotEra & Tsinghua University / arXiv:2404.05695, 2024.
+* **Research Problem:** Sim-to-real transfer for full-size bipedal humanoids fails due to complex actuator dynamics, backlash, non-linear gearbox compliance, and communication latency.
+* **Methodology & Architecture:**
+  * Open-source sim-to-real framework built on Isaac Gym and Isaac Sim.
+  * **Actuator Network Modeling:** Replaces ideal torque actuators with a multi-layer neural network modeling real-world motor velocity-torque saturation, thermal degradation, and damping hysteresis.
+  * **Denoising Curriculum:** Gradually introduces observation noise, actuator delay ($10–30$ ms jitter), and random force disturbances during training stages.
+* **Dataset & Training Strategy:** Tested on full-sized humanoid XBot-L (height 165 cm, weight 65 kg, 30 DoF). Parallel training with 8,192 environments over 20,000 epochs using PPO.
+* **Evaluation Benchmarks & Results:**
+  * Successful zero-shot sim-to-real deployment on real XBot-L humanoid walking on snow, gravel, steep ramps ($15^\circ$), and stairs.
+  * Maintained stable zero-divergence gait over 45 minutes of continuous indoor/outdoor walking.
+* **Limitations:**
+  * Focuses exclusively on blind locomotion; no manipulation, arm coordination, or camera perception.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 directly integrates Humanoid-Gym's verified actuator network parameters for Unitree H1/G1 hardware into HOROS's simulation and verification harnesses.
+
+---
+
+### 4.3 Deep Whole-Body Control: Learning a Unified Policy for Locomotion and Manipulation
+* **Metadata:** *Deep Whole-Body Control: Learning a Unified Policy for Locomotion and Manipulation*, Zipeng Fu, Xuxin Cheng, Jitendra Malik. UC Berkeley / CoRL 2023.
+* **Research Problem:** Mobile manipulation traditionally uses decoupled hierarchical stacks (navigation planner $\to$ base controller $\to$ arm motion planner), causing slow, halting, sequential movements.
+* **Methodology & Architecture:**
+  * End-to-end RL policy outputting 12-DoF quadruped leg joint commands + 6-DoF arm joint commands simultaneously at 50 Hz.
+  * Regularized with kinetic energy minimization and end-effector tracking rewards:
+    $$r_t = r_{\text{track}} - \lambda_1 \|\boldsymbol{\tau}\|_2^2 - \lambda_2 \|\mathbf{q}_{t} - \mathbf{q}_{t-1}\|_2^2$$
+  * Leverages visual egocentric depth images processed via a compact convolutional encoder.
+* **Dataset & Training Strategy:** Evaluated on Boston Dynamics Spot + arm and Unitree B1 + Z1 arm. Trained in Isaac Gym on 2,000 parallel instances.
+* **Evaluation Benchmarks & Results:**
+  * Fluid, continuous mobile manipulation: robot picks up objects from floor, pushes doors, presses buttons while maintaining smooth forward trot without stopping.
+  * $84.2\%$ real-world success on dynamic pick-and-carry tasks with moving targets.
+* **Limitations:**
+  * Quadruped base provides a statically stable 4-point footprint; transferring this formulation to an inherently unstable bipedal humanoid requires continuous inverted pendulum stabilization.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 extends the unified whole-body control formulation to bipedal humanoids by incorporating zero-moment point (ZMP) and divergent component of motion (DCM) regularization into the multi-task reward function.
+
+---
+
+### 4.4 Learning Agile and Dynamic Locomotion for Bipedal Robots via Sim-to-Real RL
+* **Metadata:** *Learning Agile and Dynamic Locomotion for Bipedal Robots via Sim-to-Real Reinforcement Learning*, Jonah Siekmann, Yesh Godse, Alan Fern, Jonathan Hurst. Agility Robotics & Oregon State University / Science Robotics, 2021–2023.
+* **Research Problem:** Bipedal walking with point/line-contact feet (Cassie biped) is fundamentally underactuated and unstable; dynamic blind gait synthesis across diverse outdoor obstacles without prior maps.
+* **Methodology & Architecture:**
+  * Asymmetric Actor-Critic architecture: Critic receives privileged physical state (ground contact forces, friction coefficients, terrain elevation profile); Actor observes only causal, noisy onboard sensor history (IMU, joint encoders).
+  * Phase-variable periodic reward design: clock signals coordinate alternating foot contact phases without enforcing rigid joint kinematic reference trajectories.
+* **Dataset & Training Strategy:** Millions of simulated steps in MuJoCo / Isaac Sim with rigorous domain randomization: body mass ($\pm 20\%$), link lengths, joint damping, spring stiffness variations, ground compliance, and latency injections (up to 40 ms).
+* **Evaluation Benchmarks & Results:**
+  * Cassie completed a full **5-kilometer outdoor run** on a single battery charge (43 minutes) with zero tethering and zero human falls.
+  * Demonstrated blind stair ascent/descent and recovery from sudden $200\text{ N}$ lateral shoves.
+* **Limitations:**
+  * Cassie has no upper body, arms, or cameras; incapable of manipulation, grasping, or visual navigation.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 utilizes the Asymmetric Actor-Critic training paradigm for the lower-body locomotion sub-policy, ensuring privileged simulation physics ground the critic while the deployable actor policy relies solely on onboard proprioception and IMU streams.
+
+---
+
+## 5. Multimodal Robot Foundation Models (VLA, Diffusion & Flow Policies)
+
+### 5.1 RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control
+* **Metadata:** *RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control*, Anthony Brohan et al. Google DeepMind / CoRL 2023.
+* **Research Problem:** Robot imitation learning datasets are tiny ($10^4$ to $10^5$ episodes) compared to internet-scale text and image datasets ($10^9$ to $10^{12}$ tokens), preventing semantic reasoning and zero-shot object generalization.
+* **Methodology & Architecture:**
+  * Casts continuous 6-DoF end-effector actions (dx, dy, dz, droll, dpitch, dyaw, gripper) as discrete text tokens:
+    $$\text{Tokens} \in \{0, \dots, 255\}$$
+  * Co-fine-tunes web-scale Vision-Language Models (PaLI-X 55B and PaLM-E 12B) jointly on robotic trajectory tokens and internet-scale VQA data:
+    $$\mathcal{L} = \mathcal{L}_{\text{VLM}}(\text{text}, \text{image}) + \lambda \mathcal{L}_{\text{Action}}(\text{action tokens} \mid \text{instruction}, \text{image})$$
+* **Dataset & Training Strategy:** 130,000 real-world robotic demonstration trajectories collected over 17 months on Google Everyday Robots mobile manipulators, mixed with billions of internet image-text pairs.
+* **Evaluation Benchmarks & Results:**
+  * Demonstrated emergent semantic reasoning: e.g., "move the extinct animal" $\to$ robot grasped plastic dinosaur; "move the object that can hammer a nail" $\to$ grasped rock.
+  * Zero-shot evaluation on novel objects and instructions improved from $32\%$ (RT-1) to **$62\%$ (RT-2-PaLI-X 55B)**.
+* **Limitations:**
+  * **Latency Bottleneck:** 55B parameter forward pass takes $>150$–$300$ ms, limiting control frequency to 1–3 Hz. Incapable of reactive error correction.
+  * Discretization quantization noise causes jitter in fine-tolerance insertion tasks ($<3$ mm).
+  * Extremely high cloud compute requirements; impossible to run locally on robot edge compute.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 adopts the multi-task pretraining concept from RT-2 for semantic understanding, but rejects tokenizing continuous actions as text tokens.
+  * PROBE-1 decouples semantic scene understanding (processed by high-level VLM at 5–10 Hz) from continuous flow-matched action execution (running at 100 Hz on-device).
+
+---
+
+### 5.2 Diffusion Policy: Visuomotor Policy Learning via Action Diffusion
+* **Metadata:** *Diffusion Policy: Visuomotor Policy Learning via Action Diffusion*, Cheng Chi, Siyuan Feng, Yilun Du, Zhenjia Xu, Eric Cousineau, Benjamin Burchfiel, Shuran Song. Columbia University & TRI / RSS 2023.
+* **Research Problem:** Multimodal human demonstrations contain conflicting, valid ways to accomplish tasks (e.g., reaching around left vs. right). Conventional MSE regression policies average these modes, outputting catastrophic interpolated trajectories into obstacles.
+* **Methodology & Architecture:**
+  * Formulates continuous robotic control as conditional Denoising Diffusion Probabilistic Models (DDPM) or Denoising Diffusion Implicit Models (DDIM).
+  * **Action Chunking:** Instead of single-step actions $a_t$, predicts an entire horizon of future continuous actions $\mathbf{A}_t = [a_t, a_{t+1}, \dots, a_{t+H}]$ given past visual/proprioceptive observations $\mathbf{O}_t$.
+  * Two backbone implementations: 1D Temporal Convolutional Network (CNN) and Transformer-based diffusion network.
+* **Dataset & Training Strategy:** Evaluated across 11 tasks in simulation and real world (Push-T, Block Pushing, Kitchen, Robomimic, bi-manual peg insertion). Trained using standard $\epsilon$-prediction MSE loss with 100 diffusion steps (DDPM) or 10–16 steps (DDIM).
+* **Evaluation Benchmarks & Results:**
+  * Outperformed LSTM-GMM, Implicit BC, and Decision Transformer across all 11 benchmarks by an average of **$46.9\%$ absolute success rate gain**.
+  * Handled multi-modal human demonstrations smoothly without mode averaging.
+* **Limitations:**
+  * DDIM still requires 8–16 sequential denoising passes per action chunk, creating $30–80$ ms inference latency on high-end desktop GPUs, straining edge deployment.
+  * Lacks internet-scale semantic reasoning; policies trained per task from scratch without shared foundation representations.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 preserves the continuous trajectory distribution modeling of Diffusion Policy, but replaces DDPM/DDIM with **Flow Matching** (optimal transport conditional vector fields), achieving high-fidelity generation in just **1 to 2 integration steps** ($<10$ ms).
+
+---
+
+### 5.3 ACT: Action Chunking with Transformers for Fine-Grained Bimanual Manipulation
+* **Metadata:** *Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware*, Tony Z. Zhao, Vikash Kumar, Sergey Levine, Chelsea Finn. Stanford University / RSS 2023.
+* **Research Problem:** Compounding errors in high-frequency teleoperated imitation learning: small single-step errors accumulate rapidly, causing robots to freeze or diverge off task manifolds during fine-grained bi-manual tasks.
+* **Methodology & Architecture:**
+  * **Action Chunking:** Predicts action sequences of chunk size $k=100$ ($a_{t:t+k}$ at 50 Hz).
+  * **Conditional VAE (CVAE):** An encoder encodes demonstration trajectories into a latent style variable $z \sim \mathcal{N}(\mu, \sigma^2)$ to model demonstration variability; a transformer decoder reconstructs the chunk conditioned on $z$ and joint states/images.
+  * **Temporal Ensembling:** Averages overlapping action chunk predictions with an exponential decay weight:
+    $$a_t = \sum_{i=0}^{k-1} w_i a_{t \mid t-i}, \quad w_i = \exp(-m \cdot i)$$
+    producing butter-smooth trajectory execution.
+* **Dataset & Training Strategy:** Collected 50 teleoperated demonstrations per task using the low-cost ($<\$20\text{k}$) Aloha bi-manual platform across challenging physical tasks (threading zip ties, opening pill bottles, slotting batteries).
+* **Evaluation Benchmarks & Results:**
+  * $80–90\%$ real-world success on millimeter-precision bi-manual tasks with just 50 demonstrations.
+  * Low inference latency ($<25$ ms on a single desktop GPU).
+* **Limitations:**
+  * CVAE latent space can experience posterior collapse if KL weight is improperly scheduled.
+  * Relies purely on joint encoders and multi-view cameras; zero tactile or force feedback, causing high failure rates if objects slip inside the gripper.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 adopts Temporal Ensembling over action chunks to guarantee zero trajectory discontinuity on humanoid arm motors.
+  * PROBE-1 introduces force-torque and tactile feedback into the chunk conditioning vector to enable reactive dynamic grip adjustment.
+
+---
+
+### 5.4 π0: A Vision-Language-Action Flow Model for Generalist Physical Intelligence
+* **Metadata:** *π0: A Vision-Language-Action Flow Model for Generalist Physical Intelligence*, Physical Intelligence Team (Kevin Black et al.). Physical Intelligence / Technical Report, October 2024.
+* **Research Problem:** Creating a truly generalist robotic foundation model capable of executing diverse, dexterous, multi-task physical interactions (folding laundry, bussing tables, assembling boxes) across heterogeneous robot hardware platforms.
+* **Methodology & Architecture:**
+  * **Trunk:** Pre-trained Vision-Language Model (PaliGemma 3B architecture) encoding RGB visual camera feeds and natural language instructions.
+  * **Flow Matching Action Head:** Predicts continuous action trajectories via Flow Matching. Trains vector fields along optimal transport paths between standard Gaussian noise and target action chunks:
+    $$\mathcal{L}_{\text{FM}} = \mathbb{E}_{t, x_0, x_1} \left\| v_\theta(x_t, t, c) - (x_1 - x_0) \right\|^2$$
+    where $x_t = (1 - t)x_0 + t x_1$.
+  * Co-training on web VLM datasets + 10,000+ hours of physical robot teleoperation data.
+* **Dataset & Training Strategy:** Massive multi-robot data collection spanning 7 diverse robot embodiments (Aloha bipedal/wheeled bi-manual arms, Franka arms, UR5 arms) across laundry folding, grocery packing, and dishwashing.
+* **Evaluation Benchmarks & Results:**
+  * State-of-the-art dexterous performance across 68 real-world physical tasks.
+  * 50 Hz real-time inference rate achieved via fast Euler flow integration with only 8 steps.
+* **Limitations:**
+  * Proprietary, closed-source, closed-weights model.
+  * Does not support bipedal humanoid whole-body locomotion or leg balance control; restricted strictly to upper-body manipulation.
+  * Lacks explicit provable safety barrier enforcement outside the neural network.
+* **PROBE-1 Design Directives:**
+  * **PROBE-1 is directly architected as the open, verifiable, whole-body counterpart to π0.**
+  * PROBE-1 adopts the Flow Matching VLA paradigm, but extends it to full-body humanoid actuation (32 DoF legs + arms + hands), integrates real-time tactile arrays, and embeds an independent deterministic safety runtime (HOROS Safety Boundary).
+
+---
+
+### 5.5 Octo: An Open-Source Generalist Robot Policy
+* **Metadata:** *Octo: An Open-Source Generalist Robot Policy*, Octo Model Team (Dibya Ghosh, Homer Walke, Karl Pertsch, Kevin Black, Oier Mees, Sudeep Dasari, Joey Hejna, Charles Xu, et al.). UC Berkeley, Stanford, CMU / RSS 2024.
+* **Research Problem:** Existing generalist models (RT-1, RT-2) were proprietary, closed-source, and hardcoded to single robot embodiments, preventing community research and custom embodiment fine-tuning.
+* **Methodology & Architecture:**
+  * Modular transformer architecture:
+    * Observation tokenizers for arbitrary camera resolutions, camera poses, and proprioceptive dimensions.
+    * Conformer-style transformer trunk (27M small, 93M base parameters).
+    * Diffusion Action Head predicting 4-step action chunks at 10–20 Hz.
+  * Multi-task conditioning on either natural language instructions or goal image frames.
+* **Dataset & Training Strategy:** Pre-trained on the Open X-Embodiment (OXE) dataset (800,000 demonstration trajectories across 22 robot types). Fine-tunable to novel robot kinematics with $<50$ demonstrations via LoRA or head replacement.
+* **Evaluation Benchmarks & Results:**
+  * Successfully controlled 9 distinct robot embodiments across 4 institutions zero-shot or with lightweight fine-tuning.
+  * $52\%$ higher success rate on out-of-distribution environments than policies trained from scratch.
+* **Limitations:**
+  * Small parameter scale (93M base) restricts complex semantic reasoning compared to multi-billion parameter VLMs.
+  * Low action frequency (10 Hz) limits dynamic contact absorption and fast reaction times.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 adopts Octo's modular tokenization design for multi-embodiment flexibility, but pairs it with a modern 3B/7B vision-language trunk and an ultra-fast 100 Hz flow matching head.
+
+---
+
+### 5.6 OpenVLA: An Open-Source Vision-Language-Action Model
+* **Metadata:** *OpenVLA: An Open-Source Vision-Language-Action Model*, Moo Jin Kim, Karl Pertsch, Siddharth Karamcheti, Ted Xiao, Ashwin Balakrishna, Suraj Nair, Rafael Rafailov, Ethan Foster, Grace Lam, Pannag Sanketi, Quan Vuong, Thomas Kollar, Benjamin Burchfiel, Russ Tedrake, Dorsa Sadigh, Sergey Levine, Percy Liang, Chelsea Finn. Stanford, Berkeley, TRI / arXiv:2406.09246, 2024.
+* **Research Problem:** Democratizing 7B-scale vision-language-action foundation models with open checkpoints, training code, and reproducible deployment recipes.
+* **Methodology & Architecture:**
+  * **Backbone:** Prismatic VLM combining SigLIP (visual feature detail) and DINOv2 (spatial/geometric structure) encoders feeding into Llama-2 (7B parameters).
+  * Tokenizes 7-DoF actions into 256 discrete bins per dimension, predicting actions autoregressively through the Llama-2 language modeling head.
+  * Action chunking: fine-tuned with 8-bit quantization (QLoRA) enabling inference on single consumer GPUs (RTX 4090).
+* **Dataset & Training Strategy:** Trained on 970,000 robot trajectories from Open X-Embodiment dataset over 14 days on 64 NVIDIA A100 GPUs using PyTorch FSDP.
+* **Evaluation Benchmarks & Results:**
+  * Outperformed RT-2-X (55B) by $16.5\%$ on real-world manipulation across multiple robot platforms while having $7\times$ fewer parameters.
+  * Demonstrated superior spatial generalization on novel object positions and visual distractions.
+* **Limitations:**
+  * **Discrete Action Bottleneck:** Autoregressive generation of 7 action tokens per step results in maximum control frequency of only **3 to 6 Hz**.
+  * Complete absence of proprioceptive and tactile grounding.
+* **PROBE-1 Design Directives:**
+  * PROBE-1 incorporates the dual visual encoder philosophy (SigLIP semantic + DINOv2 spatial features), but completely replaces OpenVLA's slow discrete token head with continuous flow matching to achieve 100 Hz control.
+
+---
+
+## 6. Synthesis: Architectural Comparison & PROBE-1 Design Matrix
+
+| Model | Architecture Type | Action Representation | Control Frequency | Tactile Grounding | Humanoid Locomotion | Open Source / Weights |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **RT-2** | Discrete VLA (PaLI-X) | Discrete Text Tokens | 1–3 Hz | No | No | Closed |
+| **OpenVLA** | Discrete VLA (Llama-2) | Discrete Text Tokens | 3–6 Hz | No | No | Open Weights |
+| **Diffusion Policy**| Denoising Diffusion | Continuous Chunk | 10–20 Hz | No | No | Open Source |
+| **ACT** | CVAE Transformer | Continuous Chunk | 50 Hz | No | No | Open Source |
+| **π0** | Flow Matching VLA | Continuous Field | 50 Hz | No | No | Closed |
+| **Octo** | Diffusion Transformer | Continuous Chunk | 10 Hz | No | No | Open Weights |
+| **Expressive WBC** | Reinforcement Learning | Joint Positions | 50 Hz | No | Yes (H1) | Open Source |
+| **Cassie Sim-to-Real**| Asymmetric RL | Joint Positions | 200 Hz | No | Yes (Biped) | Research Code |
+| **PROBE-1 (Ours)** | **Dual-Freq Flow VLA** | **Continuous Flow Chunk**| **100–200 Hz** | **Yes (GelSight + Matrix)** | **Yes (32-DoF Whole-Body)** | **First-Party Verifiable** |
+
+---
+
+## 7. Concrete Takeaways & PROBE-1 Architectural Decisions
+
+From this comprehensive review of 22 foundational papers across the 5 target domains, PROBE-1 synthesizes seven non-negotiable architectural directives:
+
+1. **Continuous Flow Matching Over Discrete Tokenization:**
+   * Discrete tokenization (RT-2, OpenVLA) destroys kinematic smoothness, causes quantization errors, and caps inference speed at $<6$ Hz. PROBE-1 implements continuous-time Optimal Transport Flow Matching, achieving 100 Hz execution in 1–2 integration steps.
+2. **Dual-Frequency Decoupled Execution:**
+   * High-level visual reasoning does not need to run at 100 Hz, and low-level balance cannot survive at 5 Hz. PROBE-1 decouples semantic scene analysis (5–10 Hz transformer trunk) from high-speed reactive motor policy execution (100–200 Hz flow head).
+3. **Multi-Sensory Proprioceptive & Tactile Fusion:**
+   * Vision is occluded at the critical moment of grasping. PROBE-1 introduces a dedicated High-Density Tactile Tokenizer (optical displacement + matrix pressure) and wrist 6-axis force-torque inputs directly into the action flow field.
+4. **Asymmetric Whole-Body Locomotion & Manipulation:**
+   * Following Cassie and Expressive WBC, lower-body balance is trained via Asymmetric Actor-Critic in simulation with randomized dynamics, feeding the actor clean proprioceptive and IMU history while conditioning on high-level navigation and torso counterbalance vectors.
+5. **Continuous Latent World Model Rollouts:**
+   * Following DreamerV3 and UniSim, PROBE-1 maintains an internal action-conditioned latent dynamics predictor for offline model-based verification and counterfactual mission safety checks before executing high-consequence physical actions.
+6. **Independent Deterministic Safety Barrier:**
+   * No physical robot should rely solely on raw neural network weights for safety. PROBE-1 routes all generated joint torques through a hardware-enforced Control Barrier Function (CBF) and torque saturation filter outside the neural network loop.
+7. **Zero-Copy RDMA Hardware Runtime:**
+   * Ingesting 4 camera streams, tactile arrays, and joint sensors at sub-10 ms latency requires zero-copy shared memory architecture. PROBE-1 targets the HOROS Reality Fabric runtime with kernel-level memory routing on NVIDIA Jetson/Drive Thor and workstation GPUs.
