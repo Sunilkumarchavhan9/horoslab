@@ -369,16 +369,16 @@ export function LandingNavbar({
         </div>
 
         <div className="w-full flex justify-center h-14 relative z-10 pointer-events-none">
-          <div className="flex items-center justify-between w-full max-w-[1360px] mx-auto bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between w-[96%] sm:w-[94%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] min-w-0 md:min-w-[760px] lg:min-w-[820px] max-w-[1040px] mx-auto bg-[#151515] shadow-[0_0_20px_10px_rgba(21,21,21,1)] border-x border-dashed border-[#333333] pointer-events-auto px-3 sm:px-4 lg:px-5">
             {/* Left: Official Vector Brand Logo */}
-            <div className="flex items-center shrink-0 h-14 mr-3 lg:mr-5 xl:mr-7">
+            <div className="flex items-center shrink-0 h-14 mr-2 lg:mr-3 xl:mr-5">
               <Link href="/" className="flex items-center group shrink-0 whitespace-nowrap">
                 <HorosLogo variant="wordmark" size="xl" className="text-[#F0EFE2]" />
               </Link>
             </div>
 
             {/* Center: Navigation Links (Desktop & Laptop) */}
-            <nav className="hidden lg:flex items-center gap-3 lg:gap-4 xl:gap-6 text-[#F0EFE2] font-medium whitespace-nowrap text-xs xl:text-[13px]">
+            <nav className="hidden lg:flex items-center gap-2.5 lg:gap-3.5 xl:gap-4.5 text-[#F0EFE2] font-medium whitespace-nowrap text-xs xl:text-[13px]">
               {/* Use cases dropdown (Hover + Click) */}
               <div
                 className="relative py-2"
@@ -553,11 +553,11 @@ export function LandingNavbar({
             </nav>
 
             {/* Right Actions: Sign in & Get started (Desktop & Mobile) */}
-            <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-1 ml-2 xl:ml-4">
+            <div className="flex items-center gap-2 shrink-0 whitespace-nowrap h-14 pl-1 ml-1.5 xl:ml-3">
               <button
                 type="button"
                 onClick={onOpenSignUp || onOpenDashboard}
-                className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-4 xl:px-5 py-2 min-h-[34px] rounded-xs transition-colors cursor-pointer text-xs sm:text-[13px] font-semibold whitespace-nowrap"
+                className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-3.5 xl:px-4 py-1.5 min-h-[32px] rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
               >
                 <span>Sign up</span>
               </button>
@@ -565,7 +565,7 @@ export function LandingNavbar({
               <button
                 type="button"
                 onClick={onOpenSignIn || onOpenDashboard}
-                className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-4 xl:px-5 py-2 min-h-[34px] rounded-xs transition-all cursor-pointer text-xs sm:text-[13px] whitespace-nowrap shadow-sm"
+                className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-3.5 xl:px-4 py-1.5 min-h-[32px] rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
               >
                 <span>Demo</span>
               </button>
