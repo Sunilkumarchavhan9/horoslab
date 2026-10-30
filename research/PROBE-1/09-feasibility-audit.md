@@ -327,3 +327,4 @@ Before allocating compute for the full 3.8B MoE foundation model pretraining, th
 * **Gate C (Safety Governor Gantry Test):** Demonstrate 20 consecutive dynamic obstacle recoveries on the gantry-tethered Unitree G1 with **zero safety barrier violations** and zero QP timeouts.
 
 **Proceed immediately to Step 2: Reproducibility Environment Preparation and EXP-001 Baseline Implementation.**
+
