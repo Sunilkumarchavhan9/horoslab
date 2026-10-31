@@ -70,6 +70,18 @@ Let $\alpha \in (0, 1)$ denote the target miscoverage rate (set to $\alpha = 0.0
     where $\mu_{\text{floor}} = 0.05$ corresponds to the physical hydrodynamic boundary lubrication limit of wet elastomer-on-polymer surfaces, preventing the polyhedral cone from degenerating to an empty set or causing numerical singularity ($f_N \to \infty$).
 \end{enumerate}
 
+\begin{remark}[Decoupling Offline All-Timestep Coverage from Online Event-Triggered Adaptation]
+We explicitly decouple the offline synthetic coverage benchmark (EXP-002) from the online physical controller's event-triggered operating mode:
+\begin{enumerate}
+    \item \textbf{Offline All-Timestep Coverage Benchmark (EXP-002):} In this synthetic tracking benchmark, the simulator supplies true surface friction $\mu_{\text{true}}(t)$ at every discrete control cycle ($t = 1, \dots, 50$). This evaluates whether Gibbs \& Candès's ACI martingale convergence theorem holds over non-exchangeable distribution shifts across the full temporal population of $5,000$ points per regime ($100\text{ episodes} \times 50\text{ steps}$).
+    \item \textbf{Online Event-Triggered Physical Adaptation (EXP-003--006):} In physical execution, true friction cannot be measured at sticking equilibrium without provoking slip. Instead, calibration updates occur along an \emph{event-indexed stopping-time sequence} $\{t_m\}_{m \ge 1}$, where each index $t_m$ corresponds to an incipient micro-slip detection ($\mathcal{E}_{\text{slip}, i}(t_m) = 1$). By the Optional Stopping Theorem applied to the ACI martingale difference sequence, asymptotic marginal coverage holds over the sub-sequence of incipient slip events:
+    \begin{equation}
+        \lim_{M \to \infty} \frac{1}{M} \sum_{m=1}^M \mathbb{I}\left\{\mu_{\text{obs}, i}(t_m) \ge \mu_{\text{cal}, i}(t_m)\right\} = 1 - \alpha
+    \end{equation}
+    During intervening sticking cycles ($t \notin \{t_m\}$), the invariant $\psi_i(t) \le \mu_{\text{cal}, i}(t)$ guarantees that tangential forces remain strictly inside the polyhedral cone, precluding macroscopic sliding. We do not imply that all-timestep coverage identically applies to event-triggered intervals without this stopping-time formulation.
+\end{enumerate}
+\end{remark}
+
 \subsection{Convex Quadratic Programming Formulation}
 The safe joint acceleration command $\mathbf{u}^* \in \mathbb{R}^{n_q}$ is resolved at each $100\text{ Hz}$ control cycle via the following convex QP:
 \begin{equation}
