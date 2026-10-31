@@ -70,7 +70,20 @@ Output artifact: `main.pdf`.
 
 ---
 
-## 4. arXiv Submission Checklist (AutoMegaKernel Standard)
+## 4. Ready-to-Upload arXiv Archive
+
+A self-contained archive package is pre-assembled and ready for direct upload to the [arXiv submission system](https://arxiv.org/submit):
+- `probe1_arxiv_submission.tar.gz` (205 KB: contains `main.tex`, `references.bib`, `sections/`, and `figures/`)
+- `probe1_arxiv_submission.zip` (235 KB: standard zip format for Overleaf or arXiv)
+
+To re-package the bundle at any time:
+```bash
+python -c "import tarfile; tar = tarfile.open('probe1_arxiv_submission.tar.gz', 'w:gz'); [tar.add(x) for x in ['main.tex', 'references.bib', 'sections', 'figures']]; tar.close()"
+```
+
+---
+
+## 5. arXiv Submission Checklist (AutoMegaKernel Standard)
 
 - [x] **Clear Authorship:** Sunil Kumar Chavhan, HOROS Physical Intelligence Research Group, `sunil@horoslab.io`.
 - [x] **Category Selection:** Primary `cs.RO` (Robotics), Secondary `eess.SY` (Systems and Control).
