@@ -7,7 +7,7 @@ Following the scientific standards of peer review, we explicitly state that the 
 \subsection{Mathematical Assumptions and Approximations}
 Our theoretical formulation rests on two explicit approximations:
 \begin{enumerate}
-    \item \textbf{Polyhedral Friction Cone Conservatism:} The 8-sided inner approximation $\mathcal{P}_8$ introduces a maximum volumetric conservatism bound of $7.61\%$ (\Cref{thm:polyhedral_bound}). While this ensures that no commanded force ever violates the true friction cone, it slightly limits the tangential force envelope that a finger can exploit compared to second-order cone programming (SOCP).
+    \item \textbf{Polyhedral Friction Cone Conservatism:} The 8-sided inner approximation $\mathcal{P}_8$ introduces a maximum radial conservatism bound of $1 - \cos(\pi/8) \approx 7.61\%$ and a cross-sectional area conservatism of $1 - \frac{2\sqrt{2}}{\pi} \approx 9.97\%$ (\Cref{thm:polyhedral_bound}). While this ensures that no commanded force ever violates the true Lorentz friction cone, it slightly restricts the tangential force envelope that a finger can exploit compared to second-order cone programming (SOCP).
     \item \textbf{Hunt-Crossley Linearization:} The affine sensitivity mapping $\mathbf{\Lambda}_i(\mathbf{q})$ assumes that contact stiffness $\mathbf{K}_c$ and damping $\mathbf{D}_c$ remain approximately constant over a single control step ($\Delta t = 10\text{ ms}$). For high-speed impacts where contact velocity changes violently within $< 2\text{ ms}$, higher-order variational integrators may be required.
 \end{enumerate}
 
@@ -24,6 +24,7 @@ To enable independent laboratory reproduction without requiring an expensive ful
 \textbf{Subsystem} & \textbf{Hardware Specification} \\
 \midrule
 Ground-Truth Transducer & ATI Industrial Automation Mini40 6-Axis F/T Sensor (0.01~N resolution) \\
+Slip Ground-Truth Transducer & Polytec PDV-100 Laser Doppler Vibrometer (velocity resolution $0.05\ \mu\text{m/s}$ at $10\text{ kHz}$) \\
 Data Acquisition & National Instruments PCIe-6323 DAQ sampling at 1000~Hz \\
 Optical Tactile Transducer & GelSlim 3.0 or DIGIT (100~Hz, $640\times 480$, Poisson marker flow) \\
 Direct-Drive Actuator & Linear ball-screw stage with direct-drive motor (100~Hz loop) \\
@@ -39,3 +40,4 @@ Swappable Contact Shells & Polished Acrylic ($\mu = 0.60$), Teflon PTFE ($\mu = 
     \item \textbf{Incipient Slip Lead-Time:} Incipient slip alert issued $t_{\text{alert}} \ge 25\text{ ms}$ prior to macroscopic sliding detected by laser Doppler vibrometry.
     \item \textbf{Execution Latency:} Embedded OSQP solve time on an NVIDIA Jetson AGX Orin $\le 1.0\text{ ms}$ (P95).
 \end{itemize}
+

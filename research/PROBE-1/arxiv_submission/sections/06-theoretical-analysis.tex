@@ -13,10 +13,10 @@ The safe contact set $\mathcal{S} \subset \mathbb{R}^{3M}$ is the intersection:
 
 \begin{theorem}[Forward Invariance of Safe Set]
 \label{thm:invariance}
-Let $\mathbf{f}_{c}(k) \in \mathcal{S}$. If the quadratic program \eqref{eq:safety_qp} yields a solution with zero slack ($\boldsymbol{\delta}_s = \mathbf{0}$), then under the linearized Hunt-Crossley sensitivity mapping \eqref{eq:force_sensitivity}, the predicted contact force satisfies $\mathbf{f}_c(k+1) \in \mathcal{S}$.
+Let $\mathbf{f}_{c}(k) \in \mathcal{S}$. If the quadratic program \eqref{eq:full_qp_filter} yields a solution with zero slack ($\boldsymbol{\delta}_s = \mathbf{0}$), then under the linearized Hunt-Crossley sensitivity mapping \eqref{eq:force_sensitivity}, the predicted contact force satisfies $\mathbf{f}_c(k+1) \in \mathcal{S}$.
 \end{theorem}
 \begin{proof}
-For any finger $i$ and facet $j \in \{0, \dots, 7\}$, the inequality constraint in \eqref{eq:qp_ineq} enforces:
+For any finger $i$ and facet $j \in \{0, \dots, 7\}$, the inequality constraint in \eqref{eq:qp_ineq_sys} enforces:
 \begin{equation}
     \mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k+1) \le (1 - \gamma_{\text{slip}}) \min\left(0, \mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k)\right)
 \end{equation}
@@ -26,23 +26,36 @@ Since $\mathbf{f}_c(k) \in \mathcal{S}$, we have $\mathbf{a}_{i, j}^T \mathbf{f}
 \subsection{Decoupling of Internal Squeeze in the Grasp Nullspace}
 Multi-fingered grasping requires modulating internal contact squeeze to arrest slip without perturbing the object's spatial trajectory.
 
-\begin{theorem}[Nullspace Internal Squeeze Decoupling]
+\begin{theorem}[Constrained Nullspace Internal Squeeze Decoupling]
 \label{thm:nullspace}
-Let the grasp matrix $\mathbf{G} \in \mathbb{R}^{6 \times 3M}$ possess full rank $\text{rank}(\mathbf{G}) = 6$ with $M \ge 3$ non-collinear contacts. Then for any internal normal force adjustment $\Delta \mathbf{f}_{\text{internal}} \in \mathcal{N}(\mathbf{G})$, the net spatial wrench applied to the object satisfies:
+Let the grasp matrix $\mathbf{G} \in \mathbb{R}^{6 \times 3M}$ possess full rank $\text{rank}(\mathbf{G}) = 6$ with $M \ge 3$ non-collinear contacts. Then for any internal contact force adjustment $\Delta \mathbf{f}_{\text{internal}} \in \mathcal{N}(\mathbf{G})$, the net spatial wrench applied to the object satisfies:
 \begin{equation}
     \mathbf{G} \left( \mathbf{f}_c(k+1) + \Delta \mathbf{f}_{\text{internal}} \right) = \mathbf{w}_{\text{req}}
 \end{equation}
+Moreover, $\Delta \mathbf{f}_{\text{internal}}$ is physically realizable if and only if it belongs to the bounded convex feasible polytope:
+\begin{equation}
+    \mathcal{F}_{\text{internal}} = \mathcal{N}(\mathbf{G}) \cap \left( \mathcal{S} \ominus \mathbf{f}_c(k+1) \right) \cap \left\{ \Delta \mathbf{f} \;\middle|\; \exists \mathbf{u} \in [\mathbf{u}_{\min}, \mathbf{u}_{\max}]: \Delta \mathbf{f} = \mathbf{\Lambda}_{\text{stack}} (\mathbf{u} - \mathbf{u}_{\text{nom}}) \right\}
+    \label{eq:feasible_internal_polytope}
+\end{equation}
 \end{theorem}
 \begin{proof}
-By definition of the nullspace, $\mathbf{G} \Delta \mathbf{f}_{\text{internal}} = \mathbf{0}$. For an opposing four-finger grasp ($M = 4$), the contact force vector space has dimension $3M = 12$. The nullspace dimension is $\dim(\mathcal{N}(\mathbf{G})) = 12 - 6 = 6$. For pairs of opposing fingertips (fingers 1 and 2 pushing with normal force $+f_N \hat{\mathbf{x}}$, and fingers 3 and 4 pushing with $-f_N \hat{\mathbf{x}}$), equal and opposite normal force increments $\Delta f_N$ cancel identically in $\mathbf{G}$:
+By definition of the nullspace, $\mathbf{G} \Delta \mathbf{f}_{\text{internal}} = \mathbf{0}$, which preserves the net spatial wrench identically: $\mathbf{G}(\mathbf{f}_c + \Delta \mathbf{f}_{\text{internal}}) = \mathbf{G}\mathbf{f}_c + \mathbf{0} = \mathbf{w}_{\text{req}}$. 
+
+For an opposing four-finger grasp ($M = 4$), the contact force vector space has dimension $3M = 12$, yielding a nullspace dimension $\dim(\mathcal{N}(\mathbf{G})) = 12 - 6 = 6$. Under the geometric symmetry assumption that pairs of opposing fingertips act along antipodal collinear axes aligned with the object principal frame (fingers 1 and 2 pushing with normal force $+f_N \hat{\mathbf{x}}$ at $\mathbf{p}_{c, 1}, \mathbf{p}_{c, 2}$, and fingers 3 and 4 pushing with $-f_N \hat{\mathbf{x}}$ at $\mathbf{p}_{c, 3}, \mathbf{p}_{c, 4}$ symmetric about $\mathbf{c}_o$), uniform opposing increments $\Delta f_N$ cancel linearly:
 \begin{equation}
-    \mathbf{G} \Delta \mathbf{f}_N = \sum_{i=1}^4 \Delta \mathbf{f}_{N, i} = \Delta f_N \hat{\mathbf{x}} + \Delta f_N \hat{\mathbf{x}} - \Delta f_N \hat{\mathbf{x}} - \Delta f_N \hat{\mathbf{x}} = \mathbf{0}
+    \sum_{i=1}^4 \Delta \mathbf{f}_{N, i} = \Delta f_N \hat{\mathbf{x}} + \Delta f_N \hat{\mathbf{x}} - \Delta f_N \hat{\mathbf{x}} - \Delta f_N \hat{\mathbf{x}} = \mathbf{0}
 \end{equation}
-and their cross products $[\mathbf{p}_{c, i} - \mathbf{c}_o]_\times \Delta \mathbf{f}_{N, i}$ sum to zero about the centroid. Thus, the safety filter can scale normal squeeze forces arbitrarily within $[F_{\min}, F_{\max}]$ without exerting net linear or angular accelerations on the object.
+Furthermore, by symmetry $(\mathbf{p}_{c, 1} - \mathbf{c}_o) + (\mathbf{p}_{c, 2} - \mathbf{c}_o) = -(\mathbf{p}_{c, 3} - \mathbf{c}_o) - (\mathbf{p}_{c, 4} - \mathbf{c}_o)$, the resultant moments sum identically to zero:
+\begin{equation}
+    \sum_{i=1}^4 (\mathbf{p}_{c, i} - \mathbf{c}_o) \times \Delta \mathbf{f}_{N, i} = \mathbf{0}
+\end{equation}
+In general asymmetric contact geometry, the internal force adjustment is projected via the orthogonal nullspace projector $\mathbf{P}_{\mathcal{N}} = \mathbf{I} - \mathbf{G}^\dagger \mathbf{G}$. 
+
+Crucially, internal forces cannot be scaled arbitrarily: they are strictly constrained by the friction cones ($\mathbf{f}_c + \Delta \mathbf{f} \in \mathcal{P}_8$), upper fragile crush thresholds ($\hat{\mathbf{n}}_i^T(\mathbf{f}_{c, i} + \Delta \mathbf{f}_i) \le F_{\max}$), minimum contact maintenance ($\hat{\mathbf{n}}_i^T(\mathbf{f}_{c, i} + \Delta \mathbf{f}_i) \ge F_{\min}$), and motor joint acceleration limits ($\mathbf{u} \in [\mathbf{u}_{\min}, \mathbf{u}_{\max}]$ through the sensitivity mapping $\mathbf{\Lambda}_{\text{stack}}$). The feasible internal adjustment is therefore strictly bounded by the compact convex polytope $\mathcal{F}_{\text{internal}}$ in \eqref{eq:feasible_internal_polytope}.
 \end{proof}
 
 \subsection{Computational Complexity of the OSQP Safety Filter}
-The safety QP \eqref{eq:safety_qp} comprises $n_{\text{vars}} = n_q + n_{\text{ineq}} + n_{\text{eq}}$ decision variables. For a 16-DoF hand with $M = 4$ fingers:
+The safety QP \eqref{eq:full_qp_filter} comprises $n_{\text{vars}} = n_q + n_{\text{ineq}} + n_{\text{eq}}$ decision variables. For a 16-DoF hand with $M = 4$ fingers:
 \begin{itemize}
     \item Joint accelerations: $n_q = 16$
     \item Anti-slip constraints: $8 \times 4 = 32$ facets

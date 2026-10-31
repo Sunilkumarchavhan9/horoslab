@@ -64,15 +64,26 @@ The polyhedral constraint matrix $\mathbf{A}_{\text{cone}, i} \in \mathbb{R}^{8 
     \mathcal{P}_{8, i} = \left\{ \mathbf{f} \in \mathbb{R}^3 \;\middle|\; \mathbf{A}_{\text{cone}, i} \mathbf{f} \le \mathbf{0}, \; \hat{\mathbf{n}}_i^T \mathbf{f} \ge F_{\min} \right\}
 \end{equation}
 
-\begin{theorem}[Analytical Conservatism Bound]
+\begin{theorem}[Analytical Radial and Area Conservatism Bounds]
 \label{thm:polyhedral_bound}
-The 8-sided polyhedral cone satisfies $\mathcal{P}_{8, i} \subseteq \mathcal{C}_i$ for all $\mu_i > 0$. The maximum relative volumetric conservatism of the inner approximation is:
-\begin{equation}
-    \epsilon_{\text{cons}} = 1 - \cos\left(\frac{\pi}{8}\right) = 1 - \frac{\sqrt{2 + \sqrt{2}}}{2} \approx 7.61\%
-\end{equation}
+The 8-sided polyhedral cone satisfies $\mathcal{P}_{8, i} \subseteq \mathcal{C}_i$ for all $\mu_i > 0$. The geometric conservatism of the inner approximation is characterized by:
+\begin{enumerate}
+    \item \textbf{Maximum Radial Conservatism Bound:} The maximum relative radial reduction from the circular cone boundary to the inscribed octagonal facet is:
+    \begin{equation}
+        \epsilon_{\text{rad}} = 1 - \cos\left(\frac{\pi}{8}\right) = 1 - \frac{\sqrt{2 + \sqrt{2}}}{2} \approx 7.61\%
+    \end{equation}
+    \item \textbf{Cross-Sectional Area Conservatism:} The cross-sectional area reduction of the regular inscribed octagon relative to the circular friction cone cross-section is:
+    \begin{equation}
+        \epsilon_{\text{area}} = 1 - \frac{A_{\text{octagon}}}{A_{\text{circle}}} = 1 - \frac{8 \cdot \frac{1}{2} R^2 \sin(\pi/4)}{\pi R^2} = 1 - \frac{2\sqrt{2}}{\pi} \approx 9.97\%
+    \end{equation}
+\end{enumerate}
 \end{theorem}
 \begin{proof}
-The minimum radial distance from the cone centerline to facet $j$ occurs at the midpoint between adjacent vertices: $r_{\min} = \mu_i f_N \cos(\pi/8) \approx 0.9239 \mu_i f_N$. For all points $\mathbf{f} \in \mathcal{P}_{8, i}$, the tangential shear satisfies $\|\mathbf{f}_T\|_2 \le r_{\min} \le \mu_i f_N$. Hence $\mathcal{P}_{8, i} \subset \mathcal{C}_i$, and the maximum conservatism is strictly $1 - 0.9239 = 7.61\%$.
+Let $R = \mu_i f_N$ denote the radius of the circular friction cone cross-section at normal force $f_N$. In the inscribed regular octagon, the vertices lie at radius $R$, while the minimum distance from the cone centerline to any facet occurs at the midpoint between adjacent vertices:
+\begin{equation}
+    r_{\min} = R \cos\left(\frac{\pi}{8}\right) \approx 0.9239 R
+\end{equation}
+For any tangential force vector $\mathbf{f}_T$ satisfying the polyhedral constraints $\mathbf{A}_{\text{cone}, i} \mathbf{f} \le \mathbf{0}$, the maximum allowable shear force along facet midpoints is bounded by $r_{\min} \le R = \mu_i f_N$. Hence $\mathcal{P}_{8, i} \subset \mathcal{C}_i$, and the maximum radial reduction is strictly $1 - \cos(\pi/8) \approx 7.61\%$. The area of the inscribed regular 8-gon is $A_{\text{octagon}} = 8 \times (\frac{1}{2} R^2 \sin(\pi/4)) = 2\sqrt{2} R^2 \approx 2.8284 R^2$. Compared to the circular area $A_{\text{circle}} = \pi R^2 \approx 3.1416 R^2$, the relative area reduction is $1 - 2\sqrt{2}/\pi \approx 9.97\%$.
 \end{proof}
 
 \subsection{Multi-Contact Safety Sets and Object Wrench Balance}

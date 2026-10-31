@@ -20,7 +20,7 @@ At each $10\text{ ms}$ control cycle, the system ingests:
 These signals are processed by a recursive least-squares estimator tracking decoupled contact forces $\mathbf{f}_{c, i}(k)$, instantaneous object mass $\hat{m}_o(k)$, and Center of Mass $\hat{\mathbf{c}}_o(k)$.
 
 \subsection{Non-Exchangeable Uncertainty Calibration Layer}
-Rather than assuming nominal friction parameters, the estimation layer forwards raw contact residuals to an Adaptive Conformal Inference (ACI) module. Operating in closed-loop, ACI dynamically adjusts the empirical miscoverage quantile, outputting a certified lower friction bound $\mu_{\text{cal}, i}(k)$ that accounts for nonstationary distribution shifts without requiring unverified physical exchangeability.
+Rather than assuming nominal friction parameters, the estimation layer forwards raw contact residuals to an Adaptive Conformal Inference (ACI) module. Operating in closed-loop, ACI dynamically adjusts the empirical miscoverage quantile, outputting a calibrated lower friction bound $\mu_{\text{cal}, i}(k)$ with asymptotic marginal coverage guarantees under nonstationary, non-exchangeable distribution shifts.
 
 \subsection{Predictive Safety Filter (QP Core)}
 The core optimization engine constructs an action-dependent predictive Control Barrier Function (p-CBF) based on the linearized Hunt-Crossley sensitivity tensor $\mathbf{\Lambda}_i(\mathbf{q})$. The resulting convex Quadratic Program simultaneously enforces:
@@ -33,4 +33,11 @@ The core optimization engine constructs an action-dependent predictive Control B
 \end{enumerate}
 
 \subsection{Real-Time Decision Gate and Fail-Safe Fallback}
-A deterministic finite-state supervisor monitors solver convergence and watchdog latency. If the QP completes within the $10.0\text{ ms}$ budget with acceptable slack, the safe command $\mathbf{u}^*$ is dispatched directly to low-level motor torque controllers. If computational delays or physical infeasibility occur, the gate seamlessly transitions to passive damping fallback, guaranteeing failsafe dissipation of kinetic energy.
+A deterministic finite-state supervisor monitors solver convergence, slack violations, and execution latency at every control cycle, governing four operational states:
+\begin{itemize}
+    \item \textbf{\texttt{NOMINAL\_SAFE}:} The QP converges within the real-time budget with zero slack ($\|\boldsymbol{\delta}_s^*\|_\infty \le 10^{-2}\text{ N}$), providing certified discrete-time forward invariance of the safe contact set.
+    \item \textbf{\texttt{EMERGENCY\_RELAXED}:} When severe external disturbances push the hand to the edge of the feasible envelope, the QP activates soft slack variables ($\|\boldsymbol{\delta}_s^*\|_\infty > 10^{-2}\text{ N}$) to compute minimum-violation compromise forces. This un-certified emergency compliance state is strictly time-bounded (up to 5 consecutive cycles, $50\text{ ms}$).
+    \item \textbf{\texttt{TIMEOUT}:} If the solver runtime exceeds the $10.0\text{ ms}$ control cycle watchdog deadline, execution immediately aborts to passive damping fallback.
+    \item \textbf{\texttt{CRITICAL\_FAIL}:} If the emergency relaxation persists beyond $5$ cycles, or upon numerical singularity, the gate dispatches passive damping fallback $\mathbf{u}_{\text{safe}} = -K_d \dot{\mathbf{q}}_k$, dissipating kinetic energy without requiring active optimization.
+\end{itemize}
+
