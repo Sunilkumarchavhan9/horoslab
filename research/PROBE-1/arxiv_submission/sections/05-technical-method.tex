@@ -20,11 +20,13 @@ where $\mathbf{a}_{\text{obj}}$ and $\boldsymbol{\alpha}_{\text{obj}}$ denote th
 \begin{equation}
     \hat{m}_o = \frac{\left( \sum_{i=1}^M \mathbf{f}_{c, i} \right)^T (\mathbf{a}_{\text{obj}} - \mathbf{g})}{\|\mathbf{a}_{\text{obj}} - \mathbf{g}\|_2^2}
 \end{equation}
-Under the quasi-static manipulation regime characteristic of stable dexterous carrying, linear accelerations are small relative to gravity ($\|\mathbf{a}_{\text{obj}}\|_2 \ll \|\mathbf{g}\|_2 \approx 9.81\text{ m/s}^2$) and angular velocities are modest ($\|\boldsymbol{\omega}_{\text{obj}}\|_2 \approx 0$). In this regime, dynamic inertial forces represent negligible perturbations, allowing the gravitational load and Center of Mass to be tracked via recursive least-squares (RLS) with exponential forgetting factor $\lambda_{\text{rls}} = 0.98$:
+Under the quasi-static manipulation regime characteristic of stable dexterous carrying, linear accelerations are small relative to gravity ($\|\mathbf{a}_{\text{obj}}\|_2 \ll \|\mathbf{g}\|_2 \approx 9.81\text{ m/s}^2$) and angular velocities are modest ($\|\boldsymbol{\omega}_{\text{obj}}\|_2 \approx 0$). In this regime, dynamic inertial forces represent negligible perturbations, allowing the gravitational load and the contact normal force centroid to be tracked via recursive least-squares (RLS) with exponential forgetting factor $\lambda_{\text{rls}} = 0.98$:
 \begin{align}
     \hat{m}_o(k) &= \frac{1}{g} \left\| \sum_{i=1}^M \mathbf{f}_{c, i}(k) \right\|_2 \\
-    \hat{\mathbf{c}}_o(k) &= \left( \sum_{i=1}^M f_{N, i}(k) \mathbf{p}_{c, i} \right) \Bigg/ \left( \sum_{i=1}^M f_{N, i}(k) \right)
+    \hat{\mathbf{p}}_{\text{cop}}(k) &= \left( \sum_{i=1}^M f_{N, i}(k) \mathbf{p}_{c, i} \right) \Bigg/ \left( \sum_{i=1}^M f_{N, i}(k) \right)
 \end{align}
+Here $\hat{\mathbf{p}}_{\text{cop}}(k)$ denotes the instantaneous Center of Pressure (CoP) along the grasp contact manifold. For planar and symmetric antipodal grasping of objects with approximately uniform transverse density, the horizontal and vertical projection of the 3D Center of Mass $\mathbf{c}_o$ coincides with $\hat{\mathbf{p}}_{\text{cop}}$, providing an apparent contact centroid that tracks lateral payload shifts (such as sloshing liquids) without requiring unconstrained 3D vision. In general asymmetric 3D configurations, full spatial CoM identification requires solving the rotational moment balance \eqref{eq:newton_euler_rot} across multiple orientations.
+
 The instantaneous apparent friction coefficient is estimated via the tangential traction ratio:
 \begin{equation}
     \hat{\mu}_i(k) = \frac{\|\mathbf{f}_{T, i}(k)\|_2}{f_{N, i}(k) + \epsilon}
@@ -35,7 +37,7 @@ Standard friction estimators output point estimates $\hat{\mu}_i(k)$ that lag be
 
 Let $\alpha \in (0, 1)$ denote the target miscoverage rate (set to $\alpha = 0.05$ for an asymptotic $95\%$ marginal coverage target). At step $k$:
 \begin{enumerate}
-    \item \textbf{Non-Conformity Scoring and Incipient Slip Observation:} The observed friction ratio $\mu_{\text{observed}, i}(k)$ is detected at the incipient micro-slip boundary. When elastomeric sensor marker displacement curl/divergence indicates localized boundary slip across the contact patch \cite{pandas2024incipient}, the critical traction ratio is recorded as $\mu_{\text{observed}, i} = \|\mathbf{f}_{T, i}\| / (f_{N, i} + \epsilon)$ (in synthetic benchmark evaluation, $\mu_{\text{observed}, i}$ tracks the ground-truth perturbed surface friction). We compute the absolute calibration residual:
+    \item \textbf{Non-Conformity Scoring and Incipient Slip Observation:} In physical deployment, ground-truth surface friction $\mu_{\text{true}}$ cannot be directly sensed. Instead, the calibration residual relies strictly on incipient micro-slip events detected by optical tactile marker curl/divergence \cite{pandas2024incipient}. The critical traction ratio at localized slip onset provides an empirical sample $\mu_{\text{observed}, i} = \|\mathbf{f}_{T, i}\| / (f_{N, i} + \epsilon)$. In our offline synthetic benchmark evaluation (EXP-002), ground-truth friction was tracked solely as an oracle reference to benchmark coverage bounds against theoretical limits; the online QP safety filter never receives privileged simulator state. We compute the absolute calibration residual:
     \begin{equation}
         E_k = |\mu_{\text{observed}, i}(k) - \hat{\mu}_i(k)|
     \end{equation}
@@ -148,6 +150,6 @@ Under the fallback law \eqref{eq:passive_damping} coupled with computed-torque c
 where $\mathbf{M}(\mathbf{q}) \succ 0$ is the symmetric positive-definite joint-space inertia matrix.
 \end{proposition}
 \begin{proof}
-Differentiating $E_{\text{kin}}$ with respect to time yields $\dot{E}_{\text{kin}} = \dot{\mathbf{q}}^T \mathbf{M} \ddot{\mathbf{q}} + \frac{1}{2} \dot{\mathbf{q}}^T \dot{\mathbf{M}} \dot{\mathbf{q}}$. Substituting $\ddot{\mathbf{q}} = -K_d \dot{\mathbf{q}}$ and applying the classical skew-symmetry property $\dot{\mathbf{q}}^T (\dot{\mathbf{M}} - 2\mathbf{C}) \dot{\mathbf{q}} = 0$ yields $\dot{E}_{\text{kin}} = -K_d \dot{\mathbf{q}}^T \mathbf{M}(\mathbf{q}) \dot{\mathbf{q}}$. Since $\mathbf{M}(\mathbf{q}) \succ 0$ with minimum eigenvalue $\lambda_{\min}(\mathbf{M}) > 0$, kinetic energy decreases monotonically to zero at rate at least $2 K_d$, absorbing contact impacts and arresting finger motion in $< 50\ \mu\text{s}$ without requiring online optimization.
+Differentiating $E_{\text{kin}}$ with respect to time yields $\dot{E}_{\text{kin}} = \dot{\mathbf{q}}^T \mathbf{M} \ddot{\mathbf{q}} + \frac{1}{2} \dot{\mathbf{q}}^T \dot{\mathbf{M}} \dot{\mathbf{q}}$. Substituting $\ddot{\mathbf{q}} = -K_d \dot{\mathbf{q}}$ and applying the classical skew-symmetry property $\dot{\mathbf{q}}^T (\dot{\mathbf{M}} - 2\mathbf{C}) \dot{\mathbf{q}} = 0$ yields $\dot{E}_{\text{kin}} = -K_d \dot{\mathbf{q}}^T \mathbf{M}(\mathbf{q}) \dot{\mathbf{q}}$. Since $\mathbf{M}(\mathbf{q}) \succ 0$ with minimum eigenvalue $\lambda_{\min}(\mathbf{M}) > 0$, kinetic energy decreases monotonically to zero at rate at least $2 K_d$, absorbing contact impacts with an exponential velocity decay time constant $\tau = K_d^{-1} = 0.20\text{ s}$ ($200\text{ ms}$), while the deterministic fallback command is dispatched in $< 50\ \mu\text{s}$ of computational latency without requiring online numerical optimization.
 \end{proof}
 

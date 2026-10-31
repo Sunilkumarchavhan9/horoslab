@@ -14,7 +14,7 @@
 ```
 arxiv_submission/
 ├── main.tex                    # Master LaTeX document (single-column article layout)
-├── references.bib              # Verified BibTeX bibliography (17 primary peer-reviewed citations)
+├── references.bib              # Verified BibTeX bibliography (19 primary peer-reviewed citations)
 ├── check_latex.py              # Automated validation script verifying labels, cites & env balance
 ├── generate_paper_figures.py   # Publication figure engine generating vector PDFs from JSON
 ├── README.md                   # Submission dossier and build instructions

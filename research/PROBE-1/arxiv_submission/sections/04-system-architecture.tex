@@ -4,7 +4,7 @@
 \begin{figure*}[t]
     \centering
     \includegraphics[width=\textwidth]{figures/architecture.pdf}
-    \caption{\textbf{HOROS PROBE-1 End-to-End System Architecture.} High-speed sensory feedback ($100\text{ Hz}$ optical tactile marker flow, joint encoders, and motor effort) is processed by a multi-contact recursive estimator. The Adaptive Conformal Inference (ACI) module tracks non-exchangeable distribution shifts, supplying dynamically calibrated friction bounds $\mu_{\text{cal}, i}$ to the predictive safety filter. Operating at $100\text{ Hz}$, the OSQP Quadratic Program modifies nominal actions $\mathbf{u}_{\text{nom}}$ into certified safe joint accelerations $\mathbf{u}^*$, monitored by a real-time four-state decision gate.}
+    \caption{\textbf{HOROS PROBE-1 End-to-End System Architecture.} High-speed sensory feedback ($100\text{ Hz}$ optical tactile marker flow, joint encoders, and motor effort) is processed by a multi-contact recursive estimator. The Adaptive Conformal Inference (ACI) module tracks non-exchangeable distribution shifts, supplying dynamically calibrated friction bounds $\mu_{\text{cal}, i}$ to the predictive safety filter. Operating at $100\text{ Hz}$, the OSQP Quadratic Program modifies nominal actions $\mathbf{u}_{\text{nom}}$ into dispatched safe joint accelerations $\mathbf{u}^*$, monitored by a real-time four-state decision gate.}
     \label{fig:architecture_overview}
 \end{figure*}
 
@@ -17,7 +17,7 @@ At each $10\text{ ms}$ control cycle, the system ingests:
     \item \textbf{Joint Encoders:} Articulated joint positions $\mathbf{q}_k \in \mathbb{R}^{16}$ and velocities $\dot{\mathbf{q}}_k \in \mathbb{R}^{16}$.
     \item \textbf{Actuator Effort:} Motor phase currents providing joint torque feedback $\boldsymbol{\tau}_k \in \mathbb{R}^{16}$.
 \end{itemize}
-These signals are processed by a recursive least-squares estimator tracking decoupled contact forces $\mathbf{f}_{c, i}(k)$, instantaneous object mass $\hat{m}_o(k)$, and Center of Mass $\hat{\mathbf{c}}_o(k)$.
+These signals are processed by a recursive least-squares estimator tracking decoupled contact forces $\mathbf{f}_{c, i}(k)$, instantaneous object mass $\hat{m}_o(k)$, and apparent contact normal force centroid $\hat{\mathbf{p}}_{\text{cop}}(k)$ (Center of Pressure).
 
 \subsection{Non-Exchangeable Uncertainty Calibration Layer}
 Rather than assuming nominal friction parameters, the estimation layer forwards raw contact residuals to an Adaptive Conformal Inference (ACI) module. Operating in closed-loop, ACI dynamically adjusts the empirical miscoverage quantile, outputting a calibrated lower friction bound $\mu_{\text{cal}, i}(k)$ with asymptotic marginal coverage guarantees under nonstationary, non-exchangeable distribution shifts.

@@ -129,8 +129,13 @@ def generate_figure1_architecture():
                                   facecolor=c_exec, edgecolor=c_border, linewidth=1.2)
     ax.add_patch(rect4)
     ax.text(0.882, 0.30, "Safety Supervisor", weight="bold", ha="center", va="top", fontsize=9.0, color="#880E4F")
-    ax.text(0.882, 0.22, "• NOMINAL_SAFE (u*)\n• EMERGENCY_RELAXED\n• TIMEOUT (> 10 ms)\n• CRITICAL_FAIL\n  -> Passive Damping",
-            ha="center", va="top", fontsize=7.4, linespacing=1.15)
+    ax.text(0.80, 0.23,
+            "1. NOMINAL_SAFE\n"
+            "2. EMERGENCY_RELAXED\n"
+            "3. TIMEOUT (> 10 ms)\n"
+            "4. CRITICAL_FAIL\n"
+            "   (Passive Damping)",
+            ha="left", va="top", fontsize=7.2, linespacing=1.18)
 
     # Connective Arrows
     arrow_props = dict(arrowstyle="-|>", lw=1.5, color="#1A237E", mutation_scale=10)
@@ -202,9 +207,9 @@ def generate_figure_safety_filter():
 
     gate_items = [
         ("NOMINAL_SAFE", "#C8E6C9", "#1B5E20", "Solve time <= 10 ms & ||delta_s||_inf <= 1e-2 N\n-> Certified Forward Invariance; dispatch u*"),
-        ("EMERGENCY_RELAXED", "#FFE0B2", "#E65100", "||delta_s||_inf > 1e-2 N (Soft Constraint Slack Active)\n-> Time-bounded emergency alert; trip if steps > 5"),
-        ("TIMEOUT", "#FFCDD2", "#B71C1C", "Execution latency > 10.0 ms Watchdog Deadline\n-> Abort QP solve immediately; enter passive damping"),
-        ("CRITICAL_FAIL", "#D1C4E9", "#4A148C", "Persisted relaxation (> 5 steps) or numerical fault\n-> Dispatch Passive Damping u_safe = -K_d * dq_k (< 50 us)")
+        ("EMERGENCY_RELAXED", "#FFE0B2", "#E65100", "||delta_s||_inf > 1e-2 N (Soft Slack Active)\n-> Time-bounded alert; trip if steps > 5"),
+        ("TIMEOUT", "#FFCDD2", "#B71C1C", "Execution latency > 10.0 ms Watchdog Deadline\n-> Abort solve; enter passive damping"),
+        ("CRITICAL_FAIL", "#D1C4E9", "#4A148C", "Persisted relaxation (> 5 steps) or numerical fault\n-> Passive damping u_safe = -K_d * dq_k (tau=0.20s)")
     ]
 
     y_g = 0.40
@@ -257,7 +262,7 @@ def generate_figure_safety_filter():
     r_act = patches.FancyBboxPatch((0.50, 0.04), 0.48, 0.105, boxstyle="round,pad=0.015",
                                   facecolor=c_action, edgecolor="#2E7D32", linewidth=1.4)
     ax.add_patch(r_act)
-    ax.text(0.74, 0.125, "Dispatched Control Command u_k* (100 Hz Control Cycle)", weight="bold", ha="center", va="top", fontsize=9.5, color="#1B5E20")
+    ax.text(0.74, 0.125, "Dispatched Joint Control Action u_k* (100 Hz Control Cycle)", weight="bold", ha="center", va="top", fontsize=9.5, color="#1B5E20")
     ax.text(0.74, 0.075, "Low-Level Computed Torque: tau = M(q) u* + C(q, dq) dq + g(q)",
         ha="center", va="top", fontsize=7.8, family="monospace", color="#1B5E20")
 

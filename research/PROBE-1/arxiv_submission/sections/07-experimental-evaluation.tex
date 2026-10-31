@@ -2,9 +2,9 @@
 \label{sec:experimental_evaluation}
 
 \subsection{Physics Simulation Testbed and Trial Accounting}
-All empirical evaluations are conducted in **Isaac Lab v2.3** powered by Isaac Sim 5.1 \cite{isaacsim2024}. Rigid-body dynamics and contact mechanics are computed using PhysX 5 with continuous collision detection (CCD) at an internal numerical integration frequency of $1\text{ kHz}$ ($\Delta t_{\text{phys}} = 1.0\text{ ms}$). High-speed optical tactile interaction is simulated via the TacSL module, generating elastomeric surface displacement vectors, shear strain fields, and Poisson marker flow across four fingertip contact pads. The outer policy and safety filter operate at $100\text{ Hz}$ ($\Delta t = 10\text{ ms}$).
+All empirical evaluations are conducted in \textbf{Isaac Lab v2.3} powered by Isaac Sim 5.1 \cite{isaacsim2024}. Rigid-body dynamics and contact mechanics are computed using PhysX 5 with continuous collision detection (CCD) at an internal numerical integration frequency of $1\text{ kHz}$ ($\Delta t_{\text{phys}} = 1.0\text{ ms}$). High-speed optical tactile interaction is simulated via the TacSL module, generating elastomeric surface displacement vectors, shear strain fields, and Poisson marker flow across four fingertip contact pads. The outer policy and safety filter operate at $100\text{ Hz}$ ($\Delta t = 10\text{ ms}$).
 
-The empirical evaluation suite encompasses exactly **3,400 independent experimental trials**, structured into three evaluation tiers:
+The empirical evaluation suite encompasses exactly \textbf{3,400 independent experimental trials}, structured into three evaluation tiers:
 \begin{enumerate}
     \item \textbf{Baseline Benchmark Suite (2,000 trials):} 4 operational regimes (Regimes A--D) $\times$ 5 controller architectures (B1--B4 and HOROS) $\times$ 100 independent seeded trials.
     \item \textbf{Ablation Study (800 trials):} 8 controller configurations (Variants 0--7) $\times$ 100 independent seeded trials under coupled nonstationary Regime D.
@@ -148,7 +148,7 @@ HOROS vs. B4 CE-MPC & 98.01 ($p < 10^{-20}$) & $1.52 \times 10^{-23}$ & $+1.00$ 
 \end{tabular}
 \end{table}
 
-As reported in \Cref{tab:significance}, HOROS achieves statistically significant superiority over all four baselines under Holm-Bonferroni correction ($p < 10^{-20}$). Cliff's Delta ($\delta = +1.00$) and rank-biserial correlation ($r_{\text{rb}} = +1.00$) demonstrate maximum non-parametric effect sizes.
+As reported in \Cref{tab:significance}, HOROS achieves statistically significant superiority over all four baselines under paired McNemar tests \cite{mcnemar1947note} and Wilcoxon signed-rank tests \cite{wilcoxon1945individual} with Holm-Bonferroni correction ($p < 10^{-20}$). Cliff's Delta ($\delta = +1.00$) \cite{cliffs1993dominance} and rank-biserial correlation ($r_{\text{rb}} = +1.00$) demonstrate maximum non-parametric effect sizes.
 
 \subsection{Computational Latency and Embedded Feasibility}
 Latency percentiles across all operational regimes are presented in \Cref{fig:latency}.
@@ -160,5 +160,5 @@ Latency percentiles across all operational regimes are presented in \Cref{fig:la
     \label{fig:latency}
 \end{figure}
 
-The embedded C-compiled OSQP ADMM core executes with a median latency of **0.193~ms** and a 99th percentile of **0.498~ms**, strictly meeting the $\le 1.0\text{ ms}$ internal solver target. The maximum observed latency of **9.603~ms** occurred during interpreted Python matrix allocation under Windows scheduling, but remained strictly within the $10.0\text{ ms}$ ($100\text{ Hz}$) control cycle budget. In compiled C++ firmware with static workspace memory allocation, total cycle times remain $< 0.50\text{ ms}$.
+The embedded C-compiled OSQP ADMM core executes with a median latency of \textbf{0.193~ms} and a 99th percentile of \textbf{0.498~ms}, strictly meeting the $\le 1.0\text{ ms}$ internal solver target. The maximum observed latency of \textbf{9.603~ms} occurred during interpreted Python matrix allocation under Windows OS thread scheduling jitter, but remained strictly within the $10.0\text{ ms}$ ($100\text{ Hz}$) control cycle watchdog budget. A compiled C++ firmware implementation with static workspace pre-allocation represents a projected engineering target to achieve $< 0.50\text{ ms}$ deterministic cycle times.
 
