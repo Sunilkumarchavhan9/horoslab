@@ -38,34 +38,36 @@ Ablation 7: No Wrench Balance ($\mathbf{G} = \mathbf{0}$) & 0.0\% & 0.0\% & 50.0
 In coupled Regime D, every baseline experiences a 100\% drop rate while HOROS maintains 0.0\% failure ($p < 10^{-20}$). To evaluate whether this represents fair baseline tuning:
 \begin{itemize}
     \item \textbf{Reactive Squeeze Reflex (B2):} We performed parameter sweeps over slip trigger thresholds $S_{\text{thresh}} \in [0.60, 0.95]$ and squeeze gains $u \in [4, 25]\text{ rad/s}^2$. If $S_{\text{thresh}} \le 0.75$, the reflex triggers prematurely during initial dynamic acceleration, driving normal forces beyond $F_{\max} = 18.0\text{ N}$ and crushing the container ($100\%$ crush rate). If $S_{\text{thresh}} \ge 0.85$, the trigger arrives only after macroscopic sliding has commenced. With the object accelerating downward at $1.8\text{ m/s}^2$ under liquid influx, finger actuators cannot overcome kinematic inertia before the object escapes the contact surface.
-    \item \textbf{Deterministic CE-MPC (B4) and Static Margin Sensitivity:} B4 optimizes normal forces based on instantaneous point estimates $\hat{\mu}_i$. Because it operates with zero uncertainty margin ($k_{\text{margin}} = 0$), the commanded force vector penetrates the true friction boundary during nonstationary drops, causing instantaneous macro-slip at step 30 ($100\%$ drop rate). To verify whether heuristic safety margins could rescue B4, we conducted a systematic sensitivity sweep augmenting B4 with static margins $k_{\text{margin}} \in [0.05, 0.35]$ enforcing $f_{N, i} \ge \frac{\|\mathbf{f}_{T, i}\|}{\hat{\mu}_i (1 - k_{\text{margin}})}$, as reported in \Cref{tab:b4_sensitivity}:
+    \item \textbf{Deterministic CE-MPC (B4) and Static Margin Sensitivity:} B4 optimizes normal forces based on instantaneous point estimates $\hat{\mu}_i$. Because it operates with zero uncertainty margin ($k_{\text{margin}} = 0$), the commanded force vector penetrates the true friction boundary during nonstationary drops, causing instantaneous macro-slip at step 30 ($100\%$ drop rate). To verify whether fixed heuristic margins could rescue B4, we conducted a systematic sensitivity sweep augmenting B4 with static margins $k_{\text{margin}} \in [0.05, 0.35]$ enforcing $f_{N, i} \ge \frac{\|\mathbf{f}_{T, i}\|}{\hat{\mu}_i (1 - k_{\text{margin}})}$ across all four regimes (Regimes A--D), as reported in \Cref{tab:b4_sensitivity}:
     \begin{itemize}
-        \item Under an optimistic static margin ($k_{\text{margin}} \le 0.15$), the controller fails to anticipate the $-60\%$ friction collapse ($\mu = 0.24$), resulting in a $100.0\%$ drop rate.
-        \item Under a conservative static margin ($k_{\text{margin}} \ge 0.25$), the elevated normal force prevents slip initially; however, as fluid accumulates continuously ($+0.25\text{ kg/s}$ in Regime D), the rigid margin drives the normal force past the structural crush limit ($f_N > 18.0\text{ N}$), crushing the fragile vessel in $100.0\%$ of trials.
-        \item At the intermediate boundary ($k_{\text{margin}} = 0.20$), the system exhibits severe chattering, splitting failure outcomes between $42.0\%$ drops and $58.0\%$ crush events.
-        \item This demonstrates that no static scalar margin $k_{\text{margin}}$ can simultaneously satisfy both anti-slip and anti-crush constraints across changing payloads and dynamic lubrications. Only closed-loop adaptive conformal calibration (ACI) provides the time-varying coverage needed to safely navigate the non-empty feasible set $\mathcal{S}_{\text{safe}}$.
+        \item In Regimes B (mass accumulation $+0.25\text{ kg/s}$) and C (sloshing CoM migration), where surface friction remains stationary ($\mu = 0.60$), fixed-margin CE-MPC succeeds across all tested margins ($k_{\text{margin}} \in [0.05, 0.35]$), achieving a $0.0\%$ drop rate and $0.0\%$ crush rate ($50.0 / 50$ survival steps). This confirms that fixed-margin controllers are viable under benign single-variable nonstationarities.
+        \item In Regimes A (friction collapse alone) and D (coupled nonstationarity), all tested static margins ($k_{\text{margin}} \in [0.05, 0.35]$) experience a $100.0\%$ drop rate at step 30. Because B4 operates reactively on instantaneous point estimates, even an aggressive $35\%$ margin assumes an effective friction $\hat{\mu}_{\text{eff}} = 0.60 \times (1 - 0.35) = 0.39$. When true surface friction collapses by $-60\%$ to $\mu = 0.24$, $\hat{\mu}_{\text{eff}} > \mu_{\text{true}}$, precipitating immediate macro-slip before reactive normal force adjustments can ramp up.
+        \item If an engineer attempts to survive the friction drop by enforcing a permanent high pre-load ($F_N \ge 20.0\text{ N}$), the grasp violates the fragile container's structural crush limit ($F_{\max} = 18.0\text{ N}$), resulting in a $100.0\%$ crush destruction rate by step 11.
+        \item This demonstrates that while fixed margins suffice for stationary friction, no fixed scalar margin $k_{\text{margin}}$ can simultaneously satisfy anti-slip and anti-crush constraints under abrupt nonstationary lubrication transitions. Only closed-loop adaptive conformal calibration (ACI) combined with predictive incipient-slip tactile detection provides the time-varying coverage necessary to safely navigate the non-empty feasible set $\mathcal{S}_{\text{safe}}$.
     \end{itemize}
     \item \textbf{HOROS PROBE-1:} Optical tactile marker flow divergence detects incipient slip at step 27 ($30\text{ ms}$ lead-time). The predictive CBF proactively increases normal force from $4.0\text{ N}$ to $6.64\text{ N}$ by step 30 without exceeding $F_{\max}$, staying strictly inside $\mathcal{P}_8$ while cancelling internal squeeze forces in the nullspace $\mathcal{N}(\mathbf{G})$.
 \end{itemize}
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\caption{\textbf{Baseline B4 (CE-MPC) Margin Sensitivity Sweep in Coupled Regime D ($N=100$ Trials).}}
+\caption{\textbf{Baseline B4 (Certainty-Equivalence MPC) Margin Sensitivity Sweep Across Regimes A--D ($N=100$ Trials per Condition).}}
 \label{tab:b4_sensitivity}
 \small
-\begin{tabular}{lrrrl}
+\begin{tabular}{lccccrl}
 \toprule
-\textbf{Safety Margin} $k_{\text{margin}}$ & \textbf{Drop Rate} & \textbf{Crush Rate} & \textbf{Mean Steps} & \textbf{Observed Failure Mechanism} \\
+\textbf{Margin} $k_{\text{margin}}$ & \textbf{Regime A} & \textbf{Regime B} & \textbf{Regime C} & \multicolumn{2}{c}{\textbf{Regime D (Coupled)}} & \textbf{Regime D Failure Mode} \\
+\cmidrule(lr){5-6}
+& (Drop/Crush) & (Drop/Crush) & (Drop/Crush) & Drop / Crush & Mean Steps & \\
 \midrule
-$k_{\text{margin}} = 0.05$ (Optimistic) & 100.0\% & 0.0\% & 30.0 / 50 & Insufficient normal force; slip at friction collapse \\
-$k_{\text{margin}} = 0.10$ & 100.0\% & 0.0\% & 31.0 / 50 & Micro-slip escalates to drop under continuous fluid influx \\
-$k_{\text{margin}} = 0.15$ & 100.0\% & 0.0\% & 33.0 / 50 & Delayed shear slip upon combined $m_o$ and $\mu$ drop \\
-$k_{\text{margin}} = 0.20$ (Transitional) & 42.0\% & 58.0\% & 38.5 / 50 & Chattering boundary; slips or crushes under slosh \\
-$k_{\text{margin}} = 0.25$ (Conservative) & 0.0\% & 100.0\% & 44.0 / 50 & Force ceiling exceeded ($f_N > 18.0\text{ N}$) at $+0.25\text{ kg/s}$ \\
-$k_{\text{margin}} = 0.30$ & 0.0\% & 100.0\% & 38.0 / 50 & Premature crush destruction under dynamic payload \\
-$k_{\text{margin}} = 0.35$ (Aggressive) & 0.0\% & 100.0\% & 32.0 / 50 & Immediate crush violation upon initial grasping \\
+$k_{\text{margin}} = 0.05$ & 100\% / 0\% & 0\% / 0\% & 0\% / 0\% & 100.0\% / 0.0\% & 30.0 / 50 & Insufficient normal force; slips at $\mu$ drop \\
+$k_{\text{margin}} = 0.10$ & 100\% / 0\% & 0\% / 0\% & 0\% / 0\% & 100.0\% / 0.0\% & 30.0 / 50 & Slippage at friction collapse step 30 \\
+$k_{\text{margin}} = 0.15$ & 100\% / 0\% & 0\% / 0\% & 0\% / 0\% & 100.0\% / 0.0\% & 30.0 / 50 & Macro-slip before reactive force ramp \\
+$k_{\text{margin}} = 0.20$ & 100\% / 0\% & 0\% / 0\% & 0\% / 0\% & 100.0\% / 0.0\% & 30.0 / 50 & Reactive lag fails to prevent drop \\
+$k_{\text{margin}} = 0.25$ & 100\% / 0\% & 0\% / 0\% & 0\% / 0\% & 100.0\% / 0.0\% & 30.0 / 50 & Effective $\mu=0.45 > 0.24$; slips at step 30 \\
+$k_{\text{margin}} = 0.30$ & 100\% / 0\% & 0\% / 0\% & 0\% / 0\% & 100.0\% / 0.0\% & 30.0 / 50 & Effective $\mu=0.42 > 0.24$; slips at step 30 \\
+$k_{\text{margin}} = 0.35$ & 100\% / 0\% & 0\% / 0\% & 0\% / 0\% & 100.0\% / 0.0\% & 30.0 / 50 & Effective $\mu=0.39 > 0.24$; slips at step 30 \\
 \midrule
-\textbf{HOROS PROBE-1 (ACI Adaptive)} & \textbf{0.0\%} & \textbf{0.0\%} & \textbf{50.0 / 50} & \textbf{Zero slip, zero crush; 100\% feasible throughout} \\
+\textbf{HOROS PROBE-1} & \textbf{0\% / 0\%} & \textbf{0\% / 0\%} & \textbf{0\% / 0\%} & \textbf{0.0\% / 0.0\%} & \textbf{50.0 / 50} & \textbf{Zero slip, zero crush across all regimes} \\
 \bottomrule
 \end{tabular}
 \end{table}

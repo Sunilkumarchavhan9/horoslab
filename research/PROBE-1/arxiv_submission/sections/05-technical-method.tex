@@ -27,28 +27,39 @@ Under the quasi-static manipulation regime characteristic of stable dexterous ca
 \end{align}
 Here $\hat{\mathbf{p}}_{\text{cop}}(k)$ denotes the instantaneous Center of Pressure (CoP) along the grasp contact manifold. For planar and symmetric antipodal grasping of objects with approximately uniform transverse density, the horizontal and vertical projection of the 3D Center of Mass $\mathbf{c}_o$ coincides with $\hat{\mathbf{p}}_{\text{cop}}$, providing an apparent contact centroid that tracks lateral payload shifts (such as sloshing liquids) without requiring unconstrained 3D vision. In general asymmetric 3D configurations, full spatial CoM identification requires solving the rotational moment balance \eqref{eq:newton_euler_rot} across multiple orientations.
 
-The instantaneous apparent friction coefficient is estimated via the tangential traction ratio:
+The instantaneous tangential-to-normal contact force ratio represents the measured \emph{friction utilization}:
 \begin{equation}
-    \hat{\mu}_i(k) = \frac{\|\mathbf{f}_{T, i}(k)\|_2}{f_{N, i}(k) + \epsilon}
+    \psi_i(k) = \frac{\|\mathbf{f}_{T, i}(k)\|_2}{f_{N, i}(k) + \epsilon}
+    \label{eq:friction_utilization}
 \end{equation}
+By Coulomb's friction law $\|\mathbf{f}_{T, i}\| \le \mu_i f_{N, i}$, the utilization ratio is bounded by the true physical friction coefficient: $\psi_i(k) \le \mu_i$. In stable, non-slipping regimes, $\psi_i(k)$ reflects external load requirements rather than the ultimate traction limit of the surface.
 
 \subsection{Adaptive Conformal Inference (ACI) Module}
-Standard friction estimators output point estimates $\hat{\mu}_i(k)$ that lag behind physical reality during sudden nonstationary drops (e.g., oil spills or condensation). Rather than asserting heuristic safety factors, we deploy Adaptive Conformal Inference (ACI) \cite{gibbs2021adaptive}.
-
-Let $\alpha \in (0, 1)$ denote the target miscoverage rate (set to $\alpha = 0.05$ for an asymptotic $95\%$ marginal coverage target). At step $k$:
+Standard friction estimators output point estimates $\hat{\mu}_i(k)$ that lag behind physical reality during sudden nonstationary drops (e.g., fluid spills or dynamic lubrication transitions). Rather than asserting heuristic safety factors, we deploy Adaptive Conformal Inference (ACI) \cite{gibbs2021adaptive}. To maintain rigorous physical validity, the framework explicitly distinguishes three distinct quantities:
 \begin{enumerate}
-    \item \textbf{Non-Conformity Scoring and Incipient Slip Observation:} In physical deployment, ground-truth surface friction $\mu_{\text{true}}$ cannot be directly sensed. Instead, the calibration residual relies strictly on incipient micro-slip events detected by optical tactile marker curl/divergence \cite{pandas2024incipient}. The critical traction ratio at localized slip onset provides an empirical sample $\mu_{\text{observed}, i} = \|\mathbf{f}_{T, i}\| / (f_{N, i} + \epsilon)$. In our offline synthetic benchmark evaluation (EXP-002), ground-truth friction was tracked solely as an oracle reference to benchmark coverage bounds against theoretical limits; the online QP safety filter never receives privileged simulator state. We compute the absolute calibration residual:
+    \item \textbf{Friction Utilization Ratio $\psi_i(k)$:} The instantaneous ratio \eqref{eq:friction_utilization} directly computed from fingertip normal and shear force measurements at $100\text{ Hz}$.
+    \item \textbf{Deployable Incipient-Slip Tactile Observation $\mu_{\text{obs}, i}(k)$:} In physical deployment, the true surface friction coefficient $\mu_i$ cannot be directly sensed during sticking contact. However, optical tactile sensors (GelSlim / DIGIT) track elastomeric surface marker flow. Impending gross slip is preceded by partial slip along the peripheral contact perimeter, characterized by spatial divergence and curl in the marker displacement field \cite{pandas2024incipient,yuan2017gelsight}. When peripheral marker flow divergence exceeds the incipient-slip threshold ($\mathcal{E}_{\text{slip}, i}(k) = 1$), the contact operates at the Coulomb cone boundary ($\|\mathbf{f}_{T, i}\| \approx \mu_i f_{N, i}$). The observed friction coefficient is then registered directly from the critical utilization ratio at slip onset:
     \begin{equation}
-        E_k = |\mu_{\text{observed}, i}(k) - \hat{\mu}_i(k)|
+        \mu_{\text{obs}, i}(k) = \psi_i(k) \quad \text{when } \mathcal{E}_{\text{slip}, i}(k) = 1
+    \end{equation}
+    When no incipient slip occurs ($\mathcal{E}_{\text{slip}, i}(k) = 0$), the condition $\psi_i(k) \le \mu_{\text{cal}, i}(k)$ confirms that the contact resides strictly within the safe cone, and no non-conformity update is required.
+    \item \textbf{Offline Ground-Truth Reference $\mu_{\text{true}}$:} Simulator ground truth is recorded solely as an offline oracle benchmark (EXP-002) to evaluate whether the theoretical $1 - \alpha = 95\%$ marginal coverage property holds under controlled non-exchangeable distribution shifts. The online safety filter and ACI calibration module operate purely on deployable sensory observations ($\psi_i$ and tactile marker divergence $\mathcal{E}_{\text{slip}, i}$) with zero access to simulator state.
+\end{enumerate}
+
+Let $\alpha \in (0, 1)$ denote the target miscoverage rate (set to $\alpha = 0.05$ for an asymptotic $95\%$ marginal coverage target). Upon registering an incipient slip event at calibration index $t$:
+\begin{enumerate}
+    \item \textbf{Calibration Residual Scoring:} We compute the non-conformity residual against the recursive point estimator:
+    \begin{equation}
+        E_t = |\mu_{\text{obs}, i}(t) - \hat{\mu}_i(t)|
     \end{equation}
     \item \textbf{Online Quantile Tracking:} The adaptive parameter $\alpha_t$ updates via Robbins-Monro stochastic approximation:
     \begin{equation}
         \alpha_{t+1} = \alpha_t + \beta \left( \alpha - \mathbb{I}\{E_t > Q_t\} \right)
         \label{eq:aci_update_rule}
     \end{equation}
-    where $\beta = 0.05$ is the adaptation rate, $\mathbb{I}\{\cdot\}$ indicates empirical miscoverage, and $Q_t = \text{Quantile}_{1 - \alpha_t}(E_{1:t-1})$. By construction, ACI guarantees long-run asymptotic marginal coverage:
+    where $\beta = 0.05$ is the adaptation step size, $\mathbb{I}\{\cdot\}$ denotes empirical miscoverage, and $Q_t = \text{Quantile}_{1 - \alpha_t}(E_{1:t-1})$. By construction, ACI guarantees long-run asymptotic marginal coverage:
     \begin{equation}
-        \lim_{T \to \infty} \frac{1}{T} \sum_{t=1}^T \mathbb{I}\left\{\mu_{\text{observed}, i}(t) \ge \mu_{\text{cal}, i}(t)\right\} = 1 - \alpha
+        \lim_{T \to \infty} \frac{1}{T} \sum_{t=1}^T \mathbb{I}\left\{\mu_{\text{obs}, i}(t) \ge \mu_{\text{cal}, i}(t)\right\} = 1 - \alpha
     \end{equation}
     even under arbitrary, non-exchangeable distribution shifts \cite{gibbs2021adaptive}. We emphasize that this provides an asymptotic statistical coverage guarantee, rather than an instantaneous deterministic certificate at every millisecond.
     \item \textbf{Calibrated Lower Bound:} The friction coefficient passed to the cone constraints is:
@@ -142,14 +153,35 @@ As illustrated in \Cref{fig:safety_filter_detail} and \Cref{alg:safety_filter}, 
     where $K_d = 5.0\text{ s}^{-1}$ is the joint velocity damping gain. For commanded joint accelerations $\mathbf{u} = \ddot{\mathbf{q}} \in \mathbb{R}^{n_q}$, the gain has dimensional units of inverse seconds: $(\text{rad/s}^2) / (\text{rad/s}) = \text{s}^{-1}$. 
 \end{enumerate}
 
-\begin{proposition}[Passive Kinetic Energy Dissipation]
-Under the fallback law \eqref{eq:passive_damping} coupled with computed-torque cancellation of Coriolis and gravity torques ($\boldsymbol{\tau} = \mathbf{M}(\mathbf{q}) \mathbf{u}_{\text{safe}} + \mathbf{C}(\mathbf{q}, \dot{\mathbf{q}}) \dot{\mathbf{q}} + \mathbf{g}(\mathbf{q})$), the manipulator kinetic energy $E_{\text{kin}} = \frac{1}{2} \dot{\mathbf{q}}^T \mathbf{M}(\mathbf{q}) \dot{\mathbf{q}}$ strictly dissipates at rate:
+\begin{proposition}[Kinetic Energy Dissipation Under Velocity Damping Fallback]
+Let the multi-fingered hand satisfy the rigid-body equations of motion:
 \begin{equation}
-    \dot{E}_{\text{kin}} = -K_d \dot{\mathbf{q}}^T \mathbf{M}(\mathbf{q}) \dot{\mathbf{q}} \le -K_d \lambda_{\min}(\mathbf{M}) \|\dot{\mathbf{q}}\|_2^2 \le 0
+    \mathbf{M}(\mathbf{q}) \ddot{\mathbf{q}} + \mathbf{C}(\mathbf{q}, \dot{\mathbf{q}}) \dot{\mathbf{q}} + \mathbf{g}(\mathbf{q}) = \boldsymbol{\tau} + \mathbf{J}_c^T \mathbf{f}_c
+    \label{eq:manipulator_eom}
 \end{equation}
-where $\mathbf{M}(\mathbf{q}) \succ 0$ is the symmetric positive-definite joint-space inertia matrix.
+where $\mathbf{M}(\mathbf{q}) = \mathbf{M}^T(\mathbf{q}) \succ 0$ is the joint-space inertia matrix, $\mathbf{C}(\mathbf{q}, \dot{\mathbf{q}})$ is formulated via Christoffel symbols such that $\dot{\mathbf{M}} - 2\mathbf{C}$ is skew-symmetric, $\mathbf{g}(\mathbf{q})$ is gravity, and $\mathbf{J}_c^T \mathbf{f}_c = \sum_{i=1}^M \mathbf{J}_i^T \mathbf{f}_{c, i}$ is the transmitted contact wrench. Under the fallback control torque $\boldsymbol{\tau} = \mathbf{g}(\mathbf{q}) - \mathbf{D} \dot{\mathbf{q}}$ with positive-definite damping $\mathbf{D} = K_d \mathbf{M}(\mathbf{q}) \succ 0$ ($K_d = 5.0\text{ s}^{-1}$), and assuming dissipative or sticking contact mechanics ($\sum_{i=1}^M \mathbf{v}_{c, i}^T \mathbf{f}_{c, i} \le 0$), the manipulator kinetic energy $E_{\text{kin}} = \frac{1}{2} \dot{\mathbf{q}}^T \mathbf{M}(\mathbf{q}) \dot{\mathbf{q}}$ strictly dissipates at rate:
+\begin{equation}
+    \dot{E}_{\text{kin}} \le -\dot{\mathbf{q}}^T \mathbf{D} \dot{\mathbf{q}} \le -K_d \lambda_{\min}(\mathbf{M}) \|\dot{\mathbf{q}}\|_2^2 \le 0
+\end{equation}
 \end{proposition}
 \begin{proof}
-Differentiating $E_{\text{kin}}$ with respect to time yields $\dot{E}_{\text{kin}} = \dot{\mathbf{q}}^T \mathbf{M} \ddot{\mathbf{q}} + \frac{1}{2} \dot{\mathbf{q}}^T \dot{\mathbf{M}} \dot{\mathbf{q}}$. Substituting $\ddot{\mathbf{q}} = -K_d \dot{\mathbf{q}}$ and applying the classical skew-symmetry property $\dot{\mathbf{q}}^T (\dot{\mathbf{M}} - 2\mathbf{C}) \dot{\mathbf{q}} = 0$ yields $\dot{E}_{\text{kin}} = -K_d \dot{\mathbf{q}}^T \mathbf{M}(\mathbf{q}) \dot{\mathbf{q}}$. Since $\mathbf{M}(\mathbf{q}) \succ 0$ with minimum eigenvalue $\lambda_{\min}(\mathbf{M}) > 0$, kinetic energy decreases monotonically to zero at rate at least $2 K_d$, absorbing contact impacts with an exponential velocity decay time constant $\tau = K_d^{-1} = 0.20\text{ s}$ ($200\text{ ms}$), while the deterministic fallback command is dispatched in $< 50\ \mu\text{s}$ of computational latency without requiring online numerical optimization.
+The total time derivative of manipulator kinetic energy along system trajectories is:
+\begin{equation}
+    \dot{E}_{\text{kin}} = \dot{\mathbf{q}}^T \mathbf{M}(\mathbf{q}) \ddot{\mathbf{q}} + \frac{1}{2} \dot{\mathbf{q}}^T \dot{\mathbf{M}}(\mathbf{q}) \dot{\mathbf{q}}
+\end{equation}
+Solving \eqref{eq:manipulator_eom} for $\mathbf{M}(\mathbf{q}) \ddot{\mathbf{q}} = \boldsymbol{\tau} - \mathbf{C}(\mathbf{q}, \dot{\mathbf{q}}) \dot{\mathbf{q}} - \mathbf{g}(\mathbf{q}) + \mathbf{J}_c^T \mathbf{f}_c$ and substituting yields:
+\begin{align}
+    \dot{E}_{\text{kin}} &= \dot{\mathbf{q}}^T \left( \boldsymbol{\tau} - \mathbf{C}\dot{\mathbf{q}} - \mathbf{g} + \mathbf{J}_c^T \mathbf{f}_c \right) + \frac{1}{2} \dot{\mathbf{q}}^T \dot{\mathbf{M}} \dot{\mathbf{q}} \nonumber \\
+    &= \dot{\mathbf{q}}^T (\boldsymbol{\tau} - \mathbf{g}) + \dot{\mathbf{q}}^T \mathbf{J}_c^T \mathbf{f}_c + \frac{1}{2} \dot{\mathbf{q}}^T (\dot{\mathbf{M}} - 2\mathbf{C}) \dot{\mathbf{q}}
+\end{align}
+By the standard skew-symmetry property of robotic manipulators, $\dot{\mathbf{q}}^T (\dot{\mathbf{M}} - 2\mathbf{C}) \dot{\mathbf{q}} \equiv 0$ identically for all $\mathbf{q}, \dot{\mathbf{q}}$. Substituting the fallback actuator law $\boldsymbol{\tau} = \mathbf{g}(\mathbf{q}) - \mathbf{D}\dot{\mathbf{q}}$ and applying kinematic contact mapping $\dot{\mathbf{q}}^T \mathbf{J}_c^T \mathbf{f}_c = \sum_{i=1}^M \mathbf{v}_{c, i}^T \mathbf{f}_{c, i}$:
+\begin{equation}
+    \dot{E}_{\text{kin}} = -\dot{\mathbf{q}}^T \mathbf{D} \dot{\mathbf{q}} + \sum_{i=1}^M \mathbf{v}_{c, i}^T \mathbf{f}_{c, i}
+\end{equation}
+Under sticking contact ($\mathbf{v}_{c, i} = \mathbf{0}$) or dissipative contact compliance ($\sum \mathbf{v}_{c, i}^T \mathbf{f}_{c, i} \le 0$ as established by the Hunt-Crossley damping model), the second term is non-positive. Consequently:
+\begin{equation}
+    \dot{E}_{\text{kin}} \le -\dot{\mathbf{q}}^T \mathbf{D} \dot{\mathbf{q}} \le -K_d \lambda_{\min}(\mathbf{M}) \|\dot{\mathbf{q}}\|_2^2 \le -2 K_d E_{\text{kin}} \le 0
+\end{equation}
+Kinetic energy decays exponentially to zero with mechanical velocity time constant $\tau = K_d^{-1} = 0.20\text{ s}$ ($200\text{ ms}$). Meanwhile, the computational dispatch latency to engage this fallback damping law requires $< 50\ \mu\text{s}$ of branching logic without online numerical optimization.
 \end{proof}
 
