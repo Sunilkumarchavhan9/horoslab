@@ -17,3 +17,4 @@ opencv-python-headless==4.10.0.84
 pydantic==2.9.2
 pytest==8.3.3
 pytest-asyncio==0.24.0
+
