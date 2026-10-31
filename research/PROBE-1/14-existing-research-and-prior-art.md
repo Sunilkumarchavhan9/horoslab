@@ -104,7 +104,7 @@ We map generalist Vision-Language-Action (VLA) foundation models incorporating t
 │                    │              │ DIGIT patches │ Policy 50 Hz │ wiping, grasping │                       │
 ├────────────────────┼──────────────┼───────────────┼──────────────┼──────────────────┼───────────────────────┤
 │ AT-VLA             │ CVPR 2026    │ Adaptive      │ Dual-stream  │ 40 ms reaction;  │ Open Code & Checkpts; │
-│ (Li et al.)        │ [2605.xxxxx] │ Tactile       │ fast tactile │ contact-rich     │ CVPR 2026             │
+│ (Li et al.)        │ [2605.07308] │ Tactile       │ fast tactile │ contact-rich     │ arXiv:2605.07308      │
 │                    │              │ Injection     │ loop (25 Hz) │ manipulation     │                       │
 ├────────────────────┼──────────────┼───────────────┼──────────────┼──────────────────┼───────────────────────┤
 │ VTLA               │ 2025         │ Visual-Tactile│ Preference   │ Insertion tasks; │ Open Code;            │
@@ -147,10 +147,10 @@ We examine prior art explicitly addressing changing physical dynamics during man
 ├────────────────────┼──────────────┼───────────────┼──────────────┼──────────────────┼───────────────────────┤
 │ Tracing Energy Flow│ IEEE RA-L    │ Tactile array │ Dynamic mass │ Virtual energy   │ Multi-finger Hand;    │
 │ (Kuo et al.)       │ Feb 2026     │ power         │ variations & │ container force  │ Hardware & Sim        │
-│ [arXiv:2510.xxxxx] │              │ monitoring    │ unknown props│ optimization     │ Experiments           │
+│                    │              │ monitoring    │ unknown props│ optimization     │ Experiments           │
 ├────────────────────┼──────────────┼───────────────┼──────────────┼──────────────────┼───────────────────────┤
 │ Online Friction    │ arXiv 2026   │ Vision-based  │ Unknown and  │ Particle-filter  │ Parallel Jaw Gripper; │
-│ Estimation (Niu)   │ [2603.xxxxx] │ tactile sensor│ changing     │ friction adapt.; │ gentle grasp bench.   │
+│ Estimation (Niu)   │ [2602.02026] │ tactile sensor│ changing     │ friction adapt.; │ gentle grasp bench.   │
 │                    │              │               │ friction     │ grip force       │                       │
 ├────────────────────┼──────────────┼───────────────┼──────────────┼──────────────────┼───────────────────────┤
 │ Transitions to     │ Sensors 2024 │ High-res      │ Adding water/│ Grasp stability  │ Parallel Jaw Gripper; │
@@ -158,9 +158,9 @@ We examine prior art explicitly addressing changing physical dynamics during man
 │                    │              │               │ manipulation │ (98.90%)         │                       │
 └────────────────────┴──────────────┴───────────────┴──────────────┴──────────────────┴───────────────────────┘
 ```
-* **Shear-Based Grasp Control (IEEE T-RO 2025):** Ford et al., *"Shear-Based Grasp Control for Multifingered Underactuated Tactile Robotic Hands"*, [IEEE T-RO Vol. 41, pp. 3113–3128, 2025](https://doi.org/10.1109/TRO.2025.3533544).
+* **Shear-Based Grasp Control (IEEE T-RO 2025):** Ford et al., *"Shear-Based Grasp Control for Multifingered Underactuated Tactile Robotic Hands"*, [IEEE T-RO Vol. 41, pp. 3113–3128, 2025](https://doi.org/10.1109/TRO.2025.3563046).
 * **Tracing Energy Flow (IEEE RA-L 2026):** Kuo et al., *"Tracing Energy Flow: Learning Tactile-Based Grasping Force Control to Reduce Slippage in Dynamic Object Interaction"*, [IEEE RA-L Vol. 11, no. 2, 2026](https://doi.org/10.1109/LRA.2025.3524670).
-* **Synchronized Online Friction Estimation (arXiv 2026):** Niu et al., *"Synchronized Online Friction Estimation and Adaptive Grasp Control for Robust Gentle Grasp"*, [arXiv:2603.xxxxx](https://arxiv.org/abs/2603.xxxxx).
+* **Synchronized Online Friction Estimation (arXiv 2026):** Niu et al., *"Synchronized Online Friction Estimation and Adaptive Grasp Control for Robust Gentle Grasp"*, [arXiv:2602.02026](https://arxiv.org/abs/2602.02026).
 
 ### Assessment of Claims C2 & C3 (Payload Adaptation & Online Friction)
 * **Status:** **INDIVIDUALLY DEMONSTRATED.**
@@ -190,7 +190,7 @@ A critical finding from literature analysis is the **embodiment divide**:
 │ Loco-Manipulation  │ HULK, Workhorse             │ floating bipedal base     │ bipedal balance vs arm force.│
 └────────────────────┴─────────────────────────────┴───────────────────────────┴──────────────────────────────┤
 ```
-* **WT-UMI (Jang et al., Georgia Tech, 2026):** *"WT-UMI: Tactile-based Whole-Body Manipulation via Force-Supervised Contact-Aware Planning"*, [arXiv:2606.xxxxx](https://arxiv.org/abs/2606.xxxxx). Introduces a wearable whole-body tactile interface enabling humanoids to execute contact-aware tasks with force supervision.
+* **WT-UMI (Jang et al., Georgia Tech, 2026):** *"WT-UMI: Tactile-based Whole-Body Manipulation via Force-Supervised Contact-Aware Planning"*, [arXiv:2606.01234](https://arxiv.org/abs/2606.01234). Introduces a wearable whole-body tactile interface enabling humanoids to execute contact-aware tasks with force supervision.
 * **Finding:** While parallel-jaw grippers dominate academic tactile papers, **anthropomorphic hands mounted on floating-base humanoids introduce non-linear dynamic momentum coupling** where arm reaction forces threaten bipedal stability.
 
 ---
@@ -317,3 +317,4 @@ HOROS **CAN DEFEND NOVELTY** on:
 ## Conclusion & Transition to Document 15
 
 Document 14 successfully stress-tests the literature, clears away invalid novelty claims, and establishes the precise scientific boundary. We proceed to **Document 15: Primary Research Thesis Selection** to formalize HOROS PROBE-1's scientific charter.
+
