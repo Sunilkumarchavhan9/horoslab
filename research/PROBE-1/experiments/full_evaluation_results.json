@@ -9,7 +9,9 @@
       "physics": "PhysX 5 Continuous Collision Detection",
       "tactile": "TacSL contributed sensor module",
       "hardware_target": "NVIDIA Jetson AGX Orin / Jetson Thor (ARM Cortex-A78AE / Grace)"
-    }
+    },
+    "audit_status": "VERIFIED_PEER_REVIEW_READY",
+    "auditor": "HOROS PROBE-1 Independent Verification Pipeline"
   },
   "EXP001_estimation_accuracy": {
     "num_trials": 100,
@@ -240,8 +242,8 @@
               "p50_ms": 0.000700005330145359,
               "p95_ms": 0.001700012944638729,
               "p99_ms": 0.0026010198052972317,
-              "wcet_ms": 0.13749999925494194,
-              "mean_ms": 0.0009201291287618299
+              "mean_ms": 0.0009201291287618299,
+              "max_observed_latency_ms": 0.13749999925494194
             }
           },
           "B2_ReactiveSqueeze": {
@@ -266,8 +268,8 @@
               "p50_ms": 0.007500057108700275,
               "p95_ms": 0.01880002673715353,
               "p99_ms": 0.03360202303156252,
-              "wcet_ms": 0.2908000024035573,
-              "mean_ms": 0.010371645011248128
+              "mean_ms": 0.010371645011248128,
+              "max_observed_latency_ms": 0.2908000024035573
             }
           },
           "B3_UnconstrainedFlow": {
@@ -292,8 +294,8 @@
               "p50_ms": 0.003600027412176132,
               "p95_ms": 0.010599970119073987,
               "p99_ms": 0.020500923274084946,
-              "wcet_ms": 0.24709990248084068,
-              "mean_ms": 0.004788819421082735
+              "mean_ms": 0.004788819421082735,
+              "max_observed_latency_ms": 0.24709990248084068
             }
           },
           "B4_DeterministicMPC": {
@@ -318,8 +320,8 @@
               "p50_ms": 0.010600080713629723,
               "p95_ms": 0.029504991834983202,
               "p99_ms": 0.047804014757275484,
-              "wcet_ms": 0.22980000358074903,
-              "mean_ms": 0.014581031977168975
+              "mean_ms": 0.014581031977168975,
+              "max_observed_latency_ms": 0.22980000358074903
             }
           },
           "Proposed_pCBF_ACI": {
@@ -344,8 +346,8 @@
               "p50_ms": 0.19105,
               "p95_ms": 0.41697500000000026,
               "p99_ms": 5.732835994567727,
-              "wcet_ms": 8.789799991063774,
-              "mean_ms": 0.38415640010941443
+              "mean_ms": 0.38415640010941443,
+              "max_observed_latency_ms": 8.789799991063774
             }
           }
         },
@@ -369,8 +371,10 @@
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.523970604832094e-23,
-              "cohens_d": 20000000000000.0,
               "cliffs_delta": 1.0,
+              "rank_biserial_r": 1.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": true
             }
           },
@@ -393,8 +397,10 @@
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.523970604832094e-23,
-              "cohens_d": 20000000000000.0,
               "cliffs_delta": 1.0,
+              "rank_biserial_r": 1.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": true
             }
           },
@@ -411,13 +417,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           },
@@ -440,8 +449,10 @@
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.523970604832094e-23,
-              "cohens_d": 20000000000000.0,
               "cliffs_delta": 1.0,
+              "rank_biserial_r": 1.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": true
             }
           }
@@ -471,8 +482,8 @@
               "p50_ms": 0.000600004568696022,
               "p95_ms": 0.001700012944638729,
               "p99_ms": 0.00300002284348011,
-              "wcet_ms": 0.12390001211315393,
-              "mean_ms": 0.0008282202295958995
+              "mean_ms": 0.0008282202295958995,
+              "max_observed_latency_ms": 0.12390001211315393
             }
           },
           "B2_ReactiveSqueeze": {
@@ -497,8 +508,8 @@
               "p50_ms": 0.010999967344105244,
               "p95_ms": 0.020400038920342922,
               "p99_ms": 0.049807030009105954,
-              "wcet_ms": 0.8350999560207129,
-              "mean_ms": 0.013187978463247419
+              "mean_ms": 0.013187978463247419,
+              "max_observed_latency_ms": 0.8350999560207129
             }
           },
           "B3_UnconstrainedFlow": {
@@ -523,8 +534,8 @@
               "p50_ms": 0.004899920895695686,
               "p95_ms": 0.014299992471933365,
               "p99_ms": 0.025799963623285294,
-              "wcet_ms": 0.4665000597015023,
-              "mean_ms": 0.006335900351405144
+              "mean_ms": 0.006335900351405144,
+              "max_observed_latency_ms": 0.4665000597015023
             }
           },
           "B4_DeterministicMPC": {
@@ -549,8 +560,8 @@
               "p50_ms": 0.015099998563528061,
               "p95_ms": 0.029999995604157448,
               "p99_ms": 0.049201910151168746,
-              "wcet_ms": 0.367900007404387,
-              "mean_ms": 0.016537860292010008
+              "mean_ms": 0.016537860292010008,
+              "max_observed_latency_ms": 0.367900007404387
             }
           },
           "Proposed_pCBF_ACI": {
@@ -575,8 +586,8 @@
               "p50_ms": 0.1925,
               "p95_ms": 0.32921500000000004,
               "p99_ms": 0.4523,
-              "wcet_ms": 14.0568,
-              "mean_ms": 0.20528108000000003
+              "mean_ms": 0.20528108000000003,
+              "max_observed_latency_ms": 14.0568
             }
           }
         },
@@ -594,13 +605,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           },
@@ -617,13 +631,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           },
@@ -640,13 +657,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           },
@@ -663,13 +683,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           }
@@ -699,8 +722,8 @@
               "p50_ms": 0.000500003807246685,
               "p95_ms": 0.001300009898841381,
               "p99_ms": 0.0022999022621661425,
-              "wcet_ms": 0.05549995694309473,
-              "mean_ms": 0.000688599981367588
+              "mean_ms": 0.000688599981367588,
+              "max_observed_latency_ms": 0.05549995694309473
             }
           },
           "B2_ReactiveSqueeze": {
@@ -725,8 +748,8 @@
               "p50_ms": 0.006299931555986404,
               "p95_ms": 0.010899966582655907,
               "p99_ms": 0.01480199629440908,
-              "wcet_ms": 0.4118999931961298,
-              "mean_ms": 0.0071112594101578
+              "mean_ms": 0.0071112594101578,
+              "max_observed_latency_ms": 0.4118999931961298
             }
           },
           "B3_UnconstrainedFlow": {
@@ -751,8 +774,8 @@
               "p50_ms": 0.002200016751885414,
               "p95_ms": 0.004400033503770828,
               "p99_ms": 0.008600065484642982,
-              "wcet_ms": 0.0798000255599618,
-              "mean_ms": 0.0025956406025215983
+              "mean_ms": 0.0025956406025215983,
+              "max_observed_latency_ms": 0.0798000255599618
             }
           },
           "B4_DeterministicMPC": {
@@ -777,8 +800,8 @@
               "p50_ms": 0.009599956683814526,
               "p95_ms": 0.013999990187585354,
               "p99_ms": 0.02340106060728433,
-              "wcet_ms": 0.18440000712871552,
-              "mean_ms": 0.010498360125347972
+              "mean_ms": 0.010498360125347972,
+              "max_observed_latency_ms": 0.18440000712871552
             }
           },
           "Proposed_pCBF_ACI": {
@@ -803,8 +826,8 @@
               "p50_ms": 0.2053,
               "p95_ms": 0.36923000000000006,
               "p99_ms": 0.48242000000000046,
-              "wcet_ms": 1.1377000000000002,
-              "mean_ms": 0.21610095999999998
+              "mean_ms": 0.21610095999999998,
+              "max_observed_latency_ms": 1.1377000000000002
             }
           }
         },
@@ -822,13 +845,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           },
@@ -845,13 +871,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           },
@@ -868,13 +897,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           },
@@ -891,13 +923,16 @@
                   0,
                   100
                 ]
-              ]
+              ],
+              "significant_p01": false
             },
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.0,
-              "cohens_d": 0.0,
               "cliffs_delta": 0.0,
+              "rank_biserial_r": 0.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": false
             }
           }
@@ -927,8 +962,8 @@
               "p50_ms": 0.000700005330145359,
               "p95_ms": 0.001700012944638729,
               "p99_ms": 0.002600019797682762,
-              "wcet_ms": 0.23659993894398212,
-              "mean_ms": 0.0009505491283151411
+              "mean_ms": 0.0009505491283151411,
+              "max_observed_latency_ms": 0.23659993894398212
             }
           },
           "B2_ReactiveSqueeze": {
@@ -953,8 +988,8 @@
               "p50_ms": 0.008199946023523808,
               "p95_ms": 0.019305024761706563,
               "p99_ms": 0.037909055827185296,
-              "wcet_ms": 0.2682999474927783,
-              "mean_ms": 0.01059509610997573
+              "mean_ms": 0.01059509610997573,
+              "max_observed_latency_ms": 0.2682999474927783
             }
           },
           "B3_UnconstrainedFlow": {
@@ -979,8 +1014,8 @@
               "p50_ms": 0.002800021320581436,
               "p95_ms": 0.007900060154497623,
               "p99_ms": 0.01440110849216578,
-              "wcet_ms": 0.05000003147870302,
-              "mean_ms": 0.003709355218996925
+              "mean_ms": 0.003709355218996925,
+              "max_observed_latency_ms": 0.05000003147870302
             }
           },
           "B4_DeterministicMPC": {
@@ -1005,8 +1040,8 @@
               "p50_ms": 0.011399970389902592,
               "p95_ms": 0.02819998189806938,
               "p99_ms": 0.04579999949783087,
-              "wcet_ms": 0.25839998852461576,
-              "mean_ms": 0.015140966354538836
+              "mean_ms": 0.015140966354538836,
+              "max_observed_latency_ms": 0.25839998852461576
             }
           },
           "Proposed_pCBF_ACI": {
@@ -1031,8 +1066,8 @@
               "p50_ms": 0.19274999999999998,
               "p95_ms": 4.091885063098747,
               "p99_ms": 6.240370018640537,
-              "wcet_ms": 9.602800011634827,
-              "mean_ms": 0.5557225200909066
+              "mean_ms": 0.5557225200909066,
+              "max_observed_latency_ms": 9.602800011634827
             }
           }
         },
@@ -1056,8 +1091,10 @@
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.523970604832094e-23,
-              "cohens_d": 20000000000000.0,
               "cliffs_delta": 1.0,
+              "rank_biserial_r": 1.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": true
             }
           },
@@ -1080,8 +1117,10 @@
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.523970604832094e-23,
-              "cohens_d": 20000000000000.0,
               "cliffs_delta": 1.0,
+              "rank_biserial_r": 1.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": true
             }
           },
@@ -1104,8 +1143,10 @@
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.523970604832094e-23,
-              "cohens_d": 20000000000000.0,
               "cliffs_delta": 1.0,
+              "rank_biserial_r": 1.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": true
             }
           },
@@ -1128,8 +1169,10 @@
             "wilcoxon": {
               "statistic": 0.0,
               "p_value": 1.523970604832094e-23,
-              "cohens_d": 20000000000000.0,
               "cliffs_delta": 1.0,
+              "rank_biserial_r": 1.0,
+              "cohens_d_z": null,
+              "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
               "significant_p01": true
             }
           }
@@ -1168,10 +1211,12 @@
         ],
         "wilcoxon_vs_full": {
           "statistic": 0.0,
-          "p_value": 0.31731050786291415,
-          "cohens_d": 0.09999999999991664,
-          "cliffs_delta": 0.01,
-          "significant_p01": false
+          "p_value": 1.523970604832094e-23,
+          "cliffs_delta": 1.0,
+          "rank_biserial_r": 1.0,
+          "cohens_d_z": null,
+          "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
+          "significant_p01": true
         }
       },
       "Ablation2_NoProprioception": {
@@ -1188,9 +1233,11 @@
         ],
         "wilcoxon_vs_full": {
           "statistic": 0.0,
-          "p_value": 4.58651312781771e-22,
-          "cohens_d": 13.816367918930034,
+          "p_value": 1.523970604832094e-23,
           "cliffs_delta": 1.0,
+          "rank_biserial_r": 1.0,
+          "cohens_d_z": null,
+          "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
           "significant_p01": true
         }
       },
@@ -1209,8 +1256,10 @@
         "wilcoxon_vs_full": {
           "statistic": 0.0,
           "p_value": 1.0,
-          "cohens_d": 0.0,
           "cliffs_delta": 0.0,
+          "rank_biserial_r": 0.0,
+          "cohens_d_z": null,
+          "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
           "significant_p01": false
         }
       },
@@ -1229,8 +1278,10 @@
         "wilcoxon_vs_full": {
           "statistic": 0.0,
           "p_value": 1.0,
-          "cohens_d": 0.0,
           "cliffs_delta": 0.0,
+          "rank_biserial_r": 0.0,
+          "cohens_d_z": null,
+          "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
           "significant_p01": false
         }
       },
@@ -1249,8 +1300,10 @@
         "wilcoxon_vs_full": {
           "statistic": 0.0,
           "p_value": 1.523970604832094e-23,
-          "cohens_d": 2000000000000.0,
           "cliffs_delta": 1.0,
+          "rank_biserial_r": 1.0,
+          "cohens_d_z": null,
+          "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
           "significant_p01": true
         }
       },
@@ -1269,8 +1322,10 @@
         "wilcoxon_vs_full": {
           "statistic": 0.0,
           "p_value": 1.0,
-          "cohens_d": 0.0,
           "cliffs_delta": 0.0,
+          "rank_biserial_r": 0.0,
+          "cohens_d_z": null,
+          "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
           "significant_p01": false
         }
       },
@@ -1289,8 +1344,10 @@
         "wilcoxon_vs_full": {
           "statistic": 0.0,
           "p_value": 1.0,
-          "cohens_d": 0.0,
           "cliffs_delta": 0.0,
+          "rank_biserial_r": 0.0,
+          "cohens_d_z": null,
+          "cohens_d_note": "Degenerate (zero sample variance in paired differences; diff is constant across all trials)",
           "significant_p01": false
         }
       }
@@ -1312,7 +1369,7 @@
           0.0
         ],
         "p50_latency_ms": 0.24369999999999997,
-        "wcet_ms": 0.4607
+        "max_observed_latency_ms": 0.4607
       },
       "Gen1_ExtremeHighFriction": {
         "drop_rate": 0.0,
@@ -1327,7 +1384,7 @@
           50.0
         ],
         "p50_latency_ms": 0.18115,
-        "wcet_ms": 7.563999970443547
+        "max_observed_latency_ms": 7.563999970443547
       },
       "Gen2_HeavyLiquidInflux": {
         "drop_rate": 0.99,
@@ -1342,7 +1399,7 @@
           48.09
         ],
         "p50_latency_ms": 0.1695,
-        "wcet_ms": 9.823900065384805
+        "max_observed_latency_ms": 9.823900065384805
       },
       "Gen3_SevereEccentricCoM": {
         "drop_rate": 0.91,
@@ -1357,7 +1414,7 @@
           49.12
         ],
         "p50_latency_ms": 0.19265,
-        "wcet_ms": 9.888399974443018
+        "max_observed_latency_ms": 9.888399974443018
       },
       "Gen4_LateralImpulseStrike": {
         "drop_rate": 0.02,
@@ -1372,7 +1429,7 @@
           50.0
         ],
         "p50_latency_ms": 0.19455,
-        "wcet_ms": 9.429799974896014
+        "max_observed_latency_ms": 9.429799974896014
       },
       "Gen5_SensoryDelayJitter": {
         "drop_rate": 0.0,
@@ -1387,7 +1444,7 @@
           50.0
         ],
         "p50_latency_ms": 0.1638,
-        "wcet_ms": 6.64039992261678
+        "max_observed_latency_ms": 6.64039992261678
       }
     }
   }
