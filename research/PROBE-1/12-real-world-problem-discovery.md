@@ -417,3 +417,4 @@ With document 12 finalized, the HOROS PROBE-1 milestone sequence proceeds throug
 Document 12 firmly anchors HOROS PROBE-1 in **unsolved, high-impact real-world problems**. By refusing to build another generic imitation-learning VLA that mimics static tabletop pick-and-place, HOROS focuses on the true physical frontiers of robotics: **anticipatory tactile slip regulation**, **epistemic failure memory**, and **whole-body centroidal momentum coordination**.
 
 We proceed to **Milestone 2: Deeply evaluating existing models relevant to the shortlisted problems** to document exactly where and why leading systems fail on these specific challenges.
+
