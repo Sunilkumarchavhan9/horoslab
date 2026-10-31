@@ -1,0 +1,68 @@
+\documentclass[11pt,a4paper]{article}
+
+% Core mathematical packages
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+
+% Layout, typography, and hyperref
+\usepackage[margin=1.0in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{cite}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[colorlinks=true,linkcolor=blue!70!black,citecolor=green!50!black,urlcolor=blue!80!black]{hyperref}
+\usepackage{cleveref}
+
+% Theorems and Definitions
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+% Title and Metadata
+\title{\textbf{Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Jointly Changing Contact Conditions}}
+
+\author{
+  \textbf{HOROS Physical Intelligence Research Group}\\[0.5em]
+  \small Correspondence: \texttt{research@horos-pi.org}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Safe robotic manipulation of fragile, dynamic objects remains a fundamental challenge in physical intelligence. While recent Vision-Language-Action (VLA) foundation policies exhibit remarkable semantic generalization, they remain vulnerable to unconstrained action generation, tactile blindness, and sensory transport lag during high-speed contact transitions. Conversely, classical reactive grip reflexes act purely \emph{a posteriori} after macroscopic sliding has commenced, precipitating catastrophic drop failures during abrupt friction collapses or payload shifts. This paper introduces \textbf{HOROS PROBE-1}, an uncertainty-aware predictive safety framework for multi-fingered robotic grasping under jointly changing nonstationary contact conditions, including continuous fluid mass influx, periodic center-of-mass (CoM) sloshing, and sudden friction collapse. Our framework unifies: (i) an action-dependent contact force sensitivity mapping derived from linearized Hunt-Crossley elastomeric dynamics; (ii) an 8-sided polyhedral inner approximation of the friction cone formulated as a discrete-time predictive Control Barrier Function (p-CBF) with object-level spatial wrench balance; and (iii) Adaptive Conformal Inference (ACI) providing distribution-free, non-exchangeable friction uncertainty calibration. 
+Through an exhaustive empirical benchmark comprising 3,400 independent simulation trials ($N = 100$ independent seeds per condition) in Isaac Lab with PhysX 5 continuous collision physics, HOROS demonstrates a \textbf{0.0\% drop rate and 0.0\% crush rate} in the fully coupled nonstationary regime, whereas fixed-force, reactive slip reflex, unconstrained flow matching, and certainty-equivalence MPC baselines all suffer a \textbf{100.0\% drop rate} (paired McNemar test $\chi^2 = 98.01, p < 10^{-20}$; Wilcoxon signed-rank $p = 1.52 \times 10^{-23}$, Cliff's $\delta = +1.00$, rank-biserial correlation $r_{\text{rb}} = +1.00$). Systematic 7-component ablations reveal that joint proprioception and upper CBF bounds are strictly mandatory to prevent object destruction (100.0\% crush rate when ablated), proving that slip avoidance and fragile structural preservation are competing physical objectives. The underlying C-level OSQP ADMM solver executes with a median latency of \textbf{0.193~ms} and a maximum observed cycle time of \textbf{9.603~ms}, strictly complying with a 10.0~ms (100~Hz) hard real-time watchdog deadline. We publish the complete open-source reproducibility codebase and specify an independent 6-axis ATI load-cell benchtop validation protocol.
+\end{abstract}
+
+\vspace{1em}
+\noindent\textbf{Keywords:} Multi-fingered Grasping, Control Barrier Functions, Tactile Sensing, Adaptive Conformal Inference, Safe Robotic Manipulation.
+
+\vspace{1.5em}
+
+% Include Section Files
+\input{sections/01-introduction.tex}
+\input{sections/02-related-work.tex}
+\input{sections/03-problem-formulation.tex}
+\input{sections/04-methodology.tex}
+\input{sections/05-theoretical-analysis.tex}
+\input{sections/06-experimental-setup.tex}
+\input{sections/07-results.tex}
+\input{sections/08-limitations.tex}
+\input{sections/09-conclusion.tex}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

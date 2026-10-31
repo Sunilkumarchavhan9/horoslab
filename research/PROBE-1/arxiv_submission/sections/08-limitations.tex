@@ -1,0 +1,41 @@
+\section{Limitations and Physical Validation Protocol}
+\label{sec:limitations}
+
+\subsection{Scope and Simulation Focus}
+We explicitly state that the empirical results presented in this paper are established within GPU-accelerated physics simulation using Isaac Lab with PhysX 5 continuous collision detection and the TacSL sensor plugin. While PhysX 5 accurately models frictional contact manifolds and second-order dynamics, physical robotic deployments introduce mechanical non-idealities, including elastomeric skin tearing, thermal illumination drift in optical tactile cameras, joint gear backlash, and motor torque ripple.
+
+\subsection{Mathematical Assumptions and Approximations}
+Our theoretical formulation rests on two explicit approximations:
+\begin{enumerate}
+    \item \textbf{Polyhedral Friction Cone Conservatism:} The 8-sided inner approximation $\mathcal{P}_8$ introduces a maximum volumetric conservatism bound of $7.61\%$ (\Cref{thm:polyhedral_bound}). While this ensures that no commanded force ever violates the true friction cone, it slightly limits the tangential force envelope that a finger can exploit compared to second-order cone programming (SOCP).
+    \item \textbf{Hunt-Crossley Linearization:} The affine sensitivity mapping $\mathbf{\Lambda}_i(\mathbf{q})$ assumes that contact stiffness $\mathbf{K}_c$ and damping $\mathbf{D}_c$ remain approximately constant over a single control step ($\Delta t = 10\text{ ms}$). For high-speed impacts where contact velocity changes violently within $< 2\text{ ms}$, higher-order variational integrators may be required.
+\end{enumerate}
+
+\subsection{Benchtop Physical Validation Protocol}
+To enable independent laboratory reproduction without requiring an expensive full-body humanoid platform (e.g., Unitree G1), we specify a modular benchtop physical validation protocol:
+
+\begin{table}[h]
+\centering
+\caption{\textbf{Benchtop Physical Validation Rig Specifications.}}
+\label{tab:benchtop}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Subsystem} & \textbf{Hardware Specification} \\
+\midrule
+Ground-Truth Transducer & ATI Industrial Automation Mini40 6-Axis F/T Sensor (0.01~N resolution) \\
+Data Acquisition & National Instruments PCIe-6323 DAQ sampling at 1000~Hz \\
+Optical Tactile Transducer & GelSlim 3.0 or DIGIT (100~Hz, $640\times 480$, Poisson marker flow) \\
+Direct-Drive Actuator & Linear ball-screw stage with direct-drive motor (100~Hz loop) \\
+Fluid Transfer Rig & KD Scientific Legato 100 syringe pump ($0\text{ to }0.50\text{ kg/s}$) \\
+Swappable Contact Shells & Polished Acrylic ($\mu = 0.60$), Teflon PTFE ($\mu = 0.12$), Silicone ($\mu = 1.30$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Physical Acceptance Criteria for Real-World Transfer:}
+\begin{itemize}
+    \item \textbf{Force Tracking Residual:} Normal force estimation error $|\hat{f}_N - f_{N, \text{ATI}}| \le 0.05\text{ N}$ RMS under dynamic fluid pouring.
+    \item \textbf{Incipient Slip Lead-Time:} Incipient slip alert issued $t_{\text{alert}} \ge 25\text{ ms}$ prior to macroscopic sliding detected by laser Doppler vibrometry.
+    \item \textbf{Execution Latency:} Embedded OSQP solve time on an NVIDIA Jetson AGX Orin $\le 1.0\text{ ms}$ (P95).
+\end{itemize}

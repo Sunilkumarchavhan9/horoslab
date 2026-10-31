@@ -1,0 +1,112 @@
+\section{Problem Formulation}
+\label{sec:problem_formulation}
+
+\subsection{Kinematics and Articulated Hand Dynamics}
+Consider an articulated robotic hand with $n_q$ actuated joints and generalized coordinates $\mathbf{q} \in \mathbb{R}^{n_q}, \dot{\mathbf{q}} \in \mathbb{R}^{n_q}$. The hand establishes contact with a dynamic object at $M$ distinct fingertip locations $\mathbf{p}_{c, i} \in \mathbb{R}^3, i \in \{1, \dots, M\}$.
+
+Let $\mathbf{J}_{c, i}(\mathbf{q}) = \frac{\partial \mathbf{p}_{c, i}}{\partial \mathbf{q}} \in \mathbb{R}^{3 \times n_q}$ denote the contact Jacobian of finger $i$. Under discrete-time sampled control with cycle duration $\Delta t$, the commanded control input is the joint acceleration vector:
+\begin{equation}
+    \mathbf{u}_k = \ddot{\mathbf{q}}_k \in \mathbb{R}^{n_q}, \quad \mathbf{u}_{\min} \le \mathbf{u}_k \le \mathbf{u}_{\max}
+    \label{eq:joint_accel_bounds}
+\end{equation}
+
+The forward kinematic position and velocity of fingertip $i$ at step $k+1$ expand as:
+\begin{align}
+    \mathbf{p}_{c, i}(k+1) &= \mathbf{p}_{c, i}(k) + \Delta t \mathbf{J}_{c, i} \dot{\mathbf{q}}_k + \frac{1}{2} \Delta t^2 \left( \mathbf{J}_{c, i} \mathbf{u}_k + \dot{\mathbf{J}}_{c, i} \dot{\mathbf{q}}_k \right) \label{eq:pos_update} \\
+    \mathbf{v}_{c, i}(k+1) &= \mathbf{J}_{c, i} \dot{\mathbf{q}}_k + \Delta t \left( \mathbf{J}_{c, i} \mathbf{u}_k + \dot{\mathbf{J}}_{c, i} \dot{\mathbf{q}}_k \right) \label{eq:vel_update}
+\end{align}
+
+\subsection{Linearized Hunt-Crossley Elastomeric Dynamics}
+Contact interaction between the elastomeric sensor skin and the object surface is modeled via the continuous Hunt-Crossley model \cite{hunt1975coefficient}. For normal indentation $\delta_{n, i} \ge 0$ and indentation velocity $\dot{\delta}_{n, i}$:
+\begin{equation}
+    f_{N, i} = K_c \delta_{n, i}^{\eta} + D_c \delta_{n, i}^{\eta} \dot{\delta}_{n, i}
+    \label{eq:hunt_crossley}
+\end{equation}
+where $K_c > 0$ is the elastomeric stiffness, $D_c \ge 0$ is the viscoelastic damping coefficient, and $\eta \approx 1.0\text{--}1.5$ is the indentation exponent.
+
+Linearizing \eqref{eq:hunt_crossley} around the operating contact state $(\delta_n, \dot{\delta}_n)$ yields the symmetric stiffness and damping tensors:
+\begin{equation}
+    \mathbf{K}_{c, i} = \left. \frac{\partial \mathbf{f}_{c, i}}{\partial \mathbf{p}_{c, i}} \right|_{(\delta_n, \dot{\delta}_n)}, \quad \mathbf{D}_{c, i} = \left. \frac{\partial \mathbf{f}_{c, i}}{\partial \mathbf{v}_{c, i}} \right|_{(\delta_n, \dot{\delta}_n)}
+\end{equation}
+
+Substituting the kinematic expansions \eqref{eq:pos_update}--\eqref{eq:vel_update} yields the \textbf{action-dependent contact force sensitivity mapping}:
+\begin{equation}
+    \mathbf{f}_{c, i}(k+1) = \mathbf{\Lambda}_i(\mathbf{q}_k) \mathbf{u}_k + \mathbf{f}_{c, i}^{\text{bias}}(\mathbf{x}_k, \boldsymbol{\theta}_k)
+    \label{eq:force_sensitivity}
+\end{equation}
+where:
+\begin{align}
+    \mathbf{\Lambda}_i(\mathbf{q}_k) &= \left( \frac{1}{2} \Delta t^2 \mathbf{K}_{c, i} + \Delta t \mathbf{D}_{c, i} \right) \mathbf{J}_{c, i}(\mathbf{q}_k) \in \mathbb{R}^{3 \times n_q} \label{eq:lambda_def} \\
+    \mathbf{f}_{c, i}^{\text{bias}} &= \mathbf{f}_{c, i}(k) + \Delta t \mathbf{K}_{c, i} \left( \mathbf{J}_{c, i} \dot{\mathbf{q}}_k - \mathbf{v}_{\text{obj}, i} \right) + \frac{1}{2} \Delta t^2 \mathbf{K}_{c, i} \dot{\mathbf{J}}_{c, i} \dot{\mathbf{q}}_k \label{eq:bias_def}
+\end{align}
+
+\begin{remark}
+Unlike classical CBF formulations that treat contact forces as independent optimization variables, \eqref{eq:force_sensitivity} links the optimization variable $\mathbf{u}_k = \ddot{\mathbf{q}}_k$ directly to the forward contact force evolution $\mathbf{f}_{c, i}(k+1)$. This guarantees direct control authority over the barrier constraints.
+\end{remark}
+
+\subsection{8-Sided Polyhedral Friction Cone Approximation}
+The physical Coulomb friction cone with surface unit normal $\hat{\mathbf{n}}_i$ and friction coefficient $\mu_i$ is a second-order cone:
+\begin{equation}
+    \mathcal{C}_i = \left\{ \mathbf{f} \in \mathbb{R}^3 \;\middle|\; \|\mathbf{f} - (\hat{\mathbf{n}}_i^T \mathbf{f}) \hat{\mathbf{n}}_i\|_2 \le \mu_i (\hat{\mathbf{n}}_i^T \mathbf{f}), \; \hat{\mathbf{n}}_i^T \mathbf{f} \ge 0 \right\}
+\end{equation}
+
+To enable real-time convex optimization within a Quadratic Program, we construct an 8-sided polyhedral inner approximation $\mathcal{P}_{8, i} \subset \mathcal{C}_i$. Let $\{\hat{\mathbf{t}}_{i, 1}, \hat{\mathbf{t}}_{i, 2}\}$ span an orthonormal basis for the contact tangent plane. The facet directional vectors around the circumference are:
+\begin{equation}
+    \mathbf{d}_{i, j} = \cos\left( \frac{2\pi j}{8} \right) \hat{\mathbf{t}}_{i, 1} + \sin\left( \frac{2\pi j}{8} \right) \hat{\mathbf{t}}_{i, 2}, \quad j \in \{0, \dots, 7\}
+\end{equation}
+
+The polyhedral constraint matrix $\mathbf{A}_{\text{cone}, i} \in \mathbb{R}^{8 \times 3}$ is defined row-wise:
+\begin{equation}
+    \mathbf{a}_{i, j}^T = \mathbf{d}_{i, j}^T - \mu_i \cos\left(\frac{\pi}{8}\right) \hat{\mathbf{n}}_i^T, \quad j \in \{0, \dots, 7\}
+    \label{eq:cone_rows}
+\end{equation}
+\begin{equation}
+    \mathcal{P}_{8, i} = \left\{ \mathbf{f} \in \mathbb{R}^3 \;\middle|\; \mathbf{A}_{\text{cone}, i} \mathbf{f} \le \mathbf{0}, \; \hat{\mathbf{n}}_i^T \mathbf{f} \ge F_{\min} \right\}
+\end{equation}
+
+\begin{theorem}[Analytical Conservatism Bound]
+\label{thm:polyhedral_bound}
+The 8-sided polyhedral cone satisfies $\mathcal{P}_{8, i} \subseteq \mathcal{C}_i$ for all $\mu_i > 0$. The maximum relative volumetric conservatism of the inner approximation is:
+\begin{equation}
+    \epsilon_{\text{cons}} = 1 - \cos\left(\frac{\pi}{8}\right) = 1 - \frac{\sqrt{2 + \sqrt{2}}}{2} \approx 7.61\%
+\end{equation}
+\end{theorem}
+\begin{proof}
+The minimum radial distance from the cone centerline to facet $j$ occurs at the midpoint between adjacent vertices: $r_{\min} = \mu_i f_N \cos(\pi/8) \approx 0.9239 \mu_i f_N$. For all points $\mathbf{f} \in \mathcal{P}_{8, i}$, the tangential shear satisfies $\|\mathbf{f}_T\|_2 \le r_{\min} \le \mu_i f_N$. Hence $\mathcal{P}_{8, i} \subset \mathcal{C}_i$, and the maximum conservatism is strictly $1 - 0.9239 = 7.61\%$.
+\end{proof}
+
+\subsection{Multi-Contact Safety Sets and Object Wrench Balance}
+We formalize three multi-contact safety sets:
+\begin{enumerate}
+    \item \textbf{Anti-Slip Safety Set $\mathcal{S}_{\text{slip}}$:} Enforces tangential shear retention inside $\mathcal{P}_{8, i}$:
+    \begin{equation}
+        h_{\text{slip}, i, j}(\mathbf{x}_k, \mathbf{u}_k) = -\mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k+1) \ge 0
+    \end{equation}
+    The discrete-time p-CBF condition enforces:
+    \begin{equation}
+        \mathbf{a}_{i, j}^T \left( \mathbf{\Lambda}_i \mathbf{u}_k + \mathbf{f}_{c, i}^{\text{bias}} \right) \le (1 - \gamma_{\text{slip}}) \min\left(0, \mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k)\right)
+        \label{eq:slip_cbf}
+    \end{equation}
+    where $\gamma_{\text{slip}} \in (0, 1]$ is the barrier decay parameter.
+    \item \textbf{Anti-Crush Safety Set $\mathcal{S}_{\text{crush}}$:} Prevents crushing fragile payloads:
+    \begin{equation}
+        \hat{\mathbf{n}}_i^T \mathbf{\Lambda}_i \mathbf{u}_k \le F_{\max} - \hat{\mathbf{n}}_i^T \mathbf{f}_{c, i}^{\text{bias}}
+        \label{eq:crush_cbf}
+    \end{equation}
+    \item \textbf{Contact Maintenance Set $\mathcal{S}_{\text{contact}}$:} Enforces minimum normal pre-load:
+    \begin{equation}
+        -\hat{\mathbf{n}}_i^T \mathbf{\Lambda}_i \mathbf{u}_k \le -F_{\min} + \hat{\mathbf{n}}_i^T \mathbf{f}_{c, i}^{\text{bias}}
+        \label{eq:contact_cbf}
+    \end{equation}
+\end{enumerate}
+
+Let $\mathbf{G} \in \mathbb{R}^{6 \times 3M}$ denote the grasp matrix mapping contact forces to net spatial wrench at the object Center of Mass $\mathbf{c}_o$:
+\begin{equation}
+    \mathbf{G} = \begin{bmatrix} \mathbf{I}_3 & \dots & \mathbf{I}_3 \\ [\mathbf{p}_{c, 1} - \mathbf{c}_o]_\times & \dots & [\mathbf{p}_{c, M} - \mathbf{c}_o]_\times \end{bmatrix}
+\end{equation}
+Given the required spatial wrench $\mathbf{w}_{\text{req}} = [m_o (\mathbf{a}_{\text{des}} - \mathbf{g})^T, (\mathbf{I}_o \boldsymbol{\alpha}_{\text{des}} + \boldsymbol{\omega} \times (\mathbf{I}_o \boldsymbol{\omega}))^T]^T$, forward wrench balance requires:
+\begin{equation}
+    \left( \mathbf{G} \mathbf{\Lambda}_{\text{stack}} \right) \mathbf{u}_k = \mathbf{w}_{\text{req}} - \mathbf{G} \mathbf{f}_{\text{bias, stack}}
+    \label{eq:wrench_eq}
+\end{equation}
+where $\mathbf{\Lambda}_{\text{stack}} = [\mathbf{\Lambda}_1^T, \dots, \mathbf{\Lambda}_M^T]^T \in \mathbb{R}^{3M \times n_q}$.

@@ -1,0 +1,59 @@
+\section{Theoretical Analysis}
+\label{sec:theoretical_analysis}
+
+\subsection{Discrete-Time Invariance and Safety Guarantees}
+We establish that satisfaction of the discrete-time barrier condition guarantees forward invariance of the multi-contact safe set.
+
+\begin{definition}[Multi-Contact Safe Set]
+The safe contact set $\mathcal{S} \subset \mathbb{R}^{3M}$ is the intersection:
+\begin{equation}
+    \mathcal{S} = \bigcap_{i=1}^M \left( \mathcal{P}_{8, i} \cap \left\{ \mathbf{f} \;\middle|\; F_{\min} \le \hat{\mathbf{n}}_i^T \mathbf{f} \le F_{\max} \right\} \right)
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Forward Invariance of Safe Set]
+\label{thm:invariance}
+Let $\mathbf{f}_{c}(k) \in \mathcal{S}$. If the quadratic program \eqref{eq:safety_qp} yields a solution with zero slack ($\boldsymbol{\delta}_s = \mathbf{0}$), then under the linearized Hunt-Crossley sensitivity mapping \eqref{eq:force_sensitivity}, the predicted contact force satisfies $\mathbf{f}_c(k+1) \in \mathcal{S}$.
+\end{theorem}
+\begin{proof}
+For any finger $i$ and facet $j \in \{0, \dots, 7\}$, the inequality constraint in \eqref{eq:qp_ineq} enforces:
+\begin{equation}
+    \mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k+1) \le (1 - \gamma_{\text{slip}}) \min\left(0, \mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k)\right)
+\end{equation}
+Since $\mathbf{f}_c(k) \in \mathcal{S}$, we have $\mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k) \le 0$ for all facets. Because $\gamma_{\text{slip}} \in (0, 1]$, the right-hand side satisfies $(1 - \gamma_{\text{slip}}) \mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k) \le 0$. Hence, $\mathbf{a}_{i, j}^T \mathbf{f}_{c, i}(k+1) \le 0$ for all $j \in \{0, \dots, 7\}$, proving that $\mathbf{f}_{c, i}(k+1) \in \mathcal{P}_{8, i}$. Analogously, the scalar force bounds \eqref{eq:crush_cbf} and \eqref{eq:contact_cbf} guarantee $F_{\min} \le \hat{\mathbf{n}}_i^T \mathbf{f}_{c, i}(k+1) \le F_{\max}$. Therefore, $\mathbf{f}_c(k+1) \in \mathcal{S}$.
+\end{proof}
+
+\subsection{Decoupling of Internal Squeeze in the Grasp Nullspace}
+Multi-fingered grasping requires modulating internal contact squeeze to arrest slip without perturbing the object's spatial trajectory.
+
+\begin{theorem}[Nullspace Internal Squeeze Decoupling]
+\label{thm:nullspace}
+Let the grasp matrix $\mathbf{G} \in \mathbb{R}^{6 \times 3M}$ possess full rank $\text{rank}(\mathbf{G}) = 6$ with $M \ge 3$ non-collinear contacts. Then for any internal normal force adjustment $\Delta \mathbf{f}_{\text{internal}} \in \mathcal{N}(\mathbf{G})$, the net spatial wrench applied to the object satisfies:
+\begin{equation}
+    \mathbf{G} \left( \mathbf{f}_c(k+1) + \Delta \mathbf{f}_{\text{internal}} \right) = \mathbf{w}_{\text{req}}
+\end{equation}
+\end{theorem}
+\begin{proof}
+By definition of the nullspace, $\mathbf{G} \Delta \mathbf{f}_{\text{internal}} = \mathbf{0}$. For an opposing four-finger grasp ($M = 4$), the contact force vector space has dimension $3M = 12$. The nullspace dimension is $\dim(\mathcal{N}(\mathbf{G})) = 12 - 6 = 6$. For pairs of opposing fingertips (fingers 1 and 2 pushing with normal force $+f_N \hat{\mathbf{x}}$, and fingers 3 and 4 pushing with $-f_N \hat{\mathbf{x}}$), equal and opposite normal force increments $\Delta f_N$ cancel identically in $\mathbf{G}$:
+\begin{equation}
+    \mathbf{G} \Delta \mathbf{f}_N = \sum_{i=1}^4 \Delta \mathbf{f}_{N, i} = \Delta f_N \hat{\mathbf{x}} + \Delta f_N \hat{\mathbf{x}} - \Delta f_N \hat{\mathbf{x}} - \Delta f_N \hat{\mathbf{x}} = \mathbf{0}
+\end{equation}
+and their cross products $[\mathbf{p}_{c, i} - \mathbf{c}_o]_\times \Delta \mathbf{f}_{N, i}$ sum to zero about the centroid. Thus, the safety filter can scale normal squeeze forces arbitrarily within $[F_{\min}, F_{\max}]$ without exerting net linear or angular accelerations on the object.
+\end{proof}
+
+\subsection{Computational Complexity of the OSQP Safety Filter}
+The safety QP \eqref{eq:safety_qp} comprises $n_{\text{vars}} = n_q + n_{\text{ineq}} + n_{\text{eq}}$ decision variables. For a 16-DoF hand with $M = 4$ fingers:
+\begin{itemize}
+    \item Joint accelerations: $n_q = 16$
+    \item Anti-slip constraints: $8 \times 4 = 32$ facets
+    \item Normal crush and contact limits: $2 \times 4 = 8$ bounds
+    \item Actuator acceleration limits: $2 \times 16 = 32$ bounds
+    \item Spatial wrench equalities: $n_{\text{eq}} = 6$
+\end{itemize}
+Total inequalities $n_{\text{ineq}} = 72$, resulting in $n_{\text{vars}} = 16 + 72 + 6 = 94$ variables.
+
+Using the Alternating Direction Method of Multipliers (ADMM) implemented in OSQP \cite{stellato2020osqp}, each iteration requires a single linear system solve:
+\begin{equation}
+    \begin{bmatrix} \mathbf{P} + \sigma \mathbf{I} & \mathbf{A}^T \\ \mathbf{A} & -\rho^{-1} \mathbf{I} \end{bmatrix} \begin{bmatrix} \mathbf{z}^{k+1} \\ \boldsymbol{\nu}^{k+1} \end{bmatrix} = \begin{bmatrix} \sigma \mathbf{z}^k - \mathbf{q}_{\text{obj}} \\ \mathbf{u}_{\text{osqp}}^k \end{bmatrix}
+\end{equation}
+Because the Hessian $\mathbf{P}$ and constraint matrix $\mathbf{A}$ depend on kinematic sensitivity $\mathbf{\Lambda}_i(\mathbf{q})$ but exhibit static sparsity patterns, quasi-static factorizations achieve convergence in $15\text{--}40$ ADMM iterations, requiring under $0.20\text{ ms}$ on modern embedded ARM cores.
