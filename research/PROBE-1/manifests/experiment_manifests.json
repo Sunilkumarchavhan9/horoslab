@@ -1,0 +1,89 @@
+{
+  "manifest_id": "HOROS-PROBE1-EXP-MANIFEST-20261031",
+  "project": "HOROS PROBE-1: Multifingered Predictive Contact Safety",
+  "software_environment": {
+    "simulation_framework": "NVIDIA Isaac Lab v2.3",
+    "simulation_engine": "NVIDIA Isaac Sim 5.1",
+    "physics_backend": "GPU PhysX 5 with Continuous Collision Detection",
+    "tactile_sensor_module": "TacSL (contributed visuotactile package)",
+    "operating_system": "Ubuntu 22.04 LTS (x86_64 / aarch64)",
+    "real_time_patch": "PREEMPT_RT v6.6",
+    "python_version": "3.12",
+    "pinned_packages": {
+      "numpy": "2.5.2",
+      "scipy": "1.18.1",
+      "osqp": "1.1.3",
+      "torch": "2.6.0+cu124",
+      "pytest": "9.0.2"
+    }
+  },
+  "control_cycle_timing": {
+    "control_frequency_hz": 100.0,
+    "master_cycle_period_ms": 10.0,
+    "internal_computational_budgets": {
+      "sensory_ingestion_optical_flow_ms": 2.5,
+      "deep_ensemble_quantile_inference_ms": 4.5,
+      "qp_predictive_safety_filter_ms": 1.0,
+      "ethercat_bus_serialization_ms": 1.0,
+      "operating_system_safety_margin_ms": 1.0
+    },
+    "watchdog_timeout_ms": 1.0,
+    "passive_damping_fallback_budget_us": 50.0
+  },
+  "physical_hardware_specifications": {
+    "robot_hand": "Dexterous Anthropomorphic Multi-Fingered Hand (Allegro-type 16 DoF)",
+    "fingers": 4,
+    "actuated_joints_per_finger": 4,
+    "total_actuated_dof": 16,
+    "actuator_acceleration_bounds_rad_s2": [-30.0, 30.0],
+    "normal_force_bounds_N": {
+      "f_min": 0.5,
+      "f_max_damage_limit": 18.0
+    },
+    "polyhedral_friction_cone": {
+      "n_sides": 8,
+      "geometric_conservatism_pct": 7.612,
+      "inner_approximation": true
+    },
+    "contact_dynamics": {
+      "model": "Hunt-Crossley Compliant Nonlinear Viscoelastic Model",
+      "normal_stiffness_kn_N_m": 2000.0,
+      "normal_damping_chi_N_s_m": 50.0,
+      "tangential_stiffness_kt_N_m": 800.0,
+      "tangential_damping_dt_N_s_m": 30.0
+    }
+  },
+  "conformal_calibration_parameters": {
+    "algorithm": "Adaptive Conformal Inference (Gibbs & Candès)",
+    "target_miscoverage_rate_delta": 0.05,
+    "nominal_coverage_pct": 95.0,
+    "adaptation_step_size_gamma": 0.02,
+    "mu_physical_floor": 0.05,
+    "incipient_slip_lead_time_ms": 30.0
+  },
+  "experimental_regimes": {
+    "Regime_A": {
+      "name": "Friction Step",
+      "description": "Instantaneous 60% drop in contact friction at t = 300 ms (0.60 -> 0.24)",
+      "incipient_slip_alert_at_ms": 270.0
+    },
+    "Regime_B": {
+      "name": "Dynamic Mass Influx",
+      "description": "Continuous payload mass influx (+0.25 kg/s) simulating liquid pouring"
+    },
+    "Regime_C": {
+      "name": "CoM Precession",
+      "description": "Dynamic 45 deg/s tilt inducing shifting gravitational center of mass"
+    },
+    "Regime_D": {
+      "name": "Joint Nonstationarity",
+      "description": "Simultaneous execution of Regimes A, B, and C"
+    }
+  },
+  "baselines": [
+    "B1_FixedForce",
+    "B2_ReactiveSlipSqueeze",
+    "B3_UnconstrainedFlowPolicy",
+    "B4_DeterministicTactileMPC"
+  ]
+}
