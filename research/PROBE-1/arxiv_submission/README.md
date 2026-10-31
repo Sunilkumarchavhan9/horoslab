@@ -4,7 +4,7 @@
 **Primary Category:** `cs.RO` (Robotics)  
 **Cross-List Category:** `eess.SY` (Systems and Control)  
 **License:** arXiv Perpetual, Non-Exclusive License  
-**Author:** Sunil Kumar Chavhan (HOROS Physical Intelligence Research, `Sunil@horoslab.io`)  
+**Author:** Sunil Kumar Chavhan (HOROS Physical Intelligence Research Group, `sunil@horoslab.io`)  
 **Structural Benchmark:** AutoMegaKernel (arXiv:2606.09682) Quality & Presentation Standard  
 
 ---
@@ -72,7 +72,7 @@ Output artifact: `main.pdf`.
 
 ## 4. arXiv Submission Checklist (AutoMegaKernel Standard)
 
-- [x] **Clear Authorship:** Sunil Kumar Chavhan, HOROS, `Sunil@horoslab.io`.
+- [x] **Clear Authorship:** Sunil Kumar Chavhan, HOROS Physical Intelligence Research Group, `sunil@horoslab.io`.
 - [x] **Category Selection:** Primary `cs.RO` (Robotics), Secondary `eess.SY` (Systems and Control).
 - [x] **Self-Contained Archive:** All 7 figures, 10 sections, and references are locally bundled.
 - [x] **Prior-Art Taxonomy Table:** Section 2 features Table 1 comparing OpenVLA, $\pi_0$, RT-2, TacClaw-Infinity, PANDAS, and Ames CBF.

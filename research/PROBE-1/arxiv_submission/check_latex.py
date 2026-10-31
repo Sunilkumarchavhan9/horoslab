@@ -30,3 +30,4 @@ if env_errors == 0:
     print("SUCCESS: All LaTeX environments are perfectly matched across all files!")
 else:
     print(f"FAILURE: Found {env_errors} environment mismatches.")
+
