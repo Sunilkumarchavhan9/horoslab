@@ -1,0 +1,536 @@
+{
+  "metadata": {
+    "experiment": "B4_CE_MPC_margin_sensitivity_sweep",
+    "total_episodes": 2800,
+    "margins": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35
+    ],
+    "regimes": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "seeds_per_condition": 100
+  },
+  "results": {
+    "A": {
+      "0.05": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.10": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.15": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.20": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.25": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.30": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.35": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      }
+    },
+    "B": {
+      "0.05": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.10": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.15": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.20": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.25": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.30": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.35": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      }
+    },
+    "C": {
+      "0.05": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.10": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.15": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.20": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.25": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.30": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      },
+      "0.35": {
+        "drop_rate": 0.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50,
+          50
+        ]
+      }
+    },
+    "D": {
+      "0.05": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.10": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.15": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.20": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.25": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.30": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "0.35": {
+        "drop_rate": 1.0,
+        "crush_rate": 0.0,
+        "mean_survival_steps": 30.0,
+        "std_survival_steps": 0.0,
+        "survival_steps_sample": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      }
+    }
+  }
+}

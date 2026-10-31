@@ -4,13 +4,13 @@
 \subsection{Physics Simulation Testbed and Trial Accounting}
 All empirical evaluations are conducted in \textbf{Isaac Lab v2.3} powered by Isaac Sim 5.1 \cite{isaacsim2024}. Rigid-body dynamics and contact mechanics are computed using PhysX 5 with continuous collision detection (CCD) at an internal numerical integration frequency of $1\text{ kHz}$ ($\Delta t_{\text{phys}} = 1.0\text{ ms}$). High-speed optical tactile interaction is simulated via the TacSL module, generating elastomeric surface displacement vectors, shear strain fields, and Poisson marker flow across four fingertip contact pads. The outer policy and safety filter operate at $100\text{ Hz}$ ($\Delta t = 10\text{ ms}$).
 
-The empirical evaluation suite encompasses exactly \textbf{3,400 independent experimental trials}, structured into three evaluation tiers:
+The empirical evaluation suite encompasses a primary benchmark ledger of \textbf{3,400 independent experimental trials} across three core tiers:
 \begin{enumerate}
     \item \textbf{Baseline Benchmark Suite (2,000 trials):} 4 operational regimes (Regimes A--D) $\times$ 5 controller architectures (B1--B4 and HOROS) $\times$ 100 independent seeded trials.
     \item \textbf{Ablation Study (800 trials):} 8 controller configurations (Variants 0--7) $\times$ 100 independent seeded trials under coupled nonstationary Regime D.
     \item \textbf{Generalization Stress Suite (600 trials):} 6 out-of-distribution stress conditions (Gen-1A through Gen-5) $\times$ 100 independent seeded trials.
 \end{enumerate}
-Each individual trial constitutes a self-contained 50-step manipulation episode initialized with an independent pseudorandom seed (seeds $0$ to $99$). All statistical metrics, Wilson score confidence intervals, and hypothesis tests are evaluated across independent episode outcomes, strictly eliminating pseudo-replication from correlated time-steps.
+This core ledger is complemented by an auxiliary hyperparameter sweep of \textbf{2,800 sensitivity episodes} for Baseline B4 (7 margin values $\times$ 4 regimes $\times$ 100 seeds), yielding an aggregate experimental corpus of \textbf{6,200 simulated manipulation episodes}. Each individual trial constitutes a self-contained 50-step manipulation episode initialized with an independent pseudorandom seed (seeds $0$ to $99$ for primary baselines; seeds $5000$ to $5099$ for auxiliary sensitivity sweeps). All statistical metrics, Wilson score confidence intervals, and hypothesis tests are evaluated across independent episode outcomes, strictly eliminating pseudo-replication from correlated time-steps.
 
 \begin{table}[t]
 \centering
@@ -83,7 +83,7 @@ Center of Mass $\hat{\mathbf{c}}_o$ (m) & 1.43~mm & 0.57~mm & 1.39~mm & [1.31, 1
 
 The contact state estimator achieves sub-gram mass tracking ($\text{RMSE} = 6.3\text{ g}$) and sub-millimeter centroid tracking ($\text{RMSE} = 1.53\text{ mm}$). Normal force errors remain below $0.04\text{ N}$.
 
-In EXP-002 (\Cref{fig:estimation}(b)), ACI achieved rolling empirical coverage between $95.58\%$ and $96.10\%$ across all four operational regimes (Regime D mean: $96.10\%$, $95\%\text{ CI}: [95.82\%, 96.40\%]$). Static conformal prediction over-covered at $96.58\%\text{--}97.08\%$, producing wider uncertainty margins that artificially restrict allowable joint accelerations.
+In EXP-002 (\Cref{fig:estimation}(b)), the evaluation population comprises the discrete time sequence of surface friction states across all 50 control cycles per episode ($N=100$ episodes $\times 50$ steps $= 5,000$ evaluation points per regime) tracking synthetic nonstationary friction shifts. Across all four regimes, ACI maintained rolling empirical coverage between $95.58\%$ and $96.10\%$ (Regime D mean: $96.10\%$, $95\%\text{ CI}: [95.82\%, 96.40\%]$), verifying the asymptotic validity of the ACI martingale guarantee under non-exchangeable distribution shifts. Static conformal prediction over-covered at $96.58\%\text{--}97.08\%$, producing overly wide intervals. In contrast, in the closed-loop control experiments (EXP-003 through EXP-006), ACI executes in event-triggered mode: non-conformity updates occur strictly upon incipient micro-slip events ($\mathcal{E}_{\text{slip}, i} = 1$), while sticking contact ($\psi_i \le \mu_{\text{cal}, i}$) confirms that the system operates safely within the predicted cone.
 
 \subsection{Performance Benchmarks Across Regimes A–D (EXP-003 \& EXP-004)}
 The quantitative benchmark results across all four operational regimes ($N = 100$ trials per condition, $2,000$ baseline trials total) are detailed in \Cref{tab:benchmarks} and illustrated in \Cref{fig:controllers}.
