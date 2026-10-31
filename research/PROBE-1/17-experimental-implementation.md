@@ -287,3 +287,4 @@ Document 17 successfully transforms the theoretical design of PROBE-1 into **ind
    The proposed controller is the **only method** to achieve $100\%$ survival on Regime D, proving that uncertainty-calibrated predictive Control Barrier Functions are essential for dynamic manipulation under joint nonstationarity.
 
 We are ready to transition to **Document 18: Empirical Evaluation, Baselines & Ablations** and the subsequent preparation of the formal peer-reviewed manuscript.
+

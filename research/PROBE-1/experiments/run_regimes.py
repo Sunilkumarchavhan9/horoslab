@@ -190,3 +190,4 @@ if __name__ == "__main__":
     for ctrl, data in bench_results["regimes"]["D"].items():
         lat = data.get("latency", {}).get("p50_ms", 0.0)
         print(f"  {ctrl:22s} | Drop: {data['drop_rate']*100:4.1f}% | Crush: {data['crush_rate']*100:4.1f}% | Survival: {data['mean_survival_steps']:4.1f}/50 steps | P50 Latency: {lat:.3f} ms")
+

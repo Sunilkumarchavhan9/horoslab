@@ -117,3 +117,4 @@ class ContactForceSensitivity:
                 max_err = err
 
         return float(max_err)
+

@@ -108,3 +108,4 @@ class DiscreteTimePredictiveCBF:
         b_eq = w_req - G_grasp @ bias_stacked      # R^6
 
         return A_ineq, b_ineq, A_eq, b_eq
+

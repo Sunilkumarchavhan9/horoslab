@@ -79,3 +79,4 @@ class DeterministicTactileMPCBaseline:
             u[i*4 : (i+1)*4] = self.gain * delta_fn
 
         return np.clip(u, -25.0, 25.0)
+

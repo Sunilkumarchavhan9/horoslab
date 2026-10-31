@@ -87,19 +87,38 @@ class GraspSimulationEnvironment:
         self.initial_friction = initial_friction
         self.reset()
 
-    def reset(self, regime: str = "D") -> None:
-        """Reset environment to initial state."""
+    def reset(
+        self,
+        regime: str = "D",
+        initial_mass: Optional[float] = None,
+        initial_friction: Optional[float] = None,
+        mass_rate: Optional[float] = None,
+        friction_drop_ratio: float = 0.60,
+        com_amplitude: float = 0.03,
+        external_impulses: Optional[Dict[int, np.ndarray]] = None,
+        obs_delay_steps: int = 0,
+        seed: Optional[int] = None,
+    ) -> None:
+        """Reset environment to initial state with optional generalization parameters."""
+        self.rng = np.random.default_rng(seed if seed is not None else 42)
         self.step_idx = 0
         self.regime = regime
-        self.mass = self.initial_mass
-        self.friction = [self.initial_friction] * self.num_fingers
+        self.mass = float(initial_mass if initial_mass is not None else self.initial_mass)
+        self.mass_rate = float(mass_rate if mass_rate is not None else 0.25)
+        self.friction_drop_ratio = float(friction_drop_ratio)
+        self.com_amplitude = float(com_amplitude)
+        self.external_impulses = external_impulses if external_impulses is not None else {}
+        self.obs_delay_steps = int(obs_delay_steps)
+        self.obs_buffer: List[Dict[str, Any]] = []
+
+        init_mu = float(initial_friction if initial_friction is not None else self.initial_friction)
+        self.friction = [init_mu] * self.num_fingers
         self.com = np.array([0.0, 0.0, 0.0], dtype=np.float64)
         self.q = np.array([0.1, 0.4, 0.6, 0.3] * self.num_fingers, dtype=np.float64)
         self.dq = np.zeros(self.num_fingers * 4, dtype=np.float64)
-        self.penetrations = [0.0015] * self.num_fingers  # 1.5 mm penetration
+        self.penetrations = [0.0015] * self.num_fingers
         self.penetration_rates = [0.0] * self.num_fingers
 
-        # Initial normal and shear forces (balanced grasp at ~4 N normal per finger)
         self.f_normal = [4.0] * self.num_fingers
         self.f_shear = [np.array([0.0, 0.0], dtype=np.float64) for _ in range(self.num_fingers)]
         self.dropped = False
@@ -108,7 +127,6 @@ class GraspSimulationEnvironment:
 
     def get_observation(self) -> Dict[str, Any]:
         """Returns synchronized sensor observation for the current cycle."""
-        # Update nonstationary parameters for the upcoming cycle
         t = self.step_idx * self.dt
 
         # Incipient slip detection: tactile peripheral marker flow detects impending slip 30 ms (3 steps) prior to macro-drop
@@ -117,22 +135,26 @@ class GraspSimulationEnvironment:
             if 27 <= self.step_idx < 30:
                 incipient_slip = True
             elif self.step_idx >= 30:
-                self.friction = [0.24] * self.num_fingers
+                drop_factor = 1.0 - self.friction_drop_ratio
+                self.friction = [self.initial_friction * drop_factor] * self.num_fingers
 
         if self.regime in ["B", "D"]:
-            # Regime B: Dynamic liquid mass influx (+0.25 kg/s)
-            self.mass = self.initial_mass + 0.25 * t
+            self.mass = self.initial_mass + self.mass_rate * t
 
         if self.regime in ["C", "D"]:
-            # Regime C: Dynamic tilt inducing CoM precession
-            self.com = np.array([0.03 * np.sin(2.0 * np.pi * 0.5 * t), 0.02 * np.cos(2.0 * np.pi * 0.5 * t), 0.0])
+            self.com = np.array([
+                self.com_amplitude * np.sin(2.0 * np.pi * 0.5 * t),
+                self.com_amplitude * 0.67 * np.cos(2.0 * np.pi * 0.5 * t),
+                0.0
+            ])
 
-        # Current shear load required to support object weight and dynamic inertia
+        # Current shear load required to support object weight, dynamic inertia, and external disturbance
+        ext_impulse = self.external_impulses.get(self.step_idx, np.zeros(3))
         for i in range(self.num_fingers):
-            shear_mag = (self.mass * 9.81 / self.num_fingers) + np.linalg.norm(self.com) * 5.0
+            shear_mag = (self.mass * 9.81 / self.num_fingers) + np.linalg.norm(self.com) * 5.0 + float(np.linalg.norm(ext_impulse[:2]) / self.num_fingers)
             self.f_shear[i] = np.array([shear_mag * 0.6, shear_mag * 0.8], dtype=np.float64)
 
-        return {
+        obs = {
             "step": self.step_idx,
             "mass": self.mass,
             "friction": list(self.friction),
@@ -143,6 +165,13 @@ class GraspSimulationEnvironment:
             "q": np.array(self.q),
             "dq": np.array(self.dq),
         }
+
+        # Handle observation delay buffer
+        self.obs_buffer.append(obs)
+        if self.obs_delay_steps > 0:
+            delayed_idx = max(0, len(self.obs_buffer) - 1 - self.obs_delay_steps)
+            return self.obs_buffer[delayed_idx]
+        return obs
 
     def step(self, u_cmd: np.ndarray) -> Dict[str, Any]:
         """

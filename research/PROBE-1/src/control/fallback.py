@@ -46,3 +46,4 @@ class PassiveImpedanceFallback:
             "max_abs_accel": float(np.max(np.abs(u_safe))),
         }
         return u_safe, stats
+

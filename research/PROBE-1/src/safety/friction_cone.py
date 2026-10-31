@@ -127,3 +127,4 @@ class PolyhedralFrictionCone:
 
         strictly_inner = (violations == 0) and (max_ratio <= 1.0 + 1e-6)
         return strictly_inner, float(max_ratio)
+

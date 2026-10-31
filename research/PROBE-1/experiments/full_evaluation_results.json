@@ -1,0 +1,1394 @@
+{
+  "metadata": {
+    "title": "HOROS PROBE-1: Full Empirical Scientific Evaluation Results",
+    "timestamp": "2026-10-31T10:01:47Z",
+    "total_execution_wallclock_seconds": 442.48,
+    "num_trials_per_condition": 100,
+    "pinned_environment": {
+      "simulation": "Isaac Lab v2.3 / Isaac Sim 5.1",
+      "physics": "PhysX 5 Continuous Collision Detection",
+      "tactile": "TacSL contributed sensor module",
+      "hardware_target": "NVIDIA Jetson AGX Orin / Jetson Thor (ARM Cortex-A78AE / Grace)"
+    }
+  },
+  "EXP001_estimation_accuracy": {
+    "num_trials": 100,
+    "metrics": {
+      "friction_mu": {
+        "mean": 0.008771610478371057,
+        "std": 0.005396283794902367,
+        "median": 0.007240124111323104,
+        "ci95": [
+          0.0077147688109580545,
+          0.009890870776338847
+        ],
+        "rmse": 0.010298593553461308
+      },
+      "normal_force_fn_N": {
+        "mean": 0.036603620475567394,
+        "std": 0.012993457380720084,
+        "median": 0.035860758089728384,
+        "ci95": [
+          0.03398872939414016,
+          0.039221868818392944
+        ],
+        "rmse": 0.03884140788673817
+      },
+      "shear_force_ft_N": {
+        "mean": 0.04453283002499748,
+        "std": 0.012473232322025015,
+        "median": 0.041862795504083575,
+        "ci95": [
+          0.04217984016148999,
+          0.04672141339104804
+        ],
+        "rmse": 0.04624666987572754
+      },
+      "object_mass_kg": {
+        "mean": 0.004865176832179674,
+        "std": 0.004013926098840947,
+        "median": 0.004149055593156786,
+        "ci95": [
+          0.0041475116633987695,
+          0.005690873200495185
+        ],
+        "rmse": 0.006307261555963439
+      },
+      "center_of_mass_m": {
+        "mean": 0.0014254431303392468,
+        "std": 0.0005669774649738012,
+        "median": 0.001385905717858773,
+        "ci95": [
+          0.001312501011229384,
+          0.001545698593394415
+        ],
+        "rmse": 0.0015340637417068002
+      }
+    },
+    "raw_logs_sample": [
+      {
+        "trial_id": 0,
+        "err_mu": 0.0030165721161616657,
+        "err_fn": 0.02389346856848662,
+        "err_ft": 0.028581517823412006,
+        "err_mass": 0.004795254570096219,
+        "err_com": 0.0016254809664898037
+      },
+      {
+        "trial_id": 1,
+        "err_mu": 0.0025678786826241334,
+        "err_fn": 0.03278324858205661,
+        "err_ft": 0.01900762564097243,
+        "err_mass": 0.006578057954766736,
+        "err_com": 0.0014296934420609442
+      },
+      {
+        "trial_id": 2,
+        "err_mu": 0.0062113958626995175,
+        "err_fn": 0.023894718721137354,
+        "err_ft": 0.0603209317228339,
+        "err_mass": 0.0009247832845753479,
+        "err_com": 0.00164205932982527
+      },
+      {
+        "trial_id": 3,
+        "err_mu": 0.012271174031798726,
+        "err_fn": 0.025417474568694143,
+        "err_ft": 0.02701641462768193,
+        "err_mass": 0.014031922442393041,
+        "err_com": 0.0012426624261498475
+      },
+      {
+        "trial_id": 4,
+        "err_mu": 0.013302324690370848,
+        "err_fn": 0.04138316432187672,
+        "err_ft": 0.03982094690008989,
+        "err_mass": 0.01083309120028253,
+        "err_com": 0.0011809358361306475
+      },
+      {
+        "trial_id": 5,
+        "err_mu": 0.008460957863588338,
+        "err_fn": 0.03074015164234778,
+        "err_ft": 0.03659996372835209,
+        "err_mass": 0.004284426346794712,
+        "err_com": 0.001639141830293954
+      },
+      {
+        "trial_id": 6,
+        "err_mu": 0.017739801336282,
+        "err_fn": 0.034886431459040024,
+        "err_ft": 0.04304958425082565,
+        "err_mass": 0.002148482324857315,
+        "err_com": 0.0009212653037085262
+      },
+      {
+        "trial_id": 7,
+        "err_mu": 0.008217984230816697,
+        "err_fn": 0.035771165023619766,
+        "err_ft": 0.025946988366357185,
+        "err_mass": 0.00428543953944982,
+        "err_com": 0.0019621927413902163
+      },
+      {
+        "trial_id": 8,
+        "err_mu": 0.006078224321866596,
+        "err_fn": 0.05249534676592099,
+        "err_ft": 0.07055441910149068,
+        "err_mass": 0.005452172612622985,
+        "err_com": 0.0007287720211730417
+      },
+      {
+        "trial_id": 9,
+        "err_mu": 0.006133083748994697,
+        "err_fn": 0.039585223248788215,
+        "err_ft": 0.03725764572153682,
+        "err_mass": 0.0013836462041774134,
+        "err_com": 0.0009043700314939199
+      }
+    ]
+  },
+  "EXP002_uncertainty_calibration": {
+    "num_episodes_per_regime": 100,
+    "regimes": {
+      "A": {
+        "aci_empirical_coverage_mean": 0.9586,
+        "aci_empirical_coverage_ci95": [
+          0.9553999999999998,
+          0.9621999999999998
+        ],
+        "static_conformal_coverage_mean": 0.9696000000000001,
+        "static_conformal_coverage_ci95": [
+          0.9648,
+          0.9742000000000002
+        ],
+        "mean_interval_width": 0.08306452805782721,
+        "caution_flag_rate": 0.0,
+        "coverage_improvement_over_static_pct": -1.100000000000012
+      },
+      "B": {
+        "aci_empirical_coverage_mean": 0.9557999999999999,
+        "aci_empirical_coverage_ci95": [
+          0.9525949999999997,
+          0.9590000000000001
+        ],
+        "static_conformal_coverage_mean": 0.9658,
+        "static_conformal_coverage_ci95": [
+          0.9605999999999999,
+          0.9710000000000001
+        ],
+        "mean_interval_width": 0.08525252202509857,
+        "caution_flag_rate": 0.0,
+        "coverage_improvement_over_static_pct": -1.000000000000012
+      },
+      "C": {
+        "aci_empirical_coverage_mean": 0.9589999999999997,
+        "aci_empirical_coverage_ci95": [
+          0.9555949999999998,
+          0.9623999999999998
+        ],
+        "static_conformal_coverage_mean": 0.9706000000000001,
+        "static_conformal_coverage_ci95": [
+          0.9650000000000003,
+          0.9758
+        ],
+        "mean_interval_width": 0.08346081583085033,
+        "caution_flag_rate": 0.0,
+        "coverage_improvement_over_static_pct": -1.1600000000000388
+      },
+      "D": {
+        "aci_empirical_coverage_mean": 0.9610000000000001,
+        "aci_empirical_coverage_ci95": [
+          0.9581949999999998,
+          0.964
+        ],
+        "static_conformal_coverage_mean": 0.9708,
+        "static_conformal_coverage_ci95": [
+          0.9664,
+          0.9754
+        ],
+        "mean_interval_width": 0.08267656850019449,
+        "caution_flag_rate": 0.0,
+        "coverage_improvement_over_static_pct": -0.979999999999992
+      }
+    }
+  },
+  "EXP003_EXP004_baselines_benchmark": {
+    "num_trials_per_condition": 100,
+    "regimes": {
+      "A": {
+        "controllers": {
+          "B1_FixedForce": {
+            "drop_rate": 1.0,
+            "drop_rate_ci95": [
+              0.9630065017930143,
+              1.0
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 30.0,
+            "survival_steps_ci95": [
+              30.0,
+              30.0
+            ],
+            "median_survival_steps": 30.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.000700005330145359,
+              "p95_ms": 0.001700012944638729,
+              "p99_ms": 0.0026010198052972317,
+              "wcet_ms": 0.13749999925494194,
+              "mean_ms": 0.0009201291287618299
+            }
+          },
+          "B2_ReactiveSqueeze": {
+            "drop_rate": 1.0,
+            "drop_rate_ci95": [
+              0.9630065017930143,
+              1.0
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 30.0,
+            "survival_steps_ci95": [
+              30.0,
+              30.0
+            ],
+            "median_survival_steps": 30.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.007500057108700275,
+              "p95_ms": 0.01880002673715353,
+              "p99_ms": 0.03360202303156252,
+              "wcet_ms": 0.2908000024035573,
+              "mean_ms": 0.010371645011248128
+            }
+          },
+          "B3_UnconstrainedFlow": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.003600027412176132,
+              "p95_ms": 0.010599970119073987,
+              "p99_ms": 0.020500923274084946,
+              "wcet_ms": 0.24709990248084068,
+              "mean_ms": 0.004788819421082735
+            }
+          },
+          "B4_DeterministicMPC": {
+            "drop_rate": 1.0,
+            "drop_rate_ci95": [
+              0.9630065017930143,
+              1.0
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 30.0,
+            "survival_steps_ci95": [
+              30.0,
+              30.0
+            ],
+            "median_survival_steps": 30.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.010600080713629723,
+              "p95_ms": 0.029504991834983202,
+              "p99_ms": 0.047804014757275484,
+              "wcet_ms": 0.22980000358074903,
+              "mean_ms": 0.014581031977168975
+            }
+          },
+          "Proposed_pCBF_ACI": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.19105,
+              "p95_ms": 0.41697500000000026,
+              "p99_ms": 5.732835994567727,
+              "wcet_ms": 8.789799991063774,
+              "mean_ms": 0.38415640010941443
+            }
+          }
+        },
+        "statistical_comparisons": {
+          "Proposed_vs_B1_FixedForce": {
+            "mcnemar": {
+              "chi2": 98.01,
+              "p_value": 0.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  100,
+                  0
+                ]
+              ],
+              "significant_p01": true
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.523970604832094e-23,
+              "cohens_d": 20000000000000.0,
+              "cliffs_delta": 1.0,
+              "significant_p01": true
+            }
+          },
+          "Proposed_vs_B2_ReactiveSqueeze": {
+            "mcnemar": {
+              "chi2": 98.01,
+              "p_value": 0.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  100,
+                  0
+                ]
+              ],
+              "significant_p01": true
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.523970604832094e-23,
+              "cohens_d": 20000000000000.0,
+              "cliffs_delta": 1.0,
+              "significant_p01": true
+            }
+          },
+          "Proposed_vs_B3_UnconstrainedFlow": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          },
+          "Proposed_vs_B4_DeterministicMPC": {
+            "mcnemar": {
+              "chi2": 98.01,
+              "p_value": 0.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  100,
+                  0
+                ]
+              ],
+              "significant_p01": true
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.523970604832094e-23,
+              "cohens_d": 20000000000000.0,
+              "cliffs_delta": 1.0,
+              "significant_p01": true
+            }
+          }
+        }
+      },
+      "B": {
+        "controllers": {
+          "B1_FixedForce": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.000600004568696022,
+              "p95_ms": 0.001700012944638729,
+              "p99_ms": 0.00300002284348011,
+              "wcet_ms": 0.12390001211315393,
+              "mean_ms": 0.0008282202295958995
+            }
+          },
+          "B2_ReactiveSqueeze": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.010999967344105244,
+              "p95_ms": 0.020400038920342922,
+              "p99_ms": 0.049807030009105954,
+              "wcet_ms": 0.8350999560207129,
+              "mean_ms": 0.013187978463247419
+            }
+          },
+          "B3_UnconstrainedFlow": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.004899920895695686,
+              "p95_ms": 0.014299992471933365,
+              "p99_ms": 0.025799963623285294,
+              "wcet_ms": 0.4665000597015023,
+              "mean_ms": 0.006335900351405144
+            }
+          },
+          "B4_DeterministicMPC": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.015099998563528061,
+              "p95_ms": 0.029999995604157448,
+              "p99_ms": 0.049201910151168746,
+              "wcet_ms": 0.367900007404387,
+              "mean_ms": 0.016537860292010008
+            }
+          },
+          "Proposed_pCBF_ACI": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.1925,
+              "p95_ms": 0.32921500000000004,
+              "p99_ms": 0.4523,
+              "wcet_ms": 14.0568,
+              "mean_ms": 0.20528108000000003
+            }
+          }
+        },
+        "statistical_comparisons": {
+          "Proposed_vs_B1_FixedForce": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          },
+          "Proposed_vs_B2_ReactiveSqueeze": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          },
+          "Proposed_vs_B3_UnconstrainedFlow": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          },
+          "Proposed_vs_B4_DeterministicMPC": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          }
+        }
+      },
+      "C": {
+        "controllers": {
+          "B1_FixedForce": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.000500003807246685,
+              "p95_ms": 0.001300009898841381,
+              "p99_ms": 0.0022999022621661425,
+              "wcet_ms": 0.05549995694309473,
+              "mean_ms": 0.000688599981367588
+            }
+          },
+          "B2_ReactiveSqueeze": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.006299931555986404,
+              "p95_ms": 0.010899966582655907,
+              "p99_ms": 0.01480199629440908,
+              "wcet_ms": 0.4118999931961298,
+              "mean_ms": 0.0071112594101578
+            }
+          },
+          "B3_UnconstrainedFlow": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.002200016751885414,
+              "p95_ms": 0.004400033503770828,
+              "p99_ms": 0.008600065484642982,
+              "wcet_ms": 0.0798000255599618,
+              "mean_ms": 0.0025956406025215983
+            }
+          },
+          "B4_DeterministicMPC": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.009599956683814526,
+              "p95_ms": 0.013999990187585354,
+              "p99_ms": 0.02340106060728433,
+              "wcet_ms": 0.18440000712871552,
+              "mean_ms": 0.010498360125347972
+            }
+          },
+          "Proposed_pCBF_ACI": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.2053,
+              "p95_ms": 0.36923000000000006,
+              "p99_ms": 0.48242000000000046,
+              "wcet_ms": 1.1377000000000002,
+              "mean_ms": 0.21610095999999998
+            }
+          }
+        },
+        "statistical_comparisons": {
+          "Proposed_vs_B1_FixedForce": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          },
+          "Proposed_vs_B2_ReactiveSqueeze": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          },
+          "Proposed_vs_B3_UnconstrainedFlow": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          },
+          "Proposed_vs_B4_DeterministicMPC": {
+            "mcnemar": {
+              "chi2": 0.0,
+              "p_value": 1.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  100
+                ]
+              ]
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.0,
+              "cohens_d": 0.0,
+              "cliffs_delta": 0.0,
+              "significant_p01": false
+            }
+          }
+        }
+      },
+      "D": {
+        "controllers": {
+          "B1_FixedForce": {
+            "drop_rate": 1.0,
+            "drop_rate_ci95": [
+              0.9630065017930143,
+              1.0
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 30.0,
+            "survival_steps_ci95": [
+              30.0,
+              30.0
+            ],
+            "median_survival_steps": 30.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.000700005330145359,
+              "p95_ms": 0.001700012944638729,
+              "p99_ms": 0.002600019797682762,
+              "wcet_ms": 0.23659993894398212,
+              "mean_ms": 0.0009505491283151411
+            }
+          },
+          "B2_ReactiveSqueeze": {
+            "drop_rate": 1.0,
+            "drop_rate_ci95": [
+              0.9630065017930143,
+              1.0
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 30.0,
+            "survival_steps_ci95": [
+              30.0,
+              30.0
+            ],
+            "median_survival_steps": 30.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.008199946023523808,
+              "p95_ms": 0.019305024761706563,
+              "p99_ms": 0.037909055827185296,
+              "wcet_ms": 0.2682999474927783,
+              "mean_ms": 0.01059509610997573
+            }
+          },
+          "B3_UnconstrainedFlow": {
+            "drop_rate": 1.0,
+            "drop_rate_ci95": [
+              0.9630065017930143,
+              1.0
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 30.0,
+            "survival_steps_ci95": [
+              30.0,
+              30.0
+            ],
+            "median_survival_steps": 30.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.002800021320581436,
+              "p95_ms": 0.007900060154497623,
+              "p99_ms": 0.01440110849216578,
+              "wcet_ms": 0.05000003147870302,
+              "mean_ms": 0.003709355218996925
+            }
+          },
+          "B4_DeterministicMPC": {
+            "drop_rate": 1.0,
+            "drop_rate_ci95": [
+              0.9630065017930143,
+              1.0
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 30.0,
+            "survival_steps_ci95": [
+              30.0,
+              30.0
+            ],
+            "median_survival_steps": 30.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.011399970389902592,
+              "p95_ms": 0.02819998189806938,
+              "p99_ms": 0.04579999949783087,
+              "wcet_ms": 0.25839998852461576,
+              "mean_ms": 0.015140966354538836
+            }
+          },
+          "Proposed_pCBF_ACI": {
+            "drop_rate": 0.0,
+            "drop_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "crush_rate": 0.0,
+            "crush_rate_ci95": [
+              3.469446951953614e-18,
+              0.03699349820698568
+            ],
+            "mean_survival_steps": 50.0,
+            "survival_steps_ci95": [
+              50.0,
+              50.0
+            ],
+            "median_survival_steps": 50.0,
+            "max_possible_steps": 50,
+            "latency_profile": {
+              "p50_ms": 0.19274999999999998,
+              "p95_ms": 4.091885063098747,
+              "p99_ms": 6.240370018640537,
+              "wcet_ms": 9.602800011634827,
+              "mean_ms": 0.5557225200909066
+            }
+          }
+        },
+        "statistical_comparisons": {
+          "Proposed_vs_B1_FixedForce": {
+            "mcnemar": {
+              "chi2": 98.01,
+              "p_value": 0.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  100,
+                  0
+                ]
+              ],
+              "significant_p01": true
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.523970604832094e-23,
+              "cohens_d": 20000000000000.0,
+              "cliffs_delta": 1.0,
+              "significant_p01": true
+            }
+          },
+          "Proposed_vs_B2_ReactiveSqueeze": {
+            "mcnemar": {
+              "chi2": 98.01,
+              "p_value": 0.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  100,
+                  0
+                ]
+              ],
+              "significant_p01": true
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.523970604832094e-23,
+              "cohens_d": 20000000000000.0,
+              "cliffs_delta": 1.0,
+              "significant_p01": true
+            }
+          },
+          "Proposed_vs_B3_UnconstrainedFlow": {
+            "mcnemar": {
+              "chi2": 98.01,
+              "p_value": 0.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  100,
+                  0
+                ]
+              ],
+              "significant_p01": true
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.523970604832094e-23,
+              "cohens_d": 20000000000000.0,
+              "cliffs_delta": 1.0,
+              "significant_p01": true
+            }
+          },
+          "Proposed_vs_B4_DeterministicMPC": {
+            "mcnemar": {
+              "chi2": 98.01,
+              "p_value": 0.0,
+              "contingency": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  100,
+                  0
+                ]
+              ],
+              "significant_p01": true
+            },
+            "wilcoxon": {
+              "statistic": 0.0,
+              "p_value": 1.523970604832094e-23,
+              "cohens_d": 20000000000000.0,
+              "cliffs_delta": 1.0,
+              "significant_p01": true
+            }
+          }
+        }
+      }
+    },
+    "raw_trials_count": 2000
+  },
+  "EXP005_ablation_studies": {
+    "num_trials_per_ablation": 100,
+    "ablations": {
+      "Variant0_FullProposed": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "survival_steps_ci95": [
+          50.0,
+          50.0
+        ]
+      },
+      "Ablation1_NoTactileShear": {
+        "drop_rate": 0.01,
+        "drop_rate_ci95": [
+          0.0017674320641406505,
+          0.054486196178705315
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 49.88,
+        "survival_steps_ci95": [
+          49.64,
+          50.0
+        ],
+        "wilcoxon_vs_full": {
+          "statistic": 0.0,
+          "p_value": 0.31731050786291415,
+          "cohens_d": 0.09999999999991664,
+          "cliffs_delta": 0.01,
+          "significant_p01": false
+        }
+      },
+      "Ablation2_NoProprioception": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 1.0,
+        "mean_survival_steps": 42.14,
+        "survival_steps_ci95": [
+          42.05,
+          42.26025
+        ],
+        "wilcoxon_vs_full": {
+          "statistic": 0.0,
+          "p_value": 4.58651312781771e-22,
+          "cohens_d": 13.816367918930034,
+          "cliffs_delta": 1.0,
+          "significant_p01": true
+        }
+      },
+      "Ablation3_NoAdaptiveCalibration": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "survival_steps_ci95": [
+          50.0,
+          50.0
+        ],
+        "wilcoxon_vs_full": {
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "cohens_d": 0.0,
+          "cliffs_delta": 0.0,
+          "significant_p01": false
+        }
+      },
+      "Ablation4_NoUncertaintyMargins": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "survival_steps_ci95": [
+          50.0,
+          50.0
+        ],
+        "wilcoxon_vs_full": {
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "cohens_d": 0.0,
+          "cliffs_delta": 0.0,
+          "significant_p01": false
+        }
+      },
+      "Ablation5_NoPredictiveCBF": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 1.0,
+        "mean_survival_steps": 48.0,
+        "survival_steps_ci95": [
+          48.0,
+          48.0
+        ],
+        "wilcoxon_vs_full": {
+          "statistic": 0.0,
+          "p_value": 1.523970604832094e-23,
+          "cohens_d": 2000000000000.0,
+          "cliffs_delta": 1.0,
+          "significant_p01": true
+        }
+      },
+      "Ablation6_NoActionContactDynamics": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "survival_steps_ci95": [
+          50.0,
+          50.0
+        ],
+        "wilcoxon_vs_full": {
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "cohens_d": 0.0,
+          "cliffs_delta": 0.0,
+          "significant_p01": false
+        }
+      },
+      "Ablation7_NoObjectWrenchBalance": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "survival_steps_ci95": [
+          50.0,
+          50.0
+        ],
+        "wilcoxon_vs_full": {
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "cohens_d": 0.0,
+          "cliffs_delta": 0.0,
+          "significant_p01": false
+        }
+      }
+    }
+  },
+  "EXP006_generalization_stress": {
+    "num_trials_per_condition": 100,
+    "generalization": {
+      "Gen1_ExtremeLowFriction": {
+        "drop_rate": 1.0,
+        "drop_rate_ci95": [
+          0.9630065017930143,
+          1.0
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 0.0,
+        "survival_steps_ci95": [
+          0.0,
+          0.0
+        ],
+        "p50_latency_ms": 0.24369999999999997,
+        "wcet_ms": 0.4607
+      },
+      "Gen1_ExtremeHighFriction": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "survival_steps_ci95": [
+          50.0,
+          50.0
+        ],
+        "p50_latency_ms": 0.18115,
+        "wcet_ms": 7.563999970443547
+      },
+      "Gen2_HeavyLiquidInflux": {
+        "drop_rate": 0.99,
+        "drop_rate_ci95": [
+          0.9455138038212946,
+          0.9982325679358593
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 48.04,
+        "survival_steps_ci95": [
+          48.0,
+          48.09
+        ],
+        "p50_latency_ms": 0.1695,
+        "wcet_ms": 9.823900065384805
+      },
+      "Gen3_SevereEccentricCoM": {
+        "drop_rate": 0.91,
+        "drop_rate_ci95": [
+          0.837737871472837,
+          0.9519274599974348
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 48.93,
+        "survival_steps_ci95": [
+          48.63,
+          49.12
+        ],
+        "p50_latency_ms": 0.19265,
+        "wcet_ms": 9.888399974443018
+      },
+      "Gen4_LateralImpulseStrike": {
+        "drop_rate": 0.02,
+        "drop_rate_ci95": [
+          0.00550196755016235,
+          0.07001179072854388
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 49.96,
+        "survival_steps_ci95": [
+          49.89975,
+          50.0
+        ],
+        "p50_latency_ms": 0.19455,
+        "wcet_ms": 9.429799974896014
+      },
+      "Gen5_SensoryDelayJitter": {
+        "drop_rate": 0.0,
+        "drop_rate_ci95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "crush_rate": 0.0,
+        "mean_survival_steps": 50.0,
+        "survival_steps_ci95": [
+          50.0,
+          50.0
+        ],
+        "p50_latency_ms": 0.1638,
+        "wcet_ms": 6.64039992261678
+      }
+    }
+  }
+}

@@ -88,3 +88,4 @@ class MultiContactStateEstimator:
             "com_mean": np.mean(com_ensemble, axis=0),
             "com_std": np.std(com_ensemble, axis=0),
         }
+

@@ -219,3 +219,4 @@ class ObjectSpatialDynamics:
         f_req = mass * (v_dot_des - self.gravity)
         tau_req = inertia @ omega_dot_des + np.cross(omega, inertia @ omega)
         return np.concatenate([f_req, tau_req])
+
