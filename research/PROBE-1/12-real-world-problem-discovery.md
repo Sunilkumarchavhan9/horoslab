@@ -329,8 +329,8 @@ Each candidate opportunity is scored across four objective criteria on a scale o
 │ 4  │ Centroidal Momentum Whole-Body Loco-Manip│ 4.7     │ 4.8     │ 4.2     │ 4.6     │ 4.61     │ RANK 3   │
 │ 5  │ Predictive Control Barrier Safety (p-CBF)│ 4.4     │ 4.9     │ 4.4     │ 4.6     │ 4.59     │ RANK 4   │
 │ 2  │ Occlusion-Immune State Estimation        │ 4.3     │ 4.6     │ 4.8     │ 4.8     │ 4.59     │ RANK 5   │
-│ 10 │ Articulated Object Stiff Latch Adapt.    │ 4.1     │ 4.5     │ 4.5     │ 4.6     │ 4.40     │ RANK 6   │
-│ 11 │ Multi-Rate Hierarchical Impedance Decoupl│ 4.0     │ 4.5     │ 4.7     │ 4.6     │ 4.41     │ RANK 7   │
+│ 11 │ Multi-Rate Hierarchical Impedance Decoupl│ 4.0     │ 4.5     │ 4.7     │ 4.6     │ 4.41     │ RANK 6   │
+│ 10 │ Articulated Object Stiff Latch Adapt.    │ 4.1     │ 4.5     │ 4.5     │ 4.6     │ 4.40     │ RANK 7   │
 │ 12 │ Bilateral Sim-to-Real Tactile Residual   │ 4.5     │ 4.3     │ 4.1     │ 4.4     │ 4.34     │ RANK 8   │
 │ 8  │ Compliant Deformable Cable / Cloth       │ 4.6     │ 4.4     │ 3.7     │ 4.2     │ 4.28     │ RANK 9   │
 │ 9  │ Dynamic Sloshing Fluid Transport         │ 3.9     │ 4.2     │ 4.5     │ 4.6     │ 4.25     │ RANK 10  │
