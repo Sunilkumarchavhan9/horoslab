@@ -57,3 +57,4 @@ Using the Alternating Direction Method of Multipliers (ADMM) implemented in OSQP
     \begin{bmatrix} \mathbf{P} + \sigma \mathbf{I} & \mathbf{A}^T \\ \mathbf{A} & -\rho^{-1} \mathbf{I} \end{bmatrix} \begin{bmatrix} \mathbf{z}^{k+1} \\ \boldsymbol{\nu}^{k+1} \end{bmatrix} = \begin{bmatrix} \sigma \mathbf{z}^k - \mathbf{q}_{\text{obj}} \\ \mathbf{u}_{\text{osqp}}^k \end{bmatrix}
 \end{equation}
 Because the Hessian $\mathbf{P}$ and constraint matrix $\mathbf{A}$ depend on kinematic sensitivity $\mathbf{\Lambda}_i(\mathbf{q})$ but exhibit static sparsity patterns, quasi-static factorizations achieve convergence in $15\text{--}40$ ADMM iterations, requiring under $0.20\text{ ms}$ on modern embedded ARM cores.
+

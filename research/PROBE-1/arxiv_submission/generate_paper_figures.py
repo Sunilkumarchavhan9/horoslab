@@ -111,6 +111,73 @@ def generate_figure1_architecture():
 
 
 # ============================================================================
+# Figure 2: Detailed Predictive Safety Filter Diagram (safety_filter_diagram.pdf)
+# ============================================================================
+def generate_figure_safety_filter():
+    fig, ax = plt.subplots(figsize=(10.5, 5.0))
+    ax.axis("off")
+
+    c_box = "#F3E5F5"
+    c_qp = "#FFF9C4"
+    c_gate = "#E0F2F1"
+    c_fail = "#FFEBEE"
+    c_border = "#263238"
+
+    # Input Panel (Left)
+    r_in = patches.FancyBboxPatch((0.02, 0.50), 0.22, 0.44, boxstyle="round,pad=0.02",
+                                 facecolor="#E3F2FD", edgecolor=c_border, linewidth=1.3)
+    ax.add_patch(r_in)
+    ax.text(0.13, 0.90, "Input Signals", weight="bold", ha="center", fontsize=10)
+    ax.text(0.13, 0.73, "• Nominal Action: u_nom\n  (VLA / Flow Matching)\n• Kinematics: q_k, dq_k\n• Calibrated Margin: mu_cal\n  (from ACI module)\n• Load Invariant: m_o, c_o",
+            ha="center", fontsize=8.5)
+
+    # Sensitivity Mapping Box (Mid-Left)
+    r_sens = patches.FancyBboxPatch((0.28, 0.50), 0.23, 0.44, boxstyle="round,pad=0.02",
+                                   facecolor="#EDE7F6", edgecolor=c_border, linewidth=1.3)
+    ax.add_patch(r_sens)
+    ax.text(0.395, 0.90, "Contact Sensitivity", weight="bold", ha="center", fontsize=10)
+    ax.text(0.395, 0.71, "Linearized Hunt-Crossley:\nLambda_i = (0.5 dt^2 K_c\n             + dt D_c) J_i\nf_{c,i}(k+1) = Lambda_i u\n             + f_{c,i}^bias\nGrasp Matrix: G in R^{6x12}",
+            ha="center", fontsize=8.5, family="monospace")
+
+    # QP Optimization Core (Mid-Right)
+    r_qp = patches.FancyBboxPatch((0.55, 0.25), 0.43, 0.69, boxstyle="round,pad=0.02",
+                                 facecolor=c_qp, edgecolor=c_border, linewidth=1.5)
+    ax.add_patch(r_qp)
+    ax.text(0.765, 0.90, "Convex Safety Filter QP (OSQP)", weight="bold", ha="center", fontsize=10.5)
+    ax.text(0.765, 0.81, "Objective Function:\nmin_{u, delta_s, delta_w} 0.5||u - u_nom||_W^2 + 0.5 rho_s ||delta_s||^2 + 0.5 rho_w ||delta_w||^2",
+            ha="center", fontsize=8.5, weight="bold")
+    ax.text(0.765, 0.55, "Constraints:\n[1] 8-Sided Polyhedral Anti-Slip (P_8):\n    A_cone Lambda_i u - delta_s <= (1 - gamma) p_curr - A_cone f_bias\n[2] Anti-Crush Barrier Constraint:\n    n_i^T Lambda_i u <= F_max - n_i^T f_{c,i}^bias\n[3] Contact Maintenance Pre-Load:\n    -n_i^T Lambda_i u <= -F_min + n_i^T f_{c,i}^bias\n[4] Object Wrench Balance Equilibrium:\n    G Lambda_stack u - delta_w = w_req - G f_bias_stack\n[5] Joint Acceleration Motor Limits:\n    u_min <= u <= u_max  (|u_j| <= 30 rad/s^2)",
+            ha="center", fontsize=8.0, family="monospace")
+
+    # Real-Time Decision Gate & Fallback (Bottom Left & Center)
+    r_gate = patches.FancyBboxPatch((0.02, 0.08), 0.49, 0.35, boxstyle="round,pad=0.02",
+                                   facecolor=c_gate, edgecolor=c_border, linewidth=1.3)
+    ax.add_patch(r_gate)
+    ax.text(0.265, 0.38, "Four-State Decision Gate & Fallback Logic", weight="bold", ha="center", fontsize=10)
+    ax.text(0.265, 0.22, "• NOMINAL_SAFE: Solve time < 10 ms & ||delta_s||_inf <= 1e-2 N -> Dispatch u*\n• EMERGENCY_RELAXED: ||delta_s|| > 1e-2 N -> Dispatch u*, Trip if steps > 5\n• TIMEOUT: Solve time > 10.0 ms -> Dispatch u_safe\n• CRITICAL_FAIL: Engage Passive Damping: u_safe = -K_d * dq_k (50 us)",
+            ha="center", fontsize=8.5)
+
+    # Output Dispatch Box (Bottom Right)
+    r_out = patches.FancyBboxPatch((0.55, 0.08), 0.43, 0.13, boxstyle="round,pad=0.02",
+                                  facecolor="#C8E6C9", edgecolor=c_border, linewidth=1.3)
+    ax.add_patch(r_out)
+    ax.text(0.765, 0.145, "Certified Joint Control Action u_k to Actuators (100 Hz)", weight="bold", ha="center", fontsize=9.5)
+
+    # Connecting Arrows
+    arr = dict(arrowstyle="->", lw=1.5, color="#1A237E")
+    ax.annotate("", xy=(0.28, 0.72), xytext=(0.24, 0.72), arrowprops=arr)
+    ax.annotate("", xy=(0.55, 0.72), xytext=(0.51, 0.72), arrowprops=arr)
+    ax.annotate("", xy=(0.765, 0.21), xytext=(0.765, 0.25), arrowprops=arr)
+    ax.annotate("", xy=(0.55, 0.14), xytext=(0.51, 0.14), arrowprops=arr)
+
+    plt.tight_layout()
+    out_file = os.path.join(fig_dir, "safety_filter_diagram.pdf")
+    plt.savefig(out_file, bbox_inches="tight")
+    plt.close()
+    print(f"Generated: {out_file}")
+
+
+# ============================================================================
 # Figure 2: State Estimation Accuracy & Conformal Tracking (estimation_results.pdf)
 # ============================================================================
 def generate_figure2_estimation(data: Dict[str, Any]):
@@ -418,15 +485,16 @@ def generate_figure6_generalization(data: Dict[str, Any]):
 
 
 def main():
-    print("Generating 6 publication vector PDF figures from experimental ledger...")
+    print("Generating 7 publication vector PDF figures from experimental ledger...")
     data = load_results()
     generate_figure1_architecture()
+    generate_figure_safety_filter()
     generate_figure2_estimation(data)
     generate_figure3_controllers(data)
     generate_figure4_ablations(data)
     generate_figure5_latency(data)
     generate_figure6_generalization(data)
-    print("All 6 figures successfully generated in PDF format.")
+    print("All 7 figures successfully generated in PDF format.")
 
 
 if __name__ == "__main__":

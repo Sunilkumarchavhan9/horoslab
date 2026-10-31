@@ -1,6 +1,8 @@
 \section{Related Work}
 \label{sec:related_work}
 
+Safe physical interaction in robotics intersects vision-language policy learning, tactile perception, control barrier functions, and distribution-free uncertainty calibration.
+
 \subsection{Vision-Language-Action Models and Manipulation Safety}
 Vision-Language-Action foundation models have redefined robot learning by transferring multimodal representations from web-scale pretraining to sensorimotor control \cite{openvla2024,pi02024}. Recent efforts, such as TacClaw-Infinity \cite{tacclaw2026infinity}, demonstrate that incorporating high-resolution tactile observations into flow-matching policies substantially boosts task success on multi-embodiment manipulation benchmarks. However, foundation policies predominantly output end-effector poses or joint trajectories via unconstrained regression or diffusion objectives. They lack formal mechanisms to guarantee that generated action trajectories respect nonlinear contact wrench manifolds or frictional slip boundaries. When physical contact properties deviate abruptly from pretraining distributions, generative policies are susceptible to constraint violations, highlighting the necessity of modular, real-time safety filters.
 
@@ -12,3 +14,28 @@ Control Barrier Functions (CBFs) provide mathematically rigorous forward-invaria
 
 \subsection{Conformal Prediction and Non-Exchangeable Calibration}
 Conformal prediction provides a distribution-free, finite-sample framework for quantifying predictive uncertainty. Standard split conformal methods require data exchangeability, an assumption routinely broken in closed-loop robotics due to state feedback and nonstationary environmental drift. Gibbs and Cand{\`e}s developed Adaptive Conformal Inference (ACI) \cite{gibbs2021adaptive,gibbs2024conformal}, establishing that online quantile adaptation guarantees long-run average coverage under arbitrary, non-exchangeable distribution shifts. While ACI has been explored for trajectory forecasting, this work represents the first integration of ACI with discrete-time Control Barrier Functions for certified contact-force regulation.
+
+\subsection{Systematic Comparison with Prior Art}
+\Cref{tab:prior_art} contrasts HOROS PROBE-1 against state-of-the-art manipulation paradigms across sensing, control frequency, safety formulation, and nonstationary adaptation.
+
+\begin{table*}[t]
+\centering
+\caption{\textbf{Systematic Prior-Art Taxonomy: Comparing HOROS PROBE-1 Against Existing Manipulation Paradigms.}}
+\label{tab:prior_art}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Framework} & \textbf{Sensing Modalities} & \textbf{Control Rate} & \textbf{Safety Constraint Mechanism} & \textbf{Friction Uncertainty Model} & \textbf{Grasp Nullspace Wrench Balance} & \textbf{Incipient Slip Feedforward} \\
+\midrule
+OpenVLA \cite{openvla2024} & Vision + Language & 5--10 Hz & None (Unconstrained Action Output) & None (Implicit in pretraining) & No & No \\
+$\pi_0$ / $\pi_{0.5}$ \cite{pi02024} & Vision + Proprioception & 10--50 Hz & None (Flow Matching Regression) & None (Implicit in pretraining) & No & No \\
+TacClaw-Infinity \cite{tacclaw2026infinity} & Vision + Tactile + Language & 10--20 Hz & None (Unconstrained Flow Policy) & None (Heuristic observation) & No & No \\
+PANDAS \cite{pandas2024incipient} & Optical Tactile Shear Flow & 100 Hz & Reactive Threshold Clamping & Heuristic Slip Ratio ($S > 0.85$) & No & Yes (Incipient only) \\
+Shear-Based Grasp \cite{shear2025grasp} & Multifinger Tactile Shear & 100 Hz & Reactive PI Feedback Controller & Uncalibrated Coulomb Point Est. & Partial (Finger-level only) & Yes \\
+Continuous CBF Grasp \cite{ames2016control} & Force / Torque & 100--500 Hz & Continuous-Time Lie Derivative CBF & Known Deterministic Constant & No (2-Jaw Gripper) & No \\
+\midrule
+\textbf{HOROS PROBE-1 (Ours)} & \textbf{Tactile + Proprioception + Current} & \textbf{100 Hz} & \textbf{Discrete Predictive CBF ($\mathcal{P}_8$ Inner Polytope)} & \textbf{Non-Exchangeable ACI Dynamic Bound} & \textbf{Yes (Full $6 \times 3M$ Grasp Nullspace)} & \textbf{Yes ($30\text{ ms}$ Pre-Slip Lead-Time)} \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

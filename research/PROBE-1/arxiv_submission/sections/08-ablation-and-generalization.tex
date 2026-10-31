@@ -1,0 +1,88 @@
+\section{Ablation and Generalization Studies}
+\label{sec:ablation_and_generalization}
+
+\subsection{Systematic 7-Component Ablation Study (EXP-005)}
+To decouple the causal attribution of each subsystem, we execute an 8-variant ablation suite under coupled nonstationary Regime D ($N = 100$ independent trials per variant, $800$ trials total). Results are detailed in \Cref{tab:ablations} and \Cref{fig:ablations}.
+
+\begin{table}[t]
+\centering
+\caption{\textbf{EXP-005 Systematic 7-Component Ablation Study Under Regime D ($N=100$ Trials).}}
+\label{tab:ablations}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Controller Variant} & \textbf{Drop Rate} & \textbf{Crush Rate} & \textbf{Mean Steps} & \textbf{Wilcoxon $p$} & \textbf{Cliff's $\delta$} \\
+\midrule
+Variant 0: Full HOROS System & 0.0\% & 0.0\% & 50.0 / 50 & Baseline & Baseline \\
+Ablation 1: No Tactile Shear & 1.0\% & 0.0\% & 49.88 / 50 & $p = 0.317$ & $+0.01$ \\
+Ablation 2: No Proprioception ($\mathbf{q}, \dot{\mathbf{q}}$) & 0.0\% & \textbf{100.0\%} & 42.14 / 50 & $p = 4.59 \times 10^{-22}$ & $+1.00$ \\
+Ablation 3: No Adaptive Conformal & 0.0\% & 0.0\% & 50.0 / 50 & $p = 1.000$ & $0.00$ \\
+Ablation 4: No Uncertainty Margins & 0.0\% & 0.0\% & 50.0 / 50 & $p = 1.000$ & $0.00$ \\
+Ablation 5: No Predictive CBF & 0.0\% & \textbf{100.0\%} & 48.00 / 50 & $p = 1.52 \times 10^{-23}$ & $+1.00$ \\
+Ablation 6: No Action Contact Dyn ($\mathbf{\Lambda} = \mathbf{0}$) & 0.0\% & 0.0\% & 50.0 / 50 & $p = 1.000$ & $0.00$ \\
+Ablation 7: No Wrench Balance ($\mathbf{G} = \mathbf{0}$) & 0.0\% & 0.0\% & 50.0 / 50 & $p = 1.000$ & $0.00$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/ablation_results.pdf}
+    \caption{\textbf{Ablation Study: Decoupling Slip Safety from Structural Preservation.} Omitting proprioception (Ablation 2) or the predictive CBF upper barrier (Ablation 5) eliminates drops, but causes a 100.0\% crush destruction rate.}
+    \label{fig:ablations}
+\end{figure}
+
+\subsection{Deep-Dive Into Three Critical Scientific Findings}
+
+\subsubsection{Critical Finding 1: 100\% Baseline Failure vs. 0\% Proposed Failure}
+In coupled Regime D, every baseline experiences a 100\% drop rate while HOROS maintains 0.0\% failure ($p < 10^{-20}$). To evaluate whether this represents fair baseline tuning:
+\begin{itemize}
+    \item \textbf{Reactive Squeeze Reflex (B2):} We performed parameter sweeps over slip trigger thresholds $S_{\text{thresh}} \in [0.60, 0.95]$ and squeeze gains $u \in [4, 25]\text{ rad/s}^2$. If $S_{\text{thresh}} \le 0.75$, the reflex triggers prematurely during initial dynamic acceleration, driving normal forces beyond $F_{\max} = 18.0\text{ N}$ and crushing the container ($100\%$ crush rate). If $S_{\text{thresh}} \ge 0.85$, the trigger arrives only after macroscopic sliding has commenced. With the object accelerating downward at $1.8\text{ m/s}^2$ under liquid influx, finger actuators cannot overcome kinematic inertia before the object escapes the contact surface.
+    \item \textbf{Deterministic MPC (B4):} B4 calculates normal forces using point estimates $\hat{\mu}_i$. Because it maintains zero uncertainty margin ($k_{\text{margin}} = 0$), the instantaneous contact force command penetrates the true friction boundary during nonstationary drops, initiating irreversible macro-slip.
+    \item \textbf{HOROS PROBE-1:} Optical tactile marker flow divergence detects incipient slip at step 27 ($30\text{ ms}$ lead-time). The predictive CBF proactively increases normal force from $4.0\text{ N}$ to $6.64\text{ N}$ by step 30 without exceeding $F_{\max}$, staying strictly inside $\mathcal{P}_8$ while cancelling internal squeeze forces in the nullspace $\mathcal{N}(\mathbf{G})$.
+\end{itemize}
+
+\subsubsection{Critical Finding 2: Operating Boundary Under Heavy Payload Saturation}
+In EXP-006 (Gen-2), object mass was initialized at $0.80\text{ kg}$ with ongoing fluid influx of $+0.40\text{ kg/s}$. HOROS maintained stable grasping until step 48 ($t = 0.48\text{ s}$), at which point object mass reached $0.992\text{ kg}$ ($9.73\text{ N}$ weight). Under collapsed friction ($\mu = 0.24$), static equilibrium requires $\sum f_{N, i} \ge 40.5\text{ N}$. Squeezing at this rate exceeded the actuator joint acceleration saturation limit of $|u_j| \le 30.0\text{ rad/s}^2$. This result defines the physical torque saturation boundary of the embodiment.
+
+\subsubsection{Critical Finding 3: Decoupling Slip Safety from Structural Preservation}
+Ablation 2 (No Proprioception) and Ablation 5 (No Predictive CBF) reveal a fundamental principle: **preventing slip does not guarantee grasp safety**.
+
+In Ablation 2, joint velocities $\dot{\mathbf{q}}$ are omitted from the sensitivity mapping, removing state-dependent contact damping. As the fingers close to arrest slip, fingertip momentum causes contact force overshoot, driving $F_N > 18.0\text{ N}$ and crushing the container in $100.0\%$ of trials at step 42 ($p = 4.59 \times 10^{-22}$). Similarly, Ablation 5 (No Predictive CBF) clamps aggressively ($F_N = 24.2\text{ N}$) and destroys the container at step 48 ($p = 1.52 \times 10^{-23}$). **This proves that slip avoidance and fragile structural preservation are competing physical constraints requiring two-sided barrier constraints.**
+
+\subsection{Generalization Stress Testing (EXP-006)}
+Out-of-distribution stress results across $N = 100$ independent trials per condition are presented in \Cref{tab:generalization} and \Cref{fig:generalization}.
+
+\begin{table}[t]
+\centering
+\caption{\textbf{EXP-006 Generalization Stress Tests to Out-of-Distribution Conditions ($N=100$ Trials).}}
+\label{tab:generalization}
+\small
+\begin{tabular}{llrrrr}
+\toprule
+\textbf{Test Condition} & \textbf{Perturbation Stress Magnitude} & \textbf{Drop Rate} & \textbf{Crush Rate} & \textbf{Mean Steps} & \textbf{Max Obs. Lat} \\
+\midrule
+Gen-1A: Extreme Low Friction & $\mu = 0.12$ (Teflon on ice, 76\% below nominal) & 100.0\% & 0.0\% & 0.0 / 50 & 0.46~ms \\
+Gen-1B: Extreme High Friction & $\mu = 1.30$ (High-tack silicone elastomer) & 0.0\% & 0.0\% & 50.0 / 50 & 7.56~ms \\
+Gen-2: Heavy Liquid Influx & $m_0 = 0.80\text{ kg} + 0.40\text{ kg/s}$ (Reaches 1.0 kg) & 99.0\% & 0.0\% & 48.0 / 50 & 9.82~ms \\
+Gen-3: Severe Eccentric CoM & CoM offset = 8.0 cm (Extreme slosh moment) & 91.0\% & 0.0\% & 48.9 / 50 & 9.89~ms \\
+Gen-4: Lateral Impulse Strike & $\pm 6.0\text{ N}$ strike at step 20 (Shock strike) & \textbf{2.0\%} & 0.0\% & \textbf{50.0 / 50} & 9.43~ms \\
+Gen-5: Sensor Transport Delay & 10 ms transport lag (1-step communication delay) & \textbf{0.0\%} & 0.0\% & \textbf{50.0 / 50} & 6.64~ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/generalization_results.pdf}
+    \caption{\textbf{Generalization Stress and Physical Feasibility Boundaries.} (a) Survival horizon across 6 out-of-distribution conditions. (b) Analytical infeasibility phase diagram: at $\mu = 0.12$, holding a 400g vessel requires $F_N \ge 32.7\text{ N}$, strictly exceeding the crush limit $F_{\max} = 18.0\text{ N}$.}
+    \label{fig:generalization}
+\end{figure}
+
+In Gen-1A ($\mu = 0.12$), the $100\%$ drop rate at step 0 is an analytical consequence of physical infeasibility:
+\begin{equation}
+    F_N^{\text{total}} \ge \frac{m_o g}{\mu} = \frac{0.40 \times 9.81}{0.12} = 32.70\text{ N} > F_{\max} = 18.0\text{ N}
+\end{equation}
+As illustrated in \Cref{fig:generalization}(b), the intersection between the friction cone safety set $\mathcal{C}_{\text{cone}}$ and the anti-crush set $\mathcal{C}_{\text{crush}}$ is empty ($\mathcal{S}_{\text{safe}} = \emptyset$). The QP recognizes this infeasibility in $0.24\text{ ms}$ and activates the passive fallback damping state without actuator runaway.
+
+In Gen-4, when subjected to violent $\pm 6.0\text{ N}$ external shock impulses at step 20, HOROS achieves a **98.0\% survival rate**, recovering spatial equilibrium within $30\text{ ms}$. In Gen-5, adding a $10\text{ ms}$ transport delay resulted in **0.0\% drops and 100\% survival**, demonstrating robust phase margin against communications jitter.
