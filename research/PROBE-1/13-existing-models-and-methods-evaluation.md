@@ -25,7 +25,7 @@ Following rigorous source verification against primary papers and official resea
 
 ## 1. Track 1: Tactile Slip Regulation & In-Hand Dexterity
 
-We examine vision-based tactile sensors ([GelSight](https://doi.org/10.3390/s17112521), [GelSlim](https://doi.org/10.1109/ICRA46639.2022.9811802)), incipient slip architectures ([SINTEF IROS 2024](https://doi.org/10.1109/IROS58592.2024.10802058), [PANDAS IROS 2025](https://doi.org/10.1109/IROS58592.2025.10802111)), and recent tactile-enhanced foundation models ([TacClaw-Infinity](https://arxiv.org/abs/2610.20320), [VLA-Touch](https://arxiv.org/abs/2502.12154), [Figure Helix 02](https://www.figure.ai/news/helix-02)).
+We examine vision-based tactile sensors ([GelSight](https://doi.org/10.3390/s17112521), [GelSlim](https://doi.org/10.1109/ICRA46639.2022.9811802)), incipient slip architectures ([SINTEF IROS 2024](https://doi.org/10.1109/IROS58592.2024.10802058), [PANDAS IROS 2025](https://doi.org/10.1109/IROS60139.2025.11246395)), and recent tactile-enhanced foundation models ([TacClaw-Infinity](https://arxiv.org/abs/2610.20320), [VLA-Touch](https://arxiv.org/abs/2507.17294), [VTLA](https://arxiv.org/abs/2505.09577), [N₀-VTLA](https://arxiv.org/abs/2607.23782), [Figure Helix 02](https://www.figure.ai/news/helix-02)).
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -61,7 +61,7 @@ We examine vision-based tactile sensors ([GelSight](https://doi.org/10.3390/s171
 
 #### B. Dedicated Incipient Slip Frameworks: SINTEF (IROS 2024) and PANDAS (IROS 2025)
 * **SINTEF / MIT (IROS 2024):** Parag et al., *"Learning incipient slip with GelSight sensors: Attention Classification with Video Vision Transformers"*, [DOI:10.1109/IROS58592.2024.10802058](https://doi.org/10.1109/IROS58592.2024.10802058). Applies Video Vision Transformers (ViViT) to tactile video, reporting **$99\%$ prediction accuracy** across 10 previously unseen objects, predicting slip onset up to **5 frames in advance**.
-* **PANDAS (IROS 2025):** Yan et al., *"PANDAS: Prediction and Detection of Accurate Slippage"*, [DOI:10.1109/IROS58592.2025.10802111](https://doi.org/10.1109/IROS58592.2025.10802111). Employs spatiotemporal attention fusing RGB and tactile streams, achieving **$32\text{ ms}$ early-warning lead time**, **$28\text{ ms}$ response latency**, and **$94.6\%$ slip sensitivity**.
+* **PANDAS (IROS 2025):** Yan et al., *"PANDAS: Prediction and Detection of Accurate Slippage"*, [DOI:10.1109/IROS60139.2025.11246395](https://doi.org/10.1109/IROS60139.2025.11246395). Employs spatiotemporal attention fusing RGB and tactile streams, achieving **$32\text{ ms}$ early-warning lead time**, **$28\text{ ms}$ response latency**, and **$94.6\%$ slip sensitivity**.
 * **Significance:** Proves that slip prediction within 25–35 ms is already established in the robotics literature; basic slip detection alone cannot serve as an isolated novelty claim for HOROS.
 
 #### C. TacClaw-Infinity (Daimon Robotics et al., October 14, 2026)
