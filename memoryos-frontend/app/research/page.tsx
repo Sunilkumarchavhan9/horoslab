@@ -180,18 +180,18 @@ export default function ResearchPage() {
 
   return (
     <div className="min-h-screen bg-[#151515] text-[#F0EFE2] font-sans selection:bg-[#75bf00] selection:text-black flex flex-col relative overflow-x-hidden">
-      {/* GLOBAL VERTICAL DASHED LINES (Identical to Use-Cases landing page) */}
+      {/* GLOBAL VERTICAL DASHED LINES (Standard HOROS Layout Grid) */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+        <div className="w-full h-full grid grid-cols-[14%_72%_14%] md:grid-cols-[calc(14%_+_120px)_calc(72%_-_240px)_calc(14%_+_120px)] lg:grid-cols-[calc(18%_+_120px)_calc(64%_-_240px)_calc(18%_+_120px)]">
           {/* Left margin with two vertical dashed lines */}
           <div className="relative border-r border-dashed border-[#333]">
-            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333] hidden md:block" />
           </div>
           {/* Center content */}
           <div />
           {/* Right margin with two vertical dashed lines */}
           <div className="relative border-l border-dashed border-[#333]">
-            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
+            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333] hidden md:block" />
           </div>
         </div>
       </div>
@@ -200,168 +200,174 @@ export default function ResearchPage() {
         <LandingNavbar dark />
       </div>
 
-      {/* Main Content Area */}
-      <main className="relative z-10 w-full max-w-[1240px] mx-auto px-6 sm:px-10 lg:px-12 pt-32 pb-24 sm:pt-40 sm:pb-32 flex-1">
-        {/* Header Hero Section */}
-        <div className="max-w-4xl mb-16 sm:mb-20">
-          <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2.5">
-            <span className="bg-[#a3e635] text-black font-semibold px-3 py-0.5 rounded-none inline-block">
-              Research
-            </span>
-            <span>from the team.</span>
-          </h1>
+      {/* Main Content Area - Strictly bounded to center grid column between dashed lines */}
+      <main className="flex-grow flex flex-col w-full relative z-10 pt-28 sm:pt-36 pb-24 sm:pb-32">
+        <div className="w-full grid grid-cols-[14%_72%_14%] md:grid-cols-[calc(14%_+_120px)_calc(72%_-_240px)_calc(14%_+_120px)] lg:grid-cols-[calc(18%_+_120px)_calc(64%_-_240px)_calc(18%_+_120px)] relative z-10">
+          <div />
+          <div className="min-w-0">
+            {/* Header Hero Section */}
+            <div className="mb-14 sm:mb-16">
+              <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2.5">
+                <span className="bg-[#a3e635] text-black font-semibold px-2.5 py-0.5 rounded-none inline-block">
+                  Research
+                </span>
+                <span>from the team.</span>
+              </h1>
 
-          <p className="mt-4 text-[#C8C7BA] text-[15px] sm:text-[16px] max-w-2xl leading-relaxed font-sans">
-            Open papers from the HOROS team on attention efficiency, LLM inference, kernel optimization, and the architectures behind production AI infrastructure.
-          </p>
+              <p className="mt-3.5 text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] max-w-2xl leading-relaxed font-sans">
+                Open papers from the HOROS team on attention efficiency, LLM inference, kernel optimization, and the architectures behind production AI infrastructure.
+              </p>
 
-          <div className="mt-4 flex items-center gap-2 text-[12px] sm:text-[13px] text-[#A0A098] font-mono">
-            <span className="text-[#a3e635]">🎵</span>
-            <span>Part of RightNow / Research lab co-designing models and hardware</span>
-          </div>
-        </div>
-
-        {/* Categories Section */}
-        <div className="space-y-16 sm:space-y-20">
-          {RESEARCH_DATA.map((category) => (
-            <section key={category.title} className="relative">
-              {/* Category Header */}
-              <div className="mb-6 sm:mb-8">
-                <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-[#F0EFE2]">
-                  {category.title}
-                </h2>
-                <p className="mt-2 text-[#A0A098] text-[14px] font-sans">
-                  {category.subtitle}
-                </p>
+              <div className="mt-3.5 flex items-center gap-2 text-[12px] sm:text-[12.5px] text-[#A0A098] font-mono">
+                <span className="text-[#a3e635]">🎵</span>
+                <span>Part of RightNow / Research lab co-designing models and hardware</span>
               </div>
+            </div>
 
-              {/* Papers Grid Container with Dashed Borders */}
-              <div className="border border-dashed border-[#333] bg-[#151515]">
-                {category.papers.map((paper) => {
-                  const isHovered = activeHoverId === paper.id;
+            {/* Categories Section */}
+            <div className="space-y-14 sm:space-y-16">
+              {RESEARCH_DATA.map((category) => (
+                <section key={category.title} className="relative">
+                  {/* Category Header */}
+                  <div className="mb-5 sm:mb-6">
+                    <h2 className="text-2xl sm:text-[26px] font-medium tracking-tight text-[#F0EFE2]">
+                      {category.title}
+                    </h2>
+                    <p className="mt-1.5 text-[#A0A098] text-[13.5px] font-sans">
+                      {category.subtitle}
+                    </p>
+                  </div>
 
-                  return (
-                    <article
-                      key={paper.id}
-                      onMouseEnter={() => setActiveHoverId(paper.id)}
-                      onMouseLeave={() => setActiveHoverId(null)}
-                      className={`group grid grid-cols-1 md:grid-cols-[75px_220px_1fr] border-b border-dashed border-[#333] last:border-b-0 transition-colors duration-200 ${
-                        isHovered ? "bg-[#1c1c1c]" : "hover:bg-[#1a1a1a]"
-                      }`}
-                    >
-                      {/* Column 1: Index Number */}
-                      <div className="p-6 md:p-8 flex items-start md:border-r border-dashed border-[#333]">
-                        <span className="font-mono text-base sm:text-lg font-bold text-[#F0EFE2]">
-                          {paper.index}
-                        </span>
-                      </div>
+                  {/* Papers Grid Container with Dashed Borders */}
+                  <div className="border border-dashed border-[#333] bg-[#151515]">
+                    {category.papers.map((paper) => {
+                      const isHovered = activeHoverId === paper.id;
 
-                      {/* Column 2: Metadata (arXiv, Category, Tags, Authors) */}
-                      <div className="p-6 md:p-8 flex flex-col justify-between gap-5 border-t md:border-t-0 md:border-r border-dashed border-[#333]">
-                        <div>
-                          <Link
-                            href={paper.arxivUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#a3e635] hover:text-[#bef264] font-mono text-[12px] font-medium inline-flex items-center gap-1 transition-colors"
-                          >
-                            <span>{paper.arxivId}</span>
-                          </Link>
-                          <div className="text-[#777] font-mono text-[11px] mt-0.5">
-                            {paper.category} / {paper.year}
-                          </div>
-                        </div>
-
-                        {/* Dashed Tags Badges */}
-                        <div className="flex flex-wrap gap-1.5">
-                          {paper.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="inline-flex items-center px-2 py-0.5 rounded-none border border-dashed border-[#3d3d3d] bg-transparent text-[#C8C7BA] font-mono text-[11px]"
-                            >
-                              {tag}
+                      return (
+                        <article
+                          key={paper.id}
+                          onMouseEnter={() => setActiveHoverId(paper.id)}
+                          onMouseLeave={() => setActiveHoverId(null)}
+                          className={`group grid grid-cols-1 md:grid-cols-[56px_200px_1fr] border-b border-dashed border-[#333] last:border-b-0 transition-colors duration-200 ${
+                            isHovered ? "bg-[#1c1c1c]" : "hover:bg-[#1a1a1a]"
+                          }`}
+                        >
+                          {/* Column 1: Index Number */}
+                          <div className="px-3 py-4 sm:px-4 sm:py-6 flex items-start md:border-r border-dashed border-[#333]">
+                            <span className="font-mono text-base font-bold text-[#F0EFE2]">
+                              {paper.index}
                             </span>
-                          ))}
-                        </div>
+                          </div>
 
-                        {/* Authors Row */}
-                        <div className="flex flex-col gap-2.5 pt-1">
-                          {paper.authors.map((author, aIdx) => (
-                            <div key={aIdx} className="flex items-center gap-2.5">
-                              {author.isGithub ? (
-                                <div className="w-5 h-5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[#F0EFE2] shrink-0">
-                                  <GithubIcon className="w-3 h-3" />
-                                </div>
-                              ) : author.avatar ? (
-                                <img
-                                  src={author.avatar}
-                                  alt={author.name}
-                                  className="w-5 h-5 rounded-full object-cover border border-[#444] shrink-0 bg-neutral-800"
-                                  onError={(e) => {
-                                    (e.target as HTMLElement).style.display = "none";
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-5 h-5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[9px] text-[#C8C7BA] font-mono shrink-0">
-                                  {author.name.slice(0, 2).toUpperCase()}
-                                </div>
-                              )}
-                              <span className="text-[12.5px] text-[#C8C7BA] font-medium tracking-tight">
-                                {author.name}
-                              </span>
+                          {/* Column 2: Metadata (arXiv, Category, Tags, Authors) */}
+                          <div className="p-4 sm:p-5 md:p-6 flex flex-col justify-between gap-4 border-t md:border-t-0 md:border-r border-dashed border-[#333]">
+                            <div>
+                              <Link
+                                href={paper.arxivUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#a3e635] hover:text-[#bef264] font-mono text-[12px] font-medium inline-flex items-center gap-1 transition-colors"
+                              >
+                                <span>{paper.arxivId}</span>
+                              </Link>
+                              <div className="text-[#777] font-mono text-[11px] mt-0.5">
+                                {paper.category} / {paper.year}
+                              </div>
                             </div>
-                          ))}
-                        </div>
-                      </div>
 
-                      {/* Column 3: Title, Description, and Actions */}
-                      <div className="p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0">
-                        <div>
-                          <h3 className="text-[#F0EFE2] font-medium text-[17px] sm:text-[18px] leading-snug group-hover:text-white transition-colors">
-                            {paper.title}
-                          </h3>
-                          <p className="text-[#A0A098] text-[13.5px] leading-relaxed mt-2.5 mb-6 font-sans font-normal">
-                            {paper.description}
-                          </p>
-                        </div>
+                            {/* Dashed Tags Badges */}
+                            <div className="flex flex-wrap gap-1.5">
+                              {paper.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="inline-flex items-center px-1.5 py-0.5 rounded-none border border-dashed border-[#3d3d3d] bg-transparent text-[#C8C7BA] font-mono text-[10.5px]"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
 
-                        {/* Action Links */}
-                        <div className="flex items-center gap-6 font-mono text-[12.5px]">
-                          <Link
-                            href={paper.pdfUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                          >
-                            <span>PDF</span>
-                            <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                          </Link>
-                          <Link
-                            href={paper.arxivUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                          >
-                            <span>arXiv</span>
-                            <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                          </Link>
-                          <Link
-                            href={paper.codeUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                          >
-                            <span>Code</span>
-                            <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
+                            {/* Authors Row */}
+                            <div className="flex flex-col gap-2 pt-1">
+                              {paper.authors.map((author, aIdx) => (
+                                <div key={aIdx} className="flex items-center gap-2">
+                                  {author.isGithub ? (
+                                    <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[#F0EFE2] shrink-0">
+                                      <GithubIcon className="w-3 h-3" />
+                                    </div>
+                                  ) : author.avatar ? (
+                                    <img
+                                      src={author.avatar}
+                                      alt={author.name}
+                                      className="w-4.5 h-4.5 rounded-full object-cover border border-[#444] shrink-0 bg-neutral-800"
+                                      onError={(e) => {
+                                        (e.target as HTMLElement).style.display = "none";
+                                      }}
+                                    />
+                                  ) : (
+                                    <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[9px] text-[#C8C7BA] font-mono shrink-0">
+                                      {author.name.slice(0, 2).toUpperCase()}
+                                    </div>
+                                  )}
+                                  <span className="text-[12px] text-[#C8C7BA] font-medium tracking-tight">
+                                    {author.name}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Column 3: Title, Description, and Actions */}
+                          <div className="p-4 sm:p-6 md:p-7 flex flex-col justify-between border-t md:border-t-0">
+                            <div>
+                              <h3 className="text-[#F0EFE2] font-medium text-[16px] sm:text-[17px] md:text-[18px] leading-snug group-hover:text-white transition-colors">
+                                {paper.title}
+                              </h3>
+                              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] leading-relaxed mt-2 mb-5 font-sans font-normal">
+                                {paper.description}
+                              </p>
+                            </div>
+
+                            {/* Action Links */}
+                            <div className="flex items-center gap-5 font-mono text-[12px]">
+                              <Link
+                                href={paper.pdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
+                              >
+                                <span>PDF</span>
+                                <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                              </Link>
+                              <Link
+                                href={paper.arxivUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
+                              >
+                                <span>arXiv</span>
+                                <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                              </Link>
+                              <Link
+                                href={paper.codeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
+                              >
+                                <span>Code</span>
+                                <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                              </Link>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </div>
+          <div />
         </div>
       </main>
 
