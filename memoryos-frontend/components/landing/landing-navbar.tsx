@@ -158,7 +158,7 @@ const RESOURCES = [
     title: "Research & Evidence",
     desc: "Empirical benchmarks and intelligence evolution papers.",
     icon: <Newspaper size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
-    href: "#research-evidence",
+    href: "/research",
   },
 ];
 
@@ -461,7 +461,7 @@ export function LandingNavbar({
               </Link>
 
               <Link
-                href="#research"
+                href="/research"
                 className="transition-colors hover:text-[#75bf00] whitespace-nowrap"
               >
                 Research
@@ -669,7 +669,7 @@ export function LandingNavbar({
                 </span>
               </Link>
               <Link
-                href="#research"
+                href="/research"
                 onClick={handleItemClick}
                 className="py-1.5 text-[#C8C7BA] hover:text-[#F0EFE2]"
               >
