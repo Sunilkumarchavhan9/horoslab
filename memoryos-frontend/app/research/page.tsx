@@ -54,7 +54,7 @@ const RESEARCH_DATA: ResearchCategory[] = [
         id: "probe-1",
         index: "01",
         arxivId: "arXiv 2611.05810",
-        arxivUrl: "https://arxiv.org/submit",
+        arxivUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
         category: "cs.RO · eess.SY",
         year: "2026",
         tags: ["p-CBF", "Tactile Shear", "ACI Calibration", "OSQP Core"],
@@ -73,110 +73,12 @@ const RESEARCH_DATA: ResearchCategory[] = [
         pdfUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1/blob/main/arxiv_submission/probe1_arxiv_source.zip",
         codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
       },
-      {
-        id: "tacsl",
-        index: "02",
-        arxivId: "arXiv 2610.04182",
-        arxivUrl: "https://arxiv.org/abs/2610.04182",
-        category: "cs.RO",
-        year: "2026",
-        tags: ["Tactile Ingestion", "Elastomeric Shear", "Isaac Lab"],
-        authors: [
-          {
-            name: "Sunil Kumar Chavhan",
-            avatar: "https://github.com/Sunilkumarchavhan9.png",
-          },
-          {
-            name: "HOROS Lab",
-            avatar: "/horos-icon.png",
-          },
-        ],
-        title: "TacSL: Decoupled Multi-Contact Ingestion and Elastomeric Tactile Dynamics for Dexterous Foundation Policies",
-        description: "Establishes high-frequency elastomeric marker tracking and contact shear decoupling algorithms for multifingered hands, enabling closed-loop slip reflexing and invariant tracking during sub-step contact nonstationarities.",
-        pdfUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
-        codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
-      },
-    ],
-  },
-  {
-    title: "Compute efficiency",
-    subtitle: "Faster, leaner, more memory-bounded ways to run models on existing hardware.",
-    papers: [
-      {
-        id: "automegakernel",
-        index: "01",
-        arxivId: "arXiv 2606.09682",
-        arxivUrl: "https://arxiv.org/abs/2606.09682",
-        category: "cs.LG",
-        year: "2026",
-        tags: ["Megakernels", "CUDA", "Agents"],
-        authors: [
-          {
-            name: "Jaber Jaber",
-            isGithub: true,
-          },
-          {
-            name: "Osama Jaber",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-          },
-        ],
-        title: "AutoMegaKernel: A Statically-Checked Agent Harness for Self-Retargeting Megakernel Synthesis",
-        description: "Compiles a Llama-family model into one persistent CUDA megakernel with no hand-written CUDA, statically certifies every agent-proposed schedule deadlock-free and race-free before launch, and self-improves the kernel through an unattended agent loop.",
-        pdfUrl: "https://arxiv.org/abs/2606.09682",
-        codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
-      },
-      {
-        id: "autokernel",
-        index: "02",
-        arxivId: "arXiv 2603.21331",
-        arxivUrl: "https://arxiv.org/abs/2603.21331",
-        category: "cs.LG",
-        year: "2026",
-        tags: ["GPU", "Kernel Optimization", "Agents"],
-        authors: [
-          {
-            name: "Jaber Jaber",
-            isGithub: true,
-          },
-          {
-            name: "Osama Jaber",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-          },
-        ],
-        title: "AutoKernel: Autonomous GPU Kernel Optimization via Iterative Agent-Driven Search",
-        description: "Autonomous GPU kernel optimization via iterative agent-driven search, using LLM agents to explore the kernel design space and validate candidates on real hardware.",
-        pdfUrl: "https://arxiv.org/abs/2603.21331",
-        codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
-      },
-      {
-        id: "streamindex",
-        index: "03",
-        arxivId: "arXiv 2605.02568",
-        arxivUrl: "https://arxiv.org/abs/2605.02568",
-        category: "cs.LG",
-        year: "2026",
-        tags: ["Sparse Attention", "Streaming Top-k", "Triton"],
-        authors: [
-          {
-            name: "Jaber Jaber",
-            isGithub: true,
-          },
-          {
-            name: "Osama Jaber",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-          },
-        ],
-        title: "StreamIndex: Memory-Bounded Compressed Sparse Attention via Streaming Top-k",
-        description: "A memory-bounded sparse attention mechanism that selects top-k keys in a single streaming pass over the sequence, fused as a Triton kernel for production inference workloads.",
-        pdfUrl: "https://arxiv.org/abs/2605.02568",
-        codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
-      },
     ],
   },
 ];
 
 export default function ResearchPage() {
-  const [activeHoverId, setActiveHoverId] = useState<string | null>("autokernel");
+  const [activeHoverId, setActiveHoverId] = useState<string | null>("probe-1");
 
   return (
     <div className="min-h-screen bg-[#151515] text-[#F0EFE2] font-sans selection:bg-[#75bf00] selection:text-black flex flex-col relative overflow-x-hidden">
