@@ -47,8 +47,8 @@ interface ResearchCategory {
 
 const RESEARCH_DATA: ResearchCategory[] = [
   {
-    title: "Physical intelligence & Safe Control",
-    subtitle: "Certified barrier invariance, tactile shear nonstationarity, and real-time safe grasp adaptation.",
+    title: "Physical Intelligence & Humanoid Robotics",
+    subtitle: "Certified predictive safety filters, nonstationary tactile adaptation, and dexterous manipulation foundation models for humanoid robots.",
     papers: [
       {
         id: "probe-1",
@@ -57,19 +57,27 @@ const RESEARCH_DATA: ResearchCategory[] = [
         arxivUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
         category: "cs.RO · eess.SY",
         year: "2026",
-        tags: ["p-CBF", "Tactile Shear", "ACI Calibration", "OSQP Core"],
+        tags: [
+          "Humanoid Robots",
+          "Dexterous Hands",
+          "p-CBF Safety",
+          "Tactile Shear",
+          "ACI Conformal",
+          "Isaac Lab",
+          "OSQP Core",
+        ],
         authors: [
           {
             name: "Sunil Kumar Chavhan",
             avatar: "https://github.com/Sunilkumarchavhan9.png",
           },
           {
-            name: "HOROS Lab",
+            name: "HOROS Physical Intelligence",
             avatar: "/horos-icon.png",
           },
         ],
         title: "HOROS PROBE-1: Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Jointly Changing Contact Conditions",
-        description: "Introduces an uncertainty-aware predictive safety framework for multi-fingered grasping under nonstationary friction collapses, fluid pouring, and sloshing dynamics. Combines linearized Hunt-Crossley dynamics with an 8-sided polyhedral p-CBF and Adaptive Conformal Inference, achieving 0.0% drops and 0.0% crush damage in coupled nonstationary regimes.",
+        description: "An uncertainty-aware physical intelligence model for multifingered humanoid robotic hands facing nonstationary friction collapses, fluid pouring, and dynamic payload sloshing. Integrates linearized Hunt-Crossley elastomeric contact models with an 8-sided polyhedral predictive Control Barrier Function (p-CBF) and Adaptive Conformal Inference (ACI), delivering 0.0% drops and 0.0% crush damage across 6,200 Isaac Lab manipulation episodes at 0.193 ms solver latency.",
         pdfUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1/blob/main/arxiv_submission/probe1_arxiv_source.zip",
         codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
       },
@@ -113,16 +121,16 @@ export default function ResearchPage() {
                 <span className="bg-[#a3e635] text-black font-semibold px-2.5 py-0.5 rounded-none inline-block">
                   Research
                 </span>
-                <span>from the team.</span>
+                <span>from HOROS Lab.</span>
               </h1>
 
               <p className="mt-3.5 text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] max-w-2xl leading-relaxed font-sans">
-                Open papers from the HOROS team on attention efficiency, LLM inference, kernel optimization, and the architectures behind production AI infrastructure.
+                Open research papers and physical intelligence foundation models from HOROS Lab for certified safe control, dexterous manipulation, and next-generation humanoid robots.
               </p>
 
               <div className="mt-3.5 flex items-center gap-2 text-[12px] sm:text-[12.5px] text-[#A0A098] font-mono">
-                <span className="text-[#a3e635]">🎵</span>
-                <span>Part of RightNow / Research lab co-designing models and hardware</span>
+                <span className="text-[#a3e635]">⚡</span>
+                <span>HOROS Physical Intelligence Research Group · Foundation models for dexterous humanoid robots</span>
               </div>
             </div>
 
