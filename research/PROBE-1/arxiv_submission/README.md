@@ -72,9 +72,13 @@ Output artifact: `main.pdf`.
 
 ## 4. Ready-to-Upload arXiv Archive
 
-A self-contained archive package is pre-assembled and ready for direct upload to the [arXiv submission system](https://arxiv.org/submit):
-- `probe1_arxiv_submission.tar.gz` (~2.0 MB: contains `main.tex`, `references.bib`, `README.md`, `check_latex.py`, `generate_paper_figures.py`, `sections/`, `figures/`, and `data/`)
-- `probe1_arxiv_submission.zip` (~2.0 MB: complete 31-entry submission package)
+Two distinct packages are prepared:
+- **arXiv Compile Package (Recommended for upload):**
+  - `probe1_arxiv_source.zip` (~263 KB: clean 19-file compilation bundle containing only `main.tex`, `references.bib`, 10 `sections/*.tex`, and 7 vector `figures/*.pdf`).
+  - `probe1_arxiv_source.tar.gz` (~237 KB: gzipped tarball alternative).
+- **Full Reproducibility Bundle (Retained for open science):**
+  - `probe1_arxiv_submission.zip` (~2.0 MB: complete 31-entry package including raw simulation data ledgers `data/*.json`, PNG previews, and generation scripts).
+  - `probe1_arxiv_submission.tar.gz` (~2.0 MB: gzipped tarball).
 - Source Repository: [https://github.com/Sunilkumarchavhan9/horoslab](https://github.com/Sunilkumarchavhan9/horoslab)
 
 To re-package the bundle at any time:
