@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Sparkles } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
 
@@ -54,10 +53,10 @@ const RESEARCH_DATA: ResearchCategory[] = [
         id: "probe-1",
         index: "01",
         arxivId: "arXiv 2611.05810",
-        arxivUrl: "https://arxiv.org/submit",
+        arxivUrl: "https://arxiv.org/abs/2611.05810",
         category: "cs.RO · eess.SY",
         year: "2026",
-        tags: ["p-CBF", "Tactile Shear", "ACI Calibration", "OSQP Core"],
+        tags: ["p-CBF", "Tactile Shear", "ACI", "OSQP"],
         authors: [
           {
             name: "Sunil Kumar Chavhan",
@@ -69,8 +68,8 @@ const RESEARCH_DATA: ResearchCategory[] = [
           },
         ],
         title: "HOROS PROBE-1: Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Jointly Changing Contact Conditions",
-        description: "Introduces an uncertainty-aware predictive safety framework for multi-fingered grasping under nonstationary friction collapses, fluid pouring, and sloshing dynamics. Combines linearized Hunt-Crossley dynamics with an 8-sided polyhedral p-CBF and Adaptive Conformal Inference, achieving 0.0% drops and 0.0% crush damage in coupled nonstationary regimes.",
-        pdfUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1/blob/main/arxiv_submission/probe1_arxiv_source.zip",
+        description: "Uncertainty-aware predictive safety framework for multi-fingered robotic grasping under nonstationary contact physics, fluid shifts, and abrupt friction collapses, certified by discrete-time p-CBF barriers and adaptive conformal inference.",
+        pdfUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1/raw/main/arxiv_submission/probe1_arxiv_source.zip",
         codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
       },
       {
@@ -92,7 +91,7 @@ const RESEARCH_DATA: ResearchCategory[] = [
           },
         ],
         title: "TacSL: Decoupled Multi-Contact Ingestion and Elastomeric Tactile Dynamics for Dexterous Foundation Policies",
-        description: "Establishes high-frequency elastomeric marker tracking and contact shear decoupling algorithms for multifingered hands, enabling closed-loop slip reflexing and invariant tracking during sub-step contact nonstationarities.",
+        description: "High-frequency elastomeric marker tracking and contact shear decoupling algorithms for multifingered hands, enabling closed-loop slip reflexing during sub-step contact nonstationarities.",
         pdfUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
         codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
       },
@@ -179,54 +178,55 @@ export default function ResearchPage() {
   const [hoveredPaperId, setHoveredPaperId] = useState<string | null>("autokernel");
 
   return (
-    <div className="min-h-screen bg-[#0c0c0e] text-white selection:bg-[#a3e635] selection:text-black font-sans relative overflow-x-hidden">
-      {/* Background Subtle Grid Texture */}
-      <div className="pointer-events-none fixed inset-0 z-0 flex justify-center opacity-40">
-        <div className="w-full max-w-6xl h-full flex justify-between border-x border-neutral-800/40">
-          <div className="w-1/4 h-full border-r border-dashed border-neutral-800/30 hidden md:block" />
-          <div className="w-1/4 h-full border-r border-dashed border-neutral-800/30 hidden md:block" />
-          <div className="w-1/4 h-full border-r border-dashed border-neutral-800/30 hidden md:block" />
+    <div className="min-h-screen bg-[#181818] text-[#F0EFE2] font-sans relative selection:bg-[#75bf00] selection:text-black">
+      {/* Global Vertical Dashed Grid Guide Lines spanning top to bottom */}
+      <div className="pointer-events-none fixed inset-0 flex justify-center z-0">
+        <div className="w-full max-w-6xl h-full flex justify-between border-x border-dashed border-[#2d2d2d]">
+          {/* Dashed vertical column guides matching card grid */}
+          <div className="w-[80px] sm:w-[90px] h-full border-r border-dashed border-[#2d2d2d] hidden md:block" />
+          <div className="w-[230px] sm:w-[260px] h-full border-r border-dashed border-[#2d2d2d] hidden md:block" />
+          <div className="flex-1 h-full hidden md:block" />
         </div>
       </div>
 
       <LandingNavbar dark />
 
-      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 sm:pt-40 sm:pb-32">
+      <main className="relative z-10 max-w-6xl mx-auto border-x border-dashed border-[#2d2d2d] pt-32 pb-24 sm:pt-40 sm:pb-32 bg-[#181818]">
         {/* Header Hero Section */}
-        <div className="max-w-4xl mb-20 sm:mb-24">
-          <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white flex items-center flex-wrap gap-2.5">
-            <span className="bg-[#a3e635] text-black font-semibold px-2.5 py-0.5 rounded-[4px] inline-block">
+        <div className="px-6 sm:px-10 mb-16 sm:mb-20">
+          <h1 className="text-3xl sm:text-5xl font-medium tracking-tight text-[#F0EFE2] flex items-center flex-wrap gap-2.5">
+            <span className="bg-[#75bf00] text-black font-semibold px-2.5 py-0.5 rounded-[3px] inline-block">
               Research
             </span>
             <span>from the team.</span>
           </h1>
 
-          <p className="mt-5 text-neutral-400 text-base sm:text-lg leading-relaxed font-normal max-w-2xl">
-            Open papers from the HOROS team on uncertainty-aware safe manipulation, tactile physics, predictive barrier control, and the architectures behind production AI infrastructure.
+          <p className="mt-4 text-[#C8C7BA] text-sm sm:text-base leading-relaxed font-normal max-w-2xl">
+            Open papers from the RunInfra team on attention efficiency, LLM inference, kernel optimization, and the architectures behind production AI infrastructure.
           </p>
 
-          <div className="mt-4 flex items-center gap-2 text-xs sm:text-sm text-neutral-500 font-mono">
-            <span className="text-neutral-400">✦</span>
-            <span>Part of HOROS / Physical Intelligence & AI Infrastructure Research lab co-designing models and contact physics</span>
+          <div className="mt-4 flex items-center gap-2 text-xs sm:text-sm text-[#888888] font-mono">
+            <span className="text-[#C8C7BA]">🎵</span>
+            <span>Part of RightNow / Research lab co-designing models and hardware</span>
           </div>
         </div>
 
         {/* Categories & Paper List */}
-        <div className="space-y-20 sm:space-y-24">
+        <div className="space-y-16 sm:space-y-20">
           {RESEARCH_DATA.map((category) => (
             <section key={category.title} className="relative">
               {/* Category Title & Subtitle */}
-              <div className="mb-8 sm:mb-10">
-                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
+              <div className="px-6 sm:px-10 mb-6 sm:mb-8">
+                <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-[#F0EFE2]">
                   {category.title}
                 </h2>
-                <p className="mt-2 text-neutral-400 text-sm sm:text-base font-normal">
+                <p className="mt-1.5 text-[#C8C7BA] text-xs sm:text-sm font-normal">
                   {category.subtitle}
                 </p>
               </div>
 
-              {/* Papers Grid Rows */}
-              <div className="border-t border-neutral-800/90 divide-y divide-neutral-800/90">
+              {/* Papers Grid with Explicit Vertical Dashed Lines */}
+              <div className="w-full border-t border-dashed border-[#2d2d2d] bg-[#141414]">
                 {category.papers.map((paper) => {
                   const isHovered = hoveredPaperId === paper.id;
 
@@ -235,121 +235,116 @@ export default function ResearchPage() {
                       key={paper.id}
                       onMouseEnter={() => setHoveredPaperId(paper.id)}
                       onMouseLeave={() => setHoveredPaperId(null)}
-                      className={`group relative py-7 sm:py-9 px-4 sm:px-6 transition-all duration-200 ${
-                        isHovered
-                          ? "bg-[#141416] border-y border-neutral-700/70"
-                          : "bg-transparent hover:bg-[#141416]/50"
+                      className={`grid grid-cols-1 md:grid-cols-[80px_230px_1fr] border-b border-dashed border-[#2d2d2d] transition-colors duration-150 ${
+                        isHovered ? "bg-[#1f1f1f]" : "bg-[#141414] hover:bg-[#1a1a1a]"
                       }`}
                     >
-                      <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-8">
-                        {/* Column 1: Index Number */}
-                        <div className="w-12 sm:w-16 shrink-0">
-                          <span className="font-mono text-xl sm:text-2xl font-bold text-white tracking-tight">
-                            {paper.index}
-                          </span>
+                      {/* Column 1: Index Number with Right Dashed Border */}
+                      <div className="py-7 px-5 md:px-6 md:border-r border-dashed border-[#2d2d2d] flex items-start">
+                        <span className="font-mono text-xl sm:text-2xl font-bold text-[#F0EFE2] tracking-tight">
+                          {paper.index}
+                        </span>
+                      </div>
+
+                      {/* Column 2: Metadata (arXiv, Category, Tags, Authors) with Right Dashed Border */}
+                      <div className="py-7 px-5 md:px-6 md:border-r border-dashed border-[#2d2d2d] flex flex-col gap-3.5">
+                        {/* arXiv link and subject/year */}
+                        <div>
+                          <Link
+                            href={paper.arxivUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#75bf00] hover:text-[#92ea00] font-mono text-xs font-semibold inline-flex items-center gap-1 transition-colors"
+                          >
+                            <span>{paper.arxivId}</span>
+                          </Link>
+                          <div className="text-[#888888] font-mono text-[11px] mt-0.5">
+                            {paper.category} / {paper.year}
+                          </div>
                         </div>
 
-                        {/* Column 2: Metadata (arXiv, Category, Tags, Authors) */}
-                        <div className="w-full lg:w-64 shrink-0 flex flex-col gap-3.5">
-                          {/* arXiv link and subject/year */}
-                          <div>
-                            <Link
-                              href={paper.arxivUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#a3e635] hover:text-[#bef264] font-mono text-xs font-medium inline-flex items-center gap-1 transition-colors"
+                        {/* Dashed Tags */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {paper.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="inline-flex items-center px-2 py-0.5 rounded border border-dashed border-[#3a3a3a] bg-[#1a1a1a] text-[#C8C7BA] font-mono text-[11px]"
                             >
-                              <span>{paper.arxivId}</span>
-                            </Link>
-                            <div className="text-neutral-500 font-mono text-xs mt-0.5">
-                              {paper.category} / {paper.year}
-                            </div>
-                          </div>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
 
-                          {/* Dotted/Dashed Badges/Tags */}
-                          <div className="flex flex-wrap gap-1.5">
-                            {paper.tags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="inline-flex items-center px-2 py-0.5 rounded border border-dashed border-neutral-700/80 bg-neutral-900/60 text-neutral-300 font-mono text-[11px]"
-                              >
-                                {tag}
+                        {/* Authors Row */}
+                        <div className="flex flex-col gap-2 pt-1">
+                          {paper.authors.map((author, aIdx) => (
+                            <div key={aIdx} className="flex items-center gap-2">
+                              {author.isGithub ? (
+                                <div className="w-5 h-5 rounded-full bg-[#242424] border border-[#333333] flex items-center justify-center text-[#F0EFE2] shrink-0">
+                                  <GithubIcon className="w-3 h-3" />
+                                </div>
+                              ) : author.avatar ? (
+                                <img
+                                  src={author.avatar}
+                                  alt={author.name}
+                                  className="w-5 h-5 rounded-full object-cover border border-[#333333] shrink-0 bg-[#242424]"
+                                  onError={(e) => {
+                                    (e.target as HTMLElement).style.display = "none";
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-5 h-5 rounded-full bg-[#242424] border border-[#333333] flex items-center justify-center text-[9px] text-[#F0EFE2] font-medium shrink-0">
+                                  {author.name.slice(0, 2).toUpperCase()}
+                                </div>
+                              )}
+                              <span className="text-xs text-[#F0EFE2] font-medium tracking-tight">
+                                {author.name}
                               </span>
-                            ))}
-                          </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
 
-                          {/* Authors Row */}
-                          <div className="flex flex-col gap-2 pt-1">
-                            {paper.authors.map((author, aIdx) => (
-                              <div key={aIdx} className="flex items-center gap-2">
-                                {author.isGithub ? (
-                                  <div className="w-6 h-6 rounded-full bg-neutral-800 border border-neutral-700/80 flex items-center justify-center text-neutral-300 shrink-0">
-                                    <GithubIcon className="w-3.5 h-3.5" />
-                                  </div>
-                                ) : author.avatar ? (
-                                  <img
-                                    src={author.avatar}
-                                    alt={author.name}
-                                    className="w-6 h-6 rounded-full object-cover border border-neutral-700/80 shrink-0 bg-neutral-800"
-                                    onError={(e) => {
-                                      // Fallback if image fails to load
-                                      (e.target as HTMLElement).style.display = "none";
-                                    }}
-                                  />
-                                ) : (
-                                  <div className="w-6 h-6 rounded-full bg-neutral-800 border border-neutral-700/80 flex items-center justify-center text-[10px] text-neutral-300 font-medium shrink-0">
-                                    {author.name.slice(0, 2).toUpperCase()}
-                                  </div>
-                                )}
-                                <span className="text-xs text-neutral-300 font-medium tracking-tight">
-                                  {author.name}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                      {/* Column 3: Title, Description, and Actions */}
+                      <div className="py-7 px-6 sm:px-8 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-[#F0EFE2] font-medium text-base sm:text-lg leading-snug">
+                            {paper.title}
+                          </h3>
+                          <p className="text-[#C8C7BA] text-sm leading-relaxed mt-2.5 mb-5 font-normal">
+                            {paper.description}
+                          </p>
                         </div>
 
-                        {/* Column 3: Title, Description, and Actions */}
-                        <div className="flex-1 flex flex-col justify-between pt-0.5">
-                          <div>
-                            <h3 className="text-white font-medium text-base sm:text-lg leading-snug group-hover:text-white transition-colors">
-                              {paper.title}
-                            </h3>
-                            <p className="text-neutral-400 text-sm leading-relaxed mt-3 mb-6 font-normal">
-                              {paper.description}
-                            </p>
-                          </div>
-
-                          {/* Action Links */}
-                          <div className="flex items-center gap-6 font-mono text-xs">
-                            <Link
-                              href={paper.pdfUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                            >
-                              <span>PDF</span>
-                              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                            </Link>
-                            <Link
-                              href={paper.arxivUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                            >
-                              <span>arXiv</span>
-                              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                            </Link>
-                            <Link
-                              href={paper.codeUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                            >
-                              <span>Code</span>
-                              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                            </Link>
-                          </div>
+                        {/* Action Links */}
+                        <div className="flex items-center gap-5 font-mono text-xs">
+                          <Link
+                            href={paper.pdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#75bf00] hover:text-[#92ea00] font-semibold inline-flex items-center gap-1 group/link transition-colors"
+                          >
+                            <span>PDF</span>
+                            <span className="text-[10px] transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5">↗</span>
+                          </Link>
+                          <Link
+                            href={paper.arxivUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#75bf00] hover:text-[#92ea00] font-semibold inline-flex items-center gap-1 group/link transition-colors"
+                          >
+                            <span>arXiv</span>
+                            <span className="text-[10px] transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5">↗</span>
+                          </Link>
+                          <Link
+                            href={paper.codeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#75bf00] hover:text-[#92ea00] font-semibold inline-flex items-center gap-1 group/link transition-colors"
+                          >
+                            <span>Code</span>
+                            <span className="text-[10px] transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5">↗</span>
+                          </Link>
                         </div>
                       </div>
                     </article>
@@ -365,4 +360,3 @@ export default function ResearchPage() {
     </div>
   );
 }
-
