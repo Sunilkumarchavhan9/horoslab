@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
+import { HorosIcon } from "@/components/horos/primitives/horos-logo";
 
 function GithubIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
@@ -22,6 +23,7 @@ interface Author {
   name: string;
   avatar?: string;
   isGithub?: boolean;
+  isHoros?: boolean;
 }
 
 interface Paper {
@@ -73,7 +75,7 @@ const RESEARCH_DATA: ResearchCategory[] = [
           },
           {
             name: "HOROS Physical Intelligence",
-            avatar: "/horos-icon.png",
+            isHoros: true,
           },
         ],
         title: "HOROS PROBE-1: Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Jointly Changing Contact Conditions",
@@ -129,8 +131,8 @@ export default function ResearchPage() {
               </p>
 
               <div className="mt-3.5 flex items-center gap-2 text-[12px] sm:text-[12.5px] text-[#A0A098] font-mono">
-                <span className="text-[#a3e635]">⚡</span>
-                <span>HOROS Physical Intelligence Research Group · Foundation models for dexterous humanoid robots</span>
+                <HorosIcon className="w-3.5 h-3.5 text-[#a3e635] shrink-0" />
+                <span>HOROS Lab / Physical intelligence research group building foundation models and safe control for humanoid robotics</span>
               </div>
             </div>
 
@@ -201,7 +203,11 @@ export default function ResearchPage() {
                             <div className="flex flex-col gap-2 pt-1">
                               {paper.authors.map((author, aIdx) => (
                                 <div key={aIdx} className="flex items-center gap-2">
-                                  {author.isGithub ? (
+                                  {author.isHoros ? (
+                                    <div className="w-4.5 h-4.5 rounded-full bg-[#111] border border-[#333] flex items-center justify-center text-[#a3e635] shrink-0">
+                                      <HorosIcon className="w-2.5 h-2.5" />
+                                    </div>
+                                  ) : author.isGithub ? (
                                     <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[#F0EFE2] shrink-0">
                                       <GithubIcon className="w-3 h-3" />
                                     </div>
