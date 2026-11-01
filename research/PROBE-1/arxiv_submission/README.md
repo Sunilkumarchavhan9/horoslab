@@ -79,7 +79,7 @@ Two distinct packages are prepared:
 - **Full Reproducibility Bundle (Retained for open science):**
   - `probe1_arxiv_submission.zip` (~2.0 MB: complete 31-entry package including raw simulation data ledgers `data/*.json`, PNG previews, and generation scripts).
   - `probe1_arxiv_submission.tar.gz` (~2.0 MB: gzipped tarball).
-- Source Repository: [https://github.com/Sunilkumarchavhan9/horoslab](https://github.com/Sunilkumarchavhan9/horoslab)
+- Source Repository: [https://github.com/Sunilkumarchavhan9/horos-probe-1](https://github.com/Sunilkumarchavhan9/horos-probe-1)
 
 To re-package the bundle at any time:
 ```bash
