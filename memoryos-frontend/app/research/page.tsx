@@ -200,11 +200,11 @@ export default function ResearchPage() {
         <LandingNavbar dark />
       </div>
 
-      {/* Main Content Area - Strictly bounded to center grid column between dashed lines */}
+      {/* Main Content Area - Strictly bounded to center grid column with generous side gaps from dashed lines */}
       <main className="flex-grow flex flex-col w-full relative z-10 pt-28 sm:pt-36 pb-24 sm:pb-32">
         <div className="w-full grid grid-cols-[14%_72%_14%] md:grid-cols-[calc(14%_+_120px)_calc(72%_-_240px)_calc(14%_+_120px)] lg:grid-cols-[calc(18%_+_120px)_calc(64%_-_240px)_calc(18%_+_120px)] relative z-10">
           <div />
-          <div className="min-w-0">
+          <div className="min-w-0 px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16">
             {/* Header Hero Section */}
             <div className="mb-14 sm:mb-16">
               <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2.5">
