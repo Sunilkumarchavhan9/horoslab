@@ -127,5 +127,5 @@ All files are version-controlled, tested, and pushed to `origin main`:
 - Evaluation Pipeline: [`research/PROBE-1/experiments/run_full_evaluations.py`](file:///c:/projects/MemoryOS/research/PROBE-1/experiments/run_full_evaluations.py)
 - Audit Engine: [`research/PROBE-1/experiments/audit_results.py`](file:///c:/projects/MemoryOS/research/PROBE-1/experiments/audit_results.py)
 - Automated Unit Tests: [`research/PROBE-1/tests`](file:///c:/projects/MemoryOS/research/PROBE-1/tests)
-- Git Remote: `https://github.com/Sunilkumarchavhan9/epoch.git` (`main`)
+- Git Remote: `https://github.com/Sunilkumarchavhan9/horoslab.git` (`main`)
 

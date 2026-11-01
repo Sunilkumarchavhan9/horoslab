@@ -73,12 +73,13 @@ Output artifact: `main.pdf`.
 ## 4. Ready-to-Upload arXiv Archive
 
 A self-contained archive package is pre-assembled and ready for direct upload to the [arXiv submission system](https://arxiv.org/submit):
-- `probe1_arxiv_submission.tar.gz` (205 KB: contains `main.tex`, `references.bib`, `sections/`, and `figures/`)
-- `probe1_arxiv_submission.zip` (235 KB: standard zip format for Overleaf or arXiv)
+- `probe1_arxiv_submission.tar.gz` (~2.0 MB: contains `main.tex`, `references.bib`, `README.md`, `check_latex.py`, `generate_paper_figures.py`, `sections/`, `figures/`, and `data/`)
+- `probe1_arxiv_submission.zip` (~2.0 MB: complete 31-entry submission package)
+- Source Repository: [https://github.com/Sunilkumarchavhan9/horoslab](https://github.com/Sunilkumarchavhan9/horoslab)
 
 To re-package the bundle at any time:
 ```bash
-python -c "import tarfile; tar = tarfile.open('probe1_arxiv_submission.tar.gz', 'w:gz'); [tar.add(x) for x in ['main.tex', 'references.bib', 'sections', 'figures']]; tar.close()"
+python -c "import os, tarfile, zipfile; base='research/PROBE-1/arxiv_submission'; [zipfile.ZipFile(os.path.join(base, 'probe1_arxiv_submission.zip'), 'w', zipfile.ZIP_DEFLATED).write(os.path.join(root, fn), os.path.relpath(os.path.join(root, fn), base)) for root, _, fns in os.walk(base) for fn in fns if not fn.endswith(('.zip', '.tar.gz'))]"
 ```
 
 ---
@@ -87,14 +88,14 @@ python -c "import tarfile; tar = tarfile.open('probe1_arxiv_submission.tar.gz', 
 
 - [x] **Clear Authorship:** Sunil Kumar Chavhan, HOROS Physical Intelligence Research Group, `sunil@horoslab.io`.
 - [x] **Category Selection:** Primary `cs.RO` (Robotics), Secondary `eess.SY` (Systems and Control).
-- [x] **Self-Contained Archive:** All 7 figures, 10 sections, and references are locally bundled.
+- [x] **Self-Contained Archive:** All 7 figures, 10 sections, 2 raw data ledgers, and references are locally bundled.
 - [x] **Prior-Art Taxonomy Table:** Section 2 features Table 1 comparing OpenVLA, $\pi_0$, RT-2, TacClaw-Infinity, PANDAS, and Ames CBF.
 - [x] **System Architecture Diagrams:** Figure 1 (Overall system flow) and Figure 2 (QP safety filter and decision gate).
 - [x] **Mathematical Algorithm Box:** Algorithm 1 in Section 5 details the 100~Hz predictive safety filter execution loop.
-- [x] **No Fabricated References:** Every BibTeX entry is checked against primary peer-reviewed venues.
-- [x] **Data-Grounded Figures:** All 7 PDF plots are generated directly from the 3,400-trial experimental ledger.
+- [x] **No Fabricated References:** Every BibTeX entry is checked against primary peer-reviewed venues (all 19 cited).
+- [x] **Data-Grounded Figures:** All 7 PDF plots are generated directly from the experimental ledger.
 - [x] **Honest Simulation Stance:** Section 9 explicitly identifies simulated measurements in Isaac Lab v2.3 / PhysX 5 and specifies the benchtop physical validation rig for laboratory transfer.
-- [x] **Deep-Dive into Key Findings:** Section 8 thoroughly analyzes (i) 100% baseline failure vs 0% HOROS in Regime D, (ii) heavy payload saturation boundary, and (iii) 100% crushing without proprioception.
+- [x] **Deep-Dive into Key Findings:** Section 8 thoroughly analyzes (i) 100% baseline failure vs 0% HOROS in Regime D, (ii) heavy payload saturation boundary, (iii) dynamic anti-slip normal force derivation (5.42 N, 6.00 N, 2.58 N), and (iv) 100% crushing without proprioception.
 
 ---
 
@@ -103,7 +104,7 @@ python -c "import tarfile; tar = tarfile.open('probe1_arxiv_submission.tar.gz', 
 ```text
 Safe robotic manipulation of fragile, dynamic objects remains an open challenge in physical intelligence. While recent Vision-Language-Action (VLA) foundation policies exhibit broad semantic generalization, direct execution without predictive safety filtering leaves them susceptible to sub-step contact nonstationarities, transport lag, and unmodeled friction variations. Conversely, classical reactive grip reflexes act purely a posteriori after macroscopic sliding has commenced, precipitating drop failures during abrupt friction collapses or payload shifts. This paper introduces HOROS PROBE-1, an uncertainty-aware predictive safety framework for multi-fingered robotic grasping under jointly changing nonstationary contact conditions. Our framework integrates: (i) an action-dependent contact force sensitivity mapping derived from linearized Hunt-Crossley elastomeric dynamics; (ii) an 8-sided polyhedral inner approximation of the friction cone formulated as a discrete-time predictive Control Barrier Function (p-CBF) with object-level spatial wrench balance; and (iii) Adaptive Conformal Inference (ACI) providing asymptotic marginal coverage guarantees over non-exchangeable, nonstationary friction shifts without requiring exchangeability or asserting deterministic per-step certificates.
 
-Across 3,400 simulation trials conducted in Isaac Lab with PhysX 5 (N = 100 independent seeds per condition, evaluated over 50-step episodes), HOROS is evaluated under nominal, coupled nonstationary, ablation, and out-of-distribution conditions. In the coupled nonstationary regime (Regime D), combining dynamic fluid pouring, center-of-mass sloshing, and a 60% step reduction in friction, HOROS achieves a 0.0% observed drop rate and a 0.0% observed crush rate. The evaluated fixed-force, reactive slip-reflex, unconstrained flow-matching, and certainty-equivalence MPC baselines each exhibit a 100.0% drop rate in this regime (paired McNemar test chi^2 = 98.01, p < 10^-20; Wilcoxon signed-rank p = 1.52e-23, Cliff's delta = +1.00). Systematic 7-component ablations reveal that joint proprioception and upper CBF bounds are strictly mandatory to prevent object destruction (100.0% crush rate when ablated), demonstrating that slip avoidance and fragile structural preservation are competing physical constraints. Separate out-of-distribution experiments identify operating boundaries, including drop failures under severe friction reduction, payload increase, and large center-of-mass displacement.
+Across 3,400 core simulation trials (and 2,800 auxiliary sensitivity episodes, comprising 6,200 simulated manipulation episodes total) conducted in Isaac Lab with PhysX 5 (N = 100 independent seeds per condition, evaluated over 50-step episodes), HOROS is evaluated under nominal, coupled nonstationary, ablation, and out-of-distribution conditions. In the coupled nonstationary regime (Regime D), combining dynamic fluid pouring, center-of-mass sloshing, and a 60% step reduction in friction, HOROS achieves a 0.0% observed drop rate and a 0.0% observed crush rate. The evaluated fixed-force, reactive slip-reflex, unconstrained flow-matching, and certainty-equivalence MPC baselines each exhibit a 100.0% drop rate in this regime (paired McNemar test chi^2 = 98.01, p < 10^-20; Wilcoxon signed-rank p = 1.52e-23, Cliff's delta = +1.00). Systematic 7-component ablations reveal that joint proprioception and upper CBF bounds are strictly mandatory to prevent object destruction (100.0% crush rate when ablated), demonstrating that slip avoidance and fragile structural preservation are competing physical constraints. Separate out-of-distribution experiments identify operating boundaries, including drop failures under severe friction reduction, payload increase, and large center-of-mass displacement.
 
 The underlying OSQP-based safety-filter implementation has a median reported solver latency of 0.193 ms. The maximum observed controller-cycle latency is 9.603 ms in the tested configuration, remaining below the 10.0 ms watchdog deadline. These measurements characterize observed simulation performance and do not establish a formal worst-case execution-time guarantee. We provide the reproducibility codebase and specify an independent benchtop protocol for future physical validation.
 ```
