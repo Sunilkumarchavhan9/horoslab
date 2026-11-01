@@ -80,7 +80,7 @@ const RESEARCH_DATA: ResearchCategory[] = [
         ],
         title: "HOROS PROBE-1: Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Jointly Changing Contact Conditions",
         description: "An uncertainty-aware physical intelligence model for multifingered humanoid robotic hands facing nonstationary friction collapses, fluid pouring, and dynamic payload sloshing. Integrates linearized Hunt-Crossley elastomeric contact models with an 8-sided polyhedral predictive Control Barrier Function (p-CBF) and Adaptive Conformal Inference (ACI), delivering 0.0% drops and 0.0% crush damage across 6,200 Isaac Lab manipulation episodes at 0.193 ms solver latency.",
-        pdfUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1/blob/main/arxiv_submission/probe1_arxiv_source.zip",
+        pdfUrl: "/HOROS_PROBE-1_Research_Paper.pdf",
         codeUrl: "https://github.com/Sunilkumarchavhan9/horos-probe-1",
       },
     ],
@@ -236,9 +236,16 @@ export default function ResearchPage() {
                           {/* Column 3: Title, Description, and Actions */}
                           <div className="p-4 sm:p-6 md:p-7 flex flex-col justify-between border-t md:border-t-0">
                             <div>
-                              <h3 className="text-[#F0EFE2] font-medium text-[16px] sm:text-[17px] md:text-[18px] leading-snug group-hover:text-white transition-colors">
-                                {paper.title}
-                              </h3>
+                              <Link
+                                href={paper.pdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group/title block"
+                              >
+                                <h3 className="text-[#F0EFE2] font-medium text-[16px] sm:text-[17px] md:text-[18px] leading-snug group-hover/title:text-[#a3e635] transition-colors">
+                                  {paper.title}
+                                </h3>
+                              </Link>
                               <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] leading-relaxed mt-2 mb-5 font-sans font-normal">
                                 {paper.description}
                               </p>
