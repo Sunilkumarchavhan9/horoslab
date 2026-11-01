@@ -74,11 +74,7 @@ Let $\alpha \in (0, 1)$ denote the target miscoverage rate (set to $\alpha = 0.0
 We explicitly decouple the offline synthetic coverage benchmark (EXP-002) from the online physical controller's event-triggered operating mode:
 \begin{enumerate}
     \item \textbf{Offline All-Timestep Coverage Benchmark (EXP-002):} In this synthetic tracking benchmark, the simulator supplies true surface friction $\mu_{\text{true}}(t)$ at every discrete control cycle ($t = 1, \dots, 50$). This evaluates whether Gibbs \& Candès's ACI martingale convergence theorem holds over non-exchangeable distribution shifts across the full temporal population of $5,000$ points per regime ($100\text{ episodes} \times 50\text{ steps}$).
-    \item \textbf{Online Event-Triggered Physical Adaptation (EXP-003--006):} In physical execution, true friction cannot be measured at sticking equilibrium without provoking slip. Instead, calibration updates occur along an \emph{event-indexed stopping-time sequence} $\{t_m\}_{m \ge 1}$, where each index $t_m$ corresponds to an incipient micro-slip detection ($\mathcal{E}_{\text{slip}, i}(t_m) = 1$). By the Optional Stopping Theorem applied to the ACI martingale difference sequence, asymptotic marginal coverage holds over the sub-sequence of incipient slip events:
-    \begin{equation}
-        \lim_{M \to \infty} \frac{1}{M} \sum_{m=1}^M \mathbb{I}\left\{\mu_{\text{obs}, i}(t_m) \ge \mu_{\text{cal}, i}(t_m)\right\} = 1 - \alpha
-    \end{equation}
-    During intervening sticking cycles ($t \notin \{t_m\}$), the invariant $\psi_i(t) \le \mu_{\text{cal}, i}(t)$ guarantees that tangential forces remain strictly inside the polyhedral cone, precluding macroscopic sliding. We do not imply that all-timestep coverage identically applies to event-triggered intervals without this stopping-time formulation.
+    \item \textbf{Online Event-Triggered Physical Adaptation (EXP-003--006):} In physical execution, true friction cannot be measured at sticking equilibrium without provoking slip. Instead, calibration updates occur conditionally along the event sequence where incipient micro-slip is detected ($\mathcal{E}_{\text{slip}, i}(k) = 1$). During non-slip sticking cycles ($\mathcal{E}_{\text{slip}, i}(k) = 0$), the controller retains the most recently calibrated quantile $\mu_{\text{cal}, i}(k) = \mu_{\text{cal}, i}(k-1)$ without generating artificial residuals or updating the ACI state. Consequently, while the offline synthetic benchmark (EXP-002) rigorously validates theoretical coverage over the full temporal sequence, the online event-triggered controller operates as a practical adaptive safeguard without asserting an unconditioned martingale coverage guarantee across intervening sticking intervals.
 \end{enumerate}
 \end{remark}
 
@@ -128,10 +124,16 @@ and $\mathbf{A}_{\text{eq}} = \mathbf{G} \mathbf{\Lambda}_{\text{stack}}$, $\mat
 \begin{algorithmic}[1]
 \REQUIRE Nominal action $\mathbf{u}_{\text{nom}}$, joint state $(\mathbf{q}_k, \dot{\mathbf{q}}_k)$, tactile afferents $\mathbf{f}_{c, i}(k)$, target miscoverage $\alpha = 0.05$.
 \ENSURE Safe joint acceleration command $\mathbf{u}_k^*$.
-\STATE Ingest tactile shear and normal forces; detect incipient slip marker divergence.
-\STATE Update load invariants $(\hat{m}_o, \hat{\mathbf{c}}_o)$ and apparent friction point estimates $\hat{\mu}_i$.
-\STATE Update ACI quantile tracking: $\alpha_{t+1} \leftarrow \alpha_t + \beta (\alpha - \mathbb{I}\{E_t > Q_t\})$.
-\STATE Compute calibrated lower bound: $\mu_{\text{cal}, i} \leftarrow \max(\mu_{\text{floor}}, \hat{\mu}_i - Q_{1 - \alpha_{t+1}})$.
+\STATE Ingest tactile shear and normal forces; evaluate incipient slip marker divergence $\mathcal{E}_{\text{slip}, i}(k) \in \{0, 1\}$.
+\STATE Update load invariants $(\hat{m}_o, \hat{\mathbf{c}}_o)$ and apparent friction point estimates $\hat{\mu}_i(k)$.
+\IF{$\mathcal{E}_{\text{slip}, i}(k) == 1$}
+    \STATE Measure critical utilization $\psi_i(k) \leftarrow \|\mathbf{f}_{T, i}(k)\|_2 / (f_{N, i}(k) + \epsilon)$ and set $\mu_{\text{obs}, i}(k) \leftarrow \psi_i(k)$.
+    \STATE Compute non-conformity residual $E_t \leftarrow |\mu_{\text{obs}, i}(k) - \hat{\mu}_i(k)|$.
+    \STATE Update ACI quantile tracking: $\alpha_{t+1} \leftarrow \alpha_t + \beta (\alpha - \mathbb{I}\{E_t > Q_t\})$.
+    \STATE Update calibrated lower bound: $\mu_{\text{cal}, i}(k) \leftarrow \max(\mu_{\text{floor}}, \hat{\mu}_i(k) - Q_{1 - \alpha_{t+1}})$.
+\ELSE
+    \STATE Retain latest calibrated lower bound: $\mu_{\text{cal}, i}(k) \leftarrow \mu_{\text{cal}, i}(k-1)$.
+\ENDIF
 \STATE Evaluate linearized contact sensitivity $\mathbf{\Lambda}_i(\mathbf{q}_k)$ via \eqref{eq:lambda_def} and bias $\mathbf{f}_{c, i}^{\text{bias}}$ via \eqref{eq:bias_def}.
 \STATE Construct grasp matrix $\mathbf{G} \in \mathbb{R}^{6 \times 3M}$ and required spatial wrench $\mathbf{w}_{\text{req}}$.
 \STATE Assemble QP matrices $(\mathbf{P}, \mathbf{q}_{\text{obj}}, \mathbf{A}, \mathbf{l}, \mathbf{u})$ for OSQP.
