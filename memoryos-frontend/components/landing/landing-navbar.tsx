@@ -158,7 +158,7 @@ const RESOURCES = [
     title: "Research & Evidence",
     desc: "Empirical benchmarks and intelligence evolution papers.",
     icon: <Newspaper size={16} className="text-[#888] group-hover:text-[#F0EFE2] transition-colors" />,
-    href: "/research",
+    href: "#research-evidence",
   },
 ];
 
