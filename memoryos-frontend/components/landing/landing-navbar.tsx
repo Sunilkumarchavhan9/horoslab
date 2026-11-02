@@ -553,11 +553,11 @@ export function LandingNavbar({
             </nav>
 
             {/* Right Actions: Sign in & Get started (Desktop & Mobile) */}
-            <div className="flex items-center gap-2 shrink-0 whitespace-nowrap h-14 pl-1 ml-1.5 xl:ml-3">
+            <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-1 ml-1.5 xl:ml-3">
               <button
                 type="button"
                 onClick={onOpenSignUp || onOpenDashboard}
-                className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-3.5 xl:px-4 py-1.5 min-h-[32px] rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
+                className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[88px] rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
               >
                 <span>Sign up</span>
               </button>
@@ -565,7 +565,7 @@ export function LandingNavbar({
               <button
                 type="button"
                 onClick={onOpenSignIn || onOpenDashboard}
-                className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-3.5 xl:px-4 py-1.5 min-h-[32px] rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
+                className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[80px] rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
               >
                 <span>Demo</span>
               </button>
