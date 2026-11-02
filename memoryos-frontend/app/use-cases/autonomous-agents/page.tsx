@@ -739,7 +739,7 @@ export default function AutonomousAgentsPage() {
 
       {/* GLOBAL VERTICAL DASHED LINES */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+        <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
           <div className="relative border-r border-dashed border-[#333]">
             <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
           </div>
@@ -796,7 +796,7 @@ export default function AutonomousAgentsPage() {
           <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-0" />
 
           <div className="absolute inset-0 pointer-events-none z-20">
-            <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+            <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
               <div className="relative">
                 <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
                 <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
@@ -810,7 +810,7 @@ export default function AutonomousAgentsPage() {
           </div>
 
           {/* Hero Content */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] py-24 md:py-32 relative z-10">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] py-24 md:py-32 relative z-10">
             <div />
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
@@ -855,7 +855,7 @@ export default function AutonomousAgentsPage() {
 
         {/* Features Section */}
         <div className="w-full relative z-10 mt-16">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div />
             <div className="min-w-0">
               <div className="text-center mb-10 md:mb-12">
@@ -870,7 +870,7 @@ export default function AutonomousAgentsPage() {
 
           <div className="w-full relative z-10">
             <div className="absolute inset-0 pointer-events-none z-20">
-              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
+              <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative">
                 <div className="relative h-full">
                   <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
                   <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
@@ -891,7 +891,7 @@ export default function AutonomousAgentsPage() {
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
               <div />
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
@@ -941,7 +941,7 @@ export default function AutonomousAgentsPage() {
 
           <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
             <div className="absolute inset-0 pointer-events-none z-20">
-              <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative">
+              <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative">
                 <div className="relative h-full">
                   <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
                   <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
@@ -962,7 +962,7 @@ export default function AutonomousAgentsPage() {
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-30">
               <div />
               <div className="min-w-0 bg-[#151515]">
                 <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
@@ -1033,7 +1033,7 @@ export default function AutonomousAgentsPage() {
         {/* Sandbox Showcase Section */}
         <div className="w-full relative z-10 mt-32">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-12 md:pt-16 mb-12 md:mb-16">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] pt-12 md:pt-16 mb-12 md:mb-16">
             <div />
             <div className="min-w-0">
               <div className="text-center">
@@ -1052,7 +1052,7 @@ export default function AutonomousAgentsPage() {
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-10">
               <div />
               <div className="w-full relative min-w-0">
                 <div className="w-full relative mx-auto" style={{ aspectRatio: '1351 / 892' }}>
@@ -1304,7 +1304,7 @@ export default function AutonomousAgentsPage() {
 
         {/* Features / Deployment Grid Row */}
         <div className="w-full relative z-10 mb-16 md:mb-20">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-10">
             <div />
 
             <div className="min-w-0">
@@ -1354,7 +1354,7 @@ export default function AutonomousAgentsPage() {
 
         {/* Hugging Face Models Catalog Section */}
         <div className="w-full relative z-10 pt-24 pb-16">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div />
             <div className="flex flex-col items-center">
               <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-5xl mx-auto leading-tight sm:whitespace-nowrap hyphens-none">
@@ -1446,7 +1446,7 @@ export default function AutonomousAgentsPage() {
 
         {/* What Horos Tunes Section */}
         <div className="w-full relative z-10 mb-32">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] mb-12">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] mb-12">
             <div />
             <div className="min-w-0">
               <div className="text-center">
@@ -1459,7 +1459,7 @@ export default function AutonomousAgentsPage() {
             <div />
           </div>
 
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div />
             <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
               <div className="grid grid-cols-1 md:grid-cols-3">
@@ -1529,7 +1529,7 @@ export default function AutonomousAgentsPage() {
 
         {/* Try This Pipeline Section */}
         <div className="w-full relative z-10 py-24">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
               <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
@@ -1589,7 +1589,7 @@ export default function AutonomousAgentsPage() {
         {/* Bottom CTA Section */}
         <div className="w-full relative z-10 py-32 flex flex-col items-center justify-center">
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] absolute inset-0 pointer-events-none z-0 overflow-hidden">
             <div className="border-r border-dashed border-[#333] relative">
               <div className="hidden md:block absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
             </div>

@@ -80,7 +80,7 @@ export function ProductionStackSection({ onOpenSignIn, dark = true }: Production
       </div>
 
       {/* Row 1: Centered Header Block */}
-      <div className="relative z-10 w-full grid grid-cols-[calc(18%_+_120px)_1fr_calc(18%_+_120px)]">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[10%_1fr_10%] xl:grid-cols-[14%_1fr_14%] 2xl:grid-cols-[18%_1fr_18%]">
         <div className="relative p-4 min-h-[140px]" />
 
         <div className="p-8 sm:p-12 lg:py-16 text-center flex flex-col items-center justify-center space-y-6">
@@ -104,7 +104,7 @@ export function ProductionStackSection({ onOpenSignIn, dark = true }: Production
 
       {/* Row 2: Split Simulator Grid Layout (aligned with master vertical lines) */}
       <SectionDivider />
-      <div className="relative z-10 w-full grid grid-cols-[calc(18%_+_120px)_17fr_19fr_calc(18%_+_120px)]">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[10%_17fr_19fr_10%] xl:grid-cols-[14%_17fr_19fr_14%] 2xl:grid-cols-[18%_17fr_19fr_18%]">
         {/* Column 1: Left Margin Cell with Watermark */}
         <div className="relative p-4 min-h-[460px]">
           <span className="absolute bottom-4 right-3 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">

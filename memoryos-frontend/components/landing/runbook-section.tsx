@@ -83,7 +83,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
 
       {/* Main Grid Layout (aligned with master vertical lines) */}
       <SectionDivider />
-      <div className="relative z-10 w-full grid grid-cols-[calc(18%_+_120px)_17fr_19fr_calc(18%_+_120px)]">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[10%_17fr_19fr_10%] xl:grid-cols-[14%_17fr_19fr_14%] 2xl:grid-cols-[18%_17fr_19fr_18%]">
         {/* Column 1: Left Margin Cell */}
         <div className="relative p-4 min-h-[580px]" />
 

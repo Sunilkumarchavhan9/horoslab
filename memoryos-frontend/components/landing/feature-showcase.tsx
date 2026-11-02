@@ -72,7 +72,7 @@ function ModelScroller() {
         {MODELS.map((m, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
             <m.Icon size={32} className="shrink-0" />
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap" style={{ color: m.color }}>
+            <span className="font-sans font-medium text-xl sm:text-2xl lg:text-[28px] xl:text-[32px] leading-none whitespace-nowrap" style={{ color: m.color }}>
               {m.name}
             </span>
           </div>
@@ -101,7 +101,7 @@ function EngineScroller() {
         {ENGINES.map((e, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
             <e.Icon size={28} />
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: e.color }}>
+            <span className="font-sans font-medium text-xl sm:text-2xl lg:text-[28px] xl:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: e.color }}>
               {e.name}
             </span>
           </div>
@@ -130,7 +130,7 @@ function GPUScroller() {
         {GPUS.map((g, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
             <g.Icon size={28} />
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: g.color }}>
+            <span className="font-sans font-medium text-xl sm:text-2xl lg:text-[28px] xl:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: g.color }}>
               {g.name}
             </span>
           </div>
@@ -159,7 +159,7 @@ function SurfaceScroller() {
         {SURFACES.map((s, i) => (
           <div key={i} className="h-10 flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#75bf00] animate-pulse"></span>
-            <span className="font-sans font-medium text-2xl lg:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: s.color }}>
+            <span className="font-sans font-medium text-xl sm:text-2xl lg:text-[28px] xl:text-[32px] leading-none whitespace-nowrap shrink-0" style={{ color: s.color }}>
               {s.name}
             </span>
           </div>
@@ -459,19 +459,20 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
   return (
     <section id="feature-showcase-section" className="relative w-full bg-[#151515] text-[#F0EFE2] font-mono select-none">
 
-      {/* 4 Continuous Margin Dashed Vertical Lines */}
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {MARGIN_VERTICAL_POSITIONS.map((pos, idx) => (
-          <div
-            key={idx}
-            className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-            style={{ left: pos }}
-          />
-        ))}
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
       </div>
 
       {/* Row 1: Centered Header Block (Scrolls away naturally) */}
-      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(18%_+_120px)_1fr_calc(18%_+_120px)] pt-16">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[10%_1fr_10%] xl:grid-cols-[14%_1fr_14%] 2xl:grid-cols-[18%_1fr_18%] pt-16">
         <div className="relative p-4 min-h-[140px] hidden lg:block" />
 
         {/* Main Center Header Content */}
@@ -499,7 +500,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
 
       {/* Row 2: Sticky Scroll Arena */}
       <SectionDivider />
-      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[calc(18%_+_120px)_6fr_12fr_calc(18%_+_120px)]">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-[10%_5fr_7fr_10%] xl:grid-cols-[14%_5fr_7fr_14%] 2xl:grid-cols-[18%_5fr_7fr_18%]">
 
         {/* Column 1: Left Margin Cell */}
         <div className="relative border-r border-dashed border-[#333333] hidden lg:block">
@@ -733,7 +734,7 @@ export function FeatureShowcase({ onOpenSignIn, dark = true }: FeatureShowcasePr
         {/* Column 4: Right Margin Cell */}
         <div className="relative pt-12 lg:pt-16 hidden lg:block">
           <div className="sticky top-32 w-full">
-            <div className="absolute left-[4vw] -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+            <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
               <HorosLogo className="w-16 h-auto text-[#F0EFE2]" />
               <div className="text-[11px] text-[#F0EFE2] font-sans font-medium leading-[1.8]" style={{ writingMode: 'vertical-rl' }}>
                 <p>Frontier Intelligence</p>

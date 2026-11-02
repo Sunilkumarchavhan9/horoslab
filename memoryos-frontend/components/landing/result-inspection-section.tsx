@@ -752,7 +752,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[10%_repeat(4,1fr)_10%] xl:grid-cols-[14%_repeat(4,1fr)_14%] 2xl:grid-cols-[18%_repeat(4,1fr)_18%]">
           <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
 
           {PILLARS_ROW_1.map((item) => (
@@ -800,7 +800,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[10%_repeat(4,1fr)_10%] xl:grid-cols-[14%_repeat(4,1fr)_14%] 2xl:grid-cols-[18%_repeat(4,1fr)_18%]">
           <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block">
             <span className="absolute bottom-3 right-3 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
               HOROS
@@ -852,7 +852,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           ))}
         </div>
 
-        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[calc(18%_+_120px)_repeat(4,1fr)_calc(18%_+_120px)]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[10%_repeat(4,1fr)_10%] xl:grid-cols-[14%_repeat(4,1fr)_14%] 2xl:grid-cols-[18%_repeat(4,1fr)_18%]">
           <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block">
             <span className="absolute bottom-3 right-3 text-[9px] font-mono tracking-[0.25em] text-[#444444] font-semibold select-none pointer-events-none uppercase">
               DELIVERABLE

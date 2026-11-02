@@ -30,7 +30,7 @@ const GridDivider = () => (
 );
 
 const SectionWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-full grid grid-cols-[14%_72%_14%] md:grid-cols-[calc(14%_+_120px)_calc(72%_-_240px)_calc(14%_+_120px)] lg:grid-cols-[calc(18%_+_120px)_calc(64%_-_240px)_calc(18%_+_120px)] relative z-10">
+  <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-10">
     <div /> {/* Left Gutter */}
     <div className="w-full flex flex-col min-w-0 py-16 lg:py-24 px-6 lg:px-12 xl:px-16">
       {children}

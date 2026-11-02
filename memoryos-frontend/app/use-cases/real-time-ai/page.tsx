@@ -714,7 +714,7 @@ aiohttp==3.10.5`;
             {/* GLOBAL VERTICAL DASHED LINES */}
         {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="w-full h-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             {/* Left margin (14%) with 7% line bisecting it */}
             <div className="relative border-r border-dashed border-[#333]">
                 <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
@@ -752,12 +752,12 @@ aiohttp==3.10.5`;
                {/* Top Crosshairs */}
                <div className="absolute left-[4%] md:left-[6%] lg:left-[18%] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
                <div className="absolute right-[4%] md:right-[6%] lg:right-[18%] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-               <div className="hidden lg:block absolute left-[calc(18%+120px)] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-               <div className="hidden lg:block absolute right-[calc(18%+120px)] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
+               <div className="hidden lg:block absolute left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+               <div className="hidden lg:block absolute right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
             </div>
 
           {/* Hero Content */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] py-24 md:py-32 relative z-10">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] py-24 md:py-32 relative z-10">
             <div />
             <div className="min-w-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-4 md:px-8 lg:px-12">
@@ -809,7 +809,7 @@ aiohttp==3.10.5`;
         {/* Features Section */}
         <div className="w-full relative z-10 mt-16">
           {/* Heading */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div />
             <div className="min-w-0">
               <div className="text-center mb-16">
@@ -833,11 +833,11 @@ aiohttp==3.10.5`;
                {/* Top Crosshairs */}
                <div className="absolute left-[4%] md:left-[6%] lg:left-[18%] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
                <div className="absolute right-[4%] md:right-[6%] lg:right-[18%] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-               <div className="hidden lg:block absolute left-[calc(18%+120px)] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-               <div className="hidden lg:block absolute right-[calc(18%+120px)] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
+               <div className="hidden lg:block absolute left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+               <div className="hidden lg:block absolute right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
             </div>
 
-            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
               <div />
               <div className="min-w-0 mx-[10px] border-t border-b border-l border-r border-dashed border-[#333]">
                 <div className="grid grid-cols-1 md:grid-cols-3">
@@ -897,12 +897,12 @@ aiohttp==3.10.5`;
                {/* Top Crosshairs */}
                <div className="absolute left-[4%] md:left-[6%] lg:left-[18%] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
                <div className="absolute right-[4%] md:right-[6%] lg:right-[18%] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-               <div className="hidden lg:block absolute left-[calc(18%+120px)] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-               <div className="hidden lg:block absolute right-[calc(18%+120px)] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
+               <div className="hidden lg:block absolute left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+               <div className="hidden lg:block absolute right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
             </div>
 
           {/* Table Content */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-30">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-30">
             <div />
             <div className="min-w-0 bg-[#151515]">
               {/* Table Header */}
@@ -976,7 +976,7 @@ aiohttp==3.10.5`;
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
           {/* Heading for Sandbox */}
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] pt-16 mb-16">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] pt-16 mb-16">
             <div />
             <div className="min-w-0">
               <div className="text-center">
@@ -995,7 +995,7 @@ aiohttp==3.10.5`;
 
           {/* Sandbox Workspace Row */}
           <div className="w-full relative z-10 bg-[#151515]/20 py-16">
-            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-10">
               <div />
               <div className="w-full relative min-w-0">
                 {/* Sandbox Content Container (SVG Skeleton Architecture) */}
@@ -1311,7 +1311,7 @@ aiohttp==3.10.5`;
 
 
           {/* Feature Cards aligned with vertical grid lines */}
-            <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)] relative z-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-10">
               <div />
               {/* Added top horizontal line per user request */}
               <div className="min-w-0 border-t border-b border-l border-r border-dashed border-[#333]">
@@ -1364,7 +1364,7 @@ aiohttp==3.10.5`;
 
         {/* Hugging Face Catalog Section */}
         <div className="w-full relative z-10 pt-4 sm:pt-6 pb-16">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div />
             <div className="flex flex-col items-center">
               <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
@@ -1435,7 +1435,7 @@ aiohttp==3.10.5`;
 
         {/* What Horos tunes Section */}
         <div className="w-full relative z-10 pt-4 sm:pt-6 pb-20">
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div />
             <div className="flex flex-col items-center">
               <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
@@ -1522,7 +1522,7 @@ aiohttp==3.10.5`;
         {/* Try this pipeline Section */}
             <div className="w-full relative z-10 py-24">
               <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
-          <div className="w-full grid grid-cols-[calc(18%+120px)_calc(64%-240px)_calc(18%+120px)]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
             <div className="border-r border-dashed border-[#333]" />
             <div className="flex flex-col items-center">
               <h2 className="text-[56px] md:text-[64px] leading-tight font-medium tracking-tight text-[#f2efe8] mb-4 text-center mt-12">Try this pipeline</h2>
