@@ -13,8 +13,8 @@ const GridDivider = () => (
     
     {/* Crosses at intersections */}
     <div className="absolute left-[6%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="hidden md:block absolute hidden md:block left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="hidden md:block absolute hidden md:block right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
     <div className="absolute left-[94%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
   </div>
 );
@@ -59,8 +59,8 @@ export default function ContactPage() {
         <div className="absolute inset-0 pointer-events-none z-0">
           <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
           <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="hidden md:block absolute hidden md:block left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          <div className="hidden md:block absolute hidden md:block right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
         </div>
 
         <GridDivider />

@@ -61,14 +61,20 @@ export function SystemComposerSection() {
   return (
     <section className="relative w-full bg-[#151515] font-sans overflow-hidden flex justify-center pt-12 lg:pt-16">
 
-      {/* Outer Global Lines to match the Hardware section (6% and 94%) */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
       </div>
 
       {/* Main Blueprint Container (aligned with the 120px inward margin on both sides) */}
-      <div className="relative z-10 w-[92%] sm:w-[88%] lg:w-[calc(64%_-_240px)] flex flex-col pb-12 lg:pb-16">
+      <div className="relative z-10 w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto flex flex-col pb-12 lg:pb-16">
 
         {/* Absolute Bottom Infinite Horizontal Line */}
         <HorizontalDivider position="bottom" infinite={true} />

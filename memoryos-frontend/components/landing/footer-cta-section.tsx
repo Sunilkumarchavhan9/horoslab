@@ -13,24 +13,25 @@ export function FooterCtaSection() {
   return (
     <footer className="relative w-full bg-[#151515] font-sans flex flex-col items-center">
 
-      {/* All Vertical Grid Lines */}
+      {/* All Vertical Grid Lines (4 adaptive lines: 2 on Left, 2 on Right) */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        {/* Outer Lines (Mobile & Desktop) */}
-        <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-
-        {/* Inner Lines (Desktop Only) */}
-        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
 
         {/* Top Infinite Horizontal Line to separate from FAQ section */}
         <div className="absolute top-0 left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
 
         {/* Crosses at intersections */}
-        <div className="absolute hidden md:block left-[14%] lg:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>
-        <div className="absolute hidden md:block left-[86%] lg:left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>
-        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>
-        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>
+        <div className="absolute hidden md:block left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%] top-0">+</div>
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform translate-x-[45%] -translate-y-[52%] top-0">+</div>
+        <div className="absolute hidden md:block right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] text-[#F0CC94] font-mono text-[10px] leading-none transform translate-x-[45%] -translate-y-[52%] top-0">+</div>
 
         {/* Center Logo Divider */}
         <div className="absolute left-1/2 top-0 -translate-y-1/2 -translate-x-1/2 z-20 bg-[#151515] p-2 hidden md:block">
@@ -39,7 +40,7 @@ export function FooterCtaSection() {
       </div>
 
       {/* --- CTA SECTION --- */}
-      <div className="relative w-[92%] sm:w-[90%] md:w-[88%] lg:max-w-4xl xl:max-w-5xl mx-auto pt-32 pb-24 flex flex-col items-center">
+      <div className="relative w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto pt-32 pb-24 flex flex-col items-center">
 
         {/* Faint Blueprint Grid Background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#222_1px,transparent_1px),linear-gradient(to_bottom,#222_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none opacity-40 z-0" />
@@ -156,7 +157,7 @@ export function FooterCtaSection() {
       </div>
 
       {/* --- FOOTER CONTENT --- */}
-      <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
+      <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto py-16 flex flex-col relative z-10">
 
         {/* Top Footer Row */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
@@ -287,7 +288,7 @@ export function FooterCtaSection() {
         {/* Tiny HOROS text aligned to the left of the 18% grid line */}
         <div className="absolute top-1/2 -translate-y-1/2 right-[86%] lg:right-[82%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
 
-        <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
+        <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
 
           <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
             <span className="flex items-center text-[#F0EFE2] mr-12">

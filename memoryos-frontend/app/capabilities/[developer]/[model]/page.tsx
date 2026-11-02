@@ -39,12 +39,17 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
   return (
     <div className="relative min-h-screen bg-[#151515] text-[#C8C7BA] font-sans flex flex-col">
       {/* Background Dashed Lines - Global Layout */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="hidden lg:block absolute left-[3%] xl:left-[5%] 2xl:left-[8%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#282828]" />
-        <div className="hidden lg:block absolute right-[3%] xl:right-[5%] 2xl:right-[8%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#282828]" />
-
-
-        </div>
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
+            </div>
 
       <div className="relative z-10 flex flex-col w-full min-h-screen">
         <div className="w-full flex justify-center">
@@ -58,7 +63,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Header Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[96%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 flex flex-col items-start border-x border-dashed border-[#333]">
+            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 flex flex-col items-start border-x border-dashed border-[#333]">
               {/* Breadcrumbs */}
               <div className="flex items-center gap-2 text-[10px] md:text-[11px] lg:text-[12px] text-[#777] mb-12">
                 <Link href="/capabilities" className="hover:text-[#C8C7BA] transition-colors">Capability Graph</Link>
@@ -112,7 +117,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Pricing Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[96%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="flex justify-between items-end mb-6">
                 <h2 className="text-[18px] md:text-[20px] lg:text-[22px] font-medium text-[#C8C7BA]">Pricing</h2>
                 <span className="text-[10px] md:text-[11px] lg:text-[12px] text-[#777]">USD, pay per token</span>
@@ -147,7 +152,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Measured Performance Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[96%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="flex justify-between items-baseline mb-6">
                 <h2 className="text-[18px] md:text-[20px] lg:text-[22px] font-medium text-[#C8C7BA]">Measured performance</h2>
               </div>
@@ -177,7 +182,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Specs & Capacity Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[96%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <div className="border border-dashed border-[#333] flex flex-col">
                 <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[#333]">
                   
@@ -306,7 +311,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Code Examples Section */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[96%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <CodeExamples capabilityId={capability.id} />
             </div>
           </div>
@@ -314,7 +319,7 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
           {/* Trust & Provenance */}
           <div className="w-full relative">
             <SectionDivider position="top" />
-            <div className="w-[96%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
+            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <h2 className="text-lg md:text-[19px] lg:text-[20px] font-medium text-[#C8C7BA] mb-2">Trust and provenance</h2>
               <p className="text-[10px] md:text-[11px] lg:text-[12px] text-[#777] mb-8">Verify the company and operating credentials behind this capability.</p>
               

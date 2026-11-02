@@ -447,19 +447,23 @@ export default function PricingPage() {
 
   return (
     <div className="relative min-h-screen bg-[#151515] text-[#C8C7BA] font-sans overflow-x-hidden selection:bg-[#76b900] selection:text-black">
-      {/* Background Vertical Dashed Layout Guidelines - Fluid framing accents */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="hidden lg:block absolute left-[3%] xl:left-[5%] 2xl:left-[8%] top-0 bottom-0 border-l border-dashed border-[#282828]" />
-        <div className="hidden lg:block absolute right-[3%] xl:right-[5%] 2xl:right-[8%] top-0 bottom-0 border-r border-dashed border-[#282828]" />
-
-
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
       </div>
 
       {/* Top Navbar with Founding Cohort Integration */}
       <LandingNavbar onOpenFoundingCohort={() => openModal("Founding Cohort Track")} />
 
       {/* Main Container - Sits cleanly inside inner dashed lines with breathing room */}
-      <main className="w-[94%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto pt-24 sm:pt-28 pb-32 relative z-10">
+      <main className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto pt-24 sm:pt-28 pb-32 relative z-10">
 
         {/* SECTION 1: Top Product Plans Selection */}
         <section className="mb-16">
