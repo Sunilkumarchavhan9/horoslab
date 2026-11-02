@@ -68,22 +68,23 @@
     "vaul": "^1.1.2",
     "xstate": "^5.32.5",
     "zod": "^4.4.3",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.14",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.7",
+    "@babel/core": "^8.0.6",
     "@babel/generator": "^8.0.6",
     "@babel/parser": "^8.0.6",
     "@babel/preset-react": "^8.0.1",
     "@babel/preset-typescript": "^8.0.1",
     "@babel/traverse": "^8.0.6",
-    "@types/node": "^26",
+    "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "concurrently": "^10.0.6",
-    "eslint": "^10",
-    "eslint-config-next": "16.4.0",
-    "typescript": "^7"
+    "concurrently": "^9.2.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2",
+    "typescript": "^5.9.3"
   }
 }

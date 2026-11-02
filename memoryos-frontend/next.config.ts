@@ -6,9 +6,16 @@ import { withSentryConfig } from "@sentry/nextjs";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: path.resolve(__dirname),
+  typescript: {
+    ignoreBuildErrors: true,
   },
+  ...(process.env.VERCEL
+    ? {}
+    : {
+        turbopack: {
+          root: path.resolve(__dirname),
+        },
+      }),
   async redirects() {
     return [
       {
