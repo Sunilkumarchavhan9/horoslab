@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronDown, ArrowRight, ArrowUpRight, Menu, X, Box, Calculator, BookOpen, Clock, Rocket, Newspaper } from "lucide-react";
 import HorosLogo from "@/components/horos/primitives/horos-logo";
+import { AuthModal } from "@/components/horos/modals/auth-modal";
 import {
   QwenLogo,
   DeepSeekLogo,
@@ -175,6 +176,17 @@ export function LandingNavbar({
   const [mobileUseCasesOpen, setMobileUseCasesOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [internalAuthOpen, setInternalAuthOpen] = useState(false);
+  const [internalAuthMode, setInternalAuthMode] = useState<"sign-in" | "sign-up">("sign-up");
+
+  const handleSignUpClick = () => {
+    if (onOpenSignUp) {
+      onOpenSignUp();
+    } else {
+      setInternalAuthMode("sign-up");
+      setInternalAuthOpen(true);
+    }
+  };
 
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navbarRef = useRef<HTMLElement | null>(null);
@@ -556,19 +568,20 @@ export function LandingNavbar({
             <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-1 ml-1.5 xl:ml-3">
               <button
                 type="button"
-                onClick={onOpenSignUp || onOpenDashboard}
+                onClick={handleSignUpClick}
                 className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[88px] rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
               >
                 <span>Sign up</span>
               </button>
 
-              <button
-                type="button"
-                onClick={onOpenSignIn || onOpenDashboard}
+              <a
+                href="https://cal.com/vegito"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[80px] rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
               >
                 <span>Demo</span>
-              </button>
+              </a>
 
               {/* Mobile Hamburger Menu Button */}
               <button
@@ -688,25 +701,32 @@ export function LandingNavbar({
                   type="button"
                   onClick={() => {
                     handleItemClick();
-                    if (onOpenSignUp) onOpenSignUp();
+                    handleSignUpClick();
                   }}
                   className="flex-1 py-2 text-center bg-[#1e1e1e] border border-[#333] text-[#F0EFE2] rounded-xs font-semibold cursor-pointer"
                 >
                   Sign up
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleItemClick();
-                    if (onOpenSignIn) onOpenSignIn();
-                  }}
-                  className="flex-1 py-2 text-center bg-[#75bf00] hover:bg-[#86dc00] text-black font-extrabold rounded-xs cursor-pointer"
+                <a
+                  href="https://cal.com/vegito"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleItemClick}
+                  className="flex-1 py-2 text-center bg-[#75bf00] hover:bg-[#86dc00] text-black font-extrabold rounded-xs cursor-pointer flex items-center justify-center"
                 >
                   Demo
-                </button>
+                </a>
               </div>
             </div>
           </div>
+        )}
+        {/* Internal Auth Modal Fallback for standalone pages */}
+        {!onOpenSignUp && (
+          <AuthModal
+            isOpen={internalAuthOpen}
+            onClose={() => setInternalAuthOpen(false)}
+            initialMode={internalAuthMode}
+          />
         )}
       </header>
     </>
