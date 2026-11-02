@@ -17,42 +17,42 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "Launch",
-    runInfra: { title: "Pick model, optimize, deploy", desc: "Start quickly and keep the production path open." },
+    horos: { title: "Pick model, optimize, deploy", desc: "Start quickly and keep the production path open." },
     closed: { title: "Call provider endpoint", desc: "Fast first demo, but the runtime stays rented." },
     diy: { title: "Build serving stack first", desc: "Infrastructure work comes before product learning." }
   },
   {
     num: "0 2",
     label: "Model control",
-    runInfra: { title: "Bring the model ID", desc: "Keep model choice and serving decisions visible." },
+    horos: { title: "Bring the model ID", desc: "Keep model choice and serving decisions visible." },
     closed: { title: "Provider catalog", desc: "You use what the provider exposes." },
     diy: { title: "Your model", desc: "Full control if your team maintains the runtime." }
   },
   {
     num: "0 3",
     label: "Tuning",
-    runInfra: { title: "Measured latency and GPU cost", desc: "Compare serving choices before deployment." },
+    horos: { title: "Measured latency and GPU cost", desc: "Compare serving choices before deployment." },
     closed: { title: "Opaque", desc: "Latency and batching stay behind the API." },
     diy: { title: "Manual profiling", desc: "Your team owns tuning and regressions." }
   },
   {
     num: "0 4",
     label: "Export",
-    runInfra: { title: "Managed now, export when needed", desc: "Use the endpoint first and take the deploy package later." },
+    horos: { title: "Managed now, export when needed", desc: "Use the endpoint first and take the deploy package later." },
     closed: { title: "Locked endpoint", desc: "You keep calling the provider." },
     diy: { title: "Already owned", desc: "Export exists because you built everything yourself." }
   },
   {
     num: "0 5",
     label: "Operations",
-    runInfra: { title: "Low until you choose to own it", desc: "Operate managed, then export with the same measured plan." },
+    horos: { title: "Low until you choose to own it", desc: "Operate managed, then export with the same measured plan." },
     closed: { title: "Low, with lock-in", desc: "Less infra work, less production control." },
     diy: { title: "High", desc: "You own infra, failures, upgrades, and serving changes." }
   },
   {
     num: "0 6",
     label: "Security",
-    runInfra: { title: "Enterprise Compliance", desc: "Audited controls across access, logging, and incident response." },
+    horos: { title: "Enterprise Compliance", desc: "Audited controls across access, logging, and incident response." },
     closed: { title: "Varies by vendor", desc: "Compliance depends on the third party sitting in the request path." },
     diy: { title: "You build it", desc: "Your team owns the audit trail, logging, and access controls." }
   }
@@ -759,8 +759,8 @@ export default function EmbeddingsPage() {
                         </div>
                         
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                         </div>
 
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">

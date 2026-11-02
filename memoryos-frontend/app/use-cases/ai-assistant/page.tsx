@@ -76,7 +76,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 1',
     label: 'System',
-    runInfra: {
+    horos: {
       title: 'Version the complete intelligence system',
       desc: 'Model, context, capabilities, runtime, compute, workload, environment, and policies are defined as one reproducible system version with lineage.',
     },
@@ -92,7 +92,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 2',
     label: 'Models',
-    runInfra: {
+    horos: {
       title: 'Discover and evaluate open models',
       desc: 'Bring models from Hugging Face, customer artifacts, private registries, or local registries. Horos validates the artifact, checks license and dependencies, verifies runtime and hardware compatibility, versions the model, and builds its capability profile.',
     },
@@ -108,7 +108,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 3',
     label: 'Context',
-    runInfra: {
+    horos: {
       title: 'Engineer context as part of intelligence',
       desc: 'Treat retrieval, memory, history, task context, tool context, compressed context, selected context, long context, and adaptive context as versioned system variables.',
     },
@@ -124,7 +124,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 4',
     label: 'Capabilities',
-    runInfra: {
+    horos: {
       title: 'Compose capabilities around the model',
       desc: 'Use models, tools, skills, data, runtimes, verifiers, environments, and hardware as explicit capabilities with provenance, resource profiles, security posture, and composability. Capability and permission remain separate.',
     },
@@ -140,7 +140,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 5',
     label: 'Workload',
-    runInfra: {
+    horos: {
       title: 'Learn the workload behind the assistant',
       desc: 'Capture input and output distributions, task type, tool trajectory, context length, concurrency, batching, burstiness, traffic distribution, GPU utilization, memory, failures, network, and resource usage.',
     },
@@ -156,7 +156,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 6',
     label: 'Optimization',
-    runInfra: {
+    horos: {
       title: 'Search the complete intelligence system',
       desc: 'Search across model, data, context, runtime, kernel, hardware, workload, and environment. Predict candidates, run experiments, measure them, verify the result, then keep or discard the change.',
     },
@@ -172,7 +172,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 7',
     label: 'Verification',
-    runInfra: {
+    horos: {
       title: 'Verify behavior and claims',
       desc: 'Evaluate capability, behavior, and system performance, then verify whether the claimed result is actually supported by evidence. Support task, trajectory, domain, safety, formal, output, and independent verification.',
     },
@@ -188,7 +188,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 8',
     label: 'Experience',
-    runInfra: {
+    horos: {
       title: 'Record what actually happened',
       desc: 'Store the mission, reality, model, data, runtime, experiment, decision, action, observation, evidence, consequence, and result as a structured experience record. Mine failures, regressions, drift, anomalies, rare events, and edge cases from that experience.',
     },
@@ -204,7 +204,7 @@ const COMPARISON_ROWS = [
   {
     num: '0 9',
     label: 'Teaching',
-    runInfra: {
+    horos: {
       title: 'Turn lessons into new intelligence',
       desc: 'Use experience and lessons to teach the model, runtime, or system through fine-tuning, LoRA, RL, distillation, adaptation, retraining, reward, world-model training, routing, serving, context, caching, configuration, compute, placement, hardware, data path, or environment changes.',
     },
@@ -220,7 +220,7 @@ const COMPARISON_ROWS = [
   {
     num: '1 0',
     label: 'Authority',
-    runInfra: {
+    horos: {
       title: 'Decide what intelligence is allowed to do',
       desc: 'Separate capability, permission, authority, approval, and credentials. Before consequential execution, check mission authority, policy, capability, credentials, resources, current state, and preconditions. Return ALLOW, DENY, or REQUIRES_APPROVAL and recheck state before execution.',
     },
@@ -605,7 +605,7 @@ const FAQ_DATA = [
 ];
 
 export default function AIAssistantPage() {
-  const [activeTab, setActiveTab] = useState("RunInfra");
+  const [activeTab, setActiveTab] = useState("HOROS");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">(
     "sign-in",
@@ -1336,10 +1336,10 @@ outlines==0.0.46`;
 
                     <div className="flex flex-col justify-center px-4 py-4 lg:px-5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
                       <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">
-                        {row.runInfra.title}
+                        {row.horos.title}
                       </h4>
                       <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-relaxed group-hover:text-[#F0EFE2] transition-colors">
-                        {row.runInfra.desc}
+                        {row.horos.desc}
                       </p>
                     </div>
 
@@ -1943,7 +1943,7 @@ outlines==0.0.46`;
                         <Cloud size={22} strokeWidth={1.5} />
                       </div>
                       <h3 className="text-[20px] font-medium text-[#F0EFE2]">
-                        Managed RunInfra
+                        Managed HOROS
                       </h3>
                       <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
                         Our GPUs, per-million-tokens billing from L4 to B200.

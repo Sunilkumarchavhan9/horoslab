@@ -174,7 +174,7 @@ spec:
 
   return (
     <div className="space-y-6 max-w-[1240px] mx-auto animate-in fade-in duration-150">
-      {/* Top Header matching RunInfra Design */}
+      {/* Top Header matching HOROS Design */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5">

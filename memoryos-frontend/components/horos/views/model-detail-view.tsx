@@ -376,9 +376,9 @@ export function ModelDetailView({
     switch (activeLang) {
       case "curl":
         return [
-          "# Set RUNINFRA_GATEWAY_KEY to your API key before running this example.",
-          `curl -X POST "https://api.runinfra.ai/v1/chat/completions" \\`,
-          `  -H "Authorization: Bearer $RUNINFRA_GATEWAY_KEY" \\`,
+          "# Set HOROS_GATEWAY_KEY to your API key before running this example.",
+          `curl -X POST "https://api.horoslab.org/v1/chat/completions" \\`,
+          `  -H "Authorization: Bearer $HOROS_GATEWAY_KEY" \\`,
           `  -H "Content-Type: application/json" \\`,
           `  -d '{"model":"${slug}","messages":[{"role":"user","content":"Hello"}],"max_tokens":16384}'`,
         ];
@@ -389,8 +389,8 @@ export function ModelDetailView({
           "from openai import OpenAI",
           "",
           "client = OpenAI(",
-          '    base_url="https://api.runinfra.ai/v1",',
-          '    api_key=os.environ.get("RUNINFRA_GATEWAY_KEY"),',
+          '    base_url="https://api.horoslab.org/v1",',
+          '    api_key=os.environ.get("HOROS_GATEWAY_KEY"),',
           ")",
           "",
           "response = client.chat.completions.create(",
@@ -406,8 +406,8 @@ export function ModelDetailView({
           'import OpenAI from "openai";',
           "",
           "const client = new OpenAI({",
-          '  baseURL: "https://api.runinfra.ai/v1",',
-          "  apiKey: process.env.RUNINFRA_GATEWAY_KEY,",
+          '  baseURL: "https://api.horoslab.org/v1",',
+          "  apiKey: process.env.HOROS_GATEWAY_KEY,",
           "});",
           "",
           "const response = await client.chat.completions.create({",
@@ -423,13 +423,13 @@ export function ModelDetailView({
           'import { createOpenAI } from "@ai-sdk/openai";',
           'import { generateText } from "ai";',
           "",
-          "const runinfra = createOpenAI({",
-          '  baseURL: "https://api.runinfra.ai/v1",',
-          "  apiKey: process.env.RUNINFRA_GATEWAY_KEY,",
+          "const horos = createOpenAI({",
+          '  baseURL: "https://api.horoslab.org/v1",',
+          "  apiKey: process.env.HOROS_GATEWAY_KEY,",
           "});",
           "",
           "const { text } = await generateText({",
-          `  model: runinfra("${slug}"),`,
+          `  model: horos("${slug}"),`,
           '  prompt: "Hello",',
           "});",
           "console.log(text);",
@@ -441,8 +441,8 @@ export function ModelDetailView({
           "import anthropic",
           "",
           "client = anthropic.Anthropic(",
-          '    base_url="https://api.runinfra.ai/v1",',
-          '    api_key=os.environ.get("RUNINFRA_GATEWAY_KEY"),',
+          '    base_url="https://api.horoslab.org/v1",',
+          '    api_key=os.environ.get("HOROS_GATEWAY_KEY"),',
           ")",
           "",
           "message = client.messages.create(",
@@ -454,9 +454,9 @@ export function ModelDetailView({
         ];
       case "Claude Code":
         return [
-          "# Configure Claude Code CLI to route through RunInfra Gateway",
-          'export ANTHROPIC_BASE_URL="https://api.runinfra.ai/v1"',
-          'export ANTHROPIC_API_KEY="$RUNINFRA_GATEWAY_KEY"',
+          "# Configure Claude Code CLI to route through HOROS Gateway",
+          'export ANTHROPIC_BASE_URL="https://api.horoslab.org/v1"',
+          'export ANTHROPIC_API_KEY="$HOROS_GATEWAY_KEY"',
           `claude --model "${slug}"`,
         ];
       default:

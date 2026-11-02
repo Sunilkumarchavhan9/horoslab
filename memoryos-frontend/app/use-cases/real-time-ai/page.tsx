@@ -16,42 +16,42 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "Launch",
-    runInfra: { title: "Pick model, deploy sandbox", desc: "Launch agents quickly and keep the production path open." },
+    horos: { title: "Pick model, deploy sandbox", desc: "Launch agents quickly and keep the production path open." },
     closed: { title: "Call provider API", desc: "Fast first demo, but the agent runtime stays rented." },
     diy: { title: "Build serving stack", desc: "Infra work comes before the agent learns anything." }
   },
   {
     num: "0 2",
     label: "Model control",
-    runInfra: { title: "Bring the agent ID", desc: "Keep model choice and tool-serving decisions visible." },
+    horos: { title: "Bring the agent ID", desc: "Keep model choice and tool-serving decisions visible." },
     closed: { title: "Provider catalog", desc: "You use what the provider exposes." },
     diy: { title: "Your model", desc: "Full control if your team maintains the runtime." }
   },
   {
     num: "0 3",
     label: "Tuning",
-    runInfra: { title: "Measured loop latency", desc: "Compare agent reasoning speed before deployment." },
+    horos: { title: "Measured loop latency", desc: "Compare agent reasoning speed before deployment." },
     closed: { title: "Opaque", desc: "Latency and tool parsing stay behind the API." },
     diy: { title: "Manual profiling", desc: "Your team owns tuning and regressions." }
   },
   {
     num: "0 4",
     label: "Export",
-    runInfra: { title: "Managed now, export later", desc: "Use the managed sandbox first, take the deploy package later." },
+    horos: { title: "Managed now, export later", desc: "Use the managed sandbox first, take the deploy package later." },
     closed: { title: "Locked endpoint", desc: "You keep calling the provider." },
     diy: { title: "Already owned", desc: "Export exists because you built it yourself." }
   },
   {
     num: "0 5",
     label: "Operations",
-    runInfra: { title: "Low until you choose to own it", desc: "Operate managed agents, export with same measured plan." },
+    horos: { title: "Low until you choose to own it", desc: "Operate managed agents, export with same measured plan." },
     closed: { title: "Low, with lock-in", desc: "Less infra work, less production control." },
     diy: { title: "High", desc: "You own infra, failures, upgrades, and serving." }
   },
   {
     num: "0 6",
     label: "Security",
-    runInfra: { title: "Enterprise Compliance", desc: "Audited controls across agent tools, logging, and data." },
+    horos: { title: "Enterprise Compliance", desc: "Audited controls across agent tools, logging, and data." },
     closed: { title: "Varies by vendor", desc: "Compliance depends on the third-party provider." },
     diy: { title: "You build it", desc: "Your team owns the audit trail and access controls." }
   }
@@ -950,8 +950,8 @@ aiohttp==3.10.5`;
                     </div>
 
                     <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.05]">
-                      <h4 className="text-[13.5px] sm:text-[14px] font-medium !text-[#75bf00] mb-1 leading-snug">{row.runInfra.title}</h4>
-                      <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                      <h4 className="text-[13.5px] sm:text-[14px] font-medium !text-[#75bf00] mb-1 leading-snug">{row.horos.title}</h4>
+                      <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                     </div>
 
                     <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
@@ -1321,7 +1321,7 @@ aiohttp==3.10.5`;
                   <div className="w-12 h-12 border border-[#333] border-dashed rounded-sm flex items-center justify-center text-[#75bf00]">
                     <Cloud size={28} strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-xl md:text-[22px] lg:text-[24px] font-medium text-[#C8C7BA]">Managed RunInfra</h3>
+                  <h3 className="text-xl md:text-[22px] lg:text-[24px] font-medium text-[#C8C7BA]">Managed HOROS</h3>
                   <p className="text-[#C8C7BA] text-lg md:text-[19px] lg:text-[20px] leading-relaxed">
                     Our GPUs, per-million-tokens billing from L4 to B200.
                   </p>

@@ -17,70 +17,70 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    runInfra: { title: "Version the complete coding system.", desc: "Code model, repository snapshot, context, tools, sandbox, test environment, runtime, and execution policies." },
+    horos: { title: "Version the complete coding system.", desc: "Code model, repository snapshot, context, tools, sandbox, test environment, runtime, and execution policies." },
     closed: { title: "Build around a hosted code model.", desc: "Connect repository access, tools, execution, tests, and orchestration in your application." },
     diy: { title: "Own the entire stack.", desc: "Integrate model serving, repository indexing, tool execution, sandboxing, and test infrastructure." }
   },
   {
     num: "0 2",
     label: "Models",
-    runInfra: { title: "Find the right coding model.", desc: "Compare open-weight models and fine-tunes on repository-specific tasks. Track model revisions, chat templates, quantization, and runtime compatibility." },
+    horos: { title: "Find the right coding model.", desc: "Compare open-weight models and fine-tunes on repository-specific tasks. Track model revisions, chat templates, quantization, and runtime compatibility." },
     closed: { title: "Choose from provider models.", desc: "Access and internal inference controls depend on the provider." },
     diy: { title: "Manage coding models yourself.", desc: "Handle model selection, artifacts, quantization, compatibility, and serving." }
   },
   {
     num: "0 3",
     label: "Context",
-    runInfra: { title: "Represent the codebase, not just its files.", desc: "Build context from symbols, imports, call sites, dependencies, issue descriptions, diffs, test results, and repository state." },
+    horos: { title: "Represent the codebase, not just its files.", desc: "Build context from symbols, imports, call sites, dependencies, issue descriptions, diffs, test results, and repository state." },
     closed: { title: "Supply repository context yourself.", desc: "Implement code search, retrieval, dependency awareness, and context construction around the API." },
     diy: { title: "Build repository intelligence.", desc: "Maintain indexing, code navigation, context selection, and synchronization with changing commits." }
   },
   {
     num: "0 4",
     label: "Capabilities",
-    runInfra: { title: "Compose the coding toolchain.", desc: "Connect repository search, file editing, terminal, Git, compilers, test runners, debuggers, and CI as versioned capabilities with explicit permissions." },
+    horos: { title: "Compose the coding toolchain.", desc: "Connect repository search, file editing, terminal, Git, compilers, test runners, debuggers, and CI as versioned capabilities with explicit permissions." },
     closed: { title: "Integrate exposed tool interfaces.", desc: "Your application coordinates execution, state, and access controls." },
     diy: { title: "Build and maintain tool adapters.", desc: "Own execution, compatibility, isolation, and integration failures." }
   },
   {
     num: "0 5",
     label: "Workload",
-    runInfra: { title: "Measure real coding tasks.", desc: "Track languages, repository size, issue type, files changed, tool trajectories, retries, test outcomes, execution time, latency, and cost." },
+    horos: { title: "Measure real coding tasks.", desc: "Track languages, repository size, issue type, files changed, tool trajectories, retries, test outcomes, execution time, latency, and cost." },
     closed: { title: "Measure requests and application traces.", desc: "Repository-level outcomes and execution metrics require additional instrumentation." },
     diy: { title: "Build workload replay and tracing.", desc: "Reproduce tasks and correlate model behavior with tools, tests, and infrastructure." }
   },
   {
     num: "0 6",
     label: "Optimization",
-    runInfra: { title: "Search the complete coding system.", desc: "Compare models, repository context, retrieval, tool strategy, step budgets, inference settings, runtimes, and hardware against task-success and cost constraints." },
+    horos: { title: "Search the complete coding system.", desc: "Compare models, repository context, retrieval, tool strategy, step budgets, inference settings, runtimes, and hardware against task-success and cost constraints." },
     closed: { title: "Tune exposed model and tool settings.", desc: "Internal serving and hardware optimization remain provider-dependent." },
     diy: { title: "Build the optimization engine.", desc: "Profile, experiment, and tune models, context, tool execution, and serving independently." }
   },
   {
     num: "0 7",
     label: "Verification",
-    runInfra: { title: "Prove what the patch passes.", desc: "Run builds, type checks, tests, static analysis, and task-specific acceptance checks. Preserve the patch, test results, environment, and evidence for each system version." },
+    horos: { title: "Prove what the patch passes.", desc: "Run builds, type checks, tests, static analysis, and task-specific acceptance checks. Preserve the patch, test results, environment, and evidence for each system version." },
     closed: { title: "Build end-to-end verification around the API.", desc: "Generated code and model-level scores do not establish patch correctness." },
     diy: { title: "Maintain the verification pipeline.", desc: "Own test datasets, isolated execution, regression checks, and reproducibility." }
   },
   {
     num: "0 8",
     label: "Experience",
-    runInfra: { title: "Remember what happened during execution.", desc: "Record the issue, repository commit, system version, tool calls, commands, outputs, patch, failures, test evidence, and final outcome. Mine regressions, repeated repair attempts, and failure causes." },
+    horos: { title: "Remember what happened during execution.", desc: "Record the issue, repository commit, system version, tool calls, commands, outputs, patch, failures, test evidence, and final outcome. Mine regressions, repeated repair attempts, and failure causes." },
     closed: { title: "Connect provider traces to repository outcomes.", desc: "Application-level execution history and evidence remain your responsibility." },
     diy: { title: "Build persistent execution history.", desc: "Correlate model versions, tool traces, patches, test runs, and production regressions across your stack." }
   },
   {
     num: "0 9",
     label: "Teaching",
-    runInfra: { title: "Teach coding intelligence from verified outcomes.", desc: "Turn test results, compiler failures, review corrections, and accepted patches into training signals, coding skills, improved tool policies, and model or system updates. Teach models how code changes affect software behavior, then evaluate new versions before promotion." },
+    horos: { title: "Teach coding intelligence from verified outcomes.", desc: "Turn test results, compiler failures, review corrections, and accepted patches into training signals, coding skills, improved tool policies, and model or system updates. Teach models how code changes affect software behavior, then evaluate new versions before promotion." },
     closed: { title: "Use available model customization.", desc: "Fine-tuning and access to training mechanisms depend on the provider. Building the verified learning loop requires additional infrastructure." },
     diy: { title: "Build the teaching pipeline.", desc: "Manage training data, fine-tuning, preference signals, evaluations, coding skills, and version promotion yourself." }
   },
   {
     num: "1 0",
     label: "Authority",
-    runInfra: { title: "Control what the coding agent can change.", desc: "Enforce repository scope, allowed commands, secret access, network permissions, write access, resource budgets, and approval requirements. Recheck workspace state before consequential changes." },
+    horos: { title: "Control what the coding agent can change.", desc: "Enforce repository scope, allowed commands, secret access, network permissions, write access, resource budgets, and approval requirements. Recheck workspace state before consequential changes." },
     closed: { title: "Enforce permissions in your application.", desc: "Tool access and model capabilities do not replace execution authorization." },
     diy: { title: "Build the execution boundary.", desc: "Own command restrictions, credentials, approvals, audit records, rollback, and deployment permissions." }
   }
@@ -877,8 +877,8 @@ export default function EmbeddingsPage() {
                         </div>
                         
                         <div className="flex flex-col justify-center px-4 py-4 lg:px-5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                         </div>
 
                         <div className="flex flex-col justify-center px-4 py-4 lg:px-5 md:border-r border-dashed border-[#333]">

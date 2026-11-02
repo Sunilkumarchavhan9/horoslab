@@ -461,7 +461,7 @@ export function CalculatorResults({
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <a href="#" className="text-[12px] font-medium text-[#C8C7BA] hover:text-[#F0EFE2] underline decoration-[#333] underline-offset-4">RunInfra Engine feasibility runtime-overhead policy</a>
+                    <a href="#" className="text-[12px] font-medium text-[#C8C7BA] hover:text-[#F0EFE2] underline decoration-[#333] underline-offset-4">HOROS Engine feasibility runtime-overhead policy</a>
                     <span className="text-[11px] text-[#666] flex items-center gap-1.5"><Calendar size={10} /> As of 2026-08-09</span>
                   </div>
 
@@ -560,15 +560,15 @@ export function CalculatorResults({
                   </button>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-[12px] font-mono text-[#F0EFE2]">GET https://runinfra.ai/api/calc</span>
-                  <span className="text-[10px] font-mono text-[#666] break-all">https://runinfra.ai/api/calc?hfId=Qwen%2FQwen3-0.6B&gpuId=H100&gpuCount=1&requestsPerDay=50000&avgInputTokens=500&avgOutputTokens=500&utilization=0.3&quantization=fp16&servedContextTokens=8192</span>
+                  <span className="text-[12px] font-mono text-[#F0EFE2]">GET https://horoslab.org/api/calc</span>
+                  <span className="text-[10px] font-mono text-[#666] break-all">https://horoslab.org/api/calc?hfId=Qwen%2FQwen3-0.6B&gpuId=H100&gpuCount=1&requestsPerDay=50000&avgInputTokens=500&avgOutputTokens=500&utilization=0.3&quantization=fp16&servedContextTokens=8192</span>
                 </div>
               </div>
 
               <div className="flex flex-col gap-3 border-t border-dashed border-[#333] mt-4 pt-4">
                 <span className="text-[9px] text-[#888] font-bold tracking-wider">CANONICAL RESULT</span>
                 <a href="#" className="flex justify-between items-center group">
-                  <span className="text-[12px] font-mono font-medium text-[#C8C7BA] group-hover:text-[#F0EFE2] transition-colors">https://runinfra.ai/calc/Qwen%2FQwen3-0.6B/h100/50k-req-day</span>
+                  <span className="text-[12px] font-mono font-medium text-[#C8C7BA] group-hover:text-[#F0EFE2] transition-colors">https://horoslab.org/economics/calc/Qwen%2FQwen3-0.6B/h100/50k-req-day</span>
                   <ExternalLink size={12} className="text-[#666] group-hover:text-[#F0EFE2] transition-colors" />
                 </a>
               </div>
@@ -576,7 +576,7 @@ export function CalculatorResults({
               <div className="flex flex-col gap-3 border-t border-dashed border-[#333] mt-4 pt-4">
                 <span className="text-[9px] text-[#888] font-bold tracking-wider">DESCRIPTOR</span>
                 <a href="#" className="flex justify-between items-center group">
-                  <span className="text-[12px] font-mono font-medium text-[#C8C7BA] group-hover:text-[#F0EFE2] transition-colors">https://runinfra.ai/api/calc/schema</span>
+                  <span className="text-[12px] font-mono font-medium text-[#C8C7BA] group-hover:text-[#F0EFE2] transition-colors">https://horoslab.org/api/calc/schema</span>
                   <ExternalLink size={12} className="text-[#666] group-hover:text-[#F0EFE2] transition-colors" />
                 </a>
                 <span className="text-[11px] text-[#666]">28 GPU ids, 7 quantizations</span>

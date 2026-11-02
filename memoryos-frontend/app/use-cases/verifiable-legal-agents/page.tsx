@@ -16,42 +16,42 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "Launch",
-    runInfra: { title: "Deploy verifiable legal agents", desc: "Launch legal agents with verifiable ZK proofs and statutory verification." },
+    horos: { title: "Deploy verifiable legal agents", desc: "Launch legal agents with verifiable ZK proofs and statutory verification." },
     closed: { title: "Basic chat completions", desc: "Per-call API responses without citation verification or audit trails." },
     diy: { title: "Build prompt chains", desc: "Spend months configuring brittle regex parsers and OpenAI webhooks." }
   },
   {
     num: "0 2",
     label: "Verification",
-    runInfra: { title: "Verifiable ZK citation proofs", desc: "Every citation is mathematically verified against authoritative case law." },
+    horos: { title: "Verifiable ZK citation proofs", desc: "Every citation is mathematically verified against authoritative case law." },
     closed: { title: "Unverified text output", desc: "High risk of hallucinated legal precedent and incorrect statute quotes." },
     diy: { title: "Manual human proofreading", desc: "Associates must manually double-check every single case reference." }
   },
   {
     num: "0 3",
     label: "Statutory Audit",
-    runInfra: { title: "Clause-level compliance audit", desc: "Automated risk analysis for indemnification, liability caps, and GDPR." },
+    horos: { title: "Clause-level compliance audit", desc: "Automated risk analysis for indemnification, liability caps, and GDPR." },
     closed: { title: "Black-box summaries", desc: "Opaque summaries that miss subtle contract ambiguities and edge cases." },
     diy: { title: "Ad-hoc regex matching", desc: "Fragile regex patterns unable to parse complex legal legalese." }
   },
   {
     num: "0 4",
     label: "Model Control",
-    runInfra: { title: "Fine-tuned legal reasoning models", desc: "Deploy domain-adapted Legal-Llama, DeepSeek-Legal, and GPT-Legal." },
+    horos: { title: "Fine-tuned legal reasoning models", desc: "Deploy domain-adapted Legal-Llama, DeepSeek-Legal, and GPT-Legal." },
     closed: { title: "Locked to vendor API defaults", desc: "Standard generalist models without specialized legal fine-tuning." },
     diy: { title: "Prompt-only tuning", desc: "Inability to adapt model weights to your law firm's internal playbooks." }
   },
   {
     num: "0 5",
     label: "Operations",
-    runInfra: { title: "Autonomous compliance loops", desc: "Automate contract review, regulatory filing audits, and ZK reporting." },
+    horos: { title: "Autonomous compliance loops", desc: "Automate contract review, regulatory filing audits, and ZK reporting." },
     closed: { title: "High legal associate toil", desc: "Legal teams spent hours manually reviewing AI-generated drafts." },
     diy: { title: "High operational overhead", desc: "Your team owns model maintenance, prompt drift, and compliance updates." }
   },
   {
     num: "0 6",
     label: "Security",
-    runInfra: { title: "Enterprise Security & On-Prem ZK Guards", desc: "Zero privilege data retention with air-gapped execution options." },
+    horos: { title: "Enterprise Security & On-Prem ZK Guards", desc: "Zero privilege data retention with air-gapped execution options." },
     closed: { title: "Third-party data storage", desc: "Privileged client contracts uploaded to third-party SaaS servers." },
     diy: { title: "Self-managed security", desc: "Your team owns attorney-client privilege data guards and compliance." }
   }
@@ -750,8 +750,8 @@ export default function VerifiableLegalAgentsPage() {
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">

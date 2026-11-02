@@ -15,14 +15,14 @@ import { Key, Cpu, Terminal, Code2, Sliders, Rocket, Folder, FolderOpen, Chevron
 const COMPARISON_ROWS: Array<{
   num: string;
   label: string;
-  runInfra: { title: string; desc: React.ReactNode };
+  horos: { title: string; desc: React.ReactNode };
   closed: { title: string; desc: React.ReactNode };
   diy: { title: string; desc: React.ReactNode };
 }> = [
   {
     num: "0 1",
     label: "System",
-    runInfra: {
+    horos: {
       title: "One multimodal system.",
       desc: "Connect models, inputs, context, runtime, and compute."
     },
@@ -38,7 +38,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 2",
     label: "Models",
-    runInfra: {
+    horos: {
       title: "Choose open models.",
       desc: (
         <>
@@ -76,7 +76,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 3",
     label: "Context",
-    runInfra: {
+    horos: {
       title: "Connect modalities.",
       desc: "Relate text, images, speech, video frames, and timestamps."
     },
@@ -92,7 +92,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 4",
     label: "Capabilities",
-    runInfra: {
+    horos: {
       title: "Compose multimodal skills.",
       desc: "Combine visual understanding, speech, audio perception, and video analysis."
     },
@@ -108,7 +108,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 5",
     label: "Workload",
-    runInfra: {
+    horos: {
       title: "Profile real inputs.",
       desc: "Measure image resolution, audio duration, video length, and concurrency."
     },
@@ -124,7 +124,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 6",
     label: "Optimization",
-    runInfra: {
+    horos: {
       title: "Tune the complete pipeline.",
       desc: "Optimize resolution, frame sampling, context length, batching, and quantization."
     },
@@ -140,7 +140,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 7",
     label: "Verification",
-    runInfra: {
+    horos: {
       title: "Test cross-modal understanding.",
       desc: "Evaluate grounding, temporal consistency, and task accuracy against your data."
     },
@@ -156,7 +156,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 8",
     label: "Experience",
-    runInfra: {
+    horos: {
       title: "Preserve multimodal evidence.",
       desc: "Link inputs, model versions, outputs, errors, and observed outcomes."
     },
@@ -172,7 +172,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "0 9",
     label: "Teaching",
-    runInfra: {
+    horos: {
       title: "Improve from observed failures.",
       desc: "Use corrected labels, difficult examples, and verified outcomes to improve future model versions."
     },
@@ -188,7 +188,7 @@ const COMPARISON_ROWS: Array<{
   {
     num: "1 0",
     label: "Authority",
-    runInfra: {
+    horos: {
       title: "Control data and execution.",
       desc: "Govern access to sensitive media, credentials, budgets, and downstream actions."
     },
@@ -1263,8 +1263,8 @@ export default function MultimodalAIPage() {
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">

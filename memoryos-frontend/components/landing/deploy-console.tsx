@@ -5,8 +5,8 @@ import { Cloud, ExternalLink, Rocket, Check, Cpu } from "lucide-react";
 import { NvidiaLogo } from "@/components/horos/primitives/brand-icons";
 
 export function DeployDashboard() {
-  const [activeTab, setActiveTab] = useState<"dockerfile" | "servesh" | "runinfrayaml">("dockerfile");
-  const [selectedTarget, setSelectedTarget] = useState<"runinfra" | "runpod" | "modal">("runinfra");
+  const [activeTab, setActiveTab] = useState<"dockerfile" | "servesh" | "horosyaml">("dockerfile");
+  const [selectedTarget, setSelectedTarget] = useState<"horos" | "runpod" | "modal">("horos");
 
   return (
     <div className="w-full max-w-xl bg-[#111111] rounded-[1px] border border-[#262626] font-mono text-sm overflow-hidden select-none p-5 space-y-4">
@@ -43,18 +43,18 @@ export function DeployDashboard() {
 
         <div className="border border-[#222222] bg-[#141414] rounded-[1px] divide-y divide-[#1c1c1c] overflow-hidden">
 
-          {/* Item 1: RunInfra Cloud */}
+          {/* Item 1: HOROS Cloud */}
           <div
-            onClick={() => setSelectedTarget("runinfra")}
-            className={`flex items-center justify-between p-3 cursor-pointer transition-colors ${selectedTarget === "runinfra" ? "bg-[#181a16] border-l-2 border-l-[#75bf00]" : "hover:bg-[#161616]"}`}
+            onClick={() => setSelectedTarget("horos")}
+            className={`flex items-center justify-between p-3 cursor-pointer transition-colors ${selectedTarget === "horos" ? "bg-[#181a16] border-l-2 border-l-[#75bf00]" : "hover:bg-[#161616]"}`}
           >
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-6 h-6 bg-[#222222] rounded-[1px] border border-[#333333] shrink-0 font-sans font-medium text-[#C8C7BA] text-[9px] md:text-[10px] lg:text-[11px]">
-                R:
+                H:
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] md:text-[11px] lg:text-[12px] font-medium text-[#C8C7BA]">RunInfra Cloud</span>
+                  <span className="text-[10px] md:text-[11px] lg:text-[12px] font-medium text-[#C8C7BA]">HOROS Cloud</span>
                   <span className="text-[9px] px-1.5 py-0.2 rounded-[1px] bg-[#1d2d14] text-[#75bf00] border border-[#2d471e] flex items-center gap-0.5">
                     <Check size={9} />
                     selected
@@ -163,17 +163,17 @@ export function DeployDashboard() {
               serve.sh
             </button>
             <button
-              onClick={() => setActiveTab("runinfrayaml")}
-              className={`text-[9px] md:text-[10px] px-2 py-0.5 rounded-[1px] transition-colors ${activeTab === "runinfrayaml" ? "bg-[#252525] text-[#C8C7BA] border border-[#333333]" : "text-[#666666] hover:text-[#aaaaaa]"}`}
+              onClick={() => setActiveTab("horosyaml")}
+              className={`text-[9px] md:text-[10px] px-2 py-0.5 rounded-[1px] transition-colors ${activeTab === "horosyaml" ? "bg-[#252525] text-[#C8C7BA] border border-[#333333]" : "text-[#666666] hover:text-[#aaaaaa]"}`}
             >
-              runinfra.yaml
+              horos.yaml
             </button>
           </div>
         </div>
 
         {/* Code Content */}
         <div className="p-3 bg-[#0d0d0d] rounded-[1px] border border-[#1e1e1e] text-[9px] md:text-[10px] lg:text-[11px] leading-relaxed font-mono overflow-x-auto text-[#d4d4d4]">
-          <div className="flex"><span className="text-[#444444] select-none w-5 text-right mr-3 shrink-0">1</span><span><span className="text-[#E06C75]">FROM</span> runinfra/vllm:0.6.3-l40s</span></div>
+          <div className="flex"><span className="text-[#444444] select-none w-5 text-right mr-3 shrink-0">1</span><span><span className="text-[#E06C75]">FROM</span> horos/vllm:0.6.3-l40s</span></div>
           <div className="flex"><span className="text-[#444444] select-none w-5 text-right mr-3 shrink-0">2</span><span><span className="text-[#E06C75]">ENV</span> MODEL=Llama-3.1-8B-Instruct</span></div>
           <div className="flex"><span className="text-[#444444] select-none w-5 text-right mr-3 shrink-0">3</span><span><span className="text-[#E06C75]">ENV</span> QUANTIZATION=awq_marlin</span></div>
           <div className="flex"><span className="text-[#444444] select-none w-5 text-right mr-3 shrink-0">4</span><span><span className="text-[#E06C75]">COPY</span> ./weights /models</span></div>

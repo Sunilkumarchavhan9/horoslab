@@ -376,7 +376,7 @@ export function HardwareDeploymentSection() {
                   )}
                 </div>
 
-                {/* 2. Center Node (RunInfra) */}
+                {/* 2. Center Node (HOROS) */}
                 <motion.div
                   whileHover={{ scale: 1.03, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border bg-[#222] w-[112px] min-h-[112px] relative z-20 shadow-lg shrink-0 transition-colors duration-300 cursor-pointer ${hoveredNode === 'horos' ? 'border-[#555]' : 'border-[#333]'}`}

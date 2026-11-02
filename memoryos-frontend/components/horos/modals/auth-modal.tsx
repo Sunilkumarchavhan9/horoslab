@@ -228,7 +228,7 @@ export function AuthModal({
                     </span>
                   </h2>
                   <p className="text-xs text-[#8a9485] leading-relaxed">
-                    Sign in to your RunInfra workspace and pick up where you left off.
+                    Sign in to your HOROS workspace and pick up where you left off.
                   </p>
                 </div>
               ) : (

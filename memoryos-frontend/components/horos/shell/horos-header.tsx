@@ -77,7 +77,7 @@ export function HorosHeader({
 
         {/* Right: Balance + Theme Toggle + Settings + User Avatar */}
         <div className="flex items-center gap-3 sm:gap-4 text-xs font-mono">
-          {/* Balance Pill matching RunInfra */}
+          {/* Balance Pill matching HOROS */}
           <button
             type="button"
             onClick={onOpenBilling || onOpenSettings}

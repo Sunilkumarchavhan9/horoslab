@@ -31,7 +31,7 @@ export function FullSpecAccordion() {
           <div className="border-t border-dashed border-[#333] px-8 py-6 flex flex-col gap-2">
             <h4 className="text-[#777] text-[12px]">Prefix caching</h4>
             <p className="text-[#ccc] leading-relaxed">
-              Automatic prefix caching runs on every replica, and requests from the same session or conversation are routed back to the replica that holds their cached prefix. A stable session hint or prompt_cache_key provides explicit grouping; otherwise RunInfra derives it from the start of the conversation. Hits remain best effort until eviction or a serve restart, never guaranteed. Cached input is billed at the cached input rate. Responses report cached token counts.
+              Automatic prefix caching runs on every replica, and requests from the same session or conversation are routed back to the replica that holds their cached prefix. A stable session hint or prompt_cache_key provides explicit grouping; otherwise HOROS derives it from the start of the conversation. Hits remain best effort until eviction or a serve restart, never guaranteed. Cached input is billed at the cached input rate. Responses report cached token counts.
             </p>
           </div>
 

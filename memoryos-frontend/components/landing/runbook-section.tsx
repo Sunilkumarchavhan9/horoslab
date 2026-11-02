@@ -91,7 +91,7 @@ export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProp
         <div className="relative p-8 lg:p-12 flex flex-col justify-center border-r border-dashed border-[#333333] h-[580px]">
           <div className="space-y-4">
             <h3 className="text-2xl sm:text-3xl lg:text-[32px] font-medium text-[#cccccc] font-sans leading-snug tracking-tight">
-              RunInfra compares
+              HOROS compares
               <br />
               <EngineScroller />
               <span className="ml-3 text-[#F0EFE2] align-middle">and</span>

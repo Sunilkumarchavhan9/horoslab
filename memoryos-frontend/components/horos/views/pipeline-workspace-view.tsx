@@ -1033,7 +1033,7 @@ export function PipelineWorkspaceView({
                         <div className="pl-4 text-[#a0a89d]">--expected-concurrency 1</div>
                       </div>
 
-                      {/* JSON Intake Payload Block matching RunInfra scroll UI */}
+                      {/* JSON Intake Payload Block matching HOROS scroll UI */}
                       <div className="border border-[#222222] bg-[#050505] rounded-none text-[#a0a89d] space-y-1 text-[10.5px] max-h-52 overflow-auto p-3.5 [scrollbar-width:thin] [scrollbar-color:#2a2a2a_#050505] leading-relaxed">
                         <div>{"{"}</div>
                         <div className="pl-3"><span className="text-[#C8C7BA]">&quot;intake&quot;:</span> {"{"}</div>
@@ -1334,7 +1334,7 @@ export function PipelineWorkspaceView({
                         <div className="pl-4 text-[#a0a89d]">&quot;serving-backend&quot;: &quot;vLLM&quot;</div>
                       </div>
 
-                      {/* JSON ToolInputs Spec matching RunInfra scroll UI */}
+                      {/* JSON ToolInputs Spec matching HOROS scroll UI */}
                       <div className="border border-[#1a1a1a] bg-[#050505] rounded-xl text-[#a0a89d] space-y-1 text-[10.5px] max-h-52 overflow-auto p-3.5 [scrollbar-width:thin] [scrollbar-color:#2a2a2a_#050505]">
                         <div>{"{"}</div>
                         <div className="pl-3"><span className="text-[#C8C7BA]">&quot;engine&quot;:</span> <span className="text-[#75bf00]">&quot;serving&quot;</span>,</div>
@@ -2026,7 +2026,7 @@ echo "Rollback completed cleanly."`}</pre>
                 <span className="font-mono text-[#788274] font-bold truncate max-w-[180px]">{contextModel}</span>
               </div>
             </div>
-            {/* TAB CONTENT 1: OPTIMIZATION (Exact RunInfra 6-Metric Grid & Waterfall) */}
+            {/* TAB CONTENT 1: OPTIMIZATION (Exact HOROS 6-Metric Grid & Waterfall) */}
             {activeTab === "optimization" && (
               <div className="p-6 space-y-5 flex-1">
                 {/* Subheader status */}
@@ -2059,7 +2059,7 @@ echo "Rollback completed cleanly."`}</pre>
                   <div className="p-10 text-center text-xs text-[#889083] font-mono min-h-[120px] flex items-center justify-center">
                     pending (fills in as the run benchmarks each phase)
                   </div>
-                  {/* 6 Metric Grid matching exact RunInfra Screenshot with Dashed Axis Lines */}
+                  {/* 6 Metric Grid matching exact HOROS Screenshot with Dashed Axis Lines */}
                   <div className={cn(
                     "border rounded-xs overflow-hidden grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 divide-[#242424]",
                     dark ? "border-[#282828] bg-[#181818]" : "border-[#d8ddd3] bg-white"
@@ -2113,7 +2113,7 @@ echo "Rollback completed cleanly."`}</pre>
               </div>
             )}
 
-            {/* TAB CONTENT 2: PLAN (Exact RunInfra Suite from Screenshots 1-5) */}
+            {/* TAB CONTENT 2: PLAN (Exact HOROS Suite from Screenshots 1-5) */}
             {activeTab === "plan" && (
               <div className="p-6 space-y-6 flex-1 max-w-[840px] text-xs font-sans">
                 <div className="text-[11px] font-mono text-[#788274]">
@@ -2166,7 +2166,7 @@ echo "Rollback completed cleanly."`}</pre>
                     <div className="flex items-start gap-3">
                       <span className="w-32 text-[#788274] font-sans shrink-0">Deployment:</span>
                       <div>
-                        <span className="text-[#F0EFE2] font-sans">RunInfra cloud (gated)</span>
+                        <span className="text-[#F0EFE2] font-sans">HOROS cloud (gated)</span>
                         <p className="text-[11px] text-[#788274] font-sans mt-0.5">
                           Deployment is not part of this runbook; execution will stop at verified optimization artifacts.
                         </p>
@@ -2862,7 +2862,7 @@ echo "Rollback completed cleanly."`}</pre>
               </div>
             )}
 
-            {/* TAB CONTENT 10: DEPLOY (Exact RunInfra Screenshot 1) */}
+            {/* TAB CONTENT 10: DEPLOY (Exact HOROS Screenshot 1) */}
             {activeTab === "deploy" && (
               <div className="p-6 space-y-4 flex-1 max-w-[800px] text-xs">
                 {/* Top Dashed Box: Deployment unlocks at $50 in lifetime credits */}

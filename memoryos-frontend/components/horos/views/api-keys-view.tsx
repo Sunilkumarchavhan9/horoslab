@@ -46,7 +46,7 @@ export function ApiKeysView({
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [newlyCreatedKey, setNewlyCreatedKey] = useState<{ name: string; secret: string } | null>(null);
 
-  // Form State matching RunInfra Modal 1:1
+  // Form State matching HOROS Modal 1:1
   const [keyName, setKeyName] = useState("Key 1");
   const [scopeDeploymentOpen, setScopeDeploymentOpen] = useState(false);
   const [selectedEndpoint, setSelectedEndpoint] = useState("");
@@ -107,7 +107,7 @@ export function ApiKeysView({
 
   return (
     <div className="max-w-[1000px] mx-auto pb-20 font-sans text-xs text-left">
-      {/* 1:1 RunInfra Top Header */}
+      {/* 1:1 HOROS Top Header */}
       <div className="mb-8">
         <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
           <span>API</span>
@@ -116,7 +116,7 @@ export function ApiKeysView({
           </span>
         </h1>
         <p className="mt-1.5 text-xs text-[#889084] leading-relaxed">
-          Authenticate inference requests against your deployed pipelines, and manage the terminals signed in with the RunInfra CLI.
+          Authenticate inference requests against your deployed pipelines, and manage the terminals signed in with the HOROS CLI.
         </p>
       </div>
 
@@ -200,7 +200,7 @@ export function ApiKeysView({
             <div className="space-y-1">
               <div className="font-bold text-[#F0EFE2] text-xs">No API keys yet</div>
               <p className="text-xs text-[#788274] leading-relaxed max-w-sm mx-auto">
-                Issue a key for RunInfra native and compatible inference requests.
+                Issue a key for HOROS native and compatible inference requests.
               </p>
             </div>
             <button
@@ -296,7 +296,7 @@ export function ApiKeysView({
           <div>
             <div className="font-bold text-[#F0EFE2] text-xs tracking-tight">Terminal sessions</div>
             <div className="text-[11px] text-[#788274]">
-              Machines signed in with the RunInfra CLI appear here.
+              Machines signed in with the HOROS CLI appear here.
             </div>
           </div>
         </div>
@@ -309,13 +309,13 @@ export function ApiKeysView({
           <div className="space-y-1">
             <div className="font-bold text-[#F0EFE2] text-xs">No terminals connected</div>
             <p className="text-xs text-[#788274] leading-relaxed max-w-md mx-auto">
-              Run <code className="font-mono px-1.5 py-0.5 bg-[#141414] border border-[#333] text-[#F0EFE2] rounded-xs text-[11px]">runinfra login</code> on a machine and approve the browser prompt. The session it creates is listed here and can be revoked at any time.
+              Run <code className="font-mono px-1.5 py-0.5 bg-[#141414] border border-[#333] text-[#F0EFE2] rounded-xs text-[11px]">horos login</code> on a machine and approve the browser prompt. The session it creates is listed here and can be revoked at any time.
             </p>
           </div>
         </div>
       </div>
 
-      {/* 1:1 REPLICA OF RUNINFRA "CREATE API KEY" MODAL */}
+      {/* 1:1 REPLICA OF HOROS "CREATE API KEY" MODAL */}
       {createModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-100 backdrop-blur-xs">
           <form

@@ -20,63 +20,63 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    runInfra: { title: "Compose the intelligence system", desc: "Combine models, data, context, tools, runtime, hardware, workload, and environment into one system definition." },
+    horos: { title: "Compose the intelligence system", desc: "Combine models, data, context, tools, runtime, hardware, workload, and environment into one system definition." },
     closed: { title: "Provider-defined system", desc: "The provider determines the underlying models, runtime, infrastructure, and execution path." },
     diy: { title: "Compose it yourself", desc: "You integrate and maintain every layer of the voice stack." }
   },
   {
     num: "0 2",
     label: "Models",
-    runInfra: { title: "Discover and evaluate models", desc: "Bring models from Hugging Face and supported sources, pin their revisions, check compatibility, and evaluate them as system candidates." },
+    horos: { title: "Discover and evaluate models", desc: "Bring models from Hugging Face and supported sources, pin their revisions, check compatibility, and evaluate them as system candidates." },
     closed: { title: "Provider model catalog", desc: "Use the models and versions exposed through the API." },
     diy: { title: "Own the model layer", desc: "Select, integrate, serve, and maintain the models yourself." }
   },
   {
     num: "0 3",
     label: "Optimization",
-    runInfra: { title: "Search the system space", desc: "Experiment across model variants, quantization, context, batching, routing, runtime, kernels, hardware, and placement." },
+    horos: { title: "Search the system space", desc: "Experiment across model variants, quantization, context, batching, routing, runtime, kernels, hardware, and placement." },
     closed: { title: "Provider optimization", desc: "Lower-level model and inference decisions are outside your control." },
     diy: { title: "Manual system search", desc: "Your team designs experiments and profiles every configuration." }
   },
   {
     num: "0 4",
     label: "Workload",
-    runInfra: { title: "Learn the workload", desc: "Capture context length, concurrency, turn patterns, traffic distribution, batching behavior, utilization, failures, latency, and cost." },
+    horos: { title: "Learn the workload", desc: "Capture context length, concurrency, turn patterns, traffic distribution, batching behavior, utilization, failures, latency, and cost." },
     closed: { title: "Generic service workload", desc: "The provider decides how your traffic is handled internally." },
     diy: { title: "Build workload intelligence", desc: "You collect traces, construct replay datasets, benchmark, and maintain them yourself." }
   },
   {
     num: "0 5",
     label: "Verification",
-    runInfra: { title: "Evidence-backed verification", desc: "Compare candidates against defined quality, latency, cost, reliability, and workload requirements before promotion." },
+    horos: { title: "Evidence-backed verification", desc: "Compare candidates against defined quality, latency, cost, reliability, and workload requirements before promotion." },
     closed: { title: "Service-level guarantees", desc: "You mainly depend on provider measurements and guarantees." },
     diy: { title: "Build your own proof", desc: "Your team owns benchmarks, experiments, evidence, and regression checks." }
   },
   {
     num: "0 6",
     label: "Deployment",
-    runInfra: { title: "Deploy the verified system", desc: "Preserve the exact model, runtime, configuration, workload, deployment, provenance, and evidence behind the deployed version." },
+    horos: { title: "Deploy the verified system", desc: "Preserve the exact model, runtime, configuration, workload, deployment, provenance, and evidence behind the deployed version." },
     closed: { title: "Call the provider endpoint", desc: "Your production system remains dependent on the provider's execution environment." },
     diy: { title: "Operate the complete stack", desc: "You manage serving, GPUs, scaling, networking, upgrades, and failures." }
   },
   {
     num: "0 7",
     label: "Dynamic reality",
-    runInfra: { title: "Decode live reality", desc: "Use real-time audio and other physical signals to build observations, state, events, relationships, and changing context around the voice system." },
+    horos: { title: "Decode live reality", desc: "Use real-time audio and other physical signals to build observations, state, events, relationships, and changing context around the voice system." },
     closed: { title: "Process the voice stream", desc: "The API handles speech while your application remains responsible for understanding the surrounding environment." },
     diy: { title: "Build the reality layer", desc: "You integrate audio, sensors, state estimation, environment data, and feedback yourself." }
   },
   {
     num: "0 8",
     label: "Teaching",
-    runInfra: { title: "Teach from verified experience", desc: "Convert observations, outcomes, failures, lessons, and ground truth into evaluation data, teaching signals, model updates, policy updates, skill updates, or world-model training." },
+    horos: { title: "Teach from verified experience", desc: "Convert observations, outcomes, failures, lessons, and ground truth into evaluation data, teaching signals, model updates, policy updates, skill updates, or world-model training." },
     closed: { title: "Provider-owned learning", desc: "The provider controls how its models are trained and improved." },
     diy: { title: "Build the teaching loop", desc: "You collect experience, construct datasets, train, evaluate, and promote new versions yourself." }
   },
   {
     num: "0 9",
     label: "Security",
-    runInfra: { title: "Identity, authority, and runtime enforcement", desc: "Give every agent and workload a verifiable identity. Evaluate mission, intent, permissions, target, environment, spend, and current world state before consequential actions. Isolate execution and continuously observe behavior." },
+    horos: { title: "Identity, authority, and runtime enforcement", desc: "Give every agent and workload a verifiable identity. Evaluate mission, intent, permissions, target, environment, spend, and current world state before consequential actions. Isolate execution and continuously observe behavior." },
     closed: { title: "Provider security limits", desc: "The API manages basic access and rate limits, but application-level authority remains your responsibility." },
     diy: { title: "Build security enforcement", desc: "You must build and maintain all identity, isolation, enforcement, and monitoring systems yourself." }
   }
@@ -890,7 +890,7 @@ export default function RagSearchPage() {
                     <span className="text-[#C8C7BA] font-bold text-[10px] tracking-[0.15em] uppercase">What Matters</span>
                   </div>
 
-                  {/* Col 2: RunInfra (Recommended) */}
+                  {/* Col 2: Horos (Recommended) */}
                   <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2 relative bg-[#75bf00]/[0.02]">
                     <span className="absolute top-2.5 right-3 text-[#75bf00] font-bold text-[8px] tracking-[0.15em] uppercase">Recommended</span>
                     <div className="flex items-center gap-2 mb-1">
@@ -936,10 +936,10 @@ export default function RagSearchPage() {
                       <ChevronRight size={16} className="text-[#75bf00] opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 transform duration-300 mt-0.5" />
                     </div>
 
-                    {/* Col 2: RunInfra */}
+                    {/* Col 2: Horos */}
                     <div className="w-full md:w-1/4 px-4 py-4 lg:px-5 border-r-0 md:border-r border-dashed border-[#333] flex flex-col gap-2">
-                      <span className="text-[#75bf00] text-[13.5px] sm:text-[14px] font-medium transition-colors mb-1 leading-snug">{row.runInfra.title}</span>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.runInfra.desc}</p>
+                      <span className="text-[#75bf00] text-[13.5px] sm:text-[14px] font-medium transition-colors mb-1 leading-snug">{row.horos.title}</span>
+                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug leading-relaxed group-hover:text-[#F0EFE2] transition-colors">{row.horos.desc}</p>
                     </div>
 
                     {/* Col 3: Closed API */}

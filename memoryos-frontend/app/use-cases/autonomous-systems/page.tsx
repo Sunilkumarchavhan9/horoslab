@@ -16,7 +16,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    runInfra: {
+    horos: {
       title: "Unified autonomy workflow",
       desc: "Connect perception, world modeling, prediction, planning, control, and evaluation in one engineering loop."
     },
@@ -32,7 +32,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 2",
     label: "Models",
-    runInfra: {
+    horos: {
       title: "Open-weight model engineering",
       desc: "Evaluate, adapt, and optimize world models, vision-language-action models, and physical-dynamics predictors."
     },
@@ -48,7 +48,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 3",
     label: "Context",
-    runInfra: {
+    horos: {
       title: "Unified environment state",
       desc: "Connect sensor observations, spatial representations, robot state, task constraints, and interaction history."
     },
@@ -64,7 +64,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 4",
     label: "Planning",
-    runInfra: {
+    horos: {
       title: "Goal-to-action engineering",
       desc: "Evaluate candidate actions against task objectives, physical constraints, predicted outcomes, and operating limits."
     },
@@ -80,7 +80,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 5",
     label: "Simulation",
-    runInfra: {
+    horos: {
       title: "Simulation-to-reality evaluation",
       desc: "Run controlled physical scenarios, compare predicted and actual outcomes, and test transfer to unfamiliar conditions."
     },
@@ -96,7 +96,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 6",
     label: "Optimization",
-    runInfra: {
+    horos: {
       title: "Model-to-hardware optimization",
       desc: "Compare quantization, inference kernels, memory movement, batching, runtimes, and hardware configurations against workload targets."
     },
@@ -112,7 +112,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 7",
     label: "Verification",
-    runInfra: {
+    horos: {
       title: "Physical-behavior verification",
       desc: "Test prediction error, action validity, task success, robustness, safety constraints, and generalization on held-out scenarios."
     },
@@ -128,7 +128,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 8",
     label: "Experience",
-    runInfra: {
+    horos: {
       title: "End-to-end observability",
       desc: "Track model versions, sensor inputs, predicted outcomes, actions, failures, recovery, latency, and measured task results."
     },
@@ -144,7 +144,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 9",
     label: "Teaching",
-    runInfra: {
+    horos: {
       title: "Continuous model adaptation",
       desc: "Use verified trajectories, demonstrations, and failure cases to guide fine-tuning, adaptation, and subsequent evaluations."
     },
@@ -160,7 +160,7 @@ const COMPARISON_ROWS = [
   {
     num: "1 0",
     label: "Authority",
-    runInfra: {
+    horos: {
       title: "Controlled autonomous execution",
       desc: "Define action limits, deployment policies, hardware access, approval gates, rollback procedures, and human intervention boundaries."
     },
@@ -976,8 +976,8 @@ export default function AutonomousSystemsPage() {
                       </div>
                       
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">

@@ -164,7 +164,7 @@ export function GovernanceView({
 
   return (
     <div className="space-y-6 max-w-[1240px] mx-auto pb-24 font-sans text-xs text-left animate-in fade-in duration-150">
-      {/* Noise-Free RunInfra Header */}
+      {/* Noise-Free HOROS Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#282828] pb-4 font-mono">
         <div>
           <div className="flex items-center gap-2">

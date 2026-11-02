@@ -564,7 +564,7 @@ export const SERVING_ENGINES = {
     {
       id: "NVIDIA Dynamo",
       name: "NVIDIA Dynamo",
-      desc: "Dynamo has no live RunInfra Cloud image or Modal stress-test worker in this workspace yet.",
+      desc: "Dynamo has no live HOROS Cloud image or Modal stress-test worker in this workspace yet.",
       icon: <Cpu size={14} />,
     },
   ],

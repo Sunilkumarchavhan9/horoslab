@@ -17,7 +17,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    runInfra: {
+    horos: {
       title: "World model prediction",
       desc: "World model for future-state prediction."
     },
@@ -33,7 +33,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 2",
     label: "Models",
-    runInfra: {
+    horos: {
       title: "Open video & world models",
       desc: "Open video and world models."
     },
@@ -49,7 +49,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 3",
     label: "Context",
-    runInfra: {
+    horos: {
       title: "Frames & observations",
       desc: "Historical frames, observations, environment state."
     },
@@ -65,7 +65,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 4",
     label: "Capabilities",
-    runInfra: {
+    horos: {
       title: "Motion & forecasting",
       desc: "Motion prediction, state forecasting."
     },
@@ -81,7 +81,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 5",
     label: "Workload",
-    runInfra: {
+    horos: {
       title: "Sequences & trajectories",
       desc: "Video sequences and observed trajectories."
     },
@@ -97,7 +97,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 6",
     label: "Optimization",
-    runInfra: {
+    horos: {
       title: "Sampling & horizon",
       desc: "Frame sampling, prediction horizon, precision."
     },
@@ -113,7 +113,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 7",
     label: "Verification",
-    runInfra: {
+    horos: {
       title: "Error & consistency",
       desc: "Prediction error and temporal consistency."
     },
@@ -129,7 +129,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 8",
     label: "Experience",
-    runInfra: {
+    horos: {
       title: "Observations & errors",
       desc: "Record observations, predictions, and errors."
     },
@@ -145,7 +145,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 9",
     label: "Teaching",
-    runInfra: {
+    horos: {
       title: "Data gap identification",
       desc: "Use prediction errors to identify data gaps."
     },
@@ -161,7 +161,7 @@ const COMPARISON_ROWS = [
   {
     num: "1 0",
     label: "Authority",
-    runInfra: {
+    horos: {
       title: "Access & compute governance",
       desc: "Govern data access, compute, and deployment."
     },
@@ -1033,8 +1033,8 @@ export default function SimulationWorldModelsPage() {
                         </div>
                         
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                         </div>
 
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">

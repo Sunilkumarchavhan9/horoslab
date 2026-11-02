@@ -17,7 +17,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    runInfra: {
+    horos: {
       title: "Single reasoning model",
       desc: "Single reasoning model with optimized inference."
     },
@@ -33,7 +33,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 2",
     label: "Models",
-    runInfra: {
+    horos: {
       title: "Open reasoning models",
       desc: "DeepSeek-R1, Qwen reasoning models."
     },
@@ -49,7 +49,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 3",
     label: "Context",
-    runInfra: {
+    horos: {
       title: "Task prompt & evidence",
       desc: "Task prompt, instructions, relevant evidence."
     },
@@ -65,7 +65,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 4",
     label: "Capabilities",
-    runInfra: {
+    horos: {
       title: "Structured reasoning",
       desc: "Mathematical reasoning, code generation, structured problem-solving."
     },
@@ -81,7 +81,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 5",
     label: "Workload",
-    runInfra: {
+    horos: {
       title: "Single-pass requests",
       desc: "Single-pass requests, latency-sensitive tasks, concurrent inference."
     },
@@ -97,7 +97,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 6",
     label: "Optimization",
-    runInfra: {
+    horos: {
       title: "Token budgets & cache",
       desc: "Quantization, batching, KV cache, reasoning-token budgets."
     },
@@ -113,7 +113,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 7",
     label: "Verification",
-    runInfra: {
+    horos: {
       title: "Held-out accuracy",
       desc: "Held-out task accuracy, answer correctness, latency and cost."
     },
@@ -129,7 +129,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 8",
     label: "Experience",
-    runInfra: {
+    horos: {
       title: "Inference telemetry",
       desc: "Record prompts, model versions, outputs, latency, and failures."
     },
@@ -145,7 +145,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 9",
     label: "Teaching",
-    runInfra: {
+    horos: {
       title: "Configuration routing",
       desc: "Route difficult cases to better configurations or models."
     },
@@ -161,7 +161,7 @@ const COMPARISON_ROWS = [
   {
     num: "1 0",
     label: "Authority",
-    runInfra: {
+    horos: {
       title: "Access & budget gates",
       desc: "Control model access, token budgets, compute spend, and deployment permissions."
     },
@@ -1076,8 +1076,8 @@ export default function ReasoningAIPage() {
                         </div>
                         
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                         </div>
 
                         <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">

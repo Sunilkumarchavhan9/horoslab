@@ -250,7 +250,7 @@ export function PipelinesView({
 
   return (
     <div className="space-y-6 max-w-[1240px] mx-auto pb-16 font-sans text-xs animate-in fade-in duration-150">
-      {/* Top Header Matching RunInfra Style */}
+      {/* Top Header Matching HOROS Style */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#282828] pb-4">
         <div>
           <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
@@ -335,7 +335,7 @@ export function PipelinesView({
         </div>
       </div>
 
-      {/* Pipelines List (Clean Dashed Cards matching RunInfra) */}
+      {/* Pipelines List (Clean Dashed Cards matching HOROS) */}
       <div className="space-y-3">
         {filteredPipelines.map((pipe) => (
           <div

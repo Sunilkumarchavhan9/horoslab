@@ -17,7 +17,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 1",
     label: "System",
-    runInfra: {
+    horos: {
       title: "One connected research lifecycle.",
       desc: "Link hypotheses, models, data, experiments, evaluations, and results."
     },
@@ -33,7 +33,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 2",
     label: "Models",
-    runInfra: {
+    horos: {
       title: "Compare model versions.",
       desc: "Track architectures, checkpoints, adaptations, and measured capabilities, including physical-world understanding."
     },
@@ -49,7 +49,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 3",
     label: "Context",
-    runInfra: {
+    horos: {
       title: "Research knowledge with lineage.",
       desc: "Connect prior findings, hypotheses, datasets, and experiment history."
     },
@@ -65,7 +65,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 4",
     label: "Capabilities",
-    runInfra: {
+    horos: {
       title: "One connected research toolkit.",
       desc: "Combine model repositories, datasets, training, evaluation, and compute environments."
     },
@@ -81,7 +81,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 5",
     label: "Workload",
-    runInfra: {
+    horos: {
       title: "Every experiment accounted for.",
       desc: "Record model configurations, datasets, training runs, compute use, and failures."
     },
@@ -97,7 +97,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 6",
     label: "Optimization",
-    runInfra: {
+    horos: {
       title: "Search for better intelligence.",
       desc: "Compare architectures, data mixtures, training methods, adaptation, and inference strategies."
     },
@@ -113,7 +113,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 7",
     label: "Verification",
-    runInfra: {
+    horos: {
       title: "Evidence-backed improvements.",
       desc: "Compare model versions against baselines and preserve reproducible evaluation results."
     },
@@ -129,7 +129,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 8",
     label: "Experience",
-    runInfra: {
+    horos: {
       title: "Research that accumulates.",
       desc: "Preserve hypotheses, code, datasets, checkpoints, failures, and experiment outcomes."
     },
@@ -145,7 +145,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 9",
     label: "Teaching",
-    runInfra: {
+    horos: {
       title: "Findings become new intelligence.",
       desc: "Turn verified results and ground truth into training signals, world-model learning, and improved model versions."
     },
@@ -161,7 +161,7 @@ const COMPARISON_ROWS = [
   {
     num: "1 0",
     label: "Authority",
-    runInfra: {
+    horos: {
       title: "Controlled research execution.",
       desc: "Govern dataset access, credentials, compute budgets, experiment permissions, and approvals."
     },
@@ -955,8 +955,8 @@ export default function EmbeddingsPage() {
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-4 lg:px-5 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.runInfra.title}</h4>
-                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.runInfra.desc}</p>
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
                       </div>
 
                       <div className="flex flex-col justify-center px-4 py-4 lg:px-5 md:border-r border-dashed border-[#333]">

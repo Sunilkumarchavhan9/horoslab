@@ -95,7 +95,7 @@ export function FinOpsCostView({
 
   return (
     <div className="space-y-6 max-w-[1040px] mx-auto pb-20 font-sans text-xs text-left animate-in fade-in duration-150">
-      {/* Top Header Matching RunInfra 1:1 */}
+      {/* Top Header Matching HOROS 1:1 */}
       <div>
         <h1 className="text-xl font-bold font-mono tracking-tight flex items-center gap-1.5 text-[#F0EFE2]">
           <span className="bg-[#75bf00] text-black px-2 py-0.5 rounded-xs font-bold inline-block font-sans text-base">
