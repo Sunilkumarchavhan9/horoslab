@@ -6,12 +6,10 @@ import { PixelFilter } from "@/components/horos/primitives/pixel-filter";
 
 export default function EconomicsPage() {
   return (
-    <div className="relative min-h-screen bg-[#151515] text-[#F0EFE2] font-sans flex flex-col">
+    <div className="relative min-h-screen bg-[#151515] text-[#F0EFE2] font-sans flex flex-col selection:bg-[#75bf00] selection:text-black">
       <PixelFilter />
 
-      {/* Background Dashed Lines - Global Layout */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Left Outer Line */}
         <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
@@ -23,6 +21,15 @@ export default function EconomicsPage() {
         <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
       </div>
 
+      <div className="relative z-10 flex flex-col w-full min-h-screen">
+        {/* Top Navbar */}
+        <div className="w-full border-b border-dashed border-[#333] flex justify-center">
+          <div className="w-full">
+            <LandingNavbar dark={true} />
+          </div>
+        </div>
+
+        {/* Main Content */}
         <main className="flex-grow flex flex-col w-full relative z-10">
           <ResourceCalculatorSection />
         </main>
