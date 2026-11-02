@@ -243,7 +243,7 @@ const DEVELOPER_SECTIONS = [
       {
         label: "GitHub",
         description: "Open source repositories.",
-        href: "https://github.com/horos",
+        href: "https://github.com/Sunilkumarchavhan9/horoslab",
         icon: <GitBranch className="w-5 h-5" />
       }
     ]
