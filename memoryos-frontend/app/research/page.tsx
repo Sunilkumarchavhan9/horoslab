@@ -118,21 +118,21 @@ export default function ResearchPage() {
           <div />
           <div className="min-w-0 px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16">
             {/* Header Hero Section */}
-            <div className="mb-14 sm:mb-16">
-              <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2.5">
-                <span className="bg-[#a3e635] text-black font-semibold px-2.5 py-0.5 rounded-none inline-block">
+            <div className="mb-12 sm:mb-14">
+              <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2 sm:gap-2.5">
+                <span className="bg-[#a3e635] text-black font-semibold px-2 py-0.5 rounded-none inline-block">
                   Research
                 </span>
                 <span>from HOROS Lab.</span>
               </h1>
 
-              <p className="mt-3.5 text-[#C8C7BA] text-[14.5px] sm:text-[15.5px] max-w-2xl leading-relaxed font-sans">
+              <p className="mt-3 text-[#C8C7BA] text-[13px] sm:text-[14px] max-w-xl leading-relaxed font-sans">
                 Open research papers and physical intelligence foundation models from HOROS Lab for certified safe control, dexterous manipulation, and next-generation humanoid robots.
               </p>
 
-              <div className="mt-3.5 flex items-center gap-2 text-[12px] sm:text-[12.5px] text-[#A0A098] font-mono">
-                <HorosIcon className="w-3.5 h-3.5 text-[#a3e635] shrink-0" />
-                <span>HOROS Lab / Physical intelligence research group building foundation models and safe control for humanoid robotics</span>
+              <div className="mt-3.5 flex items-center gap-2.5 text-[11.5px] sm:text-[12px] text-[#A0A098] font-mono">
+                <HorosIcon className="w-5 h-5 text-[#a3e635] shrink-0" />
+                <span>HOROS Lab / Physical intelligence for humanoid robots</span>
               </div>
             </div>
 
@@ -141,11 +141,11 @@ export default function ResearchPage() {
               {RESEARCH_DATA.map((category) => (
                 <section key={category.title} className="relative">
                   {/* Category Header */}
-                  <div className="mb-5 sm:mb-6">
-                    <h2 className="text-2xl sm:text-[26px] font-medium tracking-tight text-[#F0EFE2]">
+                  <div className="mb-4 sm:mb-5">
+                    <h2 className="text-xl sm:text-[22px] font-medium tracking-tight text-[#F0EFE2]">
                       {category.title}
                     </h2>
-                    <p className="mt-1.5 text-[#A0A098] text-[13.5px] font-sans">
+                    <p className="mt-1 text-[#A0A098] text-[13px] font-sans">
                       {category.subtitle}
                     </p>
                   </div>
