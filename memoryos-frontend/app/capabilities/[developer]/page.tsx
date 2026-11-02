@@ -8,7 +8,6 @@ import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
 import { CAPABILITIES } from "@/lib/capabilities-data";
 import { HorosLogo } from "@/components/horos/primitives/horos-logo";
-import { NvidiaLogo } from "@/components/horos/primitives/brand-icons";
 import { FullSpecAccordion } from "@/components/horos/capabilities/full-spec-accordion";
 import { CodeExamples } from "@/components/horos/capabilities/code-examples";
 
@@ -309,6 +308,18 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
             <SectionDivider position="top" />
             <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
               <CodeExamples capabilityId={capability.id} />
+            </div>
+          </div>
+          {/* Trust & Provenance */}
+          <div className="w-full">
+            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333]">
+              <h2 className="text-[20px] font-semibold text-[#F0EFE2] mb-2">Trust and provenance</h2>
+              <p className="text-[12px] text-[#777] mb-6">Verify the company and operating credentials behind this capability.</p>
+
+              <div className="flex items-center gap-2 text-[13px] text-[#F0EFE2] font-medium">
+                <HorosLogo variant="icon" size="sm" className="h-3 w-auto" />
+                HOROS is a product of System Integration.
+              </div>
             </div>
           </div>
 
