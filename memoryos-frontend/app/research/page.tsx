@@ -19,6 +19,28 @@ function GithubIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   );
 }
 
+function XIcon({ className = "w-3 h-3" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+    </svg>
+  );
+}
+
+function LinkedInIcon({ className = "w-3 h-3" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+  );
+}
+
+interface SocialLink {
+  platform: "x" | "linkedin" | "github";
+  label: string;
+  url: string;
+}
+
 interface Author {
   name: string;
   avatar?: string;
@@ -34,7 +56,8 @@ interface Paper {
   category: string;
   year: string;
   tags: string[];
-  authors: Author[];
+  authors?: Author[];
+  socials?: SocialLink[];
   title: string;
   description: string;
   pdfUrl: string;
@@ -68,14 +91,16 @@ const RESEARCH_DATA: ResearchCategory[] = [
           "Isaac Lab",
           "OSQP Core",
         ],
-        authors: [
+        socials: [
           {
-            name: "Sunil Kumar Chavhan",
-            avatar: "https://github.com/Sunilkumarchavhan9.png",
+            platform: "x",
+            label: "@FrostbytHitsuG",
+            url: "https://x.com/FrostbytHitsuG",
           },
           {
-            name: "HOROS Physical Intelligence",
-            isHoros: true,
+            platform: "linkedin",
+            label: "LinkedIn",
+            url: "https://www.linkedin.com/in/sunil-kumar-chavhan-269195299/",
           },
         ],
         title: "HOROS PROBE-1: Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Nonstationary Contacts",
@@ -165,7 +190,7 @@ export default function ResearchPage() {
                           </span>
                         </div>
 
-                        {/* Column 2: Metadata (arXiv, Category, Tags, Authors) */}
+                        {/* Column 2: Metadata (arXiv, Category, Tags, Social Links) */}
                         <div className="p-4 sm:p-5 flex flex-col justify-between gap-4 border-t md:border-t-0 md:border-r border-dashed border-[#333]">
                           <div>
                             <Link
@@ -193,38 +218,69 @@ export default function ResearchPage() {
                             ))}
                           </div>
 
-                          {/* Authors Row */}
-                          <div className="flex flex-col gap-2 pt-1">
-                            {paper.authors.map((author, aIdx) => (
-                              <div key={aIdx} className="flex items-center gap-2">
-                                {author.isHoros ? (
-                                  <div className="w-4.5 h-4.5 rounded-full bg-[#111] border border-[#333] flex items-center justify-center text-[#a3e635] shrink-0">
-                                    <HorosIcon className="w-2.5 h-2.5" />
+                          {/* Social Brand Links */}
+                          {paper.socials && (
+                            <div className="flex flex-col gap-2 pt-1">
+                              {paper.socials.map((social, sIdx) => (
+                                <Link
+                                  key={sIdx}
+                                  href={social.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title={social.url}
+                                  className="group/social flex items-center gap-2 text-[#C8C7BA] hover:text-[#a3e635] transition-colors"
+                                >
+                                  <div className="w-4.5 h-4.5 rounded-full bg-[#111] border border-[#333] group-hover/social:border-[#a3e635] flex items-center justify-center text-[#C8C7BA] group-hover/social:text-[#a3e635] shrink-0 transition-colors">
+                                    {social.platform === "x" ? (
+                                      <XIcon className="w-2.5 h-2.5" />
+                                    ) : social.platform === "linkedin" ? (
+                                      <LinkedInIcon className="w-2.5 h-2.5" />
+                                    ) : (
+                                      <GithubIcon className="w-2.5 h-2.5" />
+                                    )}
                                   </div>
-                                ) : author.isGithub ? (
-                                  <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[#F0EFE2] shrink-0">
-                                    <GithubIcon className="w-3 h-3" />
-                                  </div>
-                                ) : author.avatar ? (
-                                  <img
-                                    src={author.avatar}
-                                    alt={author.name}
-                                    className="w-4.5 h-4.5 rounded-full object-cover border border-[#444] shrink-0 bg-neutral-800"
-                                    onError={(e) => {
-                                      (e.target as HTMLElement).style.display = "none";
-                                    }}
-                                  />
-                                ) : (
-                                  <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[9px] text-[#C8C7BA] font-mono shrink-0">
-                                    {author.name.slice(0, 2).toUpperCase()}
-                                  </div>
-                                )}
-                                <span className="text-[12px] text-[#C8C7BA] font-medium tracking-tight">
-                                  {author.name}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                                  <span className="text-[12px] text-[#C8C7BA] group-hover/social:text-[#a3e635] font-mono tracking-tight transition-colors">
+                                    {social.label}
+                                  </span>
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Authors Row (Fallback if paper has authors) */}
+                          {paper.authors && (
+                            <div className="flex flex-col gap-2 pt-1">
+                              {paper.authors.map((author, aIdx) => (
+                                <div key={aIdx} className="flex items-center gap-2">
+                                  {author.isHoros ? (
+                                    <div className="w-4.5 h-4.5 rounded-full bg-[#111] border border-[#333] flex items-center justify-center text-[#a3e635] shrink-0">
+                                      <HorosIcon className="w-2.5 h-2.5" />
+                                    </div>
+                                  ) : author.isGithub ? (
+                                    <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[#F0EFE2] shrink-0">
+                                      <GithubIcon className="w-3 h-3" />
+                                    </div>
+                                  ) : author.avatar ? (
+                                    <img
+                                      src={author.avatar}
+                                      alt={author.name}
+                                      className="w-4.5 h-4.5 rounded-full object-cover border border-[#444] shrink-0 bg-neutral-800"
+                                      onError={(e) => {
+                                        (e.target as HTMLElement).style.display = "none";
+                                      }}
+                                    />
+                                  ) : (
+                                    <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[9px] text-[#C8C7BA] font-mono shrink-0">
+                                      {author.name.slice(0, 2).toUpperCase()}
+                                    </div>
+                                  )}
+                                  <span className="text-[12px] text-[#C8C7BA] font-medium tracking-tight">
+                                    {author.name}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
 
                         {/* Column 3: Title, Description, and Actions */}
