@@ -112,7 +112,7 @@ export function FooterCtaSection() {
           </div>
           <div className="flex items-center gap-2 px-6 py-3 w-full md:w-auto justify-center">
             <ShieldCheck size={14} className="text-[#75bf00]" />
-            <span className="text-[#a0a0a0] text-[11px] font-bold uppercase tracking-wider">SOC 2 Type II</span>
+            <span className="text-[#a0a0a0] text-[11px] font-bold uppercase tracking-wider">Enterprise Security</span>
           </div>
         </div>
 

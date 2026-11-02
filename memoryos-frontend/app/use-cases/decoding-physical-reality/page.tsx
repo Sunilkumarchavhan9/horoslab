@@ -639,7 +639,7 @@ const FAQ_DATA = [
   },
   {
     question: "Can I deploy fully air-gapped runtimes with native ROS2 and Zenoh integration?",
-    answer: "Yes. Horos exports standalone, containerized deployment packages equipped with zero-copy shared memory IPC, ROS2 Humble/Iron nodes, and Zenoh middleware bridges. Runtimes operate completely offline with zero telemetry or cloud phone-home requirements, end-to-end encryption, and full SOC 2 Type II compliance.",
+    answer: "Yes. Horos exports standalone, containerized deployment packages equipped with zero-copy shared memory IPC, ROS2 Humble/Iron nodes, and Zenoh middleware bridges. Runtimes operate completely offline with zero telemetry or cloud phone-home requirements, end-to-end encryption, and enterprise-grade security compliance.",
   }
 ];
 
@@ -2005,7 +2005,7 @@ export default function DecodingPhysicalRealityPage() {
                 </div>
                 <div className="flex items-center gap-2.5 text-[#C8C7BA] text-[14px] font-medium border border-[#333] rounded-sm px-5 py-3 bg-[#111]/80 backdrop-blur-md">
                   <ShieldCheck size={16} className="text-[#75bf00]" />
-                  SOC 2 Type II
+                  Enterprise Compliance
                 </div>
               </div>
             </div>

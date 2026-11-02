@@ -2112,7 +2112,7 @@ export default function MultimodalAIPage() {
                 </div>
                 <div className="flex items-center gap-2.5 text-[#C8C7BA] text-[14px] font-medium border border-[#333] rounded-sm px-5 py-3 bg-[#111]/80 backdrop-blur-md">
                   <ShieldCheck size={16} className="text-[#75bf00]" />
-                  SOC 2 Type II
+                  Enterprise Compliance
                 </div>
               </div>
             </div>

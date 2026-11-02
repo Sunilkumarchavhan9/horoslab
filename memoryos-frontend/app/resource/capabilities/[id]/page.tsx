@@ -294,31 +294,6 @@ export default async function CapabilityDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Trust & Provenance */}
-          <div className="w-full">
-            <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] mx-auto px-6 lg:px-8 py-12 lg:py-16 border-x border-dashed border-[#333] bg-[#151515]">
-              <h2 className="text-[20px] font-semibold text-[#F0EFE2] mb-2">Trust and provenance</h2>
-              <p className="text-[12px] text-[#777] mb-8">Verify the company and operating credentials behind this capability.</p>
-              
-              <div className="flex items-center gap-2 text-[13px] text-[#F0EFE2] font-medium mb-6">
-                <HorosLogo variant="icon" size="sm" className="h-3 w-auto" />
-                HOROS is a product of System Integration.
-              </div>
-
-              <div className="flex flex-wrap items-center gap-6 text-[12px]">
-                <div className="flex items-center gap-2 font-semibold text-[#F0EFE2]">
-                  <span className="w-2 h-2 rounded-full bg-[#76b900]"></span> SOC 2 Type II
-                </div>
-                <div className="flex items-center gap-2 font-semibold text-[#F0EFE2]">
-                  <span className="bg-[#f26522] text-white font-bold px-1 py-0.5 text-[10px] rounded-[2px]">Y</span> Y Combinator
-                </div>
-                <div className="flex items-center gap-2 font-semibold text-[#ccc] border-l border-[#333] pl-6">
-                  <NvidiaLogo size={16} className="text-[#76b900]" /> NVIDIA Inception
-                </div>
-              </div>
-            </div>
-          </div>
-
         </main>
 
         <FooterCtaSection />

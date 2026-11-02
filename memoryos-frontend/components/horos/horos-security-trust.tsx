@@ -40,7 +40,7 @@ export function HorosSecurityTrust() {
           </div>
 
           <div className="flex flex-col md:border-l md:border-dashed border-[#333] md:pl-10 lg:pl-12">
-            <Soc2FileIcon size={32} className="mb-5" />
+            <AuditFileIcon size={32} className="mb-5" />
             <h3 className="text-[#F0EFE2] font-medium text-[20px] tracking-tight mb-2">Independent Verify</h3>
             <p className="text-[#888] text-[15px] leading-relaxed">
               Verify claims with immutable evidence.
@@ -115,7 +115,7 @@ function NoTrainingBookIcon({ className, size = 24 }: { className?: string, size
   );
 }
 
-function Soc2FileIcon({ className, size = 24 }: { className?: string, size?: number }) {
+function AuditFileIcon({ className, size = 24 }: { className?: string, size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="#F0EFE2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

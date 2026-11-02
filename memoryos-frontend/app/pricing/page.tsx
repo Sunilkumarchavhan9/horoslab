@@ -203,7 +203,7 @@ const COMPARISON_ROWS = [
     isText: "mixed",
   },
   {
-    feature: "SOC 2 Type II",
+    feature: "Enterprise Security",
     payg: false,
     enterprise: true,
     isText: false,
@@ -690,7 +690,7 @@ export default function PricingPage() {
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
-                          <span>SOC 2 Type II attestation and enterprise compliance controls</span>
+                          <span>Enterprise compliance and dedicated security controls</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
@@ -985,7 +985,7 @@ export default function PricingPage() {
                         Can we run private dedicated deployments?
                       </h3>
                       <p className="text-[#aaa] text-xs sm:text-[13px] pl-5 leading-relaxed">
-                        Yes. Frontier Lab Enterprise contracts support private VPC peering, on-prem datacenter integration, SOC 2 Type II controls, and custom model weights loaded into isolated GPU/TPU nodes.
+                        Yes. Frontier Lab Enterprise contracts support private VPC peering, on-prem datacenter integration, enterprise security controls, and custom model weights loaded into isolated GPU/TPU nodes.
                       </p>
                     </div>
                   </>
@@ -1487,7 +1487,7 @@ export default function PricingPage() {
                   </div>
                   <div className="border border-[#2a2a2a] bg-[#141414] py-2 px-3 flex items-center gap-2 text-xs text-[#bbb]">
                     <ShieldCheck size={13} className="text-[#76b900] shrink-0" />
-                    <span className="truncate">SOC 2 Type II attestation</span>
+                    <span className="truncate">Enterprise Security & Compliance</span>
                   </div>
                 </div>
 

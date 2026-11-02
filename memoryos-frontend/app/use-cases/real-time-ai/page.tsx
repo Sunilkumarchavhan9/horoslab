@@ -51,7 +51,7 @@ const COMPARISON_ROWS = [
   {
     num: "0 6",
     label: "Security",
-    runInfra: { title: "SOC 2 Type II", desc: "Audited controls across agent tools, logging, and data." },
+    runInfra: { title: "Enterprise Compliance", desc: "Audited controls across agent tools, logging, and data." },
     closed: { title: "Varies by vendor", desc: "Compliance depends on the third-party provider." },
     diy: { title: "You build it", desc: "Your team owns the audit trail and access controls." }
   }
