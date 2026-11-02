@@ -22,7 +22,7 @@ export function ResourceCalculatorResult({
   const [showChartMeaning, setShowChartMeaning] = useState(false);
 
   return (
-    <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515] min-h-screen text-[#C8C7BA] font-sans pb-32 pt-24 px-6 lg:px-8">
+    <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] mx-auto border-x border-dashed border-[#333] relative z-10 bg-[#151515] min-h-screen text-[#C8C7BA] font-sans pb-32 pt-24 px-6 lg:px-8">
 
       {/* Back button */}
       <button onClick={onBack} className="text-[#888] hover:text-[#C8C7BA] flex items-center gap-2 text-[12px] md:text-[13px] lg:text-[14px] mb-12 transition-colors">

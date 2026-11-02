@@ -16,16 +16,20 @@ export function GlobalFooter() {
       {/* Top Divider */}
       <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
 
-      {/* Background Vertical Lines */}
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 border-l border-dashed border-[#333]" />
-        <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 border-l border-dashed border-[#333]" />
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
       </div>
 
       {/* --- FOOTER CONTENT --- */}
-      <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-16 flex flex-col relative z-10">
+      <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] mx-auto py-16 flex flex-col relative z-10">
 
         {/* Top Footer Row */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 pb-16 px-8 lg:px-12">
@@ -153,9 +157,9 @@ export function GlobalFooter() {
       <div className="w-full border-t border-dashed border-[#333] relative">
 
         {/* Tiny HOROS text aligned to the left of the 18% grid line */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-[86%] lg:right-[82%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
+        <div className="absolute top-1/2 -translate-y-1/2 right-[90%] lg:right-[90%] xl:right-[86%] 2xl:right-[82%] mr-6 text-[#555] text-[9px] font-bold tracking-[0.2em] z-10 hidden md:block">HOROS</div>
 
-        <div className="w-[88%] lg:w-[calc(64%_-_240px)] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
+        <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] mx-auto py-8 px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center relative z-10">
 
           <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#777] mb-4 md:mb-0">
             <span className="flex items-center text-[#F0EFE2] mr-12">

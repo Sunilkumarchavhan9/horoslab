@@ -69,7 +69,7 @@ export default function CapabilitiesPage() {
         </div>
         
         <main className="flex-grow flex flex-col items-center w-full relative z-10">
-          <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto flex flex-col border-x border-dashed border-[#333]">
+          <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] mx-auto flex flex-col border-x border-dashed border-[#333]">
             {/* Header Section */}
             <div className="w-full px-6 lg:px-8 py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
               <h1 className="text-4xl md:text-[56px] leading-[1.1] font-semibold tracking-tight text-[#F0EFE2] mb-6">

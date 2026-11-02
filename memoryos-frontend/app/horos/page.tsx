@@ -17,11 +17,11 @@ const GridDivider = () => (
     <div className="absolute left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
     
     {/* Crosses at intersections */}
-    <div className="absolute hidden md:block left-[14%] lg:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="absolute hidden md:block left-[86%] lg:left-[82%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    
+    <div className="absolute hidden md:block left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] text-[#F0CC94] font-mono text-[10px] leading-none transform translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute hidden md:block right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] text-[#F0CC94] font-mono text-[10px] leading-none transform translate-x-[45%] -translate-y-[52%]">+</div>
+        
     {/* Center Logo Divider */}
     <div className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 bg-[#151515] p-2 hidden md:block">
       <HorosLogo variant="icon" size="sm" className="w-5 h-auto text-[#F0EFE2]" />
@@ -65,11 +65,15 @@ export default function HorosPage() {
       
       <main className="pb-32 w-full relative z-10 flex flex-col">
         {/* Global Vertical Grid Lines */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          {/* Left Outer Line */}
+          <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+          {/* Left Inner Line */}
+          <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          {/* Right Inner Line */}
+          <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+          {/* Right Outer Line */}
+          <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
         </div>
 
         <GridDivider />

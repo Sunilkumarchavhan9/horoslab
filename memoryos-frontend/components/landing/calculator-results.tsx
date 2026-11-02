@@ -128,7 +128,7 @@ export function CalculatorResults({
     <div className="w-full flex flex-col items-center text-sans relative z-10">
 
       {/* Unified Main Container (with dashed borders) */}
-      <div className="w-[88%] md:w-[calc(64%-240px)] mx-auto border-x border-dashed border-[#333] relative flex flex-col pt-16 md:pt-20 pb-32 bg-[#151515]">
+      <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] mx-auto border-x border-dashed border-[#333] relative flex flex-col pt-16 md:pt-20 pb-32 bg-[#151515]">
 
         {/* Top Full-width Horizontal Divider */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100vw] border-t border-dashed border-[#333]"></div>

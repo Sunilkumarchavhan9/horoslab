@@ -11,7 +11,6 @@ interface ProductionStackSectionProps {
 }
 
 // Master alignment lines: Outer (18%), Inner Margins (pushed inside by 120px)
-export const MARGIN_VERTICAL_POSITIONS = ["18%", "calc(18% + 120px)", "calc(82% - 120px)", "82%"];
 
 const GemmaLogo = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,26 +56,24 @@ function ModelScroller() {
 export function ProductionStackSection({ onOpenSignIn, dark = true }: ProductionStackSectionProps) {
   return (
     <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-mono overflow-hidden select-none">
-      {/* 4 Continuous Margin Dashed Vertical Lines */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        {MARGIN_VERTICAL_POSITIONS.map((pos, idx) => (
-          <div
-            key={idx}
-            className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-            style={{ left: pos }}
-          />
-        ))}
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
       </div>
 
       {/* Intersection Pin Point Dots on TOP Border */}
       <div className="absolute top-0 inset-x-0 pointer-events-none z-10">
-        {MARGIN_VERTICAL_POSITIONS.map((pos, idx) => (
-          <span
-            key={idx}
-            className="absolute top-0 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-            style={{ left: pos }}
-          />
-        ))}
+        <span className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+        <span className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+        <span className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+        <span className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
       </div>
 
       {/* Row 1: Centered Header Block */}
@@ -286,13 +283,10 @@ export function ProductionStackSection({ onOpenSignIn, dark = true }: Production
 
       {/* Intersection Pin Point Dots on BOTTOM Border */}
       <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
-        {MARGIN_VERTICAL_POSITIONS.map((pos, idx) => (
-          <span
-            key={idx}
-            className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-            style={{ left: pos }}
-          />
-        ))}
+        <span className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+        <span className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+        <span className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] bottom-0 translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+        <span className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] bottom-0 translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
       </div>
     </section>
   );

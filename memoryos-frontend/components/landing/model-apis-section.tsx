@@ -43,7 +43,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
 
           {/* Main 2-Column Grid Area */}
           <div className="w-full relative">
-            <div className="w-full grid grid-cols-1 lg:grid-cols-[calc(18%_+_120px)_1fr_calc(18%_+_120px)] relative z-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_1fr_10%] xl:grid-cols-[14%_1fr_14%] 2xl:grid-cols-[18%_1fr_18%] relative z-10">
               {/* Empty Left Margin */}
               <div className="hidden lg:block" />
 
@@ -235,7 +235,7 @@ export function ModelApisSection({ dark = true }: ModelApisSectionProps) {
             </div>
 
             {/* Footer Logos Row */}
-            <div className="w-full grid grid-cols-1 lg:grid-cols-[calc(18%_+_120px)_1fr_calc(18%_+_120px)] relative z-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_1fr_10%] xl:grid-cols-[14%_1fr_14%] 2xl:grid-cols-[18%_1fr_18%] relative z-10">
               <div className="hidden lg:block" />
               <div className="py-8 border-y border-x border-dashed border-[#333] flex flex-wrap items-center justify-center gap-12 lg:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 px-8 lg:px-12">
                 <div className="text-[11px] font-mono font-bold text-[#444] tracking-widest uppercase">

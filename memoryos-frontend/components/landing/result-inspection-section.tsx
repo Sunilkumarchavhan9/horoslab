@@ -646,65 +646,35 @@ const PILLARS_ROW_3: PillarCard[] = [
   },
 ];
 
-// Outer Margin Lines (18% and 82%) extend all the way up through the header above top line
-const OUTER_VERTICAL_POSITIONS = ["18%", "82%"];
-
-// Inner Margin Lines (pushed 120px inside) stop at top monogram line
-const INNER_MARGIN_POSITIONS = ["calc(18% + 120px)", "calc(82% - 120px)"];
-
-// Header Top Line Dot Marker Positions
-const HEADER_TOP_DOT_POSITIONS = ["18%", "calc(18% + 120px)", "calc(82% - 120px)", "82%"];
-
-// Exact 100% Mathematically Aligned Vertical Grid Positions:
-// Outer (18%) | Inner (18%+120px) | Card 1-2 (34%+60px) | Card 2-3 (50%) | Card 3-4 (66%-60px) | Inner (82%-120px) | Outer (82%)
-const ALL_VERTICAL_POSITIONS = [
-  "18%",
-  "calc(18% + 120px)",
-  "calc(34% + 60px)",
-  "50%",
-  "calc(66% - 60px)",
-  "calc(82% - 120px)",
-  "82%"
-];
-
 export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultInspectionSectionProps) {
-
-
   return (
     <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-sans overflow-hidden select-none">
+      
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
+      </div>
+
+      {/* HEADER SECTION */}
       <div className="relative z-10 w-full pt-8 pb-16 border-b border-dashed border-[#333333] transition-colors overflow-hidden group/header">
-
-        <div className="absolute top-0 bottom-0 left-0 right-0 pointer-events-none z-0">
-          {OUTER_VERTICAL_POSITIONS.map((pos, idx) => (
-            <div
-              key={idx}
-              className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-              style={{ left: pos }}
-            />
-          ))}
-        </div>
-
-        <div className="absolute top-[48px] bottom-0 left-0 right-0 pointer-events-none z-0">
-          {INNER_MARGIN_POSITIONS.map((pos, idx) => (
-            <div
-              key={idx}
-              className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-              style={{ left: pos }}
-            />
-          ))}
-        </div>
-
+        
+        {/* Header Top Horizontal Dashed Line with Brand Center Logo */}
         <div className="relative w-full mb-12 z-10">
           <div className="absolute inset-x-0 top-1/2 border-t border-dashed border-[#333333] -translate-y-1/2" />
 
+          {/* Dots on the 4 Vertical Line Intersections */}
           <div className="absolute inset-0 pointer-events-none z-10">
-            {HEADER_TOP_DOT_POSITIONS.map((pos, idx) => (
-              <span
-                key={idx}
-                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-                style={{ left: pos }}
-              />
-            ))}
+            <span className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+            <span className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+            <span className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-1/2 translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
+            <span className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-1/2 translate-x-1/2 -translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none" />
           </div>
 
           <div className="relative z-20 flex justify-center">
@@ -714,9 +684,7 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
           </div>
         </div>
 
-        <div
-          className="relative max-w-4xl mx-auto text-center px-4 z-20"
-        >
+        <div className="relative max-w-4xl mx-auto text-center px-4 z-20">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-normal tracking-tight leading-[1.12] mb-3.5 text-[#F0EFE2]">
             Engineer intelligence against{" "}
             <span className="inline-block bg-[#75bf00] text-black px-2.5 py-0.5 rounded-[3px] font-medium tracking-tight shadow-[0_0_20px_rgba(117,191,0,0.35)]">
@@ -728,37 +696,23 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
             HOROS connects models, data, context, runtime, compute, workloads, and real-world evidence into one continuous system for building, testing, verifying, deploying, and improving intelligence.
           </p>
         </div>
-
-        <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <span
-              key={idx}
-              className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-              style={{ left: pos }}
-            />
-          ))}
-        </div>
       </div>
 
       {/* ROW 1: 4 HOROS CANONICAL REALITY ARCHITECTURE CARDS */}
       <div className="relative z-10 w-full border-b border-dashed border-[#333333]">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <div
-              key={idx}
-              className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-              style={{ left: pos }}
-            />
-          ))}
-        </div>
-
         <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[10%_repeat(4,1fr)_10%] xl:grid-cols-[14%_repeat(4,1fr)_14%] 2xl:grid-cols-[18%_repeat(4,1fr)_18%]">
-          <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
+          {/* Left Margin Cell */}
+          <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block border-r border-dashed border-[#333333]">
+            <span className="absolute -top-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+            <span className="absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+          </div>
 
-          {PILLARS_ROW_1.map((item) => (
+          {PILLARS_ROW_1.map((item, idx) => (
             <div
               key={item.id}
-              className="p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card"
+              className={`relative p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card border-b md:border-b-0 border-r border-dashed border-[#333333] ${
+                idx === 3 ? 'border-r-0 lg:border-r' : idx % 2 === 1 ? 'md:border-r-0 lg:border-r' : ''
+              }`}
             >
               <div className="mb-6 text-[#F0EFE2]">
                 {item.icon}
@@ -771,46 +725,36 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
                   {item.title}
                 </div>
               </div>
+
+              {/* Precise Intersection Crosshairs */}
+              <span className="hidden lg:block absolute -top-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+              <span className="hidden lg:block absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
             </div>
           ))}
 
+          {/* Right Margin Cell */}
           <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
-        </div>
-
-        <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <span
-              key={idx}
-              className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-              style={{ left: pos }}
-            />
-          ))}
         </div>
       </div>
 
       {/* ROW 2: 4 HOROS CANONICAL REALITY ARCHITECTURE CARDS + HOROS WATERMARK */}
       <div className="relative z-10 w-full border-b border-dashed border-[#333333]">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <div
-              key={idx}
-              className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-              style={{ left: pos }}
-            />
-          ))}
-        </div>
-
         <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[10%_repeat(4,1fr)_10%] xl:grid-cols-[14%_repeat(4,1fr)_14%] 2xl:grid-cols-[18%_repeat(4,1fr)_18%]">
-          <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block">
+          {/* Left Margin Cell with HOROS Watermark */}
+          <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block border-r border-dashed border-[#333333]">
             <span className="absolute bottom-3 right-3 text-[9px] font-mono tracking-[0.25em] text-[#555555] font-semibold select-none pointer-events-none uppercase">
               HOROS
             </span>
+            <span className="absolute -top-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+            <span className="absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
           </div>
 
-          {PILLARS_ROW_2.map((item) => (
+          {PILLARS_ROW_2.map((item, idx) => (
             <div
               key={item.id}
-              className="p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card"
+              className={`relative p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card border-b md:border-b-0 border-r border-dashed border-[#333333] ${
+                idx === 3 ? 'border-r-0 lg:border-r' : idx % 2 === 1 ? 'md:border-r-0 lg:border-r' : ''
+              }`}
             >
               <div className="mb-6 text-[#F0EFE2]">
                 {item.icon}
@@ -823,46 +767,36 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
                   {item.title}
                 </div>
               </div>
+
+              {/* Precise Intersection Crosshairs */}
+              <span className="hidden lg:block absolute -top-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+              <span className="hidden lg:block absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
             </div>
           ))}
 
+          {/* Right Margin Cell */}
           <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
-        </div>
-
-        <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <span
-              key={idx}
-              className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-              style={{ left: pos }}
-            />
-          ))}
         </div>
       </div>
 
       {/* ROW 3: 4 EXTENDED CANONICAL OUTCOME CARDS (DIAGNOSE, DATA CENTER, WORLD MODEL, REPAIR) */}
       <div className="relative z-10 w-full border-b border-dashed border-[#333333]">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <div
-              key={idx}
-              className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-              style={{ left: pos }}
-            />
-          ))}
-        </div>
-
         <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[10%_repeat(4,1fr)_10%] xl:grid-cols-[14%_repeat(4,1fr)_14%] 2xl:grid-cols-[18%_repeat(4,1fr)_18%]">
-          <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block">
+          {/* Left Margin Cell with DELIVERABLE Watermark */}
+          <div className="relative min-h-[200px] lg:min-h-[210px] hidden lg:block border-r border-dashed border-[#333333]">
             <span className="absolute bottom-3 right-3 text-[9px] font-mono tracking-[0.25em] text-[#444444] font-semibold select-none pointer-events-none uppercase">
               DELIVERABLE
             </span>
+            <span className="absolute -top-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+            <span className="absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
           </div>
 
-          {PILLARS_ROW_3.map((item) => (
+          {PILLARS_ROW_3.map((item, idx) => (
             <div
               key={item.id}
-              className="p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card"
+              className={`relative p-5 sm:p-6 lg:p-6 xl:p-7 min-h-[200px] lg:min-h-[210px] flex flex-col justify-between transition-all duration-300 group/card border-b md:border-b-0 border-r border-dashed border-[#333333] ${
+                idx === 3 ? 'border-r-0 lg:border-r' : idx % 2 === 1 ? 'md:border-r-0 lg:border-r' : ''
+              }`}
             >
               <div className="mb-6 text-[#F0EFE2]">
                 {item.icon}
@@ -875,43 +809,30 @@ export function ResultInspectionSection({ onOpenSignIn, dark = true }: ResultIns
                   {item.title}
                 </div>
               </div>
+
+              {/* Precise Intersection Crosshairs */}
+              <span className="hidden lg:block absolute -top-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+              <span className="hidden lg:block absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
             </div>
           ))}
 
+          {/* Right Margin Cell */}
           <div className="min-h-[200px] lg:min-h-[210px] hidden lg:block" />
-        </div>
-
-        <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <span
-              key={idx}
-              className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-              style={{ left: pos }}
-            />
-          ))}
         </div>
       </div>
 
       {/* BOTTOM DASHED MARGIN ROW */}
-      <div className="relative z-10 w-full border-b border-dashed border-[#333333] min-h-[80px]">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <div
-              key={idx}
-              className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-              style={{ left: pos }}
-            />
+      <div className="relative z-10 w-full border-b border-dashed border-[#333333]">
+        <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[10%_repeat(4,1fr)_10%] xl:grid-cols-[14%_repeat(4,1fr)_14%] 2xl:grid-cols-[18%_repeat(4,1fr)_18%]">
+          <div className="min-h-[60px] hidden lg:block border-r border-dashed border-[#333333] relative">
+            <span className="absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+          </div>
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="min-h-[60px] border-r border-dashed border-[#333333] relative hidden lg:block">
+              <span className="absolute -bottom-[4px] -right-[4px] text-[#555] font-mono text-[9px] leading-none select-none z-20 pointer-events-none">+</span>
+            </div>
           ))}
-        </div>
-
-        <div className="absolute bottom-0 inset-x-0 pointer-events-none z-10">
-          {ALL_VERTICAL_POSITIONS.map((pos, idx) => (
-            <span
-              key={idx}
-              className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 w-[3px] h-[3px] bg-[#666666] select-none"
-              style={{ left: pos }}
-            />
-          ))}
+          <div className="min-h-[60px] hidden lg:block" />
         </div>
       </div>
 

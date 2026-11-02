@@ -3,7 +3,6 @@ import { SectionDivider } from "@/components/landing/section-divider";
 
 import React, { useState, useEffect } from "react";
 import { ClipboardList } from "lucide-react";
-import { MARGIN_VERTICAL_POSITIONS } from "./production-stack-section";
 
 const VLLMOmniLogo = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,15 +69,16 @@ export interface RunbookSectionProps {
 export function RunbookSection({ onOpenSignIn, dark = true }: RunbookSectionProps) {
   return (
     <section className="relative w-full bg-[#151515] text-[#F0EFE2] font-mono overflow-hidden select-none">
-      {/* 4 Continuous Margin Dashed Vertical Lines */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        {MARGIN_VERTICAL_POSITIONS.map((pos, idx) => (
-          <div
-            key={idx}
-            className="absolute top-0 bottom-0 border-r border-dashed border-[#333333]"
-            style={{ left: pos }}
-          />
-        ))}
+      {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Left Outer Line */}
+        <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+        {/* Left Inner Line */}
+        <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* Right Inner Line */}
+        <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+        {/* Right Outer Line */}
+        <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
       </div>
 
       {/* Main Grid Layout (aligned with master vertical lines) */}
