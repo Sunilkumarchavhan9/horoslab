@@ -69,10 +69,10 @@ export default function CapabilitiesPage() {
       {/* Background Dashed Lines - Global Layout */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {/* Outer Lines (Mobile & Desktop) */}
-        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        <div className="hidden lg:block absolute left-[3%] xl:left-[5%] 2xl:left-[8%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#282828]" />
+        <div className="hidden lg:block absolute right-[3%] xl:right-[5%] 2xl:right-[8%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#282828]" />
+
+
 
         {/* Inner Lines (Desktop Only) */}
         </div>
@@ -85,7 +85,7 @@ export default function CapabilitiesPage() {
         </div>
         
         <main className="flex-grow flex flex-col items-center w-full relative z-10">
-          <div className="w-[96%] md:w-[calc(72%_-_240px)] lg:w-[calc(64%_-_240px)] mx-auto flex flex-col border-x border-dashed border-[#333]">
+          <div className="w-[96%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto flex flex-col border-x border-dashed border-[#333]">
             {/* Header Section */}
             <div className="w-full px-6 lg:px-8  py-20 lg:py-28 flex flex-col items-start border-b border-dashed border-[#333]">
               <h1 className="text-4xl md:text-[56px] leading-[1.1] font-semibold tracking-tight text-[#F0EFE2] mb-6">

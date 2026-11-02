@@ -447,19 +447,19 @@ export default function PricingPage() {
 
   return (
     <div className="relative min-h-screen bg-[#151515] text-[#C8C7BA] font-sans overflow-x-hidden selection:bg-[#76b900] selection:text-black">
-      {/* Background Vertical Dashed Layout Guidelines - Matching Global Footer Grid */}
+      {/* Background Vertical Dashed Layout Guidelines - Fluid framing accents */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[calc(14%_+_120px)] lg:left-[calc(18%_+_120px)] top-0 bottom-0 border-l border-dashed border-[#333]" />
-        <div className="hidden md:block absolute left-[calc(86%_-_120px)] lg:left-[calc(82%_-_120px)] top-0 bottom-0 border-l border-dashed border-[#333]" />
-        <div className="absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 border-l border-dashed border-[#333]" />
+        <div className="hidden lg:block absolute left-[3%] xl:left-[5%] 2xl:left-[8%] top-0 bottom-0 border-l border-dashed border-[#282828]" />
+        <div className="hidden lg:block absolute right-[3%] xl:right-[5%] 2xl:right-[8%] top-0 bottom-0 border-r border-dashed border-[#282828]" />
+
+
       </div>
 
       {/* Top Navbar with Founding Cohort Integration */}
       <LandingNavbar onOpenFoundingCohort={() => openModal("Founding Cohort Track")} />
 
       {/* Main Container - Sits cleanly inside inner dashed lines with breathing room */}
-      <main className="w-[92%] sm:w-[90%] md:w-[calc(72%_-_280px)] lg:w-[calc(64%_-_300px)] xl:w-[calc(64%_-_340px)] mx-auto pt-24 sm:pt-28 pb-32 relative z-10">
+      <main className="w-[94%] sm:w-[92%] md:w-[90%] lg:w-[88%] lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto pt-24 sm:pt-28 pb-32 relative z-10">
 
         {/* SECTION 1: Top Product Plans Selection */}
         <section className="mb-16">

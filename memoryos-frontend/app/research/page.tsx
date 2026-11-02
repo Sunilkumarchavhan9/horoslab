@@ -92,205 +92,191 @@ export default function ResearchPage() {
 
   return (
     <div className="min-h-screen bg-[#151515] text-[#F0EFE2] font-sans selection:bg-[#75bf00] selection:text-black flex flex-col relative overflow-x-hidden">
-      {/* GLOBAL VERTICAL DASHED LINES (Standard HOROS Layout Grid) */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="w-full h-full grid grid-cols-[14%_72%_14%] md:grid-cols-[calc(14%_+_120px)_calc(72%_-_240px)_calc(14%_+_120px)] lg:grid-cols-[calc(18%_+_120px)_calc(64%_-_240px)_calc(18%_+_120px)]">
-          {/* Left margin with two vertical dashed lines */}
-          <div className="relative border-r border-dashed border-[#333]">
-            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333] hidden md:block" />
-          </div>
-          {/* Center content */}
-          <div />
-          {/* Right margin with two vertical dashed lines */}
-          <div className="relative border-l border-dashed border-[#333]">
-            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333] hidden md:block" />
-          </div>
-        </div>
+      {/* Background Vertical Dashed Layout Guidelines */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="hidden lg:block absolute left-[3%] xl:left-[5%] 2xl:left-[8%] top-0 bottom-0 border-l border-dashed border-[#282828]" />
+        <div className="hidden lg:block absolute right-[3%] xl:right-[5%] 2xl:right-[8%] top-0 bottom-0 border-r border-dashed border-[#282828]" />
       </div>
 
       <div className="relative z-[100]">
         <LandingNavbar dark />
       </div>
 
-      {/* Main Content Area - Strictly bounded to center grid column with generous side gaps from dashed lines */}
-      <main className="flex-grow flex flex-col w-full relative z-10 pt-28 sm:pt-36 pb-24 sm:pb-32">
-        <div className="w-full grid grid-cols-[14%_72%_14%] md:grid-cols-[calc(14%_+_120px)_calc(72%_-_240px)_calc(14%_+_120px)] lg:grid-cols-[calc(18%_+_120px)_calc(64%_-_240px)_calc(18%_+_120px)] relative z-10">
-          <div />
-          <div className="min-w-0 px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16">
-            {/* Header Hero Section */}
-            <div className="mb-12 sm:mb-14">
-              <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2 sm:gap-2.5">
-                <span className="bg-[#a3e635] text-black font-semibold px-2 py-0.5 rounded-none inline-block">
-                  Research
-                </span>
-                <span>from HOROS Lab.</span>
-              </h1>
+      {/* Main Content Area - Auto-responsive fluid container across phone, tablet, laptop, and monitor */}
+      <main className="flex-grow flex flex-col w-full relative z-10 pt-24 sm:pt-28 md:pt-32 pb-24 sm:pb-32">
+        <div className="w-[94%] sm:w-[90%] md:w-[88%] lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col">
+          {/* Header Hero Section */}
+          <div className="mb-10 sm:mb-12">
+            <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2 sm:gap-2.5">
+              <span className="bg-[#a3e635] text-black font-semibold px-2 py-0.5 rounded-none inline-block">
+                Research
+              </span>
+              <span>from HOROS Lab.</span>
+            </h1>
 
-              <p className="mt-3 text-[#C8C7BA] text-[13px] sm:text-[14px] max-w-xl leading-relaxed font-sans">
-                Open research papers and physical intelligence foundation models from HOROS Lab for certified safe control, dexterous manipulation, and next-generation humanoid robots.
-              </p>
+            <p className="mt-3 text-[#C8C7BA] text-[13px] sm:text-[14px] max-w-xl leading-relaxed font-sans">
+              Open research papers and physical intelligence foundation models from HOROS Lab for certified safe control, dexterous manipulation, and next-generation humanoid robots.
+            </p>
 
-              <div className="mt-3.5 flex items-center gap-2.5 text-[11.5px] sm:text-[12px] text-[#A0A098] font-mono">
-                <HorosIcon className="w-5 h-5 text-[#a3e635] shrink-0" />
-                <span>HOROS Lab / Physical intelligence for humanoid robots</span>
-              </div>
-            </div>
-
-            {/* Categories Section */}
-            <div className="space-y-14 sm:space-y-16">
-              {RESEARCH_DATA.map((category) => (
-                <section key={category.title} className="relative">
-                  {/* Category Header */}
-                  <div className="mb-4 sm:mb-5">
-                    <h2 className="text-xl sm:text-[22px] font-medium tracking-tight text-[#F0EFE2]">
-                      {category.title}
-                    </h2>
-                    <p className="mt-1 text-[#A0A098] text-[13px] font-sans">
-                      {category.subtitle}
-                    </p>
-                  </div>
-
-                  {/* Papers Grid Container with Dashed Borders */}
-                  <div className="border border-dashed border-[#333] bg-[#151515]">
-                    {category.papers.map((paper) => {
-                      const isHovered = activeHoverId === paper.id;
-
-                      return (
-                        <article
-                          key={paper.id}
-                          onMouseEnter={() => setActiveHoverId(paper.id)}
-                          onMouseLeave={() => setActiveHoverId(null)}
-                          className={`group grid grid-cols-1 md:grid-cols-[56px_200px_1fr] border-b border-dashed border-[#333] last:border-b-0 transition-colors duration-200 ${
-                            isHovered ? "bg-[#1c1c1c]" : "hover:bg-[#1a1a1a]"
-                          }`}
-                        >
-                          {/* Column 1: Index Number */}
-                          <div className="px-3 py-4 sm:px-4 sm:py-6 flex items-start md:border-r border-dashed border-[#333]">
-                            <span className="font-mono text-base font-bold text-[#F0EFE2]">
-                              {paper.index}
-                            </span>
-                          </div>
-
-                          {/* Column 2: Metadata (arXiv, Category, Tags, Authors) */}
-                          <div className="p-4 sm:p-5 md:p-6 flex flex-col justify-between gap-4 border-t md:border-t-0 md:border-r border-dashed border-[#333]">
-                            <div>
-                              <Link
-                                href={paper.arxivUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[#a3e635] hover:text-[#bef264] font-mono text-[12px] font-medium inline-flex items-center gap-1 transition-colors"
-                              >
-                                <span>{paper.arxivId}</span>
-                              </Link>
-                              <div className="text-[#777] font-mono text-[11px] mt-0.5">
-                                {paper.category} / {paper.year}
-                              </div>
-                            </div>
-
-                            {/* Dashed Tags Badges */}
-                            <div className="flex flex-wrap gap-1.5">
-                              {paper.tags.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="inline-flex items-center px-1.5 py-0.5 rounded-none border border-dashed border-[#3d3d3d] bg-transparent text-[#C8C7BA] font-mono text-[10.5px]"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-
-                            {/* Authors Row */}
-                            <div className="flex flex-col gap-2 pt-1">
-                              {paper.authors.map((author, aIdx) => (
-                                <div key={aIdx} className="flex items-center gap-2">
-                                  {author.isHoros ? (
-                                    <div className="w-4.5 h-4.5 rounded-full bg-[#111] border border-[#333] flex items-center justify-center text-[#a3e635] shrink-0">
-                                      <HorosIcon className="w-2.5 h-2.5" />
-                                    </div>
-                                  ) : author.isGithub ? (
-                                    <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[#F0EFE2] shrink-0">
-                                      <GithubIcon className="w-3 h-3" />
-                                    </div>
-                                  ) : author.avatar ? (
-                                    <img
-                                      src={author.avatar}
-                                      alt={author.name}
-                                      className="w-4.5 h-4.5 rounded-full object-cover border border-[#444] shrink-0 bg-neutral-800"
-                                      onError={(e) => {
-                                        (e.target as HTMLElement).style.display = "none";
-                                      }}
-                                    />
-                                  ) : (
-                                    <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[9px] text-[#C8C7BA] font-mono shrink-0">
-                                      {author.name.slice(0, 2).toUpperCase()}
-                                    </div>
-                                  )}
-                                  <span className="text-[12px] text-[#C8C7BA] font-medium tracking-tight">
-                                    {author.name}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Column 3: Title, Description, and Actions */}
-                          <div className="p-4 sm:p-6 md:p-7 flex flex-col justify-between border-t md:border-t-0">
-                            <div>
-                              <Link
-                                href={paper.pdfUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group/title block"
-                              >
-                                <h3 className="text-[#F0EFE2] font-medium text-[16px] sm:text-[17px] md:text-[18px] leading-snug group-hover/title:text-[#a3e635] transition-colors">
-                                  {paper.title}
-                                </h3>
-                              </Link>
-                              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] leading-relaxed mt-2 mb-5 font-sans font-normal">
-                                {paper.description}
-                              </p>
-                            </div>
-
-                            {/* Action Links */}
-                            <div className="flex items-center gap-5 font-mono text-[12px]">
-                              <Link
-                                href={paper.pdfUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                              >
-                                <span>PDF</span>
-                                <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                              </Link>
-                              <Link
-                                href={paper.arxivUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                              >
-                                <span>arXiv</span>
-                                <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                              </Link>
-                              <Link
-                                href={paper.codeUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
-                              >
-                                <span>Code</span>
-                                <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                              </Link>
-                            </div>
-                          </div>
-                        </article>
-                      );
-                    })}
-                  </div>
-                </section>
-              ))}
+            <div className="mt-3.5 flex items-center gap-2.5 text-[11.5px] sm:text-[12px] text-[#A0A098] font-mono">
+              <HorosIcon className="w-5 h-5 text-[#a3e635] shrink-0" />
+              <span>HOROS Lab / Physical intelligence for humanoid robots</span>
             </div>
           </div>
-          <div />
+
+          {/* Categories Section */}
+          <div className="space-y-12 sm:space-y-16">
+            {RESEARCH_DATA.map((category) => (
+              <section key={category.title} className="relative">
+                {/* Category Header */}
+                <div className="mb-4 sm:mb-5">
+                  <h2 className="text-xl sm:text-[22px] font-medium tracking-tight text-[#F0EFE2]">
+                    {category.title}
+                  </h2>
+                  <p className="mt-1 text-[#A0A098] text-[13px] font-sans">
+                    {category.subtitle}
+                  </p>
+                </div>
+
+                {/* Papers Grid Container with Dashed Borders */}
+                <div className="border border-dashed border-[#333] bg-[#151515]">
+                  {category.papers.map((paper) => {
+                    const isHovered = activeHoverId === paper.id;
+
+                    return (
+                      <article
+                        key={paper.id}
+                        onMouseEnter={() => setActiveHoverId(paper.id)}
+                        onMouseLeave={() => setActiveHoverId(null)}
+                        className={`group grid grid-cols-1 md:grid-cols-[48px_180px_1fr] border-b border-dashed border-[#333] last:border-b-0 transition-colors duration-200 ${
+                          isHovered ? "bg-[#1c1c1c]" : "hover:bg-[#1a1a1a]"
+                        }`}
+                      >
+                        {/* Column 1: Index Number */}
+                        <div className="px-3 py-4 sm:px-4 sm:py-6 flex items-start md:border-r border-dashed border-[#333]">
+                          <span className="font-mono text-base font-bold text-[#F0EFE2]">
+                            {paper.index}
+                          </span>
+                        </div>
+
+                        {/* Column 2: Metadata (arXiv, Category, Tags, Authors) */}
+                        <div className="p-4 sm:p-5 flex flex-col justify-between gap-4 border-t md:border-t-0 md:border-r border-dashed border-[#333]">
+                          <div>
+                            <Link
+                              href={paper.arxivUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#a3e635] hover:text-[#bef264] font-mono text-[12px] font-medium inline-flex items-center gap-1 transition-colors"
+                            >
+                              <span>{paper.arxivId}</span>
+                            </Link>
+                            <div className="text-[#777] font-mono text-[11px] mt-0.5">
+                              {paper.category} / {paper.year}
+                            </div>
+                          </div>
+
+                          {/* Dashed Tags Badges */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {paper.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="inline-flex items-center px-1.5 py-0.5 rounded-none border border-dashed border-[#3d3d3d] bg-transparent text-[#C8C7BA] font-mono text-[10.5px]"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* Authors Row */}
+                          <div className="flex flex-col gap-2 pt-1">
+                            {paper.authors.map((author, aIdx) => (
+                              <div key={aIdx} className="flex items-center gap-2">
+                                {author.isHoros ? (
+                                  <div className="w-4.5 h-4.5 rounded-full bg-[#111] border border-[#333] flex items-center justify-center text-[#a3e635] shrink-0">
+                                    <HorosIcon className="w-2.5 h-2.5" />
+                                  </div>
+                                ) : author.isGithub ? (
+                                  <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[#F0EFE2] shrink-0">
+                                    <GithubIcon className="w-3 h-3" />
+                                  </div>
+                                ) : author.avatar ? (
+                                  <img
+                                    src={author.avatar}
+                                    alt={author.name}
+                                    className="w-4.5 h-4.5 rounded-full object-cover border border-[#444] shrink-0 bg-neutral-800"
+                                    onError={(e) => {
+                                      (e.target as HTMLElement).style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[9px] text-[#C8C7BA] font-mono shrink-0">
+                                    {author.name.slice(0, 2).toUpperCase()}
+                                  </div>
+                                )}
+                                <span className="text-[12px] text-[#C8C7BA] font-medium tracking-tight">
+                                  {author.name}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Column 3: Title, Description, and Actions */}
+                        <div className="p-4 sm:p-5 md:p-6 flex flex-col justify-between border-t md:border-t-0 min-w-0">
+                          <div>
+                            <Link
+                              href={paper.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group/title block"
+                            >
+                              <h3 className="text-[#F0EFE2] font-medium text-[16px] sm:text-[17px] md:text-[18px] leading-snug group-hover/title:text-[#a3e635] transition-colors">
+                                {paper.title}
+                              </h3>
+                            </Link>
+                            <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] leading-relaxed mt-2 mb-5 font-sans font-normal">
+                              {paper.description}
+                            </p>
+                          </div>
+
+                          {/* Action Links */}
+                          <div className="flex items-center gap-5 font-mono text-[12px]">
+                            <Link
+                              href={paper.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
+                            >
+                              <span>PDF</span>
+                              <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                            </Link>
+                            <Link
+                              href={paper.arxivUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
+                            >
+                              <span>arXiv</span>
+                              <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                            </Link>
+                            <Link
+                              href={paper.codeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#a3e635] hover:text-[#bef264] font-medium inline-flex items-center gap-1 group/link transition-colors"
+                            >
+                              <span>Code</span>
+                              <ArrowUpRight className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
         </div>
       </main>
 
