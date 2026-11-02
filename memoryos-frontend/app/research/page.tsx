@@ -37,7 +37,7 @@ function LinkedInIcon({ className = "w-3 h-3" }: { className?: string }) {
 
 interface SocialLink {
   platform: "x" | "linkedin" | "github";
-  label: string;
+  label?: string;
   url: string;
 }
 
@@ -87,10 +87,6 @@ const RESEARCH_DATA: ResearchCategory[] = [
           "Humanoid Robots",
           "Dexterous Hands",
           "p-CBF Safety",
-          "Tactile Shear",
-          "ACI Conformal",
-          "Isaac Lab",
-          "OSQP Core",
         ],
         authors: [
           {
@@ -102,12 +98,10 @@ const RESEARCH_DATA: ResearchCategory[] = [
         socials: [
           {
             platform: "x",
-            label: "X",
             url: "https://x.com/FrostbytHitsuG",
           },
           {
             platform: "linkedin",
-            label: "LinkedIn",
             url: "https://www.linkedin.com/in/sunil-kumar-chavhan-269195299/",
           },
         ],
@@ -187,7 +181,7 @@ export default function ResearchPage() {
                         key={paper.id}
                         onMouseEnter={() => setActiveHoverId(paper.id)}
                         onMouseLeave={() => setActiveHoverId(null)}
-                        className={`group grid grid-cols-1 md:grid-cols-[48px_180px_1fr] border-b border-dashed border-[#333] last:border-b-0 transition-colors duration-200 ${
+                        className={`group grid grid-cols-1 md:grid-cols-[48px_250px_1fr] border-b border-dashed border-[#333] last:border-b-0 transition-colors duration-200 ${
                           isHovered ? "bg-[#1c1c1c]" : "hover:bg-[#1a1a1a]"
                         }`}
                       >
@@ -214,7 +208,7 @@ export default function ResearchPage() {
                             </div>
                           </div>
 
-                          {/* Dashed Tags Badges */}
+                          {/* Dashed Tags Badges - Exactly 3 Tags */}
                           <div className="flex flex-wrap gap-1.5">
                             {paper.tags.map((tag) => (
                               <span
@@ -226,8 +220,8 @@ export default function ResearchPage() {
                             ))}
                           </div>
 
-                          {/* Author & Social Brand Links */}
-                          <div className="flex flex-col gap-2 pt-1">
+                          {/* Author & Social Brand Links (Inline on Single Line, Increased DP Size) */}
+                          <div className="flex items-center flex-wrap gap-2 pt-1">
                             {paper.authors && paper.authors.map((author, aIdx) => {
                               const authorContent = (
                                 <>
@@ -235,17 +229,17 @@ export default function ResearchPage() {
                                     <img
                                       src={author.avatar}
                                       alt={author.name}
-                                      className="w-4.5 h-4.5 rounded-full object-cover border border-[#444] group-hover/author:border-[#a3e635] shrink-0 bg-neutral-800 transition-colors"
+                                      className="w-7.5 h-7.5 rounded-full object-cover border border-[#444] group-hover/author:border-[#a3e635] shrink-0 bg-neutral-800 transition-colors"
                                       onError={(e) => {
                                         (e.target as HTMLElement).style.display = "none";
                                       }}
                                     />
                                   ) : (
-                                    <div className="w-4.5 h-4.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[9px] text-[#C8C7BA] font-mono shrink-0">
+                                    <div className="w-7.5 h-7.5 rounded-full bg-neutral-800 border border-[#444] flex items-center justify-center text-[10px] text-[#C8C7BA] font-mono shrink-0">
                                       {author.name.slice(0, 2).toUpperCase()}
                                     </div>
                                   )}
-                                  <span className="text-[12px] text-[#C8C7BA] group-hover/author:text-[#a3e635] font-medium tracking-tight transition-colors">
+                                  <span className="text-[12.5px] text-[#C8C7BA] group-hover/author:text-[#a3e635] font-medium tracking-tight whitespace-nowrap transition-colors">
                                     {author.name}
                                   </span>
                                 </>
@@ -269,28 +263,26 @@ export default function ResearchPage() {
                             })}
 
                             {paper.socials && (
-                              <div className="flex items-center gap-2 pt-0.5">
+                              <div className="flex items-center gap-1.5">
                                 {paper.socials.map((social, sIdx) => (
                                   <Link
                                     key={sIdx}
                                     href={social.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    title={social.url}
-                                    className="group/social inline-flex items-center gap-1.5 px-2 py-0.5 rounded-none border border-dashed border-[#3d3d3d] hover:border-[#a3e635] bg-[#141414] hover:bg-[#1a1a1a] text-[#C8C7BA] hover:text-[#a3e635] transition-colors"
+                                    title={social.platform === "x" ? "X (@FrostbytHitsuG)" : "LinkedIn"}
+                                    aria-label={social.platform === "x" ? "X profile" : "LinkedIn profile"}
+                                    className="w-6 h-6 flex items-center justify-center rounded-none border border-dashed border-[#3d3d3d] hover:border-[#a3e635] bg-[#141414] hover:bg-[#1a1a1a] text-[#C8C7BA] hover:text-[#a3e635] transition-colors group/social shrink-0"
                                   >
                                     <div className="text-[#C8C7BA] group-hover/social:text-[#a3e635] transition-colors">
                                       {social.platform === "x" ? (
-                                        <XIcon className="w-2.5 h-2.5" />
+                                        <XIcon className="w-3 h-3" />
                                       ) : social.platform === "linkedin" ? (
-                                        <LinkedInIcon className="w-2.5 h-2.5" />
+                                        <LinkedInIcon className="w-3 h-3" />
                                       ) : (
-                                        <GithubIcon className="w-2.5 h-2.5" />
+                                        <GithubIcon className="w-3 h-3" />
                                       )}
                                     </div>
-                                    <span className="font-mono text-[10.5px]">
-                                      {social.label}
-                                    </span>
                                   </Link>
                                 ))}
                               </div>
