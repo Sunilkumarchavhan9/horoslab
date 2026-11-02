@@ -12,20 +12,20 @@ const GridDivider = () => (
     <div className="absolute left-0 right-0 h-[1px] border-t border-dashed border-[#333]" />
     
     {/* Crosses at intersections */}
-    <div className="absolute left-[6%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute hidden md:block left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="hidden md:block absolute hidden md:block right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
-    <div className="absolute left-[94%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute hidden md:block left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform -translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform translate-x-[45%] -translate-y-[52%]">+</div>
+    <div className="absolute hidden md:block right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] text-[#666] font-mono text-[9px] md:text-[10px] leading-none transform translate-x-[45%] -translate-y-[52%]">+</div>
   </div>
 );
 
 const SectionWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-full grid grid-cols-[6%_88%_6%] md:grid-cols-[1rem_1fr_1rem] lg:grid-cols-[14%_72%_14%] relative z-10 min-h-[80vh]">
-    <div /> {/* Left Gutter */}
-    <div className="w-full flex flex-col min-w-0 px-6 lg:px-12 xl:px-16 pt-12 pb-24">
+  <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-10 min-h-[75vh]">
+    <div className="hidden lg:block" /> {/* Left Margin Gutter */}
+    <div className="w-full flex flex-col min-w-0 px-6 sm:px-8 lg:px-12 xl:px-16 pt-12 pb-24">
       {children}
     </div>
-    <div /> {/* Right Gutter */}
+    <div className="hidden lg:block" /> {/* Right Margin Gutter */}
   </div>
 );
 
@@ -55,12 +55,16 @@ export default function ContactPage() {
       />
       
       <main className="pb-0 w-full relative z-10 flex flex-col pt-[80px]">
-        {/* Global Vertical Grid Lines */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute left-[6%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="absolute left-[94%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute hidden md:block left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-          <div className="hidden md:block absolute hidden md:block right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+        {/* 4 Adaptive Vertical Guidelines (2 on Left, 2 on Right) */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          {/* Left Outer Line */}
+          <div className="hidden md:block absolute left-[4%] lg:left-[5%] xl:left-[7%] 2xl:left-[10%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#262626]" />
+          {/* Left Inner Line */}
+          <div className="absolute left-[3%] md:left-[8%] lg:left-[10%] xl:left-[14%] 2xl:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
+          {/* Right Inner Line */}
+          <div className="absolute right-[3%] md:right-[8%] lg:right-[10%] xl:right-[14%] 2xl:right-[18%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#333]" />
+          {/* Right Outer Line */}
+          <div className="hidden md:block absolute right-[4%] lg:right-[5%] xl:right-[7%] 2xl:right-[10%] top-0 bottom-0 w-[1px] border-r border-dashed border-[#262626]" />
         </div>
 
         <GridDivider />
