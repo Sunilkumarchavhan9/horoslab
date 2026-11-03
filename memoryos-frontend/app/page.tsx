@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { SectionDivider } from "@/components/landing/section-divider";
 import { LandingHero } from "@/components/landing/landing-hero";
@@ -19,6 +20,7 @@ import { X } from "lucide-react";
 import gsap from "gsap";
 
 export default function Home() {
+  const router = useRouter();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">(
     "sign-in",
@@ -213,8 +215,7 @@ export default function Home() {
           setAuthModalOpen(true);
         }}
         onOpenSignUp={() => {
-          setAuthModalMode("sign-up");
-          setAuthModalOpen(true);
+          router.push("/sign-up");
         }}
         dark={true}
       />

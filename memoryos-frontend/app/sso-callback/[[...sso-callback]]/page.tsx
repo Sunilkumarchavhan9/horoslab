@@ -3,10 +3,11 @@ import { OAuthCallbackHandler } from "@/components/auth/oauth-callback-handler";
 export default function SSOCallbackPage() {
   return (
     <OAuthCallbackHandler
-      completeUrl="/mission-control"
-      signInUrl="/auth/sign-in"
-      signUpUrl="/auth/sign-up"
-      continueSignUpUrl="/auth/sign-up"
+      completeUrl="/thank-you"
+      signInUrl="/sign-up"
+      signUpUrl="/sign-up"
+      continueSignUpUrl="/sign-up"
+      accountExistsRedirectUrl="/thank-you"
       surface="dark"
     />
   );

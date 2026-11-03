@@ -63,16 +63,9 @@ export function AuthModal({
     setIsAuthenticating(true);
 
     if (mode === "sign-up") {
-      // In sign-up mode: simulate registration handshake and show waitlist confirmation with Cal.com booking
-      setTimeout(() => {
-        setIsAuthenticating(false);
-        const identityName =
-          provider === "Email"
-            ? email
-            : `${provider} Account (Verified)`;
-        setRegisteredIdentity(identityName);
-        setSignedUpSuccess(true);
-      }, 600);
+      handleClose();
+      router.push("/sign-up");
+      return;
     } else {
       // In sign-in mode: authenticate handshake & navigate to Mission Control
       setTimeout(() => {
@@ -382,9 +375,8 @@ export function AuthModal({
                     <button
                       type="button"
                       onClick={() => {
-                        setMode("sign-up");
-                        setShowEmailForm(false);
-                        setSignedUpSuccess(false);
+                        handleClose();
+                        router.push("/sign-up");
                       }}
                       className="text-[#75bf00] font-bold hover:underline cursor-pointer"
                     >

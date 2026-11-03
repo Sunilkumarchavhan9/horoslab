@@ -1,21 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
-import { isClerkEnabled } from "@/lib/clerk";
-import { redirect } from "next/navigation";
+import { HorosSignUpView } from "@/components/auth/horos-sign-up-view";
 
-export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Sign Up - HOROS Physical Intelligence",
+  description:
+    "Create your HOROS account with Google, GitHub, or LinkedIn to secure early access to certified physical intelligence and humanoid foundation models.",
+};
 
-export default async function SignUpPage() {
-  const clerkEnabled = isClerkEnabled();
-
-  if (clerkEnabled) {
-    const { userId } = await auth();
-
-    if (userId) {
-      redirect("/mission-control");
-    }
-
-    redirect("/auth/sign-up");
-  }
-
-  redirect("/personal-app/sign-up");
+export default function SignUpPage() {
+  return <HorosSignUpView />;
 }

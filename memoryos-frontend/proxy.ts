@@ -15,6 +15,9 @@ const isPersonalProtectedRoute = createRouteMatcher([
 const isPublicAuthRoute = createRouteMatcher([
   "/",
   "/sign-up",
+  "/sign-up/(.*)",
+  "/thank-you",
+  "/thank-you/(.*)",
   "/auth/sign-in",
   "/auth/sign-up",
   "/auth/verify-link",

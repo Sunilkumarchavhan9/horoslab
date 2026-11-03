@@ -105,10 +105,10 @@ export function ClerkRootProvider({ children }: { children: ReactNode }) {
     <ClerkLoadErrorBoundary onClerkLoadFailure={() => setClerkLoadFailed(true)}>
       <ClerkProvider
         publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-        signInUrl="/auth/sign-in"
-        signUpUrl="/auth/sign-up"
-        signInFallbackRedirectUrl="/mission-control"
-        signUpFallbackRedirectUrl="/mission-control"
+        signInUrl="/sign-up"
+        signUpUrl="/sign-up"
+        signInFallbackRedirectUrl="/thank-you"
+        signUpFallbackRedirectUrl="/thank-you"
       >
         {children}
       </ClerkProvider>

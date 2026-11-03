@@ -180,11 +180,8 @@ export function LandingNavbar({
   const [internalAuthMode, setInternalAuthMode] = useState<"sign-in" | "sign-up">("sign-up");
 
   const handleSignUpClick = () => {
-    if (onOpenSignUp) {
-      onOpenSignUp();
-    } else {
-      setInternalAuthMode("sign-up");
-      setInternalAuthOpen(true);
+    if (typeof window !== "undefined") {
+      window.location.href = "/sign-up";
     }
   };
 
@@ -566,13 +563,12 @@ export function LandingNavbar({
 
             {/* Right Actions: Sign in & Get started (Desktop & Mobile) */}
             <div className="flex items-center gap-2.5 shrink-0 whitespace-nowrap h-14 pl-1 ml-1.5 xl:ml-3">
-              <button
-                type="button"
-                onClick={handleSignUpClick}
+              <Link
+                href="/sign-up"
                 className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[88px] rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
               >
                 <span>Sign up</span>
-              </button>
+              </Link>
 
               <a
                 href="https://cal.com/vegito"
@@ -697,16 +693,13 @@ export function LandingNavbar({
               </Link>
 
               <div className="pt-3 border-t border-[#222] flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleItemClick();
-                    handleSignUpClick();
-                  }}
-                  className="flex-1 py-2 text-center bg-[#1e1e1e] border border-[#333] text-[#F0EFE2] rounded-xs font-semibold cursor-pointer"
+                <Link
+                  href="/sign-up"
+                  onClick={handleItemClick}
+                  className="flex-1 py-2 text-center bg-[#1e1e1e] border border-[#333] text-[#F0EFE2] rounded-xs font-semibold cursor-pointer flex items-center justify-center"
                 >
                   Sign up
-                </button>
+                </Link>
                 <a
                   href="https://cal.com/vegito"
                   target="_blank"
