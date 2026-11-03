@@ -13,7 +13,8 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
     if (posthogKey && typeof window !== "undefined") {
       posthog.init(posthogKey, {
-        api_host: posthogHost,
+        api_host: "/ingest",
+        ui_host: "https://us.i.posthog.com",
         person_profiles: "identified_only",
         capture_pageview: false, // Handled manually for Next.js App Router SPA navigation
         capture_pageleave: true,

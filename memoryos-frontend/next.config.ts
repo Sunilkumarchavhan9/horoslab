@@ -34,6 +34,18 @@ const nextConfig: NextConfig = {
     const backendOrigin = (process.env.MEMORYOS_API_ORIGIN ?? "http://localhost:3001").replace(/\/$/, "");
     return [
       {
+        source: "/ingest/static/:path*",
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+      {
+        source: "/ingest/decide",
+        destination: "https://us.i.posthog.com/decide",
+      },
+      {
         source: "/api/v1/horos/:path*",
         destination: `${backendOrigin}/api/v1/horos/:path*`,
       },
