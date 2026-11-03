@@ -27,6 +27,19 @@ export default function Home() {
     "sign-in",
   );
   const [signUpModalOpen, setSignUpModalOpen] = useState(false);
+  const [initialConfirmed, setInitialConfirmed] = useState(false);
+  const [initialEmail, setInitialEmail] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("signed_up") === "true") {
+        setInitialConfirmed(true);
+        setInitialEmail(params.get("email") || "");
+        setSignUpModalOpen(true);
+      }
+    }
+  }, []);
   const [showFloatingComposer, setShowFloatingComposer] = useState(false);
   const prevShowFloatingComposer = useRef(false);
   const [isFloatingComposerDismissed, setIsFloatingComposerDismissed] =
@@ -328,7 +341,13 @@ export default function Home() {
       />
       <SignUpModal
         isOpen={signUpModalOpen}
-        onClose={() => setSignUpModalOpen(false)}
+        onClose={() => {
+          setSignUpModalOpen(false);
+          setInitialConfirmed(false);
+          setInitialEmail("");
+        }}
+        initialConfirmed={initialConfirmed}
+        initialEmail={initialEmail}
       />
     </div>
   );

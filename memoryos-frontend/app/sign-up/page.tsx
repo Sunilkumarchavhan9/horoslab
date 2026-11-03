@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   X,
@@ -11,6 +11,9 @@ import {
   Loader2,
 } from "lucide-react";
 import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
+import { useClerk } from "@clerk/nextjs";
+import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
+import { isClerkEnabled } from "@/lib/clerk";
 
 function GoogleIcon() {
   return (
@@ -58,11 +61,16 @@ export default function StandaloneSignUpPage() {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
 
+  const clerk = useClerk();
+  const { signIn } = useSignIn();
+  const { signUp } = useSignUp();
+
   const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
     setLoadingProvider(provider);
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
     setRegisteredEmail(targetLabel);
 
+    // 1. Try WorkOS if live
     try {
       const res = await fetch(`/api/auth/workos/authorize?provider=${provider}`);
       if (res.ok) {
@@ -73,9 +81,65 @@ export default function StandaloneSignUpPage() {
         }
       }
     } catch (err) {
-      console.warn("[HOROS Auth] WorkOS direct call fallback", err);
+      console.warn("[HOROS Auth] WorkOS check fallback", err);
     }
 
+    // 2. Real-Time Clerk OAuth Redirect (Google, GitHub, LinkedIn)
+    const clerkLive = isClerkEnabled();
+    if (clerkLive) {
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const redirectUrl = `${origin}/sso-callback`;
+      const redirectUrlComplete = `${origin}/?signed_up=true`;
+
+      const strategy =
+        provider === "google"
+          ? "oauth_google"
+          : provider === "github"
+          ? "oauth_github"
+          : "oauth_linkedin_oidc";
+
+      try {
+        if (signUp && typeof signUp.authenticateWithRedirect === "function") {
+          await signUp.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+
+        if (signIn && typeof signIn.authenticateWithRedirect === "function") {
+          await signIn.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+
+        const client = (clerk as any)?.client;
+        if (client?.signUp && typeof client.signUp.authenticateWithRedirect === "function") {
+          await client.signUp.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+        if (client?.signIn && typeof client.signIn.authenticateWithRedirect === "function") {
+          await client.signIn.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+      } catch (oauthErr) {
+        console.error("[HOROS Auth] Real-Time OAuth redirect error:", oauthErr);
+      }
+    }
+
+    // Fallback: Record early access lead
     try {
       await fetch("/api/auth/workos/early-access", {
         method: "POST",
@@ -89,43 +153,71 @@ export default function StandaloneSignUpPage() {
     setTimeout(() => {
       setLoadingProvider(null);
       setIsConfirmed(true);
-    }, 350);
+    }, 400);
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes("@")) return;
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !cleanEmail.includes("@")) return;
 
     setIsSubmitting(true);
-    setRegisteredEmail(email);
+    setRegisteredEmail(cleanEmail);
 
+    // 1. Real-Time Clerk user creation & magic email dispatch
+    const clerkLive = isClerkEnabled();
+    if (clerkLive && signUp) {
+      try {
+        const username =
+          cleanEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_") +
+          "_" +
+          Math.floor(100 + Math.random() * 900);
+
+        if (typeof signUp.createEmailLinkFlow === "function") {
+          const { startEmailLinkFlow } = signUp.createEmailLinkFlow();
+          await signUp.create({
+            emailAddress: cleanEmail,
+            username: username.slice(0, 30),
+          });
+          await startEmailLinkFlow({
+            redirectUrl: `${window.location.origin}/sso-callback`,
+          });
+        } else if (typeof signUp.create === "function") {
+          await signUp.create({ emailAddress: cleanEmail });
+          if (typeof signUp.prepareEmailAddressVerification === "function") {
+            await signUp.prepareEmailAddressVerification({
+              strategy: "email_link",
+              redirectUrl: `${window.location.origin}/?signed_up=true`,
+            });
+          }
+        }
+      } catch (clerkErr) {
+        console.warn("[HOROS Auth] Clerk real-time email dispatch note:", clerkErr);
+      }
+    }
+
+    // 2. Record lead in backend
     try {
       await fetch("/api/auth/workos/early-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, provider: "email" }),
+        body: JSON.stringify({ email: cleanEmail, provider: "email" }),
       });
     } catch (err) {
-      console.warn("[HOROS Auth] Early access registration fallback", err);
+      console.warn("[HOROS Auth] Early access registration note:", err);
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsConfirmed(true);
-    }, 350);
+    setIsSubmitting(false);
+    setIsConfirmed(true);
   };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#F0EFE2] flex items-center justify-center p-4 selection:bg-[#75bf00] selection:text-black font-sans relative">
-      {/* Background radial glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(117,191,0,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-      {/* Centered Premium Card */}
       <div className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-lg shadow-2xl p-6 sm:p-8 overflow-hidden z-10">
-        {/* Subtle top lime glow line */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#75bf00] to-transparent opacity-80" />
 
-        {/* Home link back */}
         <Link
           href="/"
           className="absolute top-4 right-4 text-[#777] hover:text-[#F0EFE2] bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] p-1.5 rounded-md transition-colors"
@@ -136,7 +228,6 @@ export default function StandaloneSignUpPage() {
 
         {!isConfirmed ? (
           <div>
-            {/* Header: Logo */}
             <div className="flex items-center gap-2 mb-4">
               <HorosLogo variant="icon" size="sm" className="text-[#F0EFE2]" />
               <HorosWordmarkLogo className="h-4 w-auto text-[#F0EFE2]" />
@@ -151,7 +242,6 @@ export default function StandaloneSignUpPage() {
               </p>
             </div>
 
-            {/* Social Logins */}
             <div className="space-y-2.5">
               <button
                 type="button"

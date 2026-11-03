@@ -6,11 +6,13 @@ import {
   CheckCircle2,
   Mail,
   ArrowRight,
-  Calendar,
   ArrowUpRight,
   Loader2,
 } from "lucide-react";
 import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
+import { useClerk } from "@clerk/nextjs";
+import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
+import { isClerkEnabled } from "@/lib/clerk";
 
 function GoogleIcon() {
   return (
@@ -54,14 +56,36 @@ function LinkedInIcon() {
 interface SignUpModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialConfirmed?: boolean;
+  initialEmail?: string;
 }
 
-export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
+export function SignUpModal({
+  isOpen,
+  onClose,
+  initialConfirmed = false,
+  initialEmail = "",
+}: SignUpModalProps) {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
-  const [isConfirmed, setIsConfirmed] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [isConfirmed, setIsConfirmed] = useState(initialConfirmed);
+  const [registeredEmail, setRegisteredEmail] = useState(initialEmail);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Clerk hooks
+  const clerk = useClerk();
+  const { signIn } = useSignIn();
+  const { signUp } = useSignUp();
+
+  useEffect(() => {
+    if (initialConfirmed) {
+      setIsConfirmed(true);
+      if (initialEmail) {
+        setRegisteredEmail(initialEmail);
+      }
+    }
+  }, [initialConfirmed, initialEmail]);
 
   if (!isOpen) return null;
 
@@ -70,30 +94,101 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     setIsSubmitting(false);
     setLoadingProvider(null);
     setEmail("");
+    setErrorMessage(null);
     onClose();
   };
 
   const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
     setLoadingProvider(provider);
+    setErrorMessage(null);
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
     setRegisteredEmail(targetLabel);
 
+    // 1. Check if WorkOS live enterprise authorization is enabled
     try {
-      // 1. Try WorkOS enterprise authorize endpoint
       const res = await fetch(`/api/auth/workos/authorize?provider=${provider}`);
       if (res.ok) {
         const data = await res.json();
         if (data?.enabled && data?.url) {
-          // Live WorkOS flow: redirect directly to identity provider
           window.location.href = data.url;
           return;
         }
       }
     } catch (err) {
-      console.warn("[HOROS Auth] WorkOS direct call fallback", err);
+      console.warn("[HOROS Auth] WorkOS check fallback", err);
     }
 
-    // Record early access lead via background endpoint
+    // 2. Real-Time Live Clerk OAuth Redirect (Google, GitHub, LinkedIn)
+    const clerkLive = isClerkEnabled();
+    if (clerkLive) {
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const redirectUrl = `${origin}/sso-callback`;
+      const redirectUrlComplete = `${origin}/?signed_up=true`;
+
+      const strategy =
+        provider === "google"
+          ? "oauth_google"
+          : provider === "github"
+          ? "oauth_github"
+          : "oauth_linkedin_oidc";
+
+      try {
+        // Try signUp.authenticateWithRedirect
+        if (signUp && typeof signUp.authenticateWithRedirect === "function") {
+          await signUp.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+
+        // Try signIn.authenticateWithRedirect
+        if (signIn && typeof signIn.authenticateWithRedirect === "function") {
+          await signIn.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+
+        // Try clerk.client directly
+        const client = (clerk as any)?.client;
+        if (client?.signUp && typeof client.signUp.authenticateWithRedirect === "function") {
+          await client.signUp.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+        if (client?.signIn && typeof client.signIn.authenticateWithRedirect === "function") {
+          await client.signIn.authenticateWithRedirect({
+            strategy: strategy as any,
+            redirectUrl,
+            redirectUrlComplete,
+          });
+          return;
+        }
+      } catch (oauthErr: any) {
+        console.error("[HOROS Auth] Real-Time OAuth redirect error:", oauthErr);
+        if (signIn && typeof signIn.authenticateWithRedirect === "function") {
+          try {
+            await signIn.authenticateWithRedirect({
+              strategy: strategy as any,
+              redirectUrl,
+              redirectUrlComplete,
+            });
+            return;
+          } catch (siErr) {
+            console.error("[HOROS Auth] Secondary SignIn redirect error:", siErr);
+          }
+        }
+      }
+    }
+
+    // Fallback: Record early access lead
     try {
       await fetch("/api/auth/workos/early-access", {
         method: "POST",
@@ -104,35 +199,88 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       // safe fallback
     }
 
-    // Modal in-place confirmation flip
     setTimeout(() => {
       setLoadingProvider(null);
       setIsConfirmed(true);
-    }, 350);
+    }, 400);
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes("@")) return;
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !cleanEmail.includes("@")) return;
 
     setIsSubmitting(true);
-    setRegisteredEmail(email);
+    setRegisteredEmail(cleanEmail);
+    setErrorMessage(null);
 
+    // 1. Real-Time Clerk user creation & magic email dispatch
+    const clerkLive = isClerkEnabled();
+    if (clerkLive && signUp) {
+      try {
+        const username =
+          cleanEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_") +
+          "_" +
+          Math.floor(100 + Math.random() * 900);
+
+        if (typeof signUp.createEmailLinkFlow === "function") {
+          const { startEmailLinkFlow } = signUp.createEmailLinkFlow();
+          await signUp.create({
+            emailAddress: cleanEmail,
+            username: username.slice(0, 30),
+          });
+
+          await startEmailLinkFlow({
+            redirectUrl: `${window.location.origin}/sso-callback`,
+          });
+          console.info("[HOROS Auth] Real email verification link dispatched via Clerk to:", cleanEmail);
+        } else if (typeof signUp.create === "function") {
+          await signUp.create({
+            emailAddress: cleanEmail,
+          });
+          if (typeof signUp.prepareEmailAddressVerification === "function") {
+            await signUp.prepareEmailAddressVerification({
+              strategy: "email_link",
+              redirectUrl: `${window.location.origin}/?signed_up=true`,
+            });
+          }
+        }
+      } catch (clerkErr: any) {
+        console.warn("[HOROS Auth] Clerk real-time email dispatch note:", clerkErr);
+        if (signIn && typeof signIn.createEmailLinkFlow === "function") {
+          try {
+            const { startEmailLinkFlow } = signIn.createEmailLinkFlow();
+            const si = await signIn.create({ identifier: cleanEmail });
+            const emailFactor = si.supportedFirstFactors?.find(
+              (f: any) => f.strategy === "email_link"
+            );
+            if (emailFactor?.emailAddressId) {
+              await startEmailLinkFlow({
+                emailAddressId: emailFactor.emailAddressId,
+                redirectUrl: `${window.location.origin}/sso-callback`,
+              });
+            }
+          } catch (siErr) {
+            console.warn("[HOROS Auth] SignIn email dispatch note:", siErr);
+          }
+        }
+      }
+    }
+
+    // 2. Record lead in backend
     try {
       await fetch("/api/auth/workos/early-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, provider: "email" }),
+        body: JSON.stringify({ email: cleanEmail, provider: "email" }),
       });
     } catch (err) {
-      console.warn("[HOROS Auth] Early access registration fallback", err);
+      console.warn("[HOROS Auth] Early access registration note:", err);
     }
 
-    // Modal in-place confirmation flip
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsConfirmed(true);
-    }, 350);
+    // 3. In-Place confirmation screen
+    setIsSubmitting(false);
+    setIsConfirmed(true);
   };
 
   return (
@@ -175,6 +323,13 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                 Sign up with your account to get early access before everyone else.
               </p>
             </div>
+
+            {/* Error notice if present */}
+            {errorMessage && (
+              <div className="mb-4 p-2.5 rounded bg-red-950/50 border border-red-800/60 text-xs text-red-200">
+                {errorMessage}
+              </div>
+            )}
 
             {/* 3 Social Login Buttons: Google, GitHub, LinkedIn */}
             <div className="space-y-2.5">
@@ -272,7 +427,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             </p>
           </div>
         ) : (
-          /* In-Place Confirmation Card (Tier-1 Startup Experience) */
+          /* In-Place Confirmation Card */
           <div className="py-2 space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
