@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendEarlyAccessConfirmationEmail } from "@/lib/email-service";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const email = body?.email?.trim();
+    const name = body?.name?.trim();
     const provider = body?.provider || "email";
 
     if (!email || !email.includes("@")) {
@@ -13,14 +15,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.info(`[HOROS Early Access] Reserved access for: ${email} (via ${provider})`);
-
-    // In a production setup, this would also queue a transactional email:
-    // "Thanks for signing up! We will reach out to you as soon as possible. We will start a launch. When we launch you can access it first."
+    const result = await sendEarlyAccessConfirmationEmail({
+      email,
+      name,
+      provider,
+    });
 
     return NextResponse.json({
       success: true,
       email,
+      delivered: !result.simulated,
       message:
         "Thanks for signing up! We will reach out to you as soon as possible. We will start a launch. When we launch you can access it first.",
     });
@@ -32,4 +36,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

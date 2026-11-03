@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   X,
@@ -141,7 +141,7 @@ export default function StandaloneSignUpPage() {
 
     // Fallback: Record early access lead
     try {
-      await fetch("/api/auth/workos/early-access", {
+      await fetch("/api/auth/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
@@ -196,9 +196,9 @@ export default function StandaloneSignUpPage() {
       }
     }
 
-    // 2. Record lead in backend
+    // 2. Real-Time Confirmation Email via Backend Mailer
     try {
-      await fetch("/api/auth/workos/early-access", {
+      await fetch("/api/auth/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: cleanEmail, provider: "email" }),
@@ -215,12 +215,13 @@ export default function StandaloneSignUpPage() {
     <div className="min-h-screen bg-[#0a0a0a] text-[#F0EFE2] flex items-center justify-center p-4 selection:bg-[#75bf00] selection:text-black font-sans relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(117,191,0,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-      <div className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-lg shadow-2xl p-6 sm:p-8 overflow-hidden z-10">
+      {/* Squared Card */}
+      <div className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl p-6 sm:p-8 overflow-hidden z-10">
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#75bf00] to-transparent opacity-80" />
 
         <Link
           href="/"
-          className="absolute top-4 right-4 text-[#777] hover:text-[#F0EFE2] bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] p-1.5 rounded-md transition-colors"
+          className="absolute top-4 right-4 text-[#777] hover:text-[#F0EFE2] bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] p-1.5 rounded-none transition-colors"
           aria-label="Back to home"
         >
           <X size={15} />
@@ -247,7 +248,7 @@ export default function StandaloneSignUpPage() {
                 type="button"
                 disabled={Boolean(loadingProvider) || isSubmitting}
                 onClick={() => handleOAuth("google")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-md transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {loadingProvider === "google" ? (
                   <Loader2 size={15} className="text-[#75bf00] animate-spin" />
@@ -261,7 +262,7 @@ export default function StandaloneSignUpPage() {
                 type="button"
                 disabled={Boolean(loadingProvider) || isSubmitting}
                 onClick={() => handleOAuth("github")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-md transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {loadingProvider === "github" ? (
                   <Loader2 size={15} className="text-[#75bf00] animate-spin" />
@@ -275,7 +276,7 @@ export default function StandaloneSignUpPage() {
                 type="button"
                 disabled={Boolean(loadingProvider) || isSubmitting}
                 onClick={() => handleOAuth("linkedin")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-md transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {loadingProvider === "linkedin" ? (
                   <Loader2 size={15} className="text-[#75bf00] animate-spin" />
@@ -300,12 +301,12 @@ export default function StandaloneSignUpPage() {
                 placeholder="name@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-md outline-none transition-colors font-mono"
+                className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
               />
               <button
                 type="submit"
                 disabled={isSubmitting || Boolean(loadingProvider)}
-                className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-md transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
               >
                 {isSubmitting ? (
                   <Loader2 size={14} className="animate-spin text-black" />
@@ -333,11 +334,11 @@ export default function StandaloneSignUpPage() {
         ) : (
           <div className="py-2 space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
-                <CheckCircle2 size={18} className="text-[#75bf00]" />
+              <div className="w-7 h-7 rounded-none bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
+                <CheckCircle2 size={16} className="text-[#75bf00]" />
               </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#75bf00]/10 border border-[#75bf00]/30 text-[10.5px] text-[#75bf00] font-mono font-bold tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#75bf00] animate-pulse" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#75bf00]/10 border border-[#75bf00]/30 text-[10px] text-[#75bf00] font-mono font-bold tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-none bg-[#75bf00] animate-pulse" />
                 ACCESS RESERVED
               </div>
             </div>
@@ -352,7 +353,7 @@ export default function StandaloneSignUpPage() {
             </div>
 
             {registeredEmail && (
-              <div className="bg-[#101010] border border-[#262626] p-3 rounded-md text-[11px] font-mono text-[#888] flex items-center justify-between">
+              <div className="bg-[#101010] border border-[#262626] p-3 rounded-none text-[11px] font-mono text-[#888] flex items-center justify-between">
                 <span>Notification target:</span>
                 <span className="text-[#75bf00] font-semibold truncate max-w-[180px]">
                   {registeredEmail}
@@ -375,7 +376,7 @@ export default function StandaloneSignUpPage() {
 
             <Link
               href="/"
-              className="w-full inline-block text-center bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-md transition-colors cursor-pointer mt-2"
+              className="w-full inline-block text-center bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-none transition-colors cursor-pointer mt-2"
             >
               Back to Home
             </Link>

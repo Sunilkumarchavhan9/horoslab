@@ -133,7 +133,6 @@ export function SignUpModal({
           : "oauth_linkedin_oidc";
 
       try {
-        // Try signUp.authenticateWithRedirect
         if (signUp && typeof signUp.authenticateWithRedirect === "function") {
           await signUp.authenticateWithRedirect({
             strategy: strategy as any,
@@ -143,7 +142,6 @@ export function SignUpModal({
           return;
         }
 
-        // Try signIn.authenticateWithRedirect
         if (signIn && typeof signIn.authenticateWithRedirect === "function") {
           await signIn.authenticateWithRedirect({
             strategy: strategy as any,
@@ -153,7 +151,6 @@ export function SignUpModal({
           return;
         }
 
-        // Try clerk.client directly
         const client = (clerk as any)?.client;
         if (client?.signUp && typeof client.signUp.authenticateWithRedirect === "function") {
           await client.signUp.authenticateWithRedirect({
@@ -188,9 +185,9 @@ export function SignUpModal({
       }
     }
 
-    // Fallback: Record early access lead
+    // Fallback: Notify and record early access lead in real-time
     try {
-      await fetch("/api/auth/workos/early-access", {
+      await fetch("/api/auth/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
@@ -267,9 +264,9 @@ export function SignUpModal({
       }
     }
 
-    // 2. Record lead in backend
+    // 2. Send Real-Time Confirmation Email via Backend Mailer
     try {
-      await fetch("/api/auth/workos/early-access", {
+      await fetch("/api/auth/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: cleanEmail, provider: "email" }),
@@ -288,19 +285,19 @@ export function SignUpModal({
       onClick={handleClose}
       className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 selection:bg-[#75bf00] selection:text-black cursor-pointer animate-in fade-in duration-200"
     >
-      {/* Centered Premium Modal Card */}
+      {/* Centered Premium Modal Card with SQUARED BORDERS */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-lg shadow-2xl p-6 sm:p-8 cursor-default overflow-hidden text-[#F0EFE2]"
+        className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl p-6 sm:p-8 cursor-default overflow-hidden text-[#F0EFE2]"
       >
         {/* Subtle top lime glow line */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#75bf00] to-transparent opacity-80" />
 
-        {/* Close Button */}
+        {/* Close Button - Squared */}
         <button
           type="button"
           onClick={handleClose}
-          className="absolute top-4 right-4 text-[#777] hover:text-[#F0EFE2] bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] p-1.5 rounded-md transition-colors cursor-pointer"
+          className="absolute top-4 right-4 text-[#777] hover:text-[#F0EFE2] bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] p-1.5 rounded-none transition-colors cursor-pointer"
           aria-label="Close"
         >
           <X size={15} />
@@ -326,19 +323,19 @@ export function SignUpModal({
 
             {/* Error notice if present */}
             {errorMessage && (
-              <div className="mb-4 p-2.5 rounded bg-red-950/50 border border-red-800/60 text-xs text-red-200">
+              <div className="mb-4 p-2.5 rounded-none bg-red-950/50 border border-red-800/60 text-xs text-red-200 font-mono">
                 {errorMessage}
               </div>
             )}
 
-            {/* 3 Social Login Buttons: Google, GitHub, LinkedIn */}
+            {/* 3 Social Login Buttons: Google, GitHub, LinkedIn - Squared */}
             <div className="space-y-2.5">
               {/* Google */}
               <button
                 type="button"
                 disabled={Boolean(loadingProvider) || isSubmitting}
                 onClick={() => handleOAuth("google")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-md transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {loadingProvider === "google" ? (
                   <Loader2 size={15} className="text-[#75bf00] animate-spin" />
@@ -353,7 +350,7 @@ export function SignUpModal({
                 type="button"
                 disabled={Boolean(loadingProvider) || isSubmitting}
                 onClick={() => handleOAuth("github")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-md transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {loadingProvider === "github" ? (
                   <Loader2 size={15} className="text-[#75bf00] animate-spin" />
@@ -368,7 +365,7 @@ export function SignUpModal({
                 type="button"
                 disabled={Boolean(loadingProvider) || isSubmitting}
                 onClick={() => handleOAuth("linkedin")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-md transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {loadingProvider === "linkedin" ? (
                   <Loader2 size={15} className="text-[#75bf00] animate-spin" />
@@ -387,7 +384,7 @@ export function SignUpModal({
               </span>
             </div>
 
-            {/* Email Input Form */}
+            {/* Email Input Form - Squared */}
             <form onSubmit={handleEmailSubmit} className="space-y-2.5">
               <input
                 type="email"
@@ -395,12 +392,12 @@ export function SignUpModal({
                 placeholder="name@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-md outline-none transition-colors font-mono"
+                className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
               />
               <button
                 type="submit"
                 disabled={isSubmitting || Boolean(loadingProvider)}
-                className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-md transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
               >
                 {isSubmitting ? (
                   <Loader2 size={14} className="animate-spin text-black" />
@@ -427,14 +424,14 @@ export function SignUpModal({
             </p>
           </div>
         ) : (
-          /* In-Place Confirmation Card */
+          /* In-Place Confirmation Card - Squared */
           <div className="py-2 space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
-                <CheckCircle2 size={18} className="text-[#75bf00]" />
+              <div className="w-7 h-7 rounded-none bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
+                <CheckCircle2 size={16} className="text-[#75bf00]" />
               </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#75bf00]/10 border border-[#75bf00]/30 text-[10.5px] text-[#75bf00] font-mono font-bold tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#75bf00] animate-pulse" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#75bf00]/10 border border-[#75bf00]/30 text-[10px] text-[#75bf00] font-mono font-bold tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-none bg-[#75bf00] animate-pulse" />
                 ACCESS RESERVED
               </div>
             </div>
@@ -449,7 +446,7 @@ export function SignUpModal({
             </div>
 
             {registeredEmail && (
-              <div className="bg-[#101010] border border-[#262626] p-3 rounded-md text-[11px] font-mono text-[#888] flex items-center justify-between">
+              <div className="bg-[#101010] border border-[#262626] p-3 rounded-none text-[11px] font-mono text-[#888] flex items-center justify-between">
                 <span>Notification target:</span>
                 <span className="text-[#75bf00] font-semibold truncate max-w-[180px]">
                   {registeredEmail}
@@ -457,7 +454,7 @@ export function SignUpModal({
               </div>
             )}
 
-            {/* Cal.com Demo Link */}
+            {/* Cal.com Demo Link - Squared */}
             <div className="pt-3 border-t border-[#242424] flex items-center justify-between text-xs text-[#777]">
               <span>Want a live demo now?</span>
               <a
@@ -471,11 +468,11 @@ export function SignUpModal({
               </a>
             </div>
 
-            {/* Done Button */}
+            {/* Done Button - Squared */}
             <button
               type="button"
               onClick={handleClose}
-              className="w-full bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-md transition-colors cursor-pointer mt-2"
+              className="w-full bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-none transition-colors cursor-pointer mt-2"
             >
               Done
             </button>

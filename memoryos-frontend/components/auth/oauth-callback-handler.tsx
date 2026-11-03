@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth, useClerk } from "@clerk/nextjs";
+import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -23,6 +23,7 @@ export function OAuthCallbackHandler({
   errorRedirectUrl,
 }: OAuthCallbackHandlerProps) {
   const clerk = useClerk();
+  const { user } = useUser();
   const { isLoaded: isSessionLoaded, isSignedIn } = useAuth();
   const router = useRouter();
 
@@ -35,8 +36,34 @@ export function OAuthCallbackHandler({
       };
     }
 
+    const triggerNotificationAndRedirect = (targetUser?: any) => {
+      const email =
+        targetUser?.primaryEmailAddress?.emailAddress ||
+        user?.primaryEmailAddress?.emailAddress ||
+        clerk.user?.primaryEmailAddress?.emailAddress;
+      const name =
+        targetUser?.fullName ||
+        targetUser?.firstName ||
+        user?.fullName ||
+        clerk.user?.fullName ||
+        "";
+
+      if (email) {
+        fetch("/api/auth/notify-signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, name, provider: "oauth" }),
+        }).catch(() => {});
+      }
+
+      const dest = email
+        ? `${completeUrl}${completeUrl.includes("?") ? "&" : "?"}email=${encodeURIComponent(email)}`
+        : completeUrl;
+      router.replace(dest);
+    };
+
     if (isSignedIn) {
-      router.replace(completeUrl);
+      triggerNotificationAndRedirect(user);
       return () => {
         active = false;
       };
@@ -54,7 +81,7 @@ export function OAuthCallbackHandler({
       })
       .then(() => {
         if (!active) return;
-        router.replace(completeUrl);
+        triggerNotificationAndRedirect(clerk.user);
       })
       .catch((callbackError) => {
         if (!active) return;
@@ -76,25 +103,34 @@ export function OAuthCallbackHandler({
           router.replace(accountExistsRedirectUrl ?? completeUrl);
           return;
         }
-        const redirectBase = errorRedirectUrl ?? signInUrl;
-        router.replace(`${redirectBase}?auth_error=oauth_callback`);
+
+        const fallbackUrl = errorRedirectUrl ?? signInUrl;
+        router.replace(fallbackUrl);
       });
 
     return () => {
       active = false;
     };
   }, [
+    accountExistsRedirectUrl,
     clerk,
     completeUrl,
     continueSignUpUrl,
-    accountExistsRedirectUrl,
     errorRedirectUrl,
     isSessionLoaded,
     isSignedIn,
     router,
     signInUrl,
     signUpUrl,
+    user,
   ]);
 
-  return <div id="clerk-captcha" className="relative hidden" aria-hidden="true" />;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#070707] text-[#F0EFE2] font-mono">
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-5 w-5 animate-spin border-2 border-[#75bf00] border-t-transparent" />
+        <p className="text-xs text-[#888]">Securing access authorization...</p>
+      </div>
+    </div>
+  );
 }
