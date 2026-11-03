@@ -14,6 +14,7 @@ import { SupportedStackSection } from "@/components/landing/supported-stack-sect
 import { FaqSection } from "@/components/landing/faq-section";
 import { FooterCtaSection } from "@/components/landing/footer-cta-section";
 import { AuthModal } from "@/components/horos/modals/auth-modal";
+import { SignUpModal } from "@/components/auth/sign-up-modal";
 import { TokenPromptInput } from "@/components/horos/primitives/token-prompt-input";
 import { PixelFilter } from "@/components/horos/primitives/pixel-filter";
 import { X } from "lucide-react";
@@ -25,6 +26,7 @@ export default function Home() {
   const [authModalMode, setAuthModalMode] = useState<"sign-in" | "sign-up">(
     "sign-in",
   );
+  const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const [showFloatingComposer, setShowFloatingComposer] = useState(false);
   const prevShowFloatingComposer = useRef(false);
   const [isFloatingComposerDismissed, setIsFloatingComposerDismissed] =
@@ -215,7 +217,7 @@ export default function Home() {
           setAuthModalOpen(true);
         }}
         onOpenSignUp={() => {
-          router.push("/sign-up");
+          setSignUpModalOpen(true);
         }}
         dark={true}
       />
@@ -323,6 +325,10 @@ export default function Home() {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         initialMode={authModalMode}
+      />
+      <SignUpModal
+        isOpen={signUpModalOpen}
+        onClose={() => setSignUpModalOpen(false)}
       />
     </div>
   );
