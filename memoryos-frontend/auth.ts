@@ -66,3 +66,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "horos-auth-secret-session-key-32chars-min!!",
   trustHost: true,
 });
+
