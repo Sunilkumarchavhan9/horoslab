@@ -8,7 +8,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Loader2,
-  ChevronDown,
 } from "lucide-react";
 import { HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
 import { signIn } from "next-auth/react";
@@ -50,7 +49,6 @@ interface SignUpModalProps {
   onClose: () => void;
   initialConfirmed?: boolean;
   initialEmail?: string;
-  initialMode?: "sign-in" | "sign-up";
 }
 
 export function SignUpModal({
@@ -58,16 +56,23 @@ export function SignUpModal({
   onClose,
   initialConfirmed = false,
   initialEmail = "",
-  initialMode = "sign-up",
 }: SignUpModalProps) {
-  const [mode, setMode] = useState<"sign-in" | "sign-up">(initialMode);
   const [email, setEmail] = useState("");
-  const [showEmailInput, setShowEmailInput] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(initialConfirmed);
   const [registeredEmail, setRegisteredEmail] = useState(initialEmail);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [lastUsedProvider, setLastUsedProvider] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("horos_last_auth_provider");
+      if (stored) {
+        setLastUsedProvider(stored);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (initialConfirmed) {
@@ -84,7 +89,6 @@ export function SignUpModal({
     setIsConfirmed(false);
     setIsSubmitting(false);
     setLoadingProvider(null);
-    setShowEmailInput(false);
     setEmail("");
     setErrorMessage(null);
     onClose();
@@ -92,11 +96,15 @@ export function SignUpModal({
 
   // Next.js Auth OAuth Handlers (Google & GitHub only, LinkedIn removed)
   const handleOAuth = async (provider: "google" | "github") => {
-    trackEvent("oauth_attempt", { provider, mode });
+    trackEvent("oauth_attempt", { provider });
     setLoadingProvider(provider);
     setErrorMessage(null);
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
     setRegisteredEmail(targetLabel);
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("horos_last_auth_provider", provider);
+    }
 
     try {
       trackSignup({ email: targetLabel, provider, method: "oauth" });
@@ -130,6 +138,10 @@ export function SignUpModal({
     setRegisteredEmail(cleanEmail);
     setErrorMessage(null);
 
+    if (typeof window !== "undefined") {
+      localStorage.setItem("horos_last_auth_provider", "email");
+    }
+
     try {
       // 1. Dispatch real confirmation email & save lead
       await fetch("/api/auth/notify-signup", {
@@ -159,8 +171,6 @@ export function SignUpModal({
     }
   };
 
-  const isSignIn = mode === "sign-in";
-
   return (
     <div
       role="dialog"
@@ -183,26 +193,25 @@ export function SignUpModal({
           <X size={15} />
         </button>
 
-        {/* Left Side: Auth Form / Confirmation (Exact same height as video) */}
+        {/* Left Side: Early Access Sign-Up Form / Confirmation */}
         <div className="w-full md:w-[370px] shrink-0 p-6 sm:p-7 flex flex-col justify-between bg-[#141414] z-10">
           {!isConfirmed ? (
-            /* Sign-Up / Sign-In Form Matching Reference UI */
             <div>
-              {/* Single Brand Company Logo Only (Removed second logo) */}
+              {/* Single Brand Company Logo Only */}
               <div className="mb-4">
                 <HorosWordmarkLogo className="h-4.5 w-auto text-[#F0EFE2]" />
               </div>
 
-              {/* Title with Highlighted Badge (like 'Welcome back' in screenshot) */}
+              {/* Title with Highlighted Badge: Early access */}
               <div className="mb-4">
                 <h2 className="text-xl sm:text-[22px] font-bold tracking-tight text-[#F0EFE2] flex items-center gap-1.5">
-                  <span>{isSignIn ? "Welcome" : "Welcome"}</span>
+                  <span>Early</span>
                   <span className="bg-[#75bf00] text-black px-1.5 py-0.2 text-base font-extrabold rounded-none">
-                    {isSignIn ? "back" : "back"}
+                    access
                   </span>
                 </h2>
                 <p className="text-xs text-[#8c8c8c] mt-1.5 leading-relaxed">
-                  Sign in to your HOROS workspace and pick up where you left off.
+                  Sign up with your account to get access before launch.
                 </p>
               </div>
 
@@ -213,13 +222,15 @@ export function SignUpModal({
                 </div>
               )}
 
-              {/* 2 Social Buttons: Google with LAST USED badge & GitHub (LinkedIn Removed) */}
-              <div className="space-y-3">
-                {/* Google Button with 'LAST USED' Badge */}
+              {/* 2 Social Buttons: Google & GitHub (LAST USED badge ONLY if previously used) */}
+              <div className="space-y-2.5">
+                {/* Google Button */}
                 <div className="relative">
-                  <span className="absolute -top-2.5 right-2 z-10 px-1.5 py-0.2 bg-[#141414] border border-[#75bf00] text-[#75bf00] text-[8.5px] font-mono tracking-wider font-bold">
-                    LAST USED
-                  </span>
+                  {lastUsedProvider === "google" && (
+                    <span className="absolute -top-2.5 right-2 z-10 px-1.5 py-0.2 bg-[#141414] border border-[#75bf00] text-[#75bf00] text-[8.5px] font-mono tracking-wider font-bold">
+                      LAST USED
+                    </span>
+                  )}
                   <button
                     type="button"
                     disabled={Boolean(loadingProvider) || isSubmitting}
@@ -236,22 +247,29 @@ export function SignUpModal({
                 </div>
 
                 {/* GitHub Button */}
-                <button
-                  type="button"
-                  disabled={Boolean(loadingProvider) || isSubmitting}
-                  onClick={() => handleOAuth("github")}
-                  className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
-                >
-                  {loadingProvider === "github" ? (
-                    <Loader2 size={15} className="text-[#75bf00] animate-spin" />
-                  ) : (
-                    <GithubIcon />
+                <div className="relative">
+                  {lastUsedProvider === "github" && (
+                    <span className="absolute -top-2.5 right-2 z-10 px-1.5 py-0.2 bg-[#141414] border border-[#75bf00] text-[#75bf00] text-[8.5px] font-mono tracking-wider font-bold">
+                      LAST USED
+                    </span>
                   )}
-                  <span>Continue with GitHub</span>
-                </button>
+                  <button
+                    type="button"
+                    disabled={Boolean(loadingProvider) || isSubmitting}
+                    onClick={() => handleOAuth("github")}
+                    className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                  >
+                    {loadingProvider === "github" ? (
+                      <Loader2 size={15} className="text-[#75bf00] animate-spin" />
+                    ) : (
+                      <GithubIcon />
+                    )}
+                    <span>Continue with GitHub</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Terms notice placed above OR divider (matching reference UI) */}
+              {/* Terms notice placed above OR divider */}
               <p className="mt-4 text-[10px] text-[#777] text-center leading-normal">
                 By continuing with Google or GitHub, you agree to the{" "}
                 <a href="/terms-of-service" className="underline text-[#aaa] hover:text-[#F0EFE2]">
@@ -272,75 +290,31 @@ export function SignUpModal({
                 </span>
               </div>
 
-              {/* Continue with Email: Expandable or input matching reference button */}
-              {!showEmailInput ? (
+              {/* Email Input Form */}
+              <form onSubmit={handleEmailSubmit} className="space-y-2.5">
+                <input
+                  type="email"
+                  required
+                  placeholder="name@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
+                />
                 <button
-                  type="button"
-                  onClick={() => setShowEmailInput(true)}
-                  className="w-full flex items-center justify-between bg-[#1b1b1b] hover:bg-[#222] border border-[#333] hover:border-[#444] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer"
+                  type="submit"
+                  disabled={isSubmitting || Boolean(loadingProvider)}
+                  className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
                 >
-                  <div className="flex items-center gap-2.5 text-[#aaa]">
-                    <Mail size={15} />
-                    <span className="text-[#ccc]">Continue with email</span>
-                  </div>
-                  <ChevronDown size={14} className="text-[#777]" />
+                  {isSubmitting ? (
+                    <Loader2 size={14} className="animate-spin text-black" />
+                  ) : (
+                    <>
+                      <span>Continue with email</span>
+                      <ArrowRight size={13} />
+                    </>
+                  )}
                 </button>
-              ) : (
-                <form onSubmit={handleEmailSubmit} className="space-y-2">
-                  <div className="relative">
-                    <input
-                      type="email"
-                      required
-                      autoFocus
-                      placeholder="name@company.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || Boolean(loadingProvider)}
-                    className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 size={14} className="animate-spin text-black" />
-                    ) : (
-                      <>
-                        <span>Continue with email</span>
-                        <ArrowRight size={13} />
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
-
-              {/* Bottom Toggle Text (matching reference UI) */}
-              <div className="mt-5 text-center text-xs text-[#888]">
-                {isSignIn ? (
-                  <>
-                    Don&apos;t have an account?{" "}
-                    <button
-                      type="button"
-                      onClick={() => setMode("sign-up")}
-                      className="text-[#75bf00] hover:underline font-bold cursor-pointer"
-                    >
-                      Sign up
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    Already have an account?{" "}
-                    <button
-                      type="button"
-                      onClick={() => setMode("sign-in")}
-                      className="text-[#75bf00] hover:underline font-bold cursor-pointer"
-                    >
-                      Sign in
-                    </button>
-                  </>
-                )}
-              </div>
+              </form>
             </div>
           ) : (
             /* In-Place Confirmation Card - Squared */
