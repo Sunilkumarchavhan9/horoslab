@@ -105,7 +105,6 @@ export function SignUpModal({
       await signIn(provider, { callbackUrl: "/?signed_up=true" });
     } catch (err: any) {
       console.warn(`[NextAuth] ${provider} redirect notice:`, err);
-      // Fallback: Notify and record early access lead in real-time
       try {
         await fetch("/api/auth/notify-signup", {
           method: "POST",
@@ -166,207 +165,241 @@ export function SignUpModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={handleClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[420px] bg-[#141414] border border-[#2b2b2b] rounded-none p-6 sm:p-7 shadow-2xl text-[#F0EFE2] font-sans"
+        className="relative w-full max-w-[420px] md:max-w-[820px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl text-[#F0EFE2] font-sans grid grid-cols-1 md:grid-cols-2 overflow-hidden"
       >
         {/* Close Button - Squared */}
         <button
           type="button"
           onClick={handleClose}
           aria-label="Close modal"
-          className="absolute top-4 right-4 p-1.5 rounded-none text-[#8c8c8c] hover:text-[#F0EFE2] hover:bg-[#222] transition-colors cursor-pointer"
+          className="absolute top-3.5 right-3.5 z-30 p-1.5 rounded-none text-[#8c8c8c] hover:text-[#F0EFE2] bg-black/60 hover:bg-[#222] border border-[#333] transition-colors cursor-pointer"
         >
-          <X size={17} />
+          <X size={16} />
         </button>
 
-        {!isConfirmed ? (
-          /* Sign-Up Card Form */
-          <div>
-            {/* Header: Logo & Badge */}
-            <div className="flex items-center gap-2 mb-4">
-              <HorosLogo variant="icon" size="sm" className="text-[#F0EFE2]" />
-              <HorosWordmarkLogo className="h-4 w-auto text-[#F0EFE2]" />
-            </div>
+        {/* Left Column: Form or Confirmation Card */}
+        <div className="p-6 sm:p-7 flex flex-col justify-between">
+          {!isConfirmed ? (
+            /* Sign-Up Card Form */
+            <div>
+              {/* Header: Logo & Badge */}
+              <div className="flex items-center gap-2 mb-4">
+                <HorosLogo variant="icon" size="sm" className="text-[#F0EFE2]" />
+                <HorosWordmarkLogo className="h-4 w-auto text-[#F0EFE2]" />
+              </div>
 
-            <div className="space-y-1 mb-6">
-              <h2 className="text-xl sm:text-[22px] font-bold tracking-tight text-[#F0EFE2]">
-                Create your account
-              </h2>
-              <p className="text-xs text-[#8c8c8c] leading-relaxed">
-                Sign up with your account to get early access before everyone else.
+              <div className="space-y-1 mb-5">
+                <h2 className="text-xl sm:text-[22px] font-bold tracking-tight text-[#F0EFE2]">
+                  Create your account
+                </h2>
+                <p className="text-xs text-[#8c8c8c] leading-relaxed">
+                  Sign up with your account to get early access before everyone else.
+                </p>
+              </div>
+
+              {/* Error notice if present */}
+              {errorMessage && (
+                <div className="mb-4 p-2.5 rounded-none bg-red-950/50 border border-red-800/60 text-xs text-red-200 font-mono">
+                  {errorMessage}
+                </div>
+              )}
+
+              {/* 3 Social Login Buttons: Google, GitHub, LinkedIn - Squared */}
+              <div className="space-y-2.5">
+                {/* Google */}
+                <button
+                  type="button"
+                  disabled={Boolean(loadingProvider) || isSubmitting}
+                  onClick={() => handleOAuth("google")}
+                  className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                >
+                  {loadingProvider === "google" ? (
+                    <Loader2 size={15} className="text-[#75bf00] animate-spin" />
+                  ) : (
+                    <GoogleIcon />
+                  )}
+                  <span>Continue with Google</span>
+                </button>
+
+                {/* GitHub */}
+                <button
+                  type="button"
+                  disabled={Boolean(loadingProvider) || isSubmitting}
+                  onClick={() => handleOAuth("github")}
+                  className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                >
+                  {loadingProvider === "github" ? (
+                    <Loader2 size={15} className="text-[#75bf00] animate-spin" />
+                  ) : (
+                    <GithubIcon />
+                  )}
+                  <span>Continue with GitHub</span>
+                </button>
+
+                {/* LinkedIn */}
+                <button
+                  type="button"
+                  disabled={Boolean(loadingProvider) || isSubmitting}
+                  onClick={() => handleOAuth("linkedin")}
+                  className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                >
+                  {loadingProvider === "linkedin" ? (
+                    <Loader2 size={15} className="text-[#75bf00] animate-spin" />
+                  ) : (
+                    <LinkedInIcon />
+                  )}
+                  <span>Continue with LinkedIn</span>
+                </button>
+              </div>
+
+              {/* Divider */}
+              <div className="relative flex items-center justify-center my-4">
+                <div className="w-full border-t border-[#292929]" />
+                <span className="absolute bg-[#141414] px-3 text-[10px] font-mono text-[#666] tracking-wider uppercase">
+                  OR
+                </span>
+              </div>
+
+              {/* Email Input Form - Squared */}
+              <form onSubmit={handleEmailSubmit} className="space-y-2.5">
+                <input
+                  type="email"
+                  required
+                  placeholder="name@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting || Boolean(loadingProvider)}
+                  className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                >
+                  {isSubmitting ? (
+                    <Loader2 size={14} className="animate-spin text-black" />
+                  ) : (
+                    <>
+                      <span>Continue with email</span>
+                      <ArrowRight size={13} />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Terms notice */}
+              <p className="mt-4 text-[10px] text-[#555] text-center leading-normal">
+                By continuing, you agree to HOROS{" "}
+                <a href="/terms-of-service" className="underline hover:text-[#888]">
+                  Terms
+                </a>{" "}
+                and{" "}
+                <a href="/privacy-policy" className="underline hover:text-[#888]">
+                  Privacy Policy
+                </a>
+                .
               </p>
             </div>
-
-            {/* Error notice if present */}
-            {errorMessage && (
-              <div className="mb-4 p-2.5 rounded-none bg-red-950/50 border border-red-800/60 text-xs text-red-200 font-mono">
-                {errorMessage}
+          ) : (
+            /* In-Place Confirmation Card - Squared */
+            <div className="py-2 space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-none bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
+                  <CheckCircle2 size={16} className="text-[#75bf00]" />
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#75bf00]/10 border border-[#75bf00]/30 text-[10px] text-[#75bf00] font-mono font-bold tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-none bg-[#75bf00] animate-pulse" />
+                  ACCESS RESERVED
+                </div>
               </div>
-            )}
 
-            {/* 3 Social Login Buttons: Google, GitHub, LinkedIn - Squared */}
-            <div className="space-y-2.5">
-              {/* Google */}
+              <div className="space-y-1.5">
+                <h2 className="text-xl font-bold tracking-tight text-[#F0EFE2]">
+                  Thanks for signing up!
+                </h2>
+                <p className="text-xs text-[#a0a0a0] leading-relaxed">
+                  We will reach out to you as soon as possible. We will start a launch. When we launch you can access it first.
+                </p>
+              </div>
+
+              {/* Account identifier badge - Squared */}
+              <div className="p-3 rounded-none bg-[#101010] border border-[#2a2a2a] flex items-center gap-3">
+                <div className="w-7 h-7 rounded-none bg-[#1f1f1f] flex items-center justify-center text-[#888] shrink-0">
+                  <Mail size={14} className="text-[#888]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[10px] font-mono text-[#666] uppercase tracking-wider">
+                    Verified Contact
+                  </div>
+                  <div className="text-xs font-mono text-[#F0EFE2] truncate">
+                    {registeredEmail || email || "Account registered"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Technical briefing callout - Squared */}
+              <div className="pt-2 border-t border-[#222]">
+                <div className="text-[11px] text-[#777] mb-2 leading-relaxed">
+                  Need an immediate enterprise walkthrough with our founding engineering team?
+                </div>
+                <a
+                  href="https://cal.com/vegito"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent("book_briefing_click", { source: "modal_confirmation" })}
+                  className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] hover:border-[#75bf00]/50 text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all group"
+                >
+                  <span>Book technical briefing on Cal.com</span>
+                  <ArrowUpRight size={13} className="text-[#888] group-hover:text-[#75bf00] transition-colors" />
+                </a>
+              </div>
+
+              {/* Done button - Squared */}
               <button
                 type="button"
-                disabled={Boolean(loadingProvider) || isSubmitting}
-                onClick={() => handleOAuth("google")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                onClick={handleClose}
+                className="w-full mt-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer"
               >
-                {loadingProvider === "google" ? (
-                  <Loader2 size={15} className="text-[#75bf00] animate-spin" />
-                ) : (
-                  <GoogleIcon />
-                )}
-                <span>Continue with Google</span>
-              </button>
-
-              {/* GitHub */}
-              <button
-                type="button"
-                disabled={Boolean(loadingProvider) || isSubmitting}
-                onClick={() => handleOAuth("github")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
-              >
-                {loadingProvider === "github" ? (
-                  <Loader2 size={15} className="text-[#75bf00] animate-spin" />
-                ) : (
-                  <GithubIcon />
-                )}
-                <span>Continue with GitHub</span>
-              </button>
-
-              {/* LinkedIn */}
-              <button
-                type="button"
-                disabled={Boolean(loadingProvider) || isSubmitting}
-                onClick={() => handleOAuth("linkedin")}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
-              >
-                {loadingProvider === "linkedin" ? (
-                  <Loader2 size={15} className="text-[#75bf00] animate-spin" />
-                ) : (
-                  <LinkedInIcon />
-                )}
-                <span>Continue with LinkedIn</span>
+                Done
               </button>
             </div>
+          )}
+        </div>
 
-            {/* Divider */}
-            <div className="relative flex items-center justify-center my-5">
-              <div className="w-full border-t border-[#292929]" />
-              <span className="absolute bg-[#141414] px-3 text-[10px] font-mono text-[#666] tracking-wider uppercase">
-                OR
+        {/* Right Column: horos-auth.mp4 Video */}
+        <div className="hidden md:relative md:flex md:flex-col items-center justify-center bg-[#0d0d0d] border-l border-[#262626] overflow-hidden min-h-[480px]">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src="/images/horos-auth.mp4" type="video/mp4" />
+            <source src="/horos-auth.mp4" type="video/mp4" />
+          </video>
+
+          {/* Vignette & Gradients */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/20 to-black/40 pointer-events-none" />
+
+          {/* Video bottom badge */}
+          <div className="absolute bottom-5 left-5 right-5 z-10 p-3.5 bg-black/75 backdrop-blur-md border border-[#333]/90 rounded-none">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-1.5 h-1.5 rounded-none bg-[#75bf00] animate-pulse" />
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#75bf00] font-bold">
+                HOROS CONTINUITY ENGINE
               </span>
             </div>
-
-            {/* Email Input Form - Squared */}
-            <form onSubmit={handleEmailSubmit} className="space-y-2.5">
-              <input
-                type="email"
-                required
-                placeholder="name@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
-              />
-              <button
-                type="submit"
-                disabled={isSubmitting || Boolean(loadingProvider)}
-                className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
-              >
-                {isSubmitting ? (
-                  <Loader2 size={14} className="animate-spin text-black" />
-                ) : (
-                  <>
-                    <span>Continue with email</span>
-                    <ArrowRight size={13} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Terms notice */}
-            <p className="mt-4 text-[10px] text-[#555] text-center leading-normal">
-              By continuing, you agree to HOROS{" "}
-              <a href="/terms-of-service" className="underline hover:text-[#888]">
-                Terms
-              </a>{" "}
-              and{" "}
-              <a href="/privacy-policy" className="underline hover:text-[#888]">
-                Privacy Policy
-              </a>
-              .
+            <p className="text-[11px] text-[#d4d4d4] leading-snug">
+              Continuous agentic control plane, outcome verification & execution runtime.
             </p>
           </div>
-        ) : (
-          /* In-Place Confirmation Card - Squared */
-          <div className="py-2 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-none bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
-                <CheckCircle2 size={16} className="text-[#75bf00]" />
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-[#75bf00]/10 border border-[#75bf00]/30 text-[10px] text-[#75bf00] font-mono font-bold tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-none bg-[#75bf00] animate-pulse" />
-                ACCESS RESERVED
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <h2 className="text-xl font-bold tracking-tight text-[#F0EFE2]">
-                Thanks for signing up!
-              </h2>
-              <p className="text-xs text-[#a0a0a0] leading-relaxed">
-                We will reach out to you as soon as possible. We will start a launch. When we launch you can access it first.
-              </p>
-            </div>
-
-            {/* Account identifier badge - Squared */}
-            <div className="p-3 rounded-none bg-[#101010] border border-[#2a2a2a] flex items-center gap-3">
-              <div className="w-7 h-7 rounded-none bg-[#1f1f1f] flex items-center justify-center text-[#888] shrink-0">
-                <Mail size={14} className="text-[#888]" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-[10px] font-mono text-[#666] uppercase tracking-wider">
-                  Verified Contact
-                </div>
-                <div className="text-xs font-mono text-[#F0EFE2] truncate">
-                  {registeredEmail || email || "Account registered"}
-                </div>
-              </div>
-            </div>
-
-            {/* Technical briefing callout - Squared */}
-            <div className="pt-2 border-t border-[#222]">
-              <div className="text-[11px] text-[#777] mb-2 leading-relaxed">
-                Need an immediate enterprise walkthrough with our founding engineering team?
-              </div>
-              <a
-                href="https://cal.com/vegito"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackEvent("book_briefing_click", { source: "modal_confirmation" })}
-                className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] hover:border-[#75bf00]/50 text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all group"
-              >
-                <span>Book technical briefing on Cal.com</span>
-                <ArrowUpRight size={13} className="text-[#888] group-hover:text-[#75bf00] transition-colors" />
-              </a>
-            </div>
-
-            {/* Done button - Squared */}
-            <button
-              type="button"
-              onClick={handleClose}
-              className="w-full mt-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer"
-            >
-              Done
-            </button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
