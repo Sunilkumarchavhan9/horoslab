@@ -729,10 +729,12 @@ export function LandingNavbar({
             initialMode={internalAuthMode}
           />
         )}
-        <SignUpModal
-          isOpen={signUpModalOpen}
-          onClose={() => setSignUpModalOpen(false)}
-        />
+        {!onOpenSignUp && (
+          <SignUpModal
+            isOpen={signUpModalOpen}
+            onClose={() => setSignUpModalOpen(false)}
+          />
+        )}
       </header>
     </>
   );
