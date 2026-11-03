@@ -3,6 +3,7 @@
 import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { trackSignup } from "@/lib/posthog";
 
 type OAuthCallbackHandlerProps = {
   completeUrl: string;
@@ -49,6 +50,7 @@ export function OAuthCallbackHandler({
         "";
 
       if (email) {
+        trackSignup(email, "oauth", name);
         fetch("/api/auth/notify-signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

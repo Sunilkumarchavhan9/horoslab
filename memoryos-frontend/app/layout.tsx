@@ -5,6 +5,7 @@ import { DatadogRumInitLoader } from "@/components/observability/datadog-rum-ini
 import { GlobalPixelButtonLoader } from "@/components/ui/global-pixel-button-loader";
 import { ThemePreferenceRoot } from "@/components/memoryos/theme-preference-root";
 import { ClerkRootProvider } from "@/components/auth/clerk-root-provider";
+import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { KernelProvider } from "@/components/providers/kernel-provider";
 import { GlobalScrollbar } from "@/components/ui/global-scrollbar";
 import { RouteTitleUpdater } from "@/components/layout/route-title-updater";
@@ -64,13 +65,15 @@ export default function RootLayout({
         ) : null}
         <GlobalScrollbar />
         <KernelProvider>
-          <ThemePreferenceRoot>
-            {clerkEnabled ? (
-              <ClerkRootProvider>{children}</ClerkRootProvider>
-            ) : (
-              children
-            )}
-          </ThemePreferenceRoot>
+          <PostHogProvider>
+            <ThemePreferenceRoot>
+              {clerkEnabled ? (
+                <ClerkRootProvider>{children}</ClerkRootProvider>
+              ) : (
+                children
+              )}
+            </ThemePreferenceRoot>
+          </PostHogProvider>
         </KernelProvider>
       </body>
     </html>

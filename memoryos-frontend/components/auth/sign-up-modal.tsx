@@ -13,6 +13,7 @@ import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/bran
 import { useClerk } from "@clerk/nextjs";
 import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
 import { isClerkEnabled } from "@/lib/clerk";
+import { trackSignup, trackEvent } from "@/lib/posthog";
 
 function GoogleIcon() {
   return (
@@ -99,6 +100,7 @@ export function SignUpModal({
   };
 
   const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
+    trackEvent("oauth_attempt", { provider });
     setLoadingProvider(provider);
     setErrorMessage(null);
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
@@ -275,7 +277,10 @@ export function SignUpModal({
       console.warn("[HOROS Auth] Early access registration note:", err);
     }
 
-    // 3. In-Place confirmation screen
+    // 3. Real-Time PostHog tracking
+    trackSignup(cleanEmail, "email");
+
+    // 4. In-Place confirmation screen
     setIsSubmitting(false);
     setIsConfirmed(true);
   };
@@ -461,6 +466,7 @@ export function SignUpModal({
                 href="https://cal.com/vegito"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("demo_clicked", { source: "modal_confirmation" })}
                 className="text-[#75bf00] hover:underline font-semibold flex items-center gap-1"
               >
                 <span>Schedule on Cal.com</span>
