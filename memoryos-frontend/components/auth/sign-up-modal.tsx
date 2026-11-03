@@ -8,8 +8,9 @@ import {
   ArrowRight,
   ArrowUpRight,
   Loader2,
+  ChevronDown,
 } from "lucide-react";
-import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
+import { HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
 import { signIn } from "next-auth/react";
 import { trackSignup, trackEvent } from "@/lib/posthog";
 
@@ -44,19 +45,12 @@ function GithubIcon() {
   );
 }
 
-function LinkedInIcon() {
-  return (
-    <svg className="w-4 h-4 fill-[#0A66C2] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
-
 interface SignUpModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialConfirmed?: boolean;
   initialEmail?: string;
+  initialMode?: "sign-in" | "sign-up";
 }
 
 export function SignUpModal({
@@ -64,8 +58,11 @@ export function SignUpModal({
   onClose,
   initialConfirmed = false,
   initialEmail = "",
+  initialMode = "sign-up",
 }: SignUpModalProps) {
+  const [mode, setMode] = useState<"sign-in" | "sign-up">(initialMode);
   const [email, setEmail] = useState("");
+  const [showEmailInput, setShowEmailInput] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(initialConfirmed);
@@ -87,14 +84,15 @@ export function SignUpModal({
     setIsConfirmed(false);
     setIsSubmitting(false);
     setLoadingProvider(null);
+    setShowEmailInput(false);
     setEmail("");
     setErrorMessage(null);
     onClose();
   };
 
-  // Next.js Auth (Auth.js) OAuth Handlers
-  const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
-    trackEvent("oauth_attempt", { provider });
+  // Next.js Auth OAuth Handlers (Google & GitHub only, LinkedIn removed)
+  const handleOAuth = async (provider: "google" | "github") => {
+    trackEvent("oauth_attempt", { provider, mode });
     setLoadingProvider(provider);
     setErrorMessage(null);
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
@@ -161,6 +159,8 @@ export function SignUpModal({
     }
   };
 
+  const isSignIn = mode === "sign-in";
+
   return (
     <div
       role="dialog"
@@ -171,7 +171,7 @@ export function SignUpModal({
       {/* 2-Column Balanced Brutalist Card: Same Level, Reduced Size */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[720px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl text-[#F0EFE2] font-sans flex flex-col md:flex-row items-stretch overflow-hidden"
+        className="relative w-full max-w-[700px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl text-[#F0EFE2] font-sans flex flex-col md:flex-row items-stretch overflow-hidden"
       >
         {/* Close Button - Squared */}
         <button
@@ -184,22 +184,25 @@ export function SignUpModal({
         </button>
 
         {/* Left Side: Auth Form / Confirmation (Exact same height as video) */}
-        <div className="w-full md:w-[380px] shrink-0 p-5 sm:p-6 flex flex-col justify-between bg-[#141414] z-10">
+        <div className="w-full md:w-[370px] shrink-0 p-6 sm:p-7 flex flex-col justify-between bg-[#141414] z-10">
           {!isConfirmed ? (
-            /* Sign-Up Card Form */
+            /* Sign-Up / Sign-In Form Matching Reference UI */
             <div>
-              {/* Header: Logo */}
-              <div className="flex items-center gap-2 mb-3.5">
-                <HorosLogo variant="icon" size="sm" className="text-[#F0EFE2]" />
-                <HorosWordmarkLogo className="h-4 w-auto text-[#F0EFE2]" />
+              {/* Single Brand Company Logo Only (Removed second logo) */}
+              <div className="mb-4">
+                <HorosWordmarkLogo className="h-4.5 w-auto text-[#F0EFE2]" />
               </div>
 
-              <div className="space-y-1 mb-4">
-                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#F0EFE2]">
-                  Create your account
+              {/* Title with Highlighted Badge (like 'Welcome back' in screenshot) */}
+              <div className="mb-4">
+                <h2 className="text-xl sm:text-[22px] font-bold tracking-tight text-[#F0EFE2] flex items-center gap-1.5">
+                  <span>{isSignIn ? "Welcome" : "Welcome"}</span>
+                  <span className="bg-[#75bf00] text-black px-1.5 py-0.2 text-base font-extrabold rounded-none">
+                    {isSignIn ? "back" : "back"}
+                  </span>
                 </h2>
-                <p className="text-xs text-[#8c8c8c] leading-relaxed">
-                  Sign up with your account to get early access before everyone else.
+                <p className="text-xs text-[#8c8c8c] mt-1.5 leading-relaxed">
+                  Sign in to your HOROS workspace and pick up where you left off.
                 </p>
               </div>
 
@@ -210,100 +213,134 @@ export function SignUpModal({
                 </div>
               )}
 
-              {/* 3 Social Login Buttons: Google, GitHub, LinkedIn - Squared */}
-              <div className="space-y-2">
-                {/* Google */}
-                <button
-                  type="button"
-                  disabled={Boolean(loadingProvider) || isSubmitting}
-                  onClick={() => handleOAuth("google")}
-                  className="w-full flex items-center justify-center gap-2.5 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2 px-3.5 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
-                >
-                  {loadingProvider === "google" ? (
-                    <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                  ) : (
-                    <GoogleIcon />
-                  )}
-                  <span>Continue with Google</span>
-                </button>
+              {/* 2 Social Buttons: Google with LAST USED badge & GitHub (LinkedIn Removed) */}
+              <div className="space-y-3">
+                {/* Google Button with 'LAST USED' Badge */}
+                <div className="relative">
+                  <span className="absolute -top-2.5 right-2 z-10 px-1.5 py-0.2 bg-[#141414] border border-[#75bf00] text-[#75bf00] text-[8.5px] font-mono tracking-wider font-bold">
+                    LAST USED
+                  </span>
+                  <button
+                    type="button"
+                    disabled={Boolean(loadingProvider) || isSubmitting}
+                    onClick={() => handleOAuth("google")}
+                    className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                  >
+                    {loadingProvider === "google" ? (
+                      <Loader2 size={15} className="text-[#75bf00] animate-spin" />
+                    ) : (
+                      <GoogleIcon />
+                    )}
+                    <span>Continue with Google</span>
+                  </button>
+                </div>
 
-                {/* GitHub */}
+                {/* GitHub Button */}
                 <button
                   type="button"
                   disabled={Boolean(loadingProvider) || isSubmitting}
                   onClick={() => handleOAuth("github")}
-                  className="w-full flex items-center justify-center gap-2.5 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2 px-3.5 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
                 >
                   {loadingProvider === "github" ? (
-                    <Loader2 size={14} className="text-[#75bf00] animate-spin" />
+                    <Loader2 size={15} className="text-[#75bf00] animate-spin" />
                   ) : (
                     <GithubIcon />
                   )}
                   <span>Continue with GitHub</span>
                 </button>
-
-                {/* LinkedIn */}
-                <button
-                  type="button"
-                  disabled={Boolean(loadingProvider) || isSubmitting}
-                  onClick={() => handleOAuth("linkedin")}
-                  className="w-full flex items-center justify-center gap-2.5 bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2 px-3.5 rounded-none transition-all cursor-pointer shadow-xs disabled:opacity-50"
-                >
-                  {loadingProvider === "linkedin" ? (
-                    <Loader2 size={14} className="text-[#75bf00] animate-spin" />
-                  ) : (
-                    <LinkedInIcon />
-                  )}
-                  <span>Continue with LinkedIn</span>
-                </button>
               </div>
 
-              {/* Divider */}
-              <div className="relative flex items-center justify-center my-3.5">
-                <div className="w-full border-t border-[#292929]" />
-                <span className="absolute bg-[#141414] px-2.5 text-[9.5px] font-mono text-[#666] tracking-wider uppercase">
-                  OR
-                </span>
-              </div>
-
-              {/* Email Input Form - Squared */}
-              <form onSubmit={handleEmailSubmit} className="space-y-2">
-                <input
-                  type="email"
-                  required
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3 py-2 rounded-none outline-none transition-colors font-mono"
-                />
-                <button
-                  type="submit"
-                  disabled={isSubmitting || Boolean(loadingProvider)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2 px-3.5 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
-                >
-                  {isSubmitting ? (
-                    <Loader2 size={13} className="animate-spin text-black" />
-                  ) : (
-                    <>
-                      <span>Continue with email</span>
-                      <ArrowRight size={13} />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              {/* Terms notice */}
-              <p className="mt-3 text-[9.5px] text-[#555] text-center leading-normal">
-                By continuing, you agree to HOROS{" "}
-                <a href="/terms-of-service" className="underline hover:text-[#888]">
-                  Terms
+              {/* Terms notice placed above OR divider (matching reference UI) */}
+              <p className="mt-4 text-[10px] text-[#777] text-center leading-normal">
+                By continuing with Google or GitHub, you agree to the{" "}
+                <a href="/terms-of-service" className="underline text-[#aaa] hover:text-[#F0EFE2]">
+                  Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="/privacy-policy" className="underline hover:text-[#888]">
+                <a href="/privacy-policy" className="underline text-[#aaa] hover:text-[#F0EFE2]">
                   Privacy Policy
                 </a>
                 .
               </p>
+
+              {/* Divider */}
+              <div className="relative flex items-center justify-center my-4">
+                <div className="w-full border-t border-[#292929]" />
+                <span className="absolute bg-[#141414] px-2.5 text-[10px] font-mono text-[#666] tracking-wider uppercase">
+                  OR
+                </span>
+              </div>
+
+              {/* Continue with Email: Expandable or input matching reference button */}
+              {!showEmailInput ? (
+                <button
+                  type="button"
+                  onClick={() => setShowEmailInput(true)}
+                  className="w-full flex items-center justify-between bg-[#1b1b1b] hover:bg-[#222] border border-[#333] hover:border-[#444] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5 text-[#aaa]">
+                    <Mail size={15} />
+                    <span className="text-[#ccc]">Continue with email</span>
+                  </div>
+                  <ChevronDown size={14} className="text-[#777]" />
+                </button>
+              ) : (
+                <form onSubmit={handleEmailSubmit} className="space-y-2">
+                  <div className="relative">
+                    <input
+                      type="email"
+                      required
+                      autoFocus
+                      placeholder="name@company.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || Boolean(loadingProvider)}
+                    className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 size={14} className="animate-spin text-black" />
+                    ) : (
+                      <>
+                        <span>Continue with email</span>
+                        <ArrowRight size={13} />
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
+
+              {/* Bottom Toggle Text (matching reference UI) */}
+              <div className="mt-5 text-center text-xs text-[#888]">
+                {isSignIn ? (
+                  <>
+                    Don&apos;t have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setMode("sign-up")}
+                      className="text-[#75bf00] hover:underline font-bold cursor-pointer"
+                    >
+                      Sign up
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setMode("sign-in")}
+                      className="text-[#75bf00] hover:underline font-bold cursor-pointer"
+                    >
+                      Sign in
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           ) : (
             /* In-Place Confirmation Card - Squared */
@@ -372,7 +409,7 @@ export function SignUpModal({
         </div>
 
         {/* Right Side: horos-auth.mp4 Video (Same Level, Flush With Form) */}
-        <div className="hidden md:block w-[340px] shrink-0 relative bg-black border-l border-[#262626] overflow-hidden">
+        <div className="hidden md:block w-[330px] shrink-0 relative bg-black border-l border-[#262626] overflow-hidden">
           <video
             autoPlay
             loop
