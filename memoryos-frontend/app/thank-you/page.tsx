@@ -3,37 +3,34 @@
 import React, { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import {
-  CheckCircle2,
   Calendar,
   ArrowRight,
   ShieldCheck,
   Cpu,
-  Boxes,
   Zap,
   ArrowUpRight,
   Bell,
-  Sparkles,
   ExternalLink,
 } from "lucide-react";
 import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
 import { GlobalFooter } from "@/components/landing/global-footer";
 
 function ThankYouContent() {
-  const { user, isLoaded } = useUser();
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
 
   const queryEmail = searchParams.get("email");
   const queryProvider = searchParams.get("provider");
 
   const displayEmail =
-    user?.primaryEmailAddress?.emailAddress ||
+    session?.user?.email ||
     queryEmail ||
     (queryProvider ? `${queryProvider.toUpperCase()} Account (Verified)` : null);
 
   const displayName =
-    user?.fullName || user?.firstName || (displayEmail ? displayEmail.split("@")[0] : "Founding Partner");
+    session?.user?.name || (displayEmail ? displayEmail.split("@")[0] : "Founding Partner");
 
   return (
     <div className="min-h-screen bg-[#0e0e0e] text-[#F0EFE2] font-sans selection:bg-[#75bf00] selection:text-black flex flex-col justify-between relative overflow-hidden">
@@ -59,7 +56,7 @@ function ThankYouContent() {
               href="https://cal.com/vegito"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold text-xs px-4 py-1.5 rounded-xs transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold text-xs px-4 py-1.5 rounded-none transition-colors shadow-xs"
             >
               <Calendar size={13} />
               <span>Demo</span>
@@ -72,15 +69,15 @@ function ThankYouContent() {
       <main className="flex-1 max-w-5xl mx-auto px-6 py-12 sm:py-16 relative z-10 w-full flex flex-col items-center">
         
         {/* Top Confirmation Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#75bf00]/10 border border-[#75bf00]/30 text-xs text-[#75bf00] font-mono font-semibold tracking-wider mb-6">
-          <span className="w-2 h-2 rounded-full bg-[#75bf00] animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-none bg-[#75bf00]/10 border border-[#75bf00]/30 text-xs text-[#75bf00] font-mono font-semibold tracking-wider mb-6">
+          <span className="w-2 h-2 rounded-none bg-[#75bf00] animate-pulse" />
           <span>EARLY ACCESS CONFIRMED</span>
         </div>
 
         {/* Hero Title */}
         <h1 className="text-3xl sm:text-5xl font-black text-center text-[#F0EFE2] tracking-tight leading-[1.15] mb-4 max-w-3xl">
           Thank you for{" "}
-          <span className="bg-[#75bf00] text-black px-2.5 py-0.5 rounded-xs inline-block">
+          <span className="bg-[#75bf00] text-black px-2.5 py-0.5 rounded-none inline-block">
             signing in
           </span>
         </h1>
@@ -90,11 +87,11 @@ function ThankYouContent() {
         </p>
 
         {/* Key Early Launch Promise Notice Box */}
-        <div className="w-full max-w-3xl bg-[#161616] border border-[#75bf00]/40 rounded-xs p-6 sm:p-7 mb-10 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#75bf00]/5 rounded-full blur-2xl pointer-events-none" />
+        <div className="w-full max-w-3xl bg-[#161616] border border-[#75bf00]/40 rounded-none p-6 sm:p-7 mb-10 relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#75bf00]/5 rounded-none blur-2xl pointer-events-none" />
           
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#75bf00]/15 border border-[#75bf00]/30 flex items-center justify-center shrink-0 text-[#75bf00] mt-0.5">
+            <div className="w-10 h-10 rounded-none bg-[#75bf00]/15 border border-[#75bf00]/30 flex items-center justify-center shrink-0 text-[#75bf00] mt-0.5">
               <Bell size={20} className="text-[#75bf00]" />
             </div>
             
@@ -103,7 +100,7 @@ function ThankYouContent() {
                 <span className="text-xs font-mono font-bold text-[#75bf00] uppercase tracking-wider">
                   Priority Access Guarantee
                 </span>
-                <span className="text-[11px] font-mono text-[#777] bg-[#111] px-2 py-0.5 border border-[#262626] rounded-xs">
+                <span className="text-[11px] font-mono text-[#777] bg-[#111] px-2 py-0.5 border border-[#262626] rounded-none">
                   Cohort Status: Active
                 </span>
               </div>
@@ -123,7 +120,7 @@ function ThankYouContent() {
         </div>
 
         {/* Cal.com Demo Walkthrough Box */}
-        <div className="w-full max-w-3xl bg-gradient-to-r from-[#171717] to-[#141414] border border-[#333] hover:border-[#75bf00]/50 rounded-xs p-6 sm:p-7 mb-12 transition-all">
+        <div className="w-full max-w-3xl bg-gradient-to-r from-[#171717] to-[#141414] border border-[#333] hover:border-[#75bf00]/50 rounded-none p-6 sm:p-7 mb-12 transition-all">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-1.5 max-w-md">
               <div className="flex items-center gap-2">
@@ -141,7 +138,7 @@ function ThankYouContent() {
               href="https://cal.com/vegito"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs px-5 py-3 rounded-xs transition-all shadow-md shrink-0"
+              className="inline-flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs px-5 py-3 rounded-none transition-all shadow-md shrink-0"
             >
               <Calendar size={14} />
               <span>Schedule Demo on Cal.com</span>
@@ -161,8 +158,8 @@ function ThankYouContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Card 1 */}
-            <div className="bg-[#141414] border border-[#262626] p-5 rounded-xs space-y-2.5">
-              <div className="w-8 h-8 rounded-xs bg-[#1f1f1f] border border-[#333] flex items-center justify-center text-[#75bf00]">
+            <div className="bg-[#141414] border border-[#262626] p-5 rounded-none space-y-2.5">
+              <div className="w-8 h-8 rounded-none bg-[#1f1f1f] border border-[#333] flex items-center justify-center text-[#75bf00]">
                 <Cpu size={16} />
               </div>
               <h3 className="text-sm font-bold text-[#F0EFE2]">
@@ -174,8 +171,8 @@ function ThankYouContent() {
             </div>
 
             {/* Card 2 */}
-            <div className="bg-[#141414] border border-[#262626] p-5 rounded-xs space-y-2.5">
-              <div className="w-8 h-8 rounded-xs bg-[#1f1f1f] border border-[#333] flex items-center justify-center text-[#75bf00]">
+            <div className="bg-[#141414] border border-[#262626] p-5 rounded-none space-y-2.5">
+              <div className="w-8 h-8 rounded-none bg-[#1f1f1f] border border-[#333] flex items-center justify-center text-[#75bf00]">
                 <ShieldCheck size={16} />
               </div>
               <h3 className="text-sm font-bold text-[#F0EFE2]">
@@ -187,8 +184,8 @@ function ThankYouContent() {
             </div>
 
             {/* Card 3 */}
-            <div className="bg-[#141414] border border-[#262626] p-5 rounded-xs space-y-2.5">
-              <div className="w-8 h-8 rounded-xs bg-[#1f1f1f] border border-[#333] flex items-center justify-center text-[#75bf00]">
+            <div className="bg-[#141414] border border-[#262626] p-5 rounded-none space-y-2.5">
+              <div className="w-8 h-8 rounded-none bg-[#1f1f1f] border border-[#333] flex items-center justify-center text-[#75bf00]">
                 <Zap size={16} />
               </div>
               <h3 className="text-sm font-bold text-[#F0EFE2]">
@@ -202,7 +199,7 @@ function ThankYouContent() {
         </div>
 
         {/* Quick Links & Research Explore */}
-        <div className="w-full max-w-3xl flex flex-wrap items-center justify-between gap-4 p-5 rounded-xs bg-[#121212] border border-[#262626]">
+        <div className="w-full max-w-3xl flex flex-wrap items-center justify-between gap-4 p-5 rounded-none bg-[#121212] border border-[#262626]">
           <div className="space-y-0.5">
             <span className="text-xs font-semibold text-[#F0EFE2]">
               Explore while you wait
@@ -215,14 +212,14 @@ function ThankYouContent() {
           <div className="flex items-center gap-2.5">
             <Link
               href="/research"
-              className="inline-flex items-center gap-1.5 bg-[#1f1f1f] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#C8C7BA] hover:text-[#F0EFE2] text-xs px-3.5 py-1.5 rounded-xs transition-colors"
+              className="inline-flex items-center gap-1.5 bg-[#1f1f1f] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#C8C7BA] hover:text-[#F0EFE2] text-xs px-3.5 py-1.5 rounded-none transition-colors"
             >
               <span>Read Paper</span>
               <ExternalLink size={11} />
             </Link>
             <Link
               href="/capabilities"
-              className="inline-flex items-center gap-1.5 bg-[#1f1f1f] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#C8C7BA] hover:text-[#F0EFE2] text-xs px-3.5 py-1.5 rounded-xs transition-colors"
+              className="inline-flex items-center gap-1.5 bg-[#1f1f1f] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#C8C7BA] hover:text-[#F0EFE2] text-xs px-3.5 py-1.5 rounded-none transition-colors"
             >
               <span>Capabilities</span>
               <ArrowRight size={11} />
@@ -251,4 +248,3 @@ export default function ThankYouPage() {
     </Suspense>
   );
 }
-
