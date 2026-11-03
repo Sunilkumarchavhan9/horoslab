@@ -10,9 +10,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
-import { useClerk } from "@clerk/nextjs";
-import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
-import { isClerkEnabled } from "@/lib/clerk";
+import { signIn } from "next-auth/react";
 import { trackSignup, trackEvent } from "@/lib/posthog";
 
 function GoogleIcon() {
@@ -74,11 +72,6 @@ export function SignUpModal({
   const [registeredEmail, setRegisteredEmail] = useState(initialEmail);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Clerk hooks
-  const clerk = useClerk();
-  const { signIn } = useSignIn();
-  const { signUp } = useSignUp();
-
   useEffect(() => {
     if (initialConfirmed) {
       setIsConfirmed(true);
@@ -99,6 +92,7 @@ export function SignUpModal({
     onClose();
   };
 
+  // Next.js Auth (Auth.js) OAuth Handlers
   const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
     trackEvent("oauth_attempt", { provider });
     setLoadingProvider(provider);
@@ -106,104 +100,30 @@ export function SignUpModal({
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
     setRegisteredEmail(targetLabel);
 
-    // 1. Check if WorkOS live enterprise authorization is enabled
     try {
-      const res = await fetch(`/api/auth/workos/authorize?provider=${provider}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.enabled && data?.url) {
-          window.location.href = data.url;
-          return;
-        }
-      }
-    } catch (err) {
-      console.warn("[HOROS Auth] WorkOS check fallback", err);
-    }
-
-    // 2. Real-Time Live Clerk OAuth Redirect (Google, GitHub, LinkedIn)
-    const clerkLive = isClerkEnabled();
-    if (clerkLive) {
-      const origin = typeof window !== "undefined" ? window.location.origin : "";
-      const redirectUrl = `${origin}/sso-callback`;
-      const redirectUrlComplete = `${origin}/?signed_up=true`;
-
-      const strategy =
-        provider === "google"
-          ? "oauth_google"
-          : provider === "github"
-          ? "oauth_github"
-          : "oauth_linkedin_oidc";
-
+      trackSignup({ email: targetLabel, provider, method: "oauth" });
+      await signIn(provider, { callbackUrl: "/?signed_up=true" });
+    } catch (err: any) {
+      console.warn(`[NextAuth] ${provider} redirect notice:`, err);
+      // Fallback: Notify and record early access lead in real-time
       try {
-        if (signUp && typeof signUp.authenticateWithRedirect === "function") {
-          await signUp.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-
-        if (signIn && typeof signIn.authenticateWithRedirect === "function") {
-          await signIn.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-
-        const client = (clerk as any)?.client;
-        if (client?.signUp && typeof client.signUp.authenticateWithRedirect === "function") {
-          await client.signUp.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-        if (client?.signIn && typeof client.signIn.authenticateWithRedirect === "function") {
-          await client.signIn.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-      } catch (oauthErr: any) {
-        console.error("[HOROS Auth] Real-Time OAuth redirect error:", oauthErr);
-        if (signIn && typeof signIn.authenticateWithRedirect === "function") {
-          try {
-            await signIn.authenticateWithRedirect({
-              strategy: strategy as any,
-              redirectUrl,
-              redirectUrlComplete,
-            });
-            return;
-          } catch (siErr) {
-            console.error("[HOROS Auth] Secondary SignIn redirect error:", siErr);
-          }
-        }
+        await fetch("/api/auth/notify-signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
+        });
+      } catch {
+        // safe fallback
       }
-    }
 
-    // Fallback: Notify and record early access lead in real-time
-    try {
-      await fetch("/api/auth/notify-signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
-      });
-    } catch {
-      // safe fallback
+      setTimeout(() => {
+        setLoadingProvider(null);
+        setIsConfirmed(true);
+      }, 400);
     }
-
-    setTimeout(() => {
-      setLoadingProvider(null);
-      setIsConfirmed(true);
-    }, 400);
   };
 
+  // Next.js Auth Credentials & Real-Time Confirmation Email Dispatch
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanEmail = email.trim();
@@ -213,99 +133,54 @@ export function SignUpModal({
     setRegisteredEmail(cleanEmail);
     setErrorMessage(null);
 
-    // 1. Real-Time Clerk user creation & magic email dispatch
-    const clerkLive = isClerkEnabled();
-    if (clerkLive && signUp) {
-      try {
-        const username =
-          cleanEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_") +
-          "_" +
-          Math.floor(100 + Math.random() * 900);
-
-        if (typeof signUp.createEmailLinkFlow === "function") {
-          const { startEmailLinkFlow } = signUp.createEmailLinkFlow();
-          await signUp.create({
-            emailAddress: cleanEmail,
-            username: username.slice(0, 30),
-          });
-
-          await startEmailLinkFlow({
-            redirectUrl: `${window.location.origin}/sso-callback`,
-          });
-          console.info("[HOROS Auth] Real email verification link dispatched via Clerk to:", cleanEmail);
-        } else if (typeof signUp.create === "function") {
-          await signUp.create({
-            emailAddress: cleanEmail,
-          });
-          if (typeof signUp.prepareEmailAddressVerification === "function") {
-            await signUp.prepareEmailAddressVerification({
-              strategy: "email_link",
-              redirectUrl: `${window.location.origin}/?signed_up=true`,
-            });
-          }
-        }
-      } catch (clerkErr: any) {
-        console.warn("[HOROS Auth] Clerk real-time email dispatch note:", clerkErr);
-        if (signIn && typeof signIn.createEmailLinkFlow === "function") {
-          try {
-            const { startEmailLinkFlow } = signIn.createEmailLinkFlow();
-            const si = await signIn.create({ identifier: cleanEmail });
-            const emailFactor = si.supportedFirstFactors?.find(
-              (f: any) => f.strategy === "email_link"
-            );
-            if (emailFactor?.emailAddressId) {
-              await startEmailLinkFlow({
-                emailAddressId: emailFactor.emailAddressId,
-                redirectUrl: `${window.location.origin}/sso-callback`,
-              });
-            }
-          } catch (siErr) {
-            console.warn("[HOROS Auth] SignIn email dispatch note:", siErr);
-          }
-        }
-      }
-    }
-
-    // 2. Send Real-Time Confirmation Email via Backend Mailer
     try {
+      // 1. Dispatch real confirmation email & save lead
       await fetch("/api/auth/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: cleanEmail, provider: "email" }),
       });
-    } catch (err) {
-      console.warn("[HOROS Auth] Early access registration note:", err);
+
+      // 2. Next.js Auth Credentials Sign-In
+      try {
+        await signIn("credentials", {
+          email: cleanEmail,
+          redirect: false,
+        });
+      } catch {
+        // safe fallback
+      }
+
+      // 3. Track in PostHog
+      trackSignup({ email: cleanEmail, provider: "email", method: "credentials" });
+
+      setIsConfirmed(true);
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Failed to process signup. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // 3. Real-Time PostHog tracking
-    trackSignup(cleanEmail, "email");
-
-    // 4. In-Place confirmation screen
-    setIsSubmitting(false);
-    setIsConfirmed(true);
   };
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={handleClose}
-      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 selection:bg-[#75bf00] selection:text-black cursor-pointer animate-in fade-in duration-200"
     >
-      {/* Centered Premium Modal Card with SQUARED BORDERS */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl p-6 sm:p-8 cursor-default overflow-hidden text-[#F0EFE2]"
+        className="relative w-full max-w-[420px] bg-[#141414] border border-[#2b2b2b] rounded-none p-6 sm:p-7 shadow-2xl text-[#F0EFE2] font-sans"
       >
-        {/* Subtle top lime glow line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#75bf00] to-transparent opacity-80" />
-
         {/* Close Button - Squared */}
         <button
           type="button"
           onClick={handleClose}
-          className="absolute top-4 right-4 text-[#777] hover:text-[#F0EFE2] bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] p-1.5 rounded-none transition-colors cursor-pointer"
-          aria-label="Close"
+          aria-label="Close modal"
+          className="absolute top-4 right-4 p-1.5 rounded-none text-[#8c8c8c] hover:text-[#F0EFE2] hover:bg-[#222] transition-colors cursor-pointer"
         >
-          <X size={15} />
+          <X size={17} />
         </button>
 
         {!isConfirmed ? (
@@ -450,35 +325,43 @@ export function SignUpModal({
               </p>
             </div>
 
-            {registeredEmail && (
-              <div className="bg-[#101010] border border-[#262626] p-3 rounded-none text-[11px] font-mono text-[#888] flex items-center justify-between">
-                <span>Notification target:</span>
-                <span className="text-[#75bf00] font-semibold truncate max-w-[180px]">
-                  {registeredEmail}
-                </span>
+            {/* Account identifier badge - Squared */}
+            <div className="p-3 rounded-none bg-[#101010] border border-[#2a2a2a] flex items-center gap-3">
+              <div className="w-7 h-7 rounded-none bg-[#1f1f1f] flex items-center justify-center text-[#888] shrink-0">
+                <Mail size={14} className="text-[#888]" />
               </div>
-            )}
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-mono text-[#666] uppercase tracking-wider">
+                  Verified Contact
+                </div>
+                <div className="text-xs font-mono text-[#F0EFE2] truncate">
+                  {registeredEmail || email || "Account registered"}
+                </div>
+              </div>
+            </div>
 
-            {/* Cal.com Demo Link - Squared */}
-            <div className="pt-3 border-t border-[#242424] flex items-center justify-between text-xs text-[#777]">
-              <span>Want a live demo now?</span>
+            {/* Technical briefing callout - Squared */}
+            <div className="pt-2 border-t border-[#222]">
+              <div className="text-[11px] text-[#777] mb-2 leading-relaxed">
+                Need an immediate enterprise walkthrough with our founding engineering team?
+              </div>
               <a
                 href="https://cal.com/vegito"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackEvent("demo_clicked", { source: "modal_confirmation" })}
-                className="text-[#75bf00] hover:underline font-semibold flex items-center gap-1"
+                onClick={() => trackEvent("book_briefing_click", { source: "modal_confirmation" })}
+                className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] hover:border-[#75bf00]/50 text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all group"
               >
-                <span>Schedule on Cal.com</span>
-                <ArrowUpRight size={12} />
+                <span>Book technical briefing on Cal.com</span>
+                <ArrowUpRight size={13} className="text-[#888] group-hover:text-[#75bf00] transition-colors" />
               </a>
             </div>
 
-            {/* Done Button - Squared */}
+            {/* Done button - Squared */}
             <button
               type="button"
               onClick={handleClose}
-              className="w-full bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-none transition-colors cursor-pointer mt-2"
+              className="w-full mt-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer"
             >
               Done
             </button>

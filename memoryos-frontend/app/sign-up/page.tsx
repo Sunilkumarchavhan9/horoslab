@@ -11,9 +11,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
-import { useClerk } from "@clerk/nextjs";
-import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
-import { isClerkEnabled } from "@/lib/clerk";
+import { signIn } from "next-auth/react";
+import { trackSignup, trackEvent } from "@/lib/posthog";
 
 function GoogleIcon() {
   return (
@@ -61,99 +60,31 @@ export default function StandaloneSignUpPage() {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
 
-  const clerk = useClerk();
-  const { signIn } = useSignIn();
-  const { signUp } = useSignUp();
-
   const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
+    trackEvent("oauth_attempt", { provider, surface: "standalone_page" });
     setLoadingProvider(provider);
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
     setRegisteredEmail(targetLabel);
 
-    // 1. Try WorkOS if live
     try {
-      const res = await fetch(`/api/auth/workos/authorize?provider=${provider}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.enabled && data?.url) {
-          window.location.href = data.url;
-          return;
-        }
-      }
-    } catch (err) {
-      console.warn("[HOROS Auth] WorkOS check fallback", err);
-    }
-
-    // 2. Real-Time Clerk OAuth Redirect (Google, GitHub, LinkedIn)
-    const clerkLive = isClerkEnabled();
-    if (clerkLive) {
-      const origin = typeof window !== "undefined" ? window.location.origin : "";
-      const redirectUrl = `${origin}/sso-callback`;
-      const redirectUrlComplete = `${origin}/?signed_up=true`;
-
-      const strategy =
-        provider === "google"
-          ? "oauth_google"
-          : provider === "github"
-          ? "oauth_github"
-          : "oauth_linkedin_oidc";
-
+      trackSignup({ email: targetLabel, provider, method: "oauth" });
+      await signIn(provider, { callbackUrl: "/?signed_up=true" });
+    } catch (err: any) {
+      console.warn(`[NextAuth] ${provider} redirect notice:`, err);
       try {
-        if (signUp && typeof signUp.authenticateWithRedirect === "function") {
-          await signUp.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-
-        if (signIn && typeof signIn.authenticateWithRedirect === "function") {
-          await signIn.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-
-        const client = (clerk as any)?.client;
-        if (client?.signUp && typeof client.signUp.authenticateWithRedirect === "function") {
-          await client.signUp.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-        if (client?.signIn && typeof client.signIn.authenticateWithRedirect === "function") {
-          await client.signIn.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl,
-            redirectUrlComplete,
-          });
-          return;
-        }
-      } catch (oauthErr) {
-        console.error("[HOROS Auth] Real-Time OAuth redirect error:", oauthErr);
+        await fetch("/api/auth/notify-signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
+        });
+      } catch {
+        // safe fallback
       }
+      setTimeout(() => {
+        setLoadingProvider(null);
+        setIsConfirmed(true);
+      }, 400);
     }
-
-    // Fallback: Record early access lead
-    try {
-      await fetch("/api/auth/notify-signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
-      });
-    } catch {
-      // safe fallback
-    }
-
-    setTimeout(() => {
-      setLoadingProvider(null);
-      setIsConfirmed(true);
-    }, 400);
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -164,58 +95,40 @@ export default function StandaloneSignUpPage() {
     setIsSubmitting(true);
     setRegisteredEmail(cleanEmail);
 
-    // 1. Real-Time Clerk user creation & magic email dispatch
-    const clerkLive = isClerkEnabled();
-    if (clerkLive && signUp) {
-      try {
-        const username =
-          cleanEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_") +
-          "_" +
-          Math.floor(100 + Math.random() * 900);
-
-        if (typeof signUp.createEmailLinkFlow === "function") {
-          const { startEmailLinkFlow } = signUp.createEmailLinkFlow();
-          await signUp.create({
-            emailAddress: cleanEmail,
-            username: username.slice(0, 30),
-          });
-          await startEmailLinkFlow({
-            redirectUrl: `${window.location.origin}/sso-callback`,
-          });
-        } else if (typeof signUp.create === "function") {
-          await signUp.create({ emailAddress: cleanEmail });
-          if (typeof signUp.prepareEmailAddressVerification === "function") {
-            await signUp.prepareEmailAddressVerification({
-              strategy: "email_link",
-              redirectUrl: `${window.location.origin}/?signed_up=true`,
-            });
-          }
-        }
-      } catch (clerkErr) {
-        console.warn("[HOROS Auth] Clerk real-time email dispatch note:", clerkErr);
-      }
-    }
-
-    // 2. Real-Time Confirmation Email via Backend Mailer
     try {
+      // 1. Dispatch real confirmation email & save lead
       await fetch("/api/auth/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: cleanEmail, provider: "email" }),
       });
-    } catch (err) {
-      console.warn("[HOROS Auth] Early access registration note:", err);
-    }
 
-    setIsSubmitting(false);
-    setIsConfirmed(true);
+      // 2. Next.js Auth Credentials Sign In
+      try {
+        await signIn("credentials", {
+          email: cleanEmail,
+          redirect: false,
+        });
+      } catch {
+        // safe fallback
+      }
+
+      // 3. Track in PostHog
+      trackSignup({ email: cleanEmail, provider: "email", method: "credentials" });
+
+      setIsConfirmed(true);
+    } catch (err) {
+      console.warn("[NextAuth] Early access registration note:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#F0EFE2] flex items-center justify-center p-4 selection:bg-[#75bf00] selection:text-black font-sans relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(117,191,0,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-      {/* Squared Card */}
+      {/* Squared Brutalist Card */}
       <div className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl p-6 sm:p-8 overflow-hidden z-10">
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#75bf00] to-transparent opacity-80" />
 
@@ -243,6 +156,7 @@ export default function StandaloneSignUpPage() {
               </p>
             </div>
 
+            {/* 3 Social Login Options - Squared */}
             <div className="space-y-2.5">
               <button
                 type="button"
@@ -321,13 +235,13 @@ export default function StandaloneSignUpPage() {
 
             <p className="mt-4 text-[10px] text-[#555] text-center leading-normal">
               By continuing, you agree to HOROS{" "}
-              <Link href="/terms-of-service" className="underline hover:text-[#888]">
+              <a href="/terms-of-service" className="underline hover:text-[#888]">
                 Terms
-              </Link>{" "}
+              </a>{" "}
               and{" "}
-              <Link href="/privacy-policy" className="underline hover:text-[#888]">
+              <a href="/privacy-policy" className="underline hover:text-[#888]">
                 Privacy Policy
-              </Link>
+              </a>
               .
             </p>
           </div>
@@ -352,33 +266,41 @@ export default function StandaloneSignUpPage() {
               </p>
             </div>
 
-            {registeredEmail && (
-              <div className="bg-[#101010] border border-[#262626] p-3 rounded-none text-[11px] font-mono text-[#888] flex items-center justify-between">
-                <span>Notification target:</span>
-                <span className="text-[#75bf00] font-semibold truncate max-w-[180px]">
-                  {registeredEmail}
-                </span>
+            <div className="p-3 rounded-none bg-[#101010] border border-[#2a2a2a] flex items-center gap-3">
+              <div className="w-7 h-7 rounded-none bg-[#1f1f1f] flex items-center justify-center text-[#888] shrink-0">
+                <Mail size={14} className="text-[#888]" />
               </div>
-            )}
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-mono text-[#666] uppercase tracking-wider">
+                  Verified Contact
+                </div>
+                <div className="text-xs font-mono text-[#F0EFE2] truncate">
+                  {registeredEmail || email || "Account registered"}
+                </div>
+              </div>
+            </div>
 
-            <div className="pt-3 border-t border-[#242424] flex items-center justify-between text-xs text-[#777]">
-              <span>Want a live demo now?</span>
+            <div className="pt-2 border-t border-[#222]">
+              <div className="text-[11px] text-[#777] mb-2 leading-relaxed">
+                Need an immediate enterprise walkthrough with our founding engineering team?
+              </div>
               <a
                 href="https://cal.com/vegito"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#75bf00] hover:underline font-semibold flex items-center gap-1"
+                onClick={() => trackEvent("book_briefing_click", { source: "standalone_confirmation" })}
+                className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] hover:border-[#75bf00]/50 text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all group"
               >
-                <span>Schedule on Cal.com</span>
-                <ArrowUpRight size={12} />
+                <span>Book technical briefing on Cal.com</span>
+                <ArrowUpRight size={13} className="text-[#888] group-hover:text-[#75bf00] transition-colors" />
               </a>
             </div>
 
             <Link
               href="/"
-              className="w-full inline-block text-center bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-none transition-colors cursor-pointer mt-2"
+              className="block w-full mt-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none text-center transition-all cursor-pointer"
             >
-              Back to Home
+              Done
             </Link>
           </div>
         )}
