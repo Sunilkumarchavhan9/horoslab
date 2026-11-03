@@ -8,6 +8,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   Loader2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
 import { signIn } from "next-auth/react";
@@ -58,6 +60,7 @@ export function SignUpModal({
   initialEmail = "",
 }: SignUpModalProps) {
   const [email, setEmail] = useState("");
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(initialConfirmed);
@@ -90,13 +93,14 @@ export function SignUpModal({
     setIsSubmitting(false);
     setLoadingProvider(null);
     setEmail("");
+    setShowEmailForm(false);
     setErrorMessage(null);
     onClose();
   };
 
   // Next.js Auth OAuth Handlers (Google & GitHub only, LinkedIn removed)
   const handleOAuth = async (provider: "google" | "github") => {
-    trackEvent("oauth_attempt", { provider });
+    trackEvent("oauth_attempt", { provider, surface: "modal" });
     setLoadingProvider(provider);
     setErrorMessage(null);
     const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
@@ -143,7 +147,7 @@ export function SignUpModal({
     }
 
     try {
-      // 1. Dispatch real confirmation email & save lead
+      // 1. Dispatch confirmation email & save lead
       await fetch("/api/auth/notify-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,6 +174,8 @@ export function SignUpModal({
       setIsSubmitting(false);
     }
   };
+
+  const isReturningUser = Boolean(lastUsedProvider);
 
   return (
     <div
@@ -202,16 +208,18 @@ export function SignUpModal({
                 <HorosWordmarkLogo className="h-4.5 w-auto text-[#F0EFE2]" />
               </div>
 
-              {/* Title with Highlighted Badge: Early access */}
+              {/* Title with Highlighted Lime Badge */}
               <div className="mb-4">
                 <h2 className="text-xl sm:text-[22px] font-bold tracking-tight text-[#F0EFE2] flex items-center gap-1.5">
-                  <span>Early</span>
+                  <span>{isReturningUser ? "Welcome" : "Early"}</span>
                   <span className="bg-[#75bf00] text-black px-1.5 py-0.2 text-base font-extrabold rounded-none">
-                    access
+                    {isReturningUser ? "back" : "access"}
                   </span>
                 </h2>
                 <p className="text-xs text-[#8c8c8c] mt-1.5 leading-relaxed">
-                  Sign up with your account to get access before launch.
+                  {isReturningUser
+                    ? "You are on our early access priority list. Launch access unlocks soon."
+                    : "Sign up with your account to get access before launch."}
                 </p>
               </div>
 
@@ -270,7 +278,7 @@ export function SignUpModal({
               </div>
 
               {/* Terms notice placed above OR divider */}
-              <p className="mt-4 text-[10px] text-[#777] text-center leading-normal">
+              <p className="mt-3.5 text-[10px] text-[#777] text-center leading-normal">
                 By continuing with Google or GitHub, you agree to the{" "}
                 <a href="/terms-of-service" className="underline text-[#aaa] hover:text-[#F0EFE2]">
                   Terms of Service
@@ -283,38 +291,65 @@ export function SignUpModal({
               </p>
 
               {/* Divider */}
-              <div className="relative flex items-center justify-center my-4">
+              <div className="relative flex items-center justify-center my-3.5">
                 <div className="w-full border-t border-[#292929]" />
                 <span className="absolute bg-[#141414] px-2.5 text-[10px] font-mono text-[#666] tracking-wider uppercase">
                   OR
                 </span>
               </div>
 
-              {/* Email Input Form */}
-              <form onSubmit={handleEmailSubmit} className="space-y-2.5">
-                <input
-                  type="email"
-                  required
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
-                />
+              {/* Email Accordion Button / Expandable Form */}
+              {!showEmailForm ? (
                 <button
-                  type="submit"
-                  disabled={isSubmitting || Boolean(loadingProvider)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                  type="button"
+                  onClick={() => setShowEmailForm(true)}
+                  className="w-full flex items-center justify-between bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs"
                 >
-                  {isSubmitting ? (
-                    <Loader2 size={14} className="animate-spin text-black" />
-                  ) : (
-                    <>
-                      <span>Continue with email</span>
-                      <ArrowRight size={13} />
-                    </>
-                  )}
+                  <div className="flex items-center gap-2.5">
+                    <Mail size={14} className="text-[#888]" />
+                    <span>Continue with email</span>
+                  </div>
+                  <ChevronDown size={14} className="text-[#888]" />
                 </button>
-              </form>
+              ) : (
+                <div className="space-y-2 animate-in fade-in duration-150">
+                  <form onSubmit={handleEmailSubmit} className="space-y-2">
+                    <input
+                      type="email"
+                      required
+                      autoFocus
+                      placeholder="name@company.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || Boolean(loadingProvider)}
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                      >
+                        {isSubmitting ? (
+                          <Loader2 size={14} className="animate-spin text-black" />
+                        ) : (
+                          <>
+                            <span>Continue with email</span>
+                            <ArrowRight size={13} />
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowEmailForm(false)}
+                        className="px-2.5 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] text-[#888] hover:text-[#eee] text-xs rounded-none transition-colors"
+                        aria-label="Collapse email input"
+                      >
+                        <ChevronUp size={14} />
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           ) : (
             /* In-Place Confirmation Card - Squared */

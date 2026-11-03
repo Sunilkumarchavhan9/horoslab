@@ -9,6 +9,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   Loader2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
 import { signIn } from "next-auth/react";
@@ -47,6 +49,7 @@ function GithubIcon() {
 
 export default function StandaloneSignUpPage() {
   const [email, setEmail] = useState("");
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -122,14 +125,15 @@ export default function StandaloneSignUpPage() {
       }
 
       trackSignup({ email: cleanEmail, provider: "email", method: "credentials" });
-
       setIsConfirmed(true);
-    } catch (err) {
-      console.warn("[NextAuth] Early access registration note:", err);
+    } catch (err: any) {
+      console.error("Email signup error:", err);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const isReturningUser = Boolean(lastUsedProvider);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#F0EFE2] flex items-center justify-center p-3 sm:p-4 selection:bg-[#75bf00] selection:text-black font-sans relative">
@@ -137,11 +141,9 @@ export default function StandaloneSignUpPage() {
 
       {/* 2-Column Balanced Brutalist Card: Same Level, Reduced Size */}
       <div className="relative w-full max-w-[700px] bg-[#141414] border border-[#2b2b2b] rounded-none shadow-2xl overflow-hidden z-10 flex flex-col md:flex-row items-stretch">
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#75bf00] to-transparent opacity-80 z-30" />
-
         <Link
           href="/"
-          className="absolute top-3 right-3 z-30 text-[#888] hover:text-[#F0EFE2] bg-black/70 hover:bg-[#282828] border border-[#333] p-1.5 rounded-none transition-colors"
+          className="absolute top-3 right-3 z-30 text-[#8c8c8c] hover:text-[#F0EFE2] bg-black/70 hover:bg-[#222] border border-[#333] p-1.5 rounded-none transition-colors"
           aria-label="Back to home"
         >
           <X size={15} />
@@ -156,16 +158,18 @@ export default function StandaloneSignUpPage() {
                 <HorosWordmarkLogo className="h-4.5 w-auto text-[#F0EFE2]" />
               </div>
 
-              {/* Title with Highlighted Badge: Early access */}
+              {/* Title with Highlighted Lime Badge */}
               <div className="mb-4">
                 <h1 className="text-xl sm:text-[22px] font-bold tracking-tight text-[#F0EFE2] flex items-center gap-1.5">
-                  <span>Early</span>
+                  <span>{isReturningUser ? "Welcome" : "Early"}</span>
                   <span className="bg-[#75bf00] text-black px-1.5 py-0.2 text-base font-extrabold rounded-none">
-                    access
+                    {isReturningUser ? "back" : "access"}
                   </span>
                 </h1>
                 <p className="text-xs text-[#8c8c8c] mt-1.5 leading-relaxed">
-                  Sign up with your account to get access before launch.
+                  {isReturningUser
+                    ? "You are on our early access priority list. Launch access unlocks soon."
+                    : "Sign up with your account to get access before launch."}
                 </p>
               </div>
 
@@ -215,7 +219,7 @@ export default function StandaloneSignUpPage() {
               </div>
 
               {/* Terms notice placed above OR divider */}
-              <p className="mt-4 text-[10px] text-[#777] text-center leading-normal">
+              <p className="mt-3.5 text-[10px] text-[#777] text-center leading-normal">
                 By continuing with Google or GitHub, you agree to the{" "}
                 <a href="/terms-of-service" className="underline text-[#aaa] hover:text-[#F0EFE2]">
                   Terms of Service
@@ -228,40 +232,68 @@ export default function StandaloneSignUpPage() {
               </p>
 
               {/* Divider */}
-              <div className="relative flex items-center justify-center my-4">
+              <div className="relative flex items-center justify-center my-3.5">
                 <div className="w-full border-t border-[#292929]" />
                 <span className="absolute bg-[#141414] px-2.5 text-[10px] font-mono text-[#666] tracking-wider uppercase">
                   OR
                 </span>
               </div>
 
-              {/* Email Input Form */}
-              <form onSubmit={handleEmailSubmit} className="space-y-2.5">
-                <input
-                  type="email"
-                  required
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
-                />
+              {/* Email Accordion Button / Expandable Form */}
+              {!showEmailForm ? (
                 <button
-                  type="submit"
-                  disabled={isSubmitting || Boolean(loadingProvider)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                  type="button"
+                  onClick={() => setShowEmailForm(true)}
+                  className="w-full flex items-center justify-between bg-[#1e1e1e] hover:bg-[#252525] border border-[#333] hover:border-[#4d4d4d] text-xs font-semibold text-[#F0EFE2] py-2.5 px-4 rounded-none transition-all cursor-pointer shadow-xs"
                 >
-                  {isSubmitting ? (
-                    <Loader2 size={14} className="animate-spin text-black" />
-                  ) : (
-                    <>
-                      <span>Continue with email</span>
-                      <ArrowRight size={13} />
-                    </>
-                  )}
+                  <div className="flex items-center gap-2.5">
+                    <Mail size={14} className="text-[#888]" />
+                    <span>Continue with email</span>
+                  </div>
+                  <ChevronDown size={14} className="text-[#888]" />
                 </button>
-              </form>
+              ) : (
+                <div className="space-y-2 animate-in fade-in duration-150">
+                  <form onSubmit={handleEmailSubmit} className="space-y-2">
+                    <input
+                      type="email"
+                      required
+                      autoFocus
+                      placeholder="name@company.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-[#101010] border border-[#303030] focus:border-[#75bf00] text-xs text-[#F0EFE2] placeholder:text-[#555] px-3.5 py-2.5 rounded-none outline-none transition-colors font-mono"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting || Boolean(loadingProvider)}
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 px-4 rounded-none transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                      >
+                        {isSubmitting ? (
+                          <Loader2 size={14} className="animate-spin text-black" />
+                        ) : (
+                          <>
+                            <span>Continue with email</span>
+                            <ArrowRight size={13} />
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowEmailForm(false)}
+                        className="px-2.5 bg-[#1a1a1a] hover:bg-[#222] border border-[#333] text-[#888] hover:text-[#eee] text-xs rounded-none transition-colors"
+                        aria-label="Collapse email input"
+                      >
+                        <ChevronUp size={14} />
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           ) : (
+            /* In-Place Confirmation Card - Squared */
             <div className="py-1 space-y-3.5">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-none bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
@@ -304,7 +336,7 @@ export default function StandaloneSignUpPage() {
                   href="https://cal.com/vegito"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackEvent("book_briefing_click", { source: "standalone_confirmation" })}
+                  onClick={() => trackEvent("book_briefing_click", { source: "page_confirmation" })}
                   className="w-full flex items-center justify-center gap-2 bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] hover:border-[#75bf00]/50 text-xs font-semibold text-[#F0EFE2] py-2 px-3 rounded-none transition-all group"
                 >
                   <span>Book technical briefing on Cal.com</span>
@@ -314,7 +346,7 @@ export default function StandaloneSignUpPage() {
 
               <Link
                 href="/"
-                className="block w-full bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2 px-3 rounded-none text-center transition-all cursor-pointer"
+                className="block text-center w-full bg-[#75bf00] hover:bg-[#86dc00] text-black font-bold text-xs py-2 px-3 rounded-none transition-all"
               >
                 Done
               </Link>
