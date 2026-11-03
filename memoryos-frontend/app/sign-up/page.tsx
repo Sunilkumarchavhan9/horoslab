@@ -11,9 +11,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
-import { useClerk } from "@clerk/nextjs";
-import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
-import { isClerkEnabled } from "@/lib/clerk";
 
 function GoogleIcon() {
   return (
@@ -61,108 +58,85 @@ export default function StandaloneSignUpPage() {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
 
-  const clerk = useClerk();
-  const { signUp } = useSignUp();
-  const { signIn } = useSignIn();
-
   const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
     setLoadingProvider(provider);
-    setRegisteredEmail(`${provider} account`);
+    const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
+    setRegisteredEmail(targetLabel);
 
-    const clerkLive = isClerkEnabled();
-    const targetSignUp = signUp ?? (clerk?.client as any)?.signUp;
-    const targetSignIn = signIn ?? (clerk?.client as any)?.signIn;
-
-    if (clerkLive && (targetSignUp || targetSignIn)) {
-      let strategy = "oauth_google";
-      if (provider === "google") strategy = "oauth_google";
-      if (provider === "github") strategy = "oauth_github";
-      if (provider === "linkedin") strategy = "oauth_linkedin_oidc";
-
-      try {
-        const origin = typeof window !== "undefined" ? window.location.origin : "";
-        const ssoCallbackUrl = `${origin}/sso-callback`;
-        const completeUrl = `${origin}/?signed_up=true`;
-
-        if (targetSignUp && typeof targetSignUp.authenticateWithRedirect === "function") {
-          try {
-            await targetSignUp.authenticateWithRedirect({
-              strategy: strategy as any,
-              redirectUrl: ssoCallbackUrl,
-              redirectUrlComplete: completeUrl,
-            });
-            return;
-          } catch (signUpErr) {
-            console.warn("[HOROS Auth] SignUp redirect fallback to SignIn", signUpErr);
-          }
-        }
-
-        if (targetSignIn && typeof targetSignIn.authenticateWithRedirect === "function") {
-          await targetSignIn.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl: ssoCallbackUrl,
-            redirectUrlComplete: completeUrl,
-          });
+    try {
+      const res = await fetch(`/api/auth/workos/authorize?provider=${provider}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.enabled && data?.url) {
+          window.location.href = data.url;
           return;
         }
-      } catch (err) {
-        console.warn("[HOROS Auth] OAuth handled gracefully in modal", err);
       }
+    } catch (err) {
+      console.warn("[HOROS Auth] WorkOS direct call fallback", err);
+    }
+
+    try {
+      await fetch("/api/auth/workos/early-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
+      });
+    } catch {
+      // safe fallback
     }
 
     setTimeout(() => {
       setLoadingProvider(null);
       setIsConfirmed(true);
-    }, 400);
+    }, 350);
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !email.includes("@")) return;
 
     setIsSubmitting(true);
     setRegisteredEmail(email);
 
-    const clerkLive = isClerkEnabled();
-    const targetSignUp = signUp ?? (clerk?.client as any)?.signUp;
-
-    if (clerkLive && targetSignUp && typeof targetSignUp.create === "function") {
-      try {
-        await targetSignUp.create({ emailAddress: email });
-      } catch (err) {
-        console.warn("[HOROS Auth] Email create noted", err);
-      }
+    try {
+      await fetch("/api/auth/workos/early-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, provider: "email" }),
+      });
+    } catch (err) {
+      console.warn("[HOROS Auth] Early access registration fallback", err);
     }
 
     setTimeout(() => {
       setIsSubmitting(false);
       setIsConfirmed(true);
-    }, 400);
+    }, 350);
   };
 
   return (
-    <div className="min-h-screen bg-[#0e0e0e] text-[#F0EFE2] font-sans selection:bg-[#75bf00] selection:text-black flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Blueprint Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1a1a1a_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1a_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_35%,#000_60%,transparent_100%)] pointer-events-none opacity-40 z-0" />
+    <div className="min-h-screen bg-[#0a0a0a] text-[#F0EFE2] flex items-center justify-center p-4 selection:bg-[#75bf00] selection:text-black font-sans relative">
+      {/* Background radial glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(117,191,0,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-      {/* Top back link */}
-      <div className="mb-6 z-10">
-        <Link
-          href="/"
-          className="text-xs text-[#777] hover:text-[#F0EFE2] font-mono transition-colors"
-        >
-          ← Return to HOROS
-        </Link>
-      </div>
-
-      {/* Centered Single Card */}
-      <div className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-lg shadow-2xl p-6 sm:p-8 z-10 overflow-hidden">
+      {/* Centered Premium Card */}
+      <div className="relative w-full max-w-[430px] bg-[#141414] border border-[#2b2b2b] rounded-lg shadow-2xl p-6 sm:p-8 overflow-hidden z-10">
         {/* Subtle top lime glow line */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#75bf00] to-transparent opacity-80" />
 
+        {/* Home link back */}
+        <Link
+          href="/"
+          className="absolute top-4 right-4 text-[#777] hover:text-[#F0EFE2] bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] p-1.5 rounded-md transition-colors"
+          aria-label="Back to home"
+        >
+          <X size={15} />
+        </Link>
+
         {!isConfirmed ? (
           <div>
-            {/* Header: Logo & Badge */}
+            {/* Header: Logo */}
             <div className="flex items-center gap-2 mb-4">
               <HorosLogo variant="icon" size="sm" className="text-[#F0EFE2]" />
               <HorosWordmarkLogo className="h-4 w-auto text-[#F0EFE2]" />
@@ -177,7 +151,7 @@ export default function StandaloneSignUpPage() {
               </p>
             </div>
 
-            {/* 3 Social Login Buttons */}
+            {/* Social Logins */}
             <div className="space-y-2.5">
               <button
                 type="button"
@@ -222,7 +196,6 @@ export default function StandaloneSignUpPage() {
               </button>
             </div>
 
-            {/* Divider */}
             <div className="relative flex items-center justify-center my-5">
               <div className="w-full border-t border-[#292929]" />
               <span className="absolute bg-[#141414] px-3 text-[10px] font-mono text-[#666] tracking-wider uppercase">
@@ -230,7 +203,6 @@ export default function StandaloneSignUpPage() {
               </span>
             </div>
 
-            {/* Email Input Form */}
             <form onSubmit={handleEmailSubmit} className="space-y-2.5">
               <input
                 type="email"
@@ -269,7 +241,6 @@ export default function StandaloneSignUpPage() {
             </p>
           </div>
         ) : (
-          /* Confirmation */
           <div className="py-2 space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
@@ -292,7 +263,7 @@ export default function StandaloneSignUpPage() {
 
             {registeredEmail && (
               <div className="bg-[#101010] border border-[#262626] p-3 rounded-md text-[11px] font-mono text-[#888] flex items-center justify-between">
-                <span>Confirmation sent:</span>
+                <span>Notification target:</span>
                 <span className="text-[#75bf00] font-semibold truncate max-w-[180px]">
                   {registeredEmail}
                 </span>
@@ -314,9 +285,9 @@ export default function StandaloneSignUpPage() {
 
             <Link
               href="/"
-              className="block w-full text-center bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-md transition-colors cursor-pointer mt-2"
+              className="w-full inline-block text-center bg-[#1e1e1e] hover:bg-[#282828] border border-[#333] hover:border-[#444] text-[#F0EFE2] font-semibold text-xs py-2.5 px-4 rounded-md transition-colors cursor-pointer mt-2"
             >
-              Done
+              Back to Home
             </Link>
           </div>
         )}

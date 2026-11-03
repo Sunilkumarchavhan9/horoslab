@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   CheckCircle2,
@@ -11,9 +11,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { HorosLogo, HorosWordmarkLogo } from "@/components/horos/primitives/brand-icons";
-import { useClerk } from "@clerk/nextjs";
-import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
-import { isClerkEnabled } from "@/lib/clerk";
 
 function GoogleIcon() {
   return (
@@ -66,10 +63,6 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
 
-  const clerk = useClerk();
-  const { signUp } = useSignUp();
-  const { signIn } = useSignIn();
-
   if (!isOpen) return null;
 
   const handleClose = () => {
@@ -82,80 +75,64 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
 
   const handleOAuth = async (provider: "google" | "github" | "linkedin") => {
     setLoadingProvider(provider);
-    const targetEmail = `${provider} account`;
-    setRegisteredEmail(targetEmail);
+    const targetLabel = `${provider.charAt(0).toUpperCase() + provider.slice(1)} account`;
+    setRegisteredEmail(targetLabel);
 
-    const clerkLive = isClerkEnabled();
-    const targetSignUp = signUp ?? (clerk?.client as any)?.signUp;
-    const targetSignIn = signIn ?? (clerk?.client as any)?.signIn;
-
-    if (clerkLive && (targetSignUp || targetSignIn)) {
-      let strategy = "oauth_google";
-      if (provider === "google") strategy = "oauth_google";
-      if (provider === "github") strategy = "oauth_github";
-      if (provider === "linkedin") strategy = "oauth_linkedin_oidc";
-
-      try {
-        const origin = typeof window !== "undefined" ? window.location.origin : "";
-        const ssoCallbackUrl = `${origin}/sso-callback`;
-        const completeUrl = `${origin}/?signed_up=true`;
-
-        if (targetSignUp && typeof targetSignUp.authenticateWithRedirect === "function") {
-          try {
-            await targetSignUp.authenticateWithRedirect({
-              strategy: strategy as any,
-              redirectUrl: ssoCallbackUrl,
-              redirectUrlComplete: completeUrl,
-            });
-            return;
-          } catch (signUpErr) {
-            console.warn("[HOROS Auth] SignUp redirect fallback to SignIn", signUpErr);
-          }
-        }
-
-        if (targetSignIn && typeof targetSignIn.authenticateWithRedirect === "function") {
-          await targetSignIn.authenticateWithRedirect({
-            strategy: strategy as any,
-            redirectUrl: ssoCallbackUrl,
-            redirectUrlComplete: completeUrl,
-          });
+    try {
+      // 1. Try WorkOS enterprise authorize endpoint
+      const res = await fetch(`/api/auth/workos/authorize?provider=${provider}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.enabled && data?.url) {
+          // Live WorkOS flow: redirect directly to identity provider
+          window.location.href = data.url;
           return;
         }
-      } catch (err) {
-        console.warn("[HOROS Auth] OAuth handled gracefully in modal", err);
       }
+    } catch (err) {
+      console.warn("[HOROS Auth] WorkOS direct call fallback", err);
     }
 
-    // Modal in-place confirmation
+    // Record early access lead via background endpoint
+    try {
+      await fetch("/api/auth/workos/early-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: `oauth_${provider}@user.pending`, provider }),
+      });
+    } catch {
+      // safe fallback
+    }
+
+    // Modal in-place confirmation flip
     setTimeout(() => {
       setLoadingProvider(null);
       setIsConfirmed(true);
-    }, 400);
+    }, 350);
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !email.includes("@")) return;
 
     setIsSubmitting(true);
     setRegisteredEmail(email);
 
-    const clerkLive = isClerkEnabled();
-    const targetSignUp = signUp ?? (clerk?.client as any)?.signUp;
-
-    if (clerkLive && targetSignUp && typeof targetSignUp.create === "function") {
-      try {
-        await targetSignUp.create({ emailAddress: email });
-      } catch (err) {
-        console.warn("[HOROS Auth] Email create noted", err);
-      }
+    try {
+      await fetch("/api/auth/workos/early-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, provider: "email" }),
+      });
+    } catch (err) {
+      console.warn("[HOROS Auth] Early access registration fallback", err);
     }
 
-    // Modal in-place confirmation
+    // Modal in-place confirmation flip
     setTimeout(() => {
       setIsSubmitting(false);
       setIsConfirmed(true);
-    }, 400);
+    }, 350);
   };
 
   return (
@@ -199,7 +176,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               </p>
             </div>
 
-            {/* 3 Social Login Buttons */}
+            {/* 3 Social Login Buttons: Google, GitHub, LinkedIn */}
             <div className="space-y-2.5">
               {/* Google */}
               <button
@@ -295,7 +272,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             </p>
           </div>
         ) : (
-          /* In-Place Confirmation Card */
+          /* In-Place Confirmation Card (Tier-1 Startup Experience) */
           <div className="py-2 space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-[#75bf00]/15 border border-[#75bf00]/40 flex items-center justify-center text-[#75bf00] shrink-0">
@@ -318,7 +295,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
 
             {registeredEmail && (
               <div className="bg-[#101010] border border-[#262626] p-3 rounded-md text-[11px] font-mono text-[#888] flex items-center justify-between">
-                <span>Confirmation sent:</span>
+                <span>Notification target:</span>
                 <span className="text-[#75bf00] font-semibold truncate max-w-[180px]">
                   {registeredEmail}
                 </span>
@@ -353,4 +330,3 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     </div>
   );
 }
-
