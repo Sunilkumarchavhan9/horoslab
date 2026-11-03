@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth, useSignIn, useSignUp } from "@clerk/nextjs";
+import { useAuth, useClerk } from "@clerk/nextjs";
+import { useSignIn, useSignUp } from "@clerk/nextjs/legacy";
 import {
   Loader2,
   Calendar,
@@ -61,6 +62,7 @@ function LinkedInIcon() {
 export function HorosSignUpView() {
   const router = useRouter();
   const { isSignedIn, isLoaded: isAuthLoaded } = useAuth();
+  const clerk = useClerk();
   const { signUp, isLoaded: isSignUpLoaded } = useSignUp();
   const { signIn, isLoaded: isSignInLoaded } = useSignIn();
 
@@ -86,48 +88,118 @@ export function HorosSignUpView() {
     const clerkLive = isClerkEnabled();
 
     // If Clerk is not enabled in this environment, fallback gracefully to early access confirmation
-    if (!clerkLive || !signUp || !signIn) {
+    if (!clerkLive) {
       setTimeout(() => {
         router.push(`/thank-you?provider=${provider}&status=confirmed`);
       }, 500);
       return;
     }
 
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "";
+    const ssoCallbackUrl = `${origin}/sso-callback`;
+    const completeUrl = `${origin}/thank-you`;
+
+    let strategy = "oauth_google";
+    if (provider === "google") strategy = "oauth_google";
+    if (provider === "github") strategy = "oauth_github";
+    if (provider === "linkedin") strategy = "oauth_linkedin_oidc";
+
+    const targetSignUp = signUp ?? (clerk?.client as any)?.signUp;
+    const targetSignIn = signIn ?? (clerk?.client as any)?.signIn;
+
+    const executeRedirect = async (strat: string) => {
+      // 1. Try targetSignUp.authenticateWithRedirect
+      if (targetSignUp && typeof targetSignUp.authenticateWithRedirect === "function") {
+        try {
+          await targetSignUp.authenticateWithRedirect({
+            strategy: strat as any,
+            redirectUrl: ssoCallbackUrl,
+            redirectUrlComplete: completeUrl,
+          });
+          return true;
+        } catch (signUpErr: any) {
+          console.warn("[HOROS Auth] SignUp authenticateWithRedirect failed, trying SignIn", signUpErr);
+          // If user exists or requires sign-in path
+          if (targetSignIn && typeof targetSignIn.authenticateWithRedirect === "function") {
+            await targetSignIn.authenticateWithRedirect({
+              strategy: strat as any,
+              redirectUrl: ssoCallbackUrl,
+              redirectUrlComplete: completeUrl,
+            });
+            return true;
+          }
+          throw signUpErr;
+        }
+      }
+
+      // 2. Try targetSignIn.authenticateWithRedirect
+      if (targetSignIn && typeof targetSignIn.authenticateWithRedirect === "function") {
+        await targetSignIn.authenticateWithRedirect({
+          strategy: strat as any,
+          redirectUrl: ssoCallbackUrl,
+          redirectUrlComplete: completeUrl,
+        });
+        return true;
+      }
+
+      // 3. Try clerk.authenticateWithRedirect
+      if (clerk && typeof (clerk as any).authenticateWithRedirect === "function") {
+        await (clerk as any).authenticateWithRedirect({
+          strategy: strat as any,
+          redirectUrl: ssoCallbackUrl,
+          redirectUrlComplete: completeUrl,
+        });
+        return true;
+      }
+
+      return false;
+    };
+
     try {
-      const origin =
-        typeof window !== "undefined" ? window.location.origin : "";
-      const ssoCallbackUrl = `${origin}/sso-callback`;
-      const completeUrl = `${origin}/thank-you`;
-
-      let strategy: "oauth_google" | "oauth_github" | "oauth_linkedin_oidc" | "oauth_linkedin" =
-        "oauth_google";
-      if (provider === "google") strategy = "oauth_google";
-      if (provider === "github") strategy = "oauth_github";
-      if (provider === "linkedin") strategy = "oauth_linkedin_oidc";
-
+      let succeeded = false;
       try {
-        await signUp.authenticateWithRedirect({
-          strategy,
-          redirectUrl: ssoCallbackUrl,
-          redirectUrlComplete: completeUrl,
-        });
-      } catch (signUpErr: unknown) {
-        // If account already exists or provider requires sign-in path
-        console.warn("[HOROS Auth] SignUp redirect fallback to SignIn", signUpErr);
-        await signIn.authenticateWithRedirect({
-          strategy,
-          redirectUrl: ssoCallbackUrl,
-          redirectUrlComplete: completeUrl,
-        });
+        succeeded = await executeRedirect(strategy);
+      } catch (err: any) {
+        // If LinkedIn OIDC fails in dev, try legacy oauth_linkedin
+        if (provider === "linkedin") {
+          try {
+            succeeded = await executeRedirect("oauth_linkedin");
+          } catch (linkedInErr) {
+            console.warn("[HOROS Auth] oauth_linkedin fallback failed", linkedInErr);
+            throw err;
+          }
+        } else {
+          throw err;
+        }
+      }
+
+      if (!succeeded) {
+        // Fallback for mock/local development
+        router.push(`/thank-you?provider=${provider}&status=confirmed`);
       }
     } catch (err: unknown) {
-      console.error("[HOROS Auth] OAuth execution failed", err);
-      const msg =
-        err instanceof Error
-          ? err.message
-          : "Authentication handshake failed. Please try another provider or schedule a demo.";
-      setErrorMessage(msg);
-      setLoadingProvider(null);
+      console.error("[HOROS Auth] OAuth execution error:", err);
+      const msg = err instanceof Error ? err.message : String(err || "");
+
+      // If social connection is not enabled in Clerk dashboard yet, inform user and proceed to early access
+      if (
+        msg.toLowerCase().includes("not enabled") ||
+        msg.toLowerCase().includes("not configured") ||
+        msg.toLowerCase().includes("oauth")
+      ) {
+        setErrorMessage(
+          `${provider.toUpperCase()} provider is being connected. Redirecting to early access confirmation...`
+        );
+        setTimeout(() => {
+          router.push(`/thank-you?provider=${provider}&status=confirmed`);
+        }, 1500);
+      } else {
+        setErrorMessage(
+          msg || "Authentication handshake failed. Please try another provider or schedule a demo."
+        );
+        setLoadingProvider(null);
+      }
     }
   };
 
@@ -139,8 +211,9 @@ export function HorosSignUpView() {
     setErrorMessage(null);
 
     const clerkLive = isClerkEnabled();
+    const targetSignUp = signUp ?? (clerk?.client as any)?.signUp;
 
-    if (!clerkLive || !signUp) {
+    if (!clerkLive || !targetSignUp) {
       setTimeout(() => {
         router.push(
           `/thank-you?email=${encodeURIComponent(emailInput)}&status=confirmed`
@@ -150,20 +223,16 @@ export function HorosSignUpView() {
     }
 
     try {
-      const origin =
-        typeof window !== "undefined" ? window.location.origin : "";
-      // Create sign up attempt with Clerk email link / code
-      await signUp.create({
-        emailAddress: emailInput,
-      });
-
-      // Prepare verification or redirect to Thank You page
+      if (typeof targetSignUp.create === "function") {
+        await targetSignUp.create({
+          emailAddress: emailInput,
+        });
+      }
       router.push(
         `/thank-you?email=${encodeURIComponent(emailInput)}&status=confirmed`
       );
     } catch (err: unknown) {
       console.warn("[HOROS Auth] Email sign-up note", err);
-      // If user already exists or needs email code, route gracefully
       router.push(
         `/thank-you?email=${encodeURIComponent(emailInput)}&status=confirmed`
       );
@@ -368,4 +437,3 @@ export function HorosSignUpView() {
     </div>
   );
 }
-
