@@ -244,21 +244,21 @@ export default function PricingPage() {
       <main className="flex-grow flex flex-col w-full relative z-10 pt-24 sm:pt-28 md:pt-32 pb-24 sm:pb-32">
         <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto flex flex-col">
 
-        {/* SECTION 1: Clean, Minimal Header */}
-        <section className="mb-10 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#1a1a1a] border border-[#2a2a2a] text-[#76b900] font-mono text-[11px] font-semibold tracking-wider uppercase mb-4">
+        {/* SECTION 1: Clean, Minimal Header - Left-aligned and Inline */}
+        <section className="mb-8 sm:mb-10 text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#1a1a1a] border border-[#2a2a2a] text-[#76b900] font-mono text-[11px] font-semibold tracking-wider uppercase mb-3.5">
             <span className="w-1.5 h-1.5 bg-[#76b900] animate-pulse" />
             PRICING & INFRASTRUCTURE
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[#F0EFE2] leading-tight">
-            Frontier AI Research &{" "}
-            <span className="bg-[#76b900] text-black px-2 py-0.5 font-bold inline-block">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2 sm:gap-2.5">
+            <span>Frontier AI Research &</span>
+            <span className="bg-[#76b900] text-black font-semibold px-2 py-0.5 rounded-none whitespace-nowrap">
               Lab Infrastructure
             </span>
           </h1>
 
-          <p className="text-[#888] text-sm sm:text-base mt-3 leading-relaxed">
+          <p className="text-[#888] text-sm sm:text-base mt-3 max-w-2xl leading-relaxed">
             High-throughput model endpoints, autonomous research loops, and physical AI compute.
           </p>
         </section>
