@@ -269,93 +269,105 @@ export default function PricingPage() {
         <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto flex flex-col px-4 sm:px-6 md:px-8 lg:px-10">
           {/* SECTION 2: 3 Clean Architecture Track Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          {/* Track 1: Compute & Model APIs */}
-          <div
-            onClick={() => setSelectedTrack("compute")}
-            className={`p-5 cursor-pointer transition-all border ${
-              selectedTrack === "compute"
-                ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                : "border-[#262626] bg-[#151515] hover:border-[#444]"
-            }`}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <Cpu size={16} className={selectedTrack === "compute" ? "text-[#76b900]" : "text-[#777]"} />
-                <h2 className="text-base font-semibold text-[#F0EFE2]">Compute & Model API</h2>
+            {/* Track 1: Compute & Model APIs */}
+            <div
+              onClick={() => setSelectedTrack("compute")}
+              className={`p-6 sm:p-7 cursor-pointer transition-all border border-dashed flex flex-col justify-between min-h-[195px] ${
+                selectedTrack === "compute"
+                  ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.25)]"
+                  : "border-[#333] bg-[#151515] hover:border-[#555]"
+              }`}
+            >
+              <div>
+                <div className="flex justify-between items-start mb-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <Cpu size={16} className={selectedTrack === "compute" ? "text-[#76b900]" : "text-[#777]"} />
+                    <h2 className="text-base font-semibold text-[#F0EFE2] tracking-tight">Compute & Model API</h2>
+                  </div>
+                  <div
+                    className={`w-3.5 h-3.5 border flex items-center justify-center transition-colors shrink-0 ${
+                      selectedTrack === "compute" ? "border-[#76b900] bg-[#76b900]/15" : "border-[#444]"
+                    }`}
+                  >
+                    {selectedTrack === "compute" && <div className="w-1.5 h-1.5 bg-[#76b900]" />}
+                  </div>
+                </div>
+                <p className="text-[#888] text-xs sm:text-[13px] leading-relaxed font-normal">
+                  Pay-per-token model endpoints, verified kernels, and controlled inference harness.
+                </p>
               </div>
-              <div
-                className={`w-3 h-3 border transition-colors ${
-                  selectedTrack === "compute" ? "border-[#76b900] bg-[#76b900]" : "border-[#444]"
-                }`}
-              />
+              <div className="pt-5">
+                <span className="font-mono font-bold text-[#F0EFE2] text-sm block">Pay As You Go</span>
+                <span className="text-[11px] text-[#777] block mt-0.5">Top-up from $5 • Zero seat fees</span>
+              </div>
             </div>
-            <p className="text-[#888] text-xs mb-4 leading-relaxed">
-              Pay-per-token model endpoints, verified kernels, and controlled inference harness.
-            </p>
-            <div className="pt-3 border-t border-[#222]">
-              <span className="font-mono font-bold text-[#F0EFE2] text-sm">Pay As You Go</span>
-              <span className="text-[11px] text-[#777] block mt-0.5">Top-up from $25 • Zero seat fees</span>
-            </div>
-          </div>
 
-          {/* Track 2: Autonomous Research Lab */}
-          <div
-            onClick={() => setSelectedTrack("lab")}
-            className={`p-5 cursor-pointer transition-all border ${
-              selectedTrack === "lab"
-                ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                : "border-[#262626] bg-[#151515] hover:border-[#444]"
-            }`}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <Workflow size={16} className={selectedTrack === "lab" ? "text-[#76b900]" : "text-[#777]"} />
-                <h2 className="text-base font-semibold text-[#F0EFE2]">Autonomous Research Lab</h2>
+            {/* Track 2: Autonomous Research Lab */}
+            <div
+              onClick={() => setSelectedTrack("lab")}
+              className={`p-6 sm:p-7 cursor-pointer transition-all border border-dashed flex flex-col justify-between min-h-[195px] ${
+                selectedTrack === "lab"
+                  ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.25)]"
+                  : "border-[#333] bg-[#151515] hover:border-[#555]"
+              }`}
+            >
+              <div>
+                <div className="flex justify-between items-start mb-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <Workflow size={16} className={selectedTrack === "lab" ? "text-[#76b900]" : "text-[#777]"} />
+                    <h2 className="text-base font-semibold text-[#F0EFE2] tracking-tight">Autonomous Research Lab</h2>
+                  </div>
+                  <div
+                    className={`w-3.5 h-3.5 border flex items-center justify-center transition-colors shrink-0 ${
+                      selectedTrack === "lab" ? "border-[#76b900] bg-[#76b900]/15" : "border-[#444]"
+                    }`}
+                  >
+                    {selectedTrack === "lab" && <div className="w-1.5 h-1.5 bg-[#76b900]" />}
+                  </div>
+                </div>
+                <p className="text-[#888] text-xs sm:text-[13px] leading-relaxed font-normal">
+                  SFT/DPO/RL training orchestrator, 15-point benchmark suite, and rollout stores.
+                </p>
               </div>
-              <div
-                className={`w-3 h-3 border transition-colors ${
-                  selectedTrack === "lab" ? "border-[#76b900] bg-[#76b900]" : "border-[#444]"
-                }`}
-              />
+              <div className="pt-5">
+                <span className="font-mono font-bold text-[#F0EFE2] text-sm block">From $190 / mo</span>
+                <span className="text-[11px] text-[#777] block mt-0.5">Includes monthly research compute</span>
+              </div>
             </div>
-            <p className="text-[#888] text-xs mb-4 leading-relaxed">
-              SFT/DPO/RL training orchestrator, 15-point benchmark suite, and rollout stores.
-            </p>
-            <div className="pt-3 border-t border-[#222]">
-              <span className="font-mono font-bold text-[#F0EFE2] text-sm">From $190 / mo</span>
-              <span className="text-[11px] text-[#777] block mt-0.5">Includes monthly research compute</span>
-            </div>
-          </div>
 
-          {/* Track 3: Physical AI & Dedicated Clusters */}
-          <div
-            onClick={() => setSelectedTrack("physical")}
-            className={`p-5 cursor-pointer transition-all border ${
-              selectedTrack === "physical"
-                ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                : "border-[#262626] bg-[#151515] hover:border-[#444]"
-            }`}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={16} className={selectedTrack === "physical" ? "text-[#76b900]" : "text-[#777]"} />
-                <h2 className="text-base font-semibold text-[#F0EFE2]">Physical AI & Clusters</h2>
+            {/* Track 3: Physical AI & Dedicated Clusters */}
+            <div
+              onClick={() => setSelectedTrack("physical")}
+              className={`p-6 sm:p-7 cursor-pointer transition-all border border-dashed flex flex-col justify-between min-h-[195px] ${
+                selectedTrack === "physical"
+                  ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.25)]"
+                  : "border-[#333] bg-[#151515] hover:border-[#555]"
+              }`}
+            >
+              <div>
+                <div className="flex justify-between items-start mb-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck size={16} className={selectedTrack === "physical" ? "text-[#76b900]" : "text-[#777]"} />
+                    <h2 className="text-base font-semibold text-[#F0EFE2] tracking-tight">Physical AI & Clusters</h2>
+                  </div>
+                  <div
+                    className={`w-3.5 h-3.5 border flex items-center justify-center transition-colors shrink-0 ${
+                      selectedTrack === "physical" ? "border-[#76b900] bg-[#76b900]/15" : "border-[#444]"
+                    }`}
+                  >
+                    {selectedTrack === "physical" && <div className="w-1.5 h-1.5 bg-[#76b900]" />}
+                  </div>
+                </div>
+                <p className="text-[#888] text-xs sm:text-[13px] leading-relaxed font-normal">
+                  PROBE-1 (Humanoids), AEROPROBE-1 (Aerospace), and dedicated H100 bare-metal clusters.
+                </p>
               </div>
-              <div
-                className={`w-3 h-3 border transition-colors ${
-                  selectedTrack === "physical" ? "border-[#76b900] bg-[#76b900]" : "border-[#444]"
-                }`}
-              />
-            </div>
-            <p className="text-[#888] text-xs mb-4 leading-relaxed">
-              PROBE-1 (Humanoids), AEROPROBE-1 (Aerospace), and dedicated H100 bare-metal clusters.
-            </p>
-            <div className="pt-3 border-t border-[#222]">
-              <span className="font-mono font-bold text-[#F0EFE2] text-sm">Custom Contracts</span>
-              <span className="text-[11px] text-[#777] block mt-0.5">Private VPC & Air-Gapped Deployments</span>
+              <div className="pt-5">
+                <span className="font-mono font-bold text-[#F0EFE2] text-sm block">Custom Contracts</span>
+                <span className="text-[11px] text-[#777] block mt-0.5">Private VPC & Air-Gapped Deployments</span>
+              </div>
             </div>
           </div>
-        </div>
 
         {/* SECTION 3: Dynamic View by Selected Track */}
 
