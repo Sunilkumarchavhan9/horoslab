@@ -264,18 +264,21 @@ export default function PricingPage() {
         </section>
 
         {/* Active Cohort Notice: Minimal 1-line bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-2.5 bg-[#161a13] border border-[#76b900]/30 text-xs mb-8">
+        <div 
+          onClick={() => openModal("Founding Cohort Allocation")}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-2.5 bg-[#161a13] border border-[#76b900]/30 hover:border-[#76b900]/70 transition-all cursor-pointer text-xs mb-8 group"
+        >
           <div className="flex items-center gap-2.5">
             <span className="w-2 h-2 bg-[#76b900] animate-pulse shrink-0" />
             <span className="font-mono text-[#76b900] font-semibold tracking-wide text-[11px]">
               FOUNDING COHORT ALLOCATION
             </span>
             <span className="text-[#555] hidden sm:inline">•</span>
-            <span className="text-[#aaa] text-xs">
+            <span className="text-[#aaa] text-xs group-hover:text-[#F0EFE2] transition-colors">
               Model endpoints, compiler autotuning, and physical AI clusters allocate in phased batches.
             </span>
           </div>
-          <span className="text-[10px] font-mono text-[#76b900] border border-[#76b900]/40 px-2 py-0.5 shrink-0 self-start sm:self-auto">
+          <span className="text-[10px] font-mono text-[#76b900] group-hover:bg-[#76b900] group-hover:text-black border border-[#76b900]/40 px-2 py-0.5 shrink-0 self-start sm:self-auto transition-colors">
             PRIORITY ACCESS
           </span>
         </div>
