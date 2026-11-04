@@ -242,29 +242,33 @@ export default function PricingPage() {
 
       {/* Main Content Area - Auto-responsive fluid container framed within the 4 vertical guidelines */}
       <main className="flex-grow flex flex-col w-full relative z-10 pt-24 sm:pt-28 md:pt-32 pb-24 sm:pb-32">
+        <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto flex flex-col px-4 sm:px-6 md:px-8 lg:px-10 mb-6 sm:mb-8">
+          {/* SECTION 1: Clean, Minimal Header - Left-aligned and Inline */}
+          <section className="text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#1a1a1a] border border-[#2a2a2a] text-[#76b900] font-mono text-[11px] font-semibold tracking-wider uppercase mb-3.5">
+              <span className="w-1.5 h-1.5 bg-[#76b900] animate-pulse" />
+              PRICING & INFRASTRUCTURE
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2 sm:gap-2.5">
+              <span>Frontier AI Research &</span>
+              <span className="bg-[#76b900] text-black font-semibold px-2 py-0.5 rounded-none whitespace-nowrap">
+                Lab Infrastructure
+              </span>
+            </h1>
+
+            <p className="text-[#888] text-sm sm:text-base mt-3 max-w-2xl leading-relaxed">
+              High-throughput model endpoints, autonomous research loops, and physical AI compute.
+            </p>
+          </section>
+        </div>
+
+        {/* Section Divider dashed line with HOROS brand logo and + crosshairs */}
+        <SectionDivider className="mb-10 sm:mb-12" />
+
         <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto flex flex-col px-4 sm:px-6 md:px-8 lg:px-10">
-
-        {/* SECTION 1: Clean, Minimal Header - Left-aligned and Inline */}
-        <section className="mb-8 sm:mb-10 text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#1a1a1a] border border-[#2a2a2a] text-[#76b900] font-mono text-[11px] font-semibold tracking-wider uppercase mb-3.5">
-            <span className="w-1.5 h-1.5 bg-[#76b900] animate-pulse" />
-            PRICING & INFRASTRUCTURE
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-medium tracking-tight text-[#F0EFE2] leading-tight flex items-center flex-wrap gap-2 sm:gap-2.5">
-            <span>Frontier AI Research &</span>
-            <span className="bg-[#76b900] text-black font-semibold px-2 py-0.5 rounded-none whitespace-nowrap">
-              Lab Infrastructure
-            </span>
-          </h1>
-
-          <p className="text-[#888] text-sm sm:text-base mt-3 max-w-2xl leading-relaxed">
-            High-throughput model endpoints, autonomous research loops, and physical AI compute.
-          </p>
-        </section>
-
-        {/* SECTION 2: 3 Clean Architecture Track Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          {/* SECTION 2: 3 Clean Architecture Track Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           {/* Track 1: Compute & Model APIs */}
           <div
             onClick={() => setSelectedTrack("compute")}
