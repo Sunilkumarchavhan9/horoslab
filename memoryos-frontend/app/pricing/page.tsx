@@ -362,7 +362,7 @@ export default function PricingPage() {
         {/* TRACK 1: Compute & Model API - Pay as you go vs Enterprise Split */}
         {selectedTrack === "compute" && (
           <section className="mb-14">
-            <div className="border border-[#262626] bg-[#141414] grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#262626]">
+            <div className="border border-dashed border-[#333] bg-[#141414] grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#333]">
               {/* Left Column: Pay as you go */}
               <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full">
                 <div>
@@ -391,7 +391,7 @@ export default function PricingPage() {
                           className={`text-xs px-2.5 py-1 font-mono transition-colors border ${
                             creditAmount === amt
                               ? "bg-[#76b900] text-black border-[#76b900] font-bold"
-                              : "bg-[#1c1c1c] text-[#888] border-[#333] hover:text-white"
+                              : "bg-[#1c1c1c] text-[#888] border border-dashed border-[#333] hover:text-white hover:border-[#555]"
                           }`}
                         >
                           ${amt}
@@ -400,7 +400,7 @@ export default function PricingPage() {
                     </div>
 
                     <div className="relative mb-2">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-base sm:text-lg">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-medium text-sm sm:text-base">
                         $
                       </span>
                       <input
@@ -408,7 +408,7 @@ export default function PricingPage() {
                         min="5"
                         value={creditAmount}
                         onChange={(e) => setCreditAmount(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-[#0d0d0d] border border-[#2a2a2a] py-3 pl-9 pr-4 text-[#F0EFE2] font-mono text-base sm:text-lg focus:outline-none focus:border-[#76b900] transition-colors"
+                        className="w-full bg-[#0d0d0d] border border-dashed border-[#333] py-2 pl-7 pr-3 text-[#F0EFE2] font-mono text-sm sm:text-base focus:outline-none focus:border-[#76b900] transition-colors"
                       />
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-[#777]">
@@ -447,7 +447,7 @@ export default function PricingPage() {
                   <button
                     type="button"
                     onClick={() => openModal(`Pay as you go ($${creditAmount})`)}
-                    className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs sm:text-sm py-3.5 flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                    className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-semibold text-xs sm:text-sm py-2 sm:py-2.5 flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer"
                   >
                     <span>Add credits</span>
                     <ChevronRight size={15} strokeWidth={2.5} />
@@ -501,7 +501,7 @@ export default function PricingPage() {
                   <button
                     type="button"
                     onClick={() => openModal("Enterprise Cohort")}
-                    className="w-full bg-[#1e1e1e] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-semibold text-xs sm:text-sm py-3.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    className="w-full bg-[#1e1e1e] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-2 sm:py-2.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <span>Request a demo</span>
                     <ChevronRight size={15} strokeWidth={2} className="text-[#888]" />
