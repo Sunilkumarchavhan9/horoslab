@@ -359,34 +359,36 @@ export default function PricingPage() {
 
         {/* SECTION 3: Dynamic View by Selected Track */}
 
-        {/* TRACK 1: Compute & Model API */}
+        {/* TRACK 1: Compute & Model API - Pay as you go vs Enterprise Split */}
         {selectedTrack === "compute" && (
           <section className="mb-14">
-            <div className="border border-[#262626] bg-[#141414] grid grid-cols-1 md:grid-cols-2">
-              {/* Left Column: Top-Up */}
-              <div className="p-6 sm:p-7 flex flex-col justify-between">
+            <div className="border border-[#262626] bg-[#141414] grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#262626]">
+              {/* Left Column: Pay as you go */}
+              <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-xl font-medium text-[#F0EFE2]">Frontier Compute Top-Up</h2>
-                    <span className="text-[11px] font-mono bg-[#1a1a1a] border border-[#333] px-2 py-0.5 text-[#aaa]">
-                      PAYG
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#F0EFE2]">Pay as you go</h2>
+                    <span className="text-[11px] font-mono tracking-wide bg-[#202020] border border-[#333] px-2.5 py-1 text-[#aaa] flex items-center gap-1.5">
+                      <span className="text-[#76b900] font-bold">#</span> No subscription
                     </span>
                   </div>
-                  <p className="text-[#888] text-xs mb-6">
-                    Direct access to open-weights & Horos compiled kernels on one unified balance.
+                  <p className="text-[#888] text-xs sm:text-[13px] mb-6">
+                    Hosted Model APIs, per token, on one prepaid balance.
                   </p>
 
                   <div className="mb-6">
-                    <label className="text-[10px] text-[#777] font-semibold uppercase tracking-widest mb-2 block">
-                      TOP-UP AMOUNT
+                    <label className="text-[10px] text-[#777] font-semibold uppercase tracking-widest mb-2.5 block">
+                      AMOUNT IN DOLLARS
                     </label>
-                    <div className="flex flex-wrap gap-1.5 mb-2.5">
-                      {[25, 50, 100, 250, 500].map((amt) => (
+
+                    {/* Quick amount presets */}
+                    <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+                      {[5, 20, 50, 100, 250].map((amt) => (
                         <button
                           key={amt}
                           type="button"
                           onClick={() => setCreditAmount(amt)}
-                          className={`text-xs px-3 py-1 font-mono transition-colors border ${
+                          className={`text-xs px-2.5 py-1 font-mono transition-colors border ${
                             creditAmount === amt
                               ? "bg-[#76b900] text-black border-[#76b900] font-bold"
                               : "bg-[#1c1c1c] text-[#888] border-[#333] hover:text-white"
@@ -397,96 +399,114 @@ export default function PricingPage() {
                       ))}
                     </div>
 
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-base">
+                    <div className="relative mb-2">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F0EFE2] font-semibold text-base sm:text-lg">
                         $
                       </span>
                       <input
                         type="number"
-                        min="25"
+                        min="5"
                         value={creditAmount}
                         onChange={(e) => setCreditAmount(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-[#0d0d0d] border border-[#333] py-2.5 pl-8 pr-3 text-[#F0EFE2] font-mono text-base focus:outline-none focus:border-[#76b900] transition-colors"
+                        className="w-full bg-[#0d0d0d] border border-[#2a2a2a] py-3 pl-9 pr-4 text-[#F0EFE2] font-mono text-base sm:text-lg focus:outline-none focus:border-[#76b900] transition-colors"
                       />
                     </div>
-                    <div className="flex items-center justify-between mt-2 text-[11px] text-[#777]">
-                      <span>No expiration for 12 months.</span>
+                    <div className="flex items-center justify-between text-[11px] text-[#777]">
+                      <span>$5 minimum top-up. Pay per token.</span>
                       <span className="text-[#76b900] font-mono">~{Math.round((creditAmount / 0.15) * 10) / 10}M tokens estimate</span>
                     </div>
                   </div>
 
-                  <div className="space-y-2 text-xs text-[#bbb] mb-6">
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
-                      <span>vLLM, SGLang, and TensorRT-LLM runtimes</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
-                      <span>Up to 90% discount on cached context prefixes</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
-                      <span>Standard OpenAI and Anthropic API compatibility</span>
+                  <div className="mb-6">
+                    <h3 className="font-bold text-xs sm:text-sm text-[#F0EFE2] mb-3">What's included</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-xs text-[#bbb]">
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>OpenAI-compatible chat completions and Anthropic-compatible Messages</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>Per-token pricing with cached input discounts on supported models</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>Session-aware routing keeps agent replays warm</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>One prepaid balance, no seats, no per-user fees</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => openModal(`Compute PAYG ($${creditAmount})`)}
-                  className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs sm:text-sm py-3 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
-                >
-                  Apply for Compute Cohort <ChevronRight size={15} strokeWidth={2.5} className="ml-1" />
-                </button>
+                <div className="pt-2">
+                  <p className="text-center text-[11px] text-[#777] mb-3">
+                    Get $1 free to test the Model APIs.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => openModal(`Pay as you go ($${creditAmount})`)}
+                    className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs sm:text-sm py-3.5 flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                  >
+                    <span>Add credits</span>
+                    <ChevronRight size={15} strokeWidth={2.5} />
+                  </button>
+                </div>
               </div>
 
-              {/* Right Column: Architectural Highlights */}
-              <div className="p-6 sm:p-7 border-t md:border-t-0 md:border-l border-[#262626] bg-[#121212] flex flex-col justify-between">
+              {/* Right Column: Enterprise */}
+              <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full bg-[#121212]">
                 <div>
-                  <div className="mb-4">
-                    <span className="text-[10px] font-mono text-[#76b900] uppercase tracking-wider block mb-1">
-                      HOROS RUNTIME COMPILER
-                    </span>
-                    <h2 className="text-xl font-medium text-[#F0EFE2] mb-1">Universal IR & Kernel Autotuning</h2>
-                    <p className="text-[#888] text-xs">
-                      Universal computation graphs optimized across memory and compiled to verified hardware kernels.
+                  <div className="mb-6">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#F0EFE2] mb-1.5">Enterprise</h2>
+                    <p className="text-[#888] text-xs sm:text-[13px] leading-relaxed">
+                      Dedicated infrastructure, compliance, and custom volume.
                     </p>
                   </div>
 
-                  <div className="space-y-2.5 mb-6">
-                    <div className="p-3 bg-[#161616] border border-[#262626] text-xs">
-                      <div className="flex items-center justify-between text-[#F0EFE2] font-semibold mb-0.5">
-                        <span>Dynamic Speculative Decoding</span>
-                        <span className="font-mono text-[#76b900]">2.8x speedup</span>
-                      </div>
-                      <p className="text-[11px] text-[#777]">Draft verification routes smaller helper models to predict tokens ahead of time.</p>
+                  <div className="mb-6">
+                    <div className="text-2xl sm:text-3xl font-bold text-[#F0EFE2] font-mono mb-5">
+                      Custom pricing
                     </div>
-
-                    <div className="p-3 bg-[#161616] border border-[#262626] text-xs">
-                      <div className="flex items-center justify-between text-[#F0EFE2] font-semibold mb-0.5">
-                        <span>Paged KV Memory Cache</span>
-                        <span className="font-mono text-[#76b900]">Zero OOM</span>
-                      </div>
-                      <p className="text-[11px] text-[#777]">Virtual memory allocation eliminates fragmentation during long inference sessions.</p>
-                    </div>
-
-                    <div className="p-3 bg-[#161616] border border-[#262626] text-xs">
-                      <div className="flex items-center justify-between text-[#F0EFE2] font-semibold mb-0.5">
-                        <span>Outcome Contract Tracing</span>
-                        <span className="font-mono text-[#76b900]">Verified Evidence</span>
-                      </div>
-                      <p className="text-[11px] text-[#777]">Every token records latency, GPU wattage, and causal verification lineage.</p>
-                    </div>
+                    <p className="text-xs sm:text-sm font-semibold text-[#F0EFE2] mb-3">
+                      Everything self-serve includes, plus
+                    </p>
+                    <ul className="space-y-3 text-xs text-[#bbb]">
+                      <li className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>Audit logs and role-based access control (RBAC)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>Custom volume and contract terms</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>Custom SLAs up to 99.99%</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>Enterprise compliance and dedicated security controls</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check size={13} className="text-[#76b900] mt-0.5 shrink-0" />
+                        <span>Dedicated CSM and private Slack</span>
+                      </li>
+                    </ul>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => openModal("Research Infra API Track")}
-                  className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-3 flex items-center justify-center transition-colors cursor-pointer"
-                >
-                  Request API Ingestion Keys <ChevronRight size={14} className="ml-1 text-[#888]" />
-                </button>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => openModal("Enterprise Cohort")}
+                    className="w-full bg-[#1e1e1e] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-semibold text-xs sm:text-sm py-3.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <span>Request a demo</span>
+                    <ChevronRight size={15} strokeWidth={2} className="text-[#888]" />
+                  </button>
+                </div>
               </div>
             </div>
           </section>
