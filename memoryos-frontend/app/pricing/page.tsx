@@ -25,8 +25,13 @@ import {
   MistralLogo,
   OpenAILogo,
 } from "@/components/horos/primitives/brand-icons";
+import { HorosIcon } from "@/components/horos/primitives/horos-logo";
 
 const founderEmail = "chavhansunilkumar753@gmail.com";
+
+function HorosModelLogo({ size = 20, className }: { size?: number; className?: string }) {
+  return <HorosIcon width={size} height={size} className={className || "text-[#76b900]"} />;
+}
 
 function ZLogo({ size = 20 }: { size?: number }) {
   return (
@@ -48,18 +53,16 @@ function ZLogo({ size = 20 }: { size?: number }) {
 }
 
 const MODEL_APIS_DATA = [
+  // First-party HOROS Foundation Models
   {
     id: "probe-1-robotics",
     name: "HOROS PROBE-1 (Humanoid Contact Policy)",
     developer: "HOROS Lab",
-    icon: ShieldCheck,
+    icon: HorosModelLogo,
     isFirstParty: true,
-    promo: "Certified p-CBF Safety",
-    promoUntil: "Zero crush damage guarantee",
     inputPrice: "$0.30",
-    strikethroughCached: "$0.08",
     cachedPrice: "$0.03",
-    cacheHitRate: "98.2% cache hit on trajectories",
+    cacheHitRate: "98.2% cache hit, last 24 hours",
     outputPrice: "$1.20",
     link: "/capabilities/Horos/Probe-1",
   },
@@ -67,72 +70,91 @@ const MODEL_APIS_DATA = [
     id: "aeroprobe-1-aerospace",
     name: "HOROS AEROPROBE-1 (CFD Field Surrogate)",
     developer: "HOROS Lab",
-    icon: Cpu,
+    icon: HorosModelLogo,
     isFirstParty: true,
-    promo: "Inverse Solver Active",
-    promoUntil: "Real-time aerodynamic field",
     inputPrice: "$0.40",
-    strikethroughCached: "$0.10",
     cachedPrice: "$0.04",
-    cacheHitRate: "96.5% mesh prefix cache hit",
+    cacheHitRate: "96.5% cache hit, last 24 hours",
     outputPrice: "$1.60",
     link: "/capabilities/Horos/Aeroprobe-1",
   },
+  // Open-weights & Partner Models from catalog
   {
-    id: "deepseek-v4-1-flash",
-    name: "DeepSeek V4.1 Flash",
+    id: "deepseek-v4-1-flash-1017",
+    name: "DeepSeek V4.1 Flash 1017",
     developer: "DeepSeek",
     icon: DeepSeekLogo,
-    promo: "Free cached input",
-    promoUntil: "until Oct 31, 2026",
     inputPrice: "$0.15",
-    strikethroughCached: "$0.01",
-    cachedPrice: "Free",
-    cacheHitRate: "94.6% cache hit rate",
+    cachedPrice: "$0.01",
+    cacheHitRate: "99.5% cache hit, last 24 hours",
     outputPrice: "$0.60",
     link: "/capabilities/DeepSeek/DeepSeek%20V4.1%20Flash%201017",
   },
   {
-    id: "nemotron-3-5-30b",
-    name: "Nemotron 3.5 Lightning 30B",
-    developer: "NVIDIA",
-    icon: NvidiaLogo,
-    promo: "Free cached input",
-    promoUntil: "until Oct 31, 2026",
-    inputPrice: "$0.05",
-    strikethroughCached: "$0.01",
-    cachedPrice: "Free",
-    cacheHitRate: "99.2% cache hit rate",
-    outputPrice: "$0.15",
-    link: "/capabilities/NVIDIA/Nemotron%203.5%20Lightning%2030B",
-  },
-  {
-    id: "qwen3-8-27b",
-    name: "Qwen 3.8 27B",
-    developer: "Alibaba Cloud",
-    icon: QwenLogo,
-    promo: "Free cached input",
-    promoUntil: "until Oct 31, 2026",
-    inputPrice: "$0.10",
-    strikethroughCached: "$0.01",
-    cachedPrice: "Free",
-    cacheHitRate: "97.1% cache hit rate",
-    outputPrice: "$0.40",
-    link: "/capabilities/Alibaba%20Cloud/Qwen3.8%2027B",
+    id: "glm-5-3",
+    name: "GLM 5.3",
+    developer: "Z.ai",
+    icon: ZLogo,
+    inputPrice: "$1.30",
+    cachedPrice: "$0.13",
+    cacheHitRate: "99.1% cache hit, last 24 hours",
+    outputPrice: "$4.20",
+    link: "/capabilities/Z.ai/GLM%205.3",
   },
   {
     id: "glm-5-3-flash",
     name: "GLM 5.3 Flash",
     developer: "Z.ai",
     icon: ZLogo,
-    promo: "Free cached input",
-    promoUntil: "until Oct 31, 2026",
     inputPrice: "$0.11",
-    strikethroughCached: "$0.03",
-    cachedPrice: "Free",
-    cacheHitRate: "98.1% cache hit rate",
+    cachedPrice: "$0.03",
+    cacheHitRate: "99.3% cache hit, last 24 hours",
     outputPrice: "$0.45",
     link: "/capabilities/Z.ai/GLM%205.3%20Flash",
+  },
+  {
+    id: "nemotron-3-5-lightning-30b",
+    name: "Nemotron 3.5 Lightning 30B",
+    developer: "NVIDIA",
+    icon: NvidiaLogo,
+    inputPrice: "$0.05",
+    cachedPrice: "$0.01",
+    cacheHitRate: "",
+    outputPrice: "$0.15",
+    link: "/capabilities/NVIDIA/Nemotron%203.5%20Lightning%2030B",
+  },
+  {
+    id: "qwen3-8-27b",
+    name: "Qwen3.8 27B",
+    developer: "Alibaba Cloud",
+    icon: QwenLogo,
+    inputPrice: "$0.10",
+    cachedPrice: "$0.01",
+    cacheHitRate: "95.7% cache hit, last 24 hours",
+    outputPrice: "$0.40",
+    link: "/capabilities/Alibaba%20Cloud/Qwen3.8%2027B",
+  },
+  {
+    id: "ornith-1-5-35b",
+    name: "Ornith 1.5 35B",
+    developer: "Ornith",
+    icon: OrnithLogo,
+    inputPrice: "$0.10",
+    cachedPrice: "$0.01",
+    cacheHitRate: "94.3% cache hit, last 24 hours",
+    outputPrice: "$0.40",
+    link: "/capabilities/Ornith/Ornith%201.5%2035B",
+  },
+  {
+    id: "deepseek-v4-1-flash",
+    name: "DeepSeek V4.1 Flash",
+    developer: "DeepSeek",
+    icon: DeepSeekLogo,
+    inputPrice: "$0.14",
+    cachedPrice: "$0.03",
+    cacheHitRate: "98.8% cache hit, last 24 hours",
+    outputPrice: "$0.58",
+    link: "/capabilities/DeepSeek/DeepSeek%20V4.1%20Flash",
   },
 ];
 
@@ -190,6 +212,7 @@ const COMPARISON_ROWS = [
 export default function PricingPage() {
   const [selectedTrack, setSelectedTrack] = useState<"compute" | "lab" | "physical">("compute");
   const [creditAmount, setCreditAmount] = useState(50);
+  const [highlightedModelId, setHighlightedModelId] = useState<string>("deepseek-v4-1-flash-1017");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPlan, setModalPlan] = useState("Frontier Compute (PAYG)");
   const [submitted, setSubmitted] = useState(false);
@@ -729,28 +752,31 @@ export default function PricingPage() {
           </section>
         )}
 
-        {/* SECTION 4: Model APIs & Lab Weights Table */}
+        {/* SECTION 4: Model APIs Table */}
         <section id="model-apis-pricing" className="mb-20 scroll-mt-20">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
             <div>
-              <div className="text-[#76b900] text-xs font-mono font-medium tracking-wider uppercase mb-1">
-                FRONTIER MODEL APIS & LAB WEIGHTS
+              <div className="text-[#76b900] text-xs font-mono font-medium tracking-wider uppercase mb-1.5">
+                MODEL APIS
               </div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-[#F0EFE2] tracking-tight">
-                Pay for model tokens, not idle capacity
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#F0EFE2] tracking-tight">
+                Pay for model tokens, not idle{" "}
+                <span className="bg-[#76b900] text-black font-semibold px-2 py-0.5 rounded-none whitespace-nowrap">
+                  capacity
+                </span>
               </h2>
             </div>
 
-            <span className="text-[11px] text-[#888] font-mono border border-[#333] bg-[#151515] px-3 py-1 shrink-0 self-start sm:self-auto">
+            <span className="text-xs text-[#888] font-mono border border-dashed border-[#333] bg-[#151515] px-3.5 py-1.5 shrink-0 self-start sm:self-auto">
               Price per 1M tokens
             </span>
           </div>
 
-          {/* Table Container: Solid clean border, no dashed borders */}
-          <div className="w-full border border-[#262626] bg-[#151515] overflow-x-auto">
-            <div className="min-w-[700px]">
+          {/* Table Container with dashed border on #151515 */}
+          <div className="w-full border border-dashed border-[#333] bg-[#151515] overflow-x-auto">
+            <div className="min-w-[760px]">
               {/* Header */}
-              <div className="grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3 border-b border-[#262626] text-xs font-medium text-[#777]">
+              <div className="grid grid-cols-[3.2fr_1.1fr_1.8fr_1.1fr_1.2fr] px-6 py-4 border-b border-dashed border-[#333] text-xs font-medium text-[#777]">
                 <div>Model</div>
                 <div>Input</div>
                 <div>Cached input</div>
@@ -761,46 +787,58 @@ export default function PricingPage() {
               {/* Rows */}
               {MODEL_APIS_DATA.map((model, idx) => {
                 const IconComponent = model.icon;
+                const isHighlighted = highlightedModelId === model.id;
                 return (
                   <Link
                     key={model.id}
                     href={model.link}
-                    className={`grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3.5 items-center group hover:bg-[#1a1a1a] transition-colors ${
-                      idx < MODEL_APIS_DATA.length - 1 ? "border-b border-[#222]" : ""
+                    onMouseEnter={() => setHighlightedModelId(model.id)}
+                    className={`grid grid-cols-[3.2fr_1.1fr_1.8fr_1.1fr_1.2fr] px-6 py-4.5 items-center group transition-all ${
+                      isHighlighted
+                        ? "bg-[#1c1c1c] border-b border-dashed border-[#444]"
+                        : idx < MODEL_APIS_DATA.length - 1
+                        ? "border-b border-dashed border-[#262626] hover:bg-[#1a1a1a]"
+                        : "hover:bg-[#1a1a1a]"
                     }`}
                   >
-                    <div className="flex items-center gap-3 pr-3">
-                      <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                        <IconComponent size={18} />
+                    <div className="flex items-center gap-3.5 pr-3">
+                      <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                        <IconComponent size={20} className={model.isFirstParty ? "text-[#76b900]" : ""} />
                       </div>
-                      <span className="font-semibold text-[#F0EFE2] text-sm group-hover:text-[#76b900] transition-colors truncate">
-                        {model.name}
-                      </span>
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="font-semibold text-[#F0EFE2] text-sm sm:text-[15px] group-hover:text-[#76b900] transition-colors truncate">
+                          {model.name}
+                        </span>
+                        {model.isFirstParty && (
+                          <span className="text-[10px] font-mono font-bold text-[#76b900] bg-[#76b900]/10 border border-[#76b900]/30 px-1.5 py-0.5 shrink-0">
+                            HOROS
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
+                    <div className="font-bold text-[#F0EFE2] text-sm sm:text-base font-mono">
                       {model.inputPrice}
                     </div>
 
                     <div className="flex flex-col justify-center">
-                      <span className="line-through text-[#666] text-[11px] font-mono leading-none mb-0.5">
-                        {model.strikethroughCached}
-                      </span>
-                      <span className="font-bold text-[#F0EFE2] text-sm leading-tight">
+                      <span className="font-bold text-[#F0EFE2] text-sm sm:text-base font-mono">
                         {model.cachedPrice}
                       </span>
-                      <span className="text-[10px] text-[#666] mt-0.5">
-                        {model.cacheHitRate}
-                      </span>
+                      {model.cacheHitRate ? (
+                        <span className="text-[11px] text-[#777] mt-0.5 whitespace-nowrap font-sans">
+                          {model.cacheHitRate}
+                        </span>
+                      ) : null}
                     </div>
 
-                    <div className="font-semibold text-[#F0EFE2] text-sm font-mono">
+                    <div className="font-bold text-[#F0EFE2] text-sm sm:text-base font-mono">
                       {model.outputPrice}
                     </div>
 
                     <div className="flex justify-end">
-                      <span className="text-xs text-[#888] group-hover:text-[#F0EFE2] flex items-center gap-1 font-medium transition-colors">
-                        View model <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                      <span className="text-xs text-[#888] group-hover:text-[#F0EFE2] flex items-center gap-1.5 font-medium transition-colors">
+                        View model <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
                       </span>
                     </div>
                   </Link>
@@ -808,6 +846,10 @@ export default function PricingPage() {
               })}
             </div>
           </div>
+
+          <p className="text-xs text-[#777] mt-3.5 font-normal">
+            Limits and modality-specific capabilities are listed on each model page.
+          </p>
         </section>
 
         {/* SECTION 5: Clean Comparison Matrix */}
