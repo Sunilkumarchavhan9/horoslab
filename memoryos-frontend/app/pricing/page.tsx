@@ -274,8 +274,8 @@ export default function PricingPage() {
             onClick={() => setSelectedTrack("compute")}
             className={`p-5 cursor-pointer transition-all border ${
               selectedTrack === "compute"
-                ? "border-[#76b900] bg-[#181818] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                : "border-[#262626] bg-[#141414] hover:border-[#444]"
+                ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
+                : "border-[#262626] bg-[#151515] hover:border-[#444]"
             }`}
           >
             <div className="flex justify-between items-start mb-2">
@@ -303,8 +303,8 @@ export default function PricingPage() {
             onClick={() => setSelectedTrack("lab")}
             className={`p-5 cursor-pointer transition-all border ${
               selectedTrack === "lab"
-                ? "border-[#76b900] bg-[#181818] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                : "border-[#262626] bg-[#141414] hover:border-[#444]"
+                ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
+                : "border-[#262626] bg-[#151515] hover:border-[#444]"
             }`}
           >
             <div className="flex justify-between items-start mb-2">
@@ -332,8 +332,8 @@ export default function PricingPage() {
             onClick={() => setSelectedTrack("physical")}
             className={`p-5 cursor-pointer transition-all border ${
               selectedTrack === "physical"
-                ? "border-[#76b900] bg-[#181818] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
-                : "border-[#262626] bg-[#141414] hover:border-[#444]"
+                ? "border-[#76b900] bg-[#151515] shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)]"
+                : "border-[#262626] bg-[#151515] hover:border-[#444]"
             }`}
           >
             <div className="flex justify-between items-start mb-2">
@@ -362,7 +362,7 @@ export default function PricingPage() {
         {/* TRACK 1: Compute & Model API - Pay as you go vs Enterprise Split */}
         {selectedTrack === "compute" && (
           <section className="mb-14">
-            <div className="border border-dashed border-[#333] bg-[#141414] grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#333]">
+            <div className="border border-dashed border-[#333] bg-[#151515] grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#333]">
               {/* Left Column: Pay as you go */}
               <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full">
                 <div>
@@ -391,7 +391,7 @@ export default function PricingPage() {
                           className={`text-xs px-2.5 py-1 font-mono transition-colors border ${
                             creditAmount === amt
                               ? "bg-[#76b900] text-black border-[#76b900] font-bold"
-                              : "bg-[#1c1c1c] text-[#888] border border-dashed border-[#333] hover:text-white hover:border-[#555]"
+                              : "bg-[#151515] text-[#888] border border-dashed border-[#333] hover:text-white hover:border-[#555]"
                           }`}
                         >
                           ${amt}
@@ -408,7 +408,7 @@ export default function PricingPage() {
                         min="5"
                         value={creditAmount}
                         onChange={(e) => setCreditAmount(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-[#0d0d0d] border border-dashed border-[#333] py-2 pl-7 pr-3 text-[#F0EFE2] font-mono text-sm sm:text-base focus:outline-none focus:border-[#76b900] transition-colors"
+                        className="w-full bg-[#151515] border border-dashed border-[#333] py-2 pl-7 pr-3 text-[#F0EFE2] font-mono text-sm sm:text-base focus:outline-none focus:border-[#76b900] transition-colors"
                       />
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-[#777]">
@@ -456,7 +456,7 @@ export default function PricingPage() {
               </div>
 
               {/* Right Column: Enterprise */}
-              <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full bg-[#121212]">
+              <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full bg-[#151515]">
                 <div>
                   <div className="mb-6">
                     <h2 className="text-xl sm:text-2xl font-bold text-[#F0EFE2] mb-1.5">Enterprise</h2>
@@ -517,7 +517,7 @@ export default function PricingPage() {
           <section className="mb-14">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Explorer Tier */}
-              <div className="border border-[#262626] bg-[#141414] p-5 sm:p-6 flex flex-col justify-between hover:border-[#444] transition-colors">
+              <div className="border border-[#262626] bg-[#151515] p-5 sm:p-6 flex flex-col justify-between hover:border-[#444] transition-colors">
                 <div>
                   <div className="flex justify-between items-center mb-1">
                     <h3 className="text-base font-semibold text-[#F0EFE2]">Lab Explorer</h3>
@@ -606,7 +606,7 @@ export default function PricingPage() {
               </div>
 
               {/* Cluster Team Tier */}
-              <div className="border border-[#262626] bg-[#141414] p-5 sm:p-6 flex flex-col justify-between hover:border-[#444] transition-colors">
+              <div className="border border-[#262626] bg-[#151515] p-5 sm:p-6 flex flex-col justify-between hover:border-[#444] transition-colors">
                 <div>
                   <div className="flex justify-between items-center mb-1">
                     <h3 className="text-base font-semibold text-[#F0EFE2]">Cluster Team</h3>
@@ -680,7 +680,7 @@ export default function PricingPage() {
               {/* 2 Program Callout Cards: Clean, concise, no walls of text */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-[#262626]">
                 {/* PROBE-1 */}
-                <div className="p-4 bg-[#141414] border border-[#262626] space-y-2">
+                <div className="p-4 bg-[#151515] border border-[#262626] space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold text-[#76b900]">PROGRAM 01</span>
                     <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-[#333]">HUMANOID ROBOTICS</span>
@@ -697,7 +697,7 @@ export default function PricingPage() {
                 </div>
 
                 {/* AEROPROBE-1 */}
-                <div className="p-4 bg-[#141414] border border-[#262626] space-y-2">
+                <div className="p-4 bg-[#151515] border border-[#262626] space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold text-[#76b900]">PROGRAM 02</span>
                     <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-[#333]">AEROSPACE ENGINEERING</span>
@@ -729,13 +729,13 @@ export default function PricingPage() {
               </h2>
             </div>
 
-            <span className="text-[11px] text-[#888] font-mono border border-[#333] bg-[#181818] px-3 py-1 shrink-0 self-start sm:self-auto">
+            <span className="text-[11px] text-[#888] font-mono border border-[#333] bg-[#151515] px-3 py-1 shrink-0 self-start sm:self-auto">
               Price per 1M tokens
             </span>
           </div>
 
           {/* Table Container: Solid clean border, no dashed borders */}
-          <div className="w-full border border-[#262626] bg-[#141414] overflow-x-auto">
+          <div className="w-full border border-[#262626] bg-[#151515] overflow-x-auto">
             <div className="min-w-[700px]">
               {/* Header */}
               <div className="grid grid-cols-[3fr_1.1fr_1.8fr_1.1fr_1.2fr] px-4 sm:px-5 py-3 border-b border-[#262626] text-xs font-medium text-[#777]">
@@ -800,7 +800,7 @@ export default function PricingPage() {
 
         {/* SECTION 5: Clean Comparison Matrix */}
         <section className="mb-20">
-          <div className="w-full border border-[#262626] bg-[#141414] flex flex-col">
+          <div className="w-full border border-[#262626] bg-[#151515] flex flex-col">
             <div className="p-4 sm:p-5 border-b border-[#262626]">
               <h2 className="text-lg font-semibold text-[#F0EFE2] mb-1 tracking-tight">
                 Compare Architecture Tiers
@@ -811,7 +811,7 @@ export default function PricingPage() {
             </div>
 
             {/* Matrix Header */}
-            <div className="grid grid-cols-[1.2fr_1.2fr_1.2fr_1.2fr] divide-x divide-[#262626] border-b border-[#262626] bg-[#161616]">
+            <div className="grid grid-cols-[1.2fr_1.2fr_1.2fr_1.2fr] divide-x divide-[#262626] border-b border-[#262626] bg-[#151515]">
               <div className="p-3.5 sm:p-4 text-xs font-medium text-[#777]">Feature</div>
               <div className="p-3.5 sm:p-4 text-xs font-semibold text-[#F0EFE2]">Compute (PAYG)</div>
               <div className="p-3.5 sm:p-4 text-xs font-semibold text-[#F0EFE2]">Autonomous Lab</div>
@@ -823,7 +823,7 @@ export default function PricingPage() {
               <div
                 key={row.feature}
                 className={`grid grid-cols-[1.2fr_1.2fr_1.2fr_1.2fr] divide-x divide-[#262626] border-b border-[#202020] text-xs ${
-                  i % 2 === 1 ? "bg-[#161616]/40" : "bg-transparent"
+                  i % 2 === 1 ? "bg-[#151515]/40" : "bg-transparent"
                 }`}
               >
                 <div className="p-3.5 text-[#aaa]">{row.feature}</div>
@@ -868,7 +868,7 @@ export default function PricingPage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-[#161616] border border-[#333] p-6 text-[#F0EFE2] shadow-2xl relative"
+            className="w-full max-w-md bg-[#151515] border border-[#333] p-6 text-[#F0EFE2] shadow-2xl relative"
           >
             <button
               type="button"
@@ -899,7 +899,7 @@ export default function PricingPage() {
                       placeholder="Dr. Jane Doe"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-[#101010] border border-[#333] px-3 py-2 text-xs text-[#F0EFE2] outline-none focus:border-[#76b900]"
+                      className="w-full bg-[#151515] border border-[#333] px-3 py-2 text-xs text-[#F0EFE2] outline-none focus:border-[#76b900]"
                     />
                   </div>
                   <div>
@@ -910,7 +910,7 @@ export default function PricingPage() {
                       placeholder="jane@lab.org"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-[#101010] border border-[#333] px-3 py-2 text-xs text-[#F0EFE2] outline-none focus:border-[#76b900]"
+                      className="w-full bg-[#151515] border border-[#333] px-3 py-2 text-xs text-[#F0EFE2] outline-none focus:border-[#76b900]"
                     />
                   </div>
                   <div>
@@ -921,7 +921,7 @@ export default function PricingPage() {
                       placeholder="Autonomous Systems Lab"
                       value={formData.org}
                       onChange={(e) => setFormData({ ...formData, org: e.target.value })}
-                      className="w-full bg-[#101010] border border-[#333] px-3 py-2 text-xs text-[#F0EFE2] outline-none focus:border-[#76b900]"
+                      className="w-full bg-[#151515] border border-[#333] px-3 py-2 text-xs text-[#F0EFE2] outline-none focus:border-[#76b900]"
                     />
                   </div>
                   <button
