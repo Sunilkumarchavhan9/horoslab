@@ -242,7 +242,7 @@ export default function PricingPage() {
 
       {/* Main Content Area - Auto-responsive fluid container framed within the 4 vertical guidelines */}
       <main className="flex-grow flex flex-col w-full relative z-10 pt-24 sm:pt-28 md:pt-32 pb-24 sm:pb-32">
-        <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto flex flex-col">
+        <div className="w-[94%] md:w-[84%] lg:w-[80%] xl:w-[72%] 2xl:w-[64%] 2xl:max-w-7xl mx-auto flex flex-col px-4 sm:px-6 md:px-8 lg:px-10">
 
         {/* SECTION 1: Clean, Minimal Header - Left-aligned and Inline */}
         <section className="mb-8 sm:mb-10 text-left">
