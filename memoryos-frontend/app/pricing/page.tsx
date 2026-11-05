@@ -30,7 +30,7 @@ import { HorosIcon } from "@/components/horos/primitives/horos-logo";
 const founderEmail = "chavhansunilkumar753@gmail.com";
 
 function HorosModelLogo({ size = 20, className }: { size?: number; className?: string }) {
-  return <HorosIcon width={size} height={size} className={className || "text-[#76b900]"} />;
+  return <HorosIcon width={size} height={size} className={className || "text-[#F0EFE2]"} />;
 }
 
 function ZLogo({ size = 20 }: { size?: number }) {
@@ -56,7 +56,7 @@ const MODEL_APIS_DATA = [
   // First-party HOROS Foundation Models
   {
     id: "probe-1-robotics",
-    name: "HOROS PROBE-1 (Humanoid Contact Policy)",
+    name: "PROBE-1",
     developer: "HOROS Lab",
     icon: HorosModelLogo,
     isFirstParty: true,
@@ -68,7 +68,7 @@ const MODEL_APIS_DATA = [
   },
   {
     id: "aeroprobe-1-aerospace",
-    name: "HOROS AEROPROBE-1 (CFD Field Surrogate)",
+    name: "AEROPROBE-1",
     developer: "HOROS Lab",
     icon: HorosModelLogo,
     isFirstParty: true,
@@ -864,17 +864,12 @@ export default function PricingPage() {
                   >
                     <div className="flex items-center gap-3.5 pr-3">
                       <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                        <IconComponent size={20} className={model.isFirstParty ? "text-[#76b900]" : ""} />
+                        <IconComponent size={20} className={model.isFirstParty ? "text-[#F0EFE2]" : ""} />
                       </div>
                       <div className="flex items-center gap-2 truncate">
                         <span className="font-semibold text-[#F0EFE2] text-sm sm:text-[15px] group-hover:text-[#76b900] transition-colors truncate">
                           {model.name}
                         </span>
-                        {model.isFirstParty && (
-                          <span className="text-[10px] font-mono font-bold text-[#76b900] bg-[#76b900]/10 border border-[#76b900]/30 px-1.5 py-0.5 shrink-0">
-                            HOROS
-                          </span>
-                        )}
                       </div>
                     </div>
 
