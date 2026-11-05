@@ -31,10 +31,6 @@
 
 </div>
 
-<p align="center">
-  <img src="./assets/developer-console.jpg" alt="HOROS Developer Console and Research Harness" width="94%" />
-</p>
-
 ## 🌐 The HOROS Platform
 
 HOROS is an end-to-end foundation research and physical AI infrastructure platform bridging frontier model inference, autonomous post-training loops, and real-world contact-rich physical dynamics.
@@ -93,10 +89,6 @@ Predictable monthly plans with dedicated compute credits, autonomous post-traini
 └────────────────────────────────────────────┴────────────────────────────────────────────┘
 ```
 
-<p align="center">
-  <img src="./assets/hero-hands.png" alt="HOROS PROBE-1 Multifingered Dexterous Manipulation" width="90%" />
-</p>
-
 ### 1. HOROS PROBE-1 — Research-001: Uncertainty-Aware Safe Adaptation
 - **Paper:** *Uncertainty-Aware Safe Adaptation for Multifingered Grasping* ([PDF Download](./research/PROBE-1/HOROS_PROBE-1_Research_Paper.pdf))
 - **Key Breakthrough:** First multifingered grasp controller integrating deep generative flow policies with certified Predictive Control Barrier Functions (p-CBF), achieving **0.0% crush and drop violations** under dynamic friction shifts.
@@ -116,10 +108,6 @@ Predictable monthly plans with dedicated compute credits, autonomous post-traini
 ## ⚡ Track 1: Compute & Frontier Model APIs
 
 Pay only for generated model tokens with zero idle capacity fees. All endpoints offer native OpenAI and Anthropic API compatibility, prefix caching, and session-aware routing.
-
-<p align="center">
-  <img src="./assets/horos-chip.png" alt="HOROS Compute Silicon and Kernel Optimization" width="85%" />
-</p>
 
 ### Supported Model Endpoints
 
