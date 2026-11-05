@@ -570,7 +570,7 @@ export function LandingNavbar({
               <button
                 type="button"
                 onClick={handleSignUpClick}
-                className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[88px] rounded-xs transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
+                className="hidden sm:flex items-center justify-center gap-1 border border-[#2a2a2a] bg-[#161616] hover:border-[#444] text-[#cccccc] hover:text-[#F0EFE2] px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[88px] rounded-none transition-colors cursor-pointer text-xs font-semibold whitespace-nowrap"
               >
                 <span>Sign up</span>
               </button>
@@ -579,7 +579,7 @@ export function LandingNavbar({
                 href="https://cal.com/vegito"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[80px] rounded-xs transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
+                className="flex items-center justify-center gap-1 bg-[#75bf00] hover:bg-[#86dc00] text-black font-semibold px-5 sm:px-6 py-1.5 min-h-[32px] min-w-[80px] rounded-none transition-all cursor-pointer text-xs whitespace-nowrap shadow-sm"
               >
                 <span>Demo</span>
               </a>
@@ -588,7 +588,7 @@ export function LandingNavbar({
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-1.5 text-[#aaa] hover:text-[#F0EFE2] bg-[#1c1c1c] border border-[#2a2a2a] rounded-xs cursor-pointer ml-1"
+                className="lg:hidden p-1.5 text-[#aaa] hover:text-[#F0EFE2] bg-[#1c1c1c] border border-[#2a2a2a] rounded-none cursor-pointer ml-1"
                 aria-label="Toggle navigation menu"
               >
                 {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
@@ -704,7 +704,7 @@ export function LandingNavbar({
                     handleItemClick();
                     handleSignUpClick();
                   }}
-                  className="flex-1 py-2 text-center bg-[#1e1e1e] border border-[#333] text-[#F0EFE2] rounded-xs font-semibold cursor-pointer flex items-center justify-center"
+                  className="flex-1 py-2 text-center bg-[#1e1e1e] border border-[#333] text-[#F0EFE2] rounded-none font-semibold cursor-pointer flex items-center justify-center"
                 >
                   Sign up
                 </button>
@@ -713,7 +713,7 @@ export function LandingNavbar({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleItemClick}
-                  className="flex-1 py-2 text-center bg-[#75bf00] hover:bg-[#86dc00] text-black font-extrabold rounded-xs cursor-pointer flex items-center justify-center"
+                  className="flex-1 py-2 text-center bg-[#75bf00] hover:bg-[#86dc00] text-black font-extrabold rounded-none cursor-pointer flex items-center justify-center"
                 >
                   Demo
                 </a>
