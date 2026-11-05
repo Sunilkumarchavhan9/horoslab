@@ -479,14 +479,13 @@ export default function PricingPage() {
                   <p className="text-center text-[11px] text-[#777] mb-3">
                     Get $1 free to test the Model APIs.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => openModal(`Pay as you go ($${creditAmount})`)}
+                  <Link
+                    href={`/sign-up?plan=payg&amount=${creditAmount}`}
                     className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-semibold text-xs sm:text-sm py-2 sm:py-2.5 flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer"
                   >
-                    <span>Add credits</span>
+                    <span>Direct Signup & Add Credits</span>
                     <ChevronRight size={15} strokeWidth={2.5} />
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -533,14 +532,15 @@ export default function PricingPage() {
                 </div>
 
                 <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => openModal("Enterprise Cohort")}
+                  <a
+                    href="https://cal.com/vegito?tier=Enterprise&notes=Tier%3A+Enterprise"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-full bg-[#1e1e1e] hover:bg-[#282828] text-[#F0EFE2] border border-[#333] hover:border-[#555] font-medium text-xs sm:text-sm py-2 sm:py-2.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <span>Request a demo</span>
+                    <span>Book a Call (Enterprise Demo)</span>
                     <ChevronRight size={15} strokeWidth={2} className="text-[#888]" />
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -585,13 +585,22 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => openModal("Lab Explorer ($190/mo)")}
-                  className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-dashed border-[#444] hover:border-[#76b900] font-semibold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer"
-                >
-                  Apply for Explorer Cohort <ChevronRight size={14} className="ml-1" />
-                </button>
+                <div className="pt-2">
+                  <Link
+                    href="/sign-up?plan=lab-explorer"
+                    className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-dashed border-[#444] hover:border-[#76b900] font-semibold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer"
+                  >
+                    Direct Signup <ChevronRight size={14} className="ml-1" />
+                  </Link>
+                  <a
+                    href="https://cal.com/vegito?tier=Lab+Explorer&notes=Tier%3A+Lab+Explorer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-center text-[11px] text-[#888] hover:text-[#76b900] hover:underline block mt-2 font-mono"
+                  >
+                    Or Book a Call via Cal.com &rarr;
+                  </a>
+                </div>
               </div>
 
               {/* Lab Pro Tier (Recommended) */}
@@ -635,13 +644,22 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => openModal("Frontier Lab Pro ($690/mo)")}
-                  className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer shadow-sm"
-                >
-                  Apply for Pro Lab Cohort <ChevronRight size={14} className="ml-1" />
-                </button>
+                <div className="pt-2">
+                  <Link
+                    href="/sign-up?plan=frontier-lab-pro"
+                    className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                  >
+                    Direct Signup <ChevronRight size={14} className="ml-1" />
+                  </Link>
+                  <a
+                    href="https://cal.com/vegito?tier=Frontier+Lab+Pro&notes=Tier%3A+Frontier+Lab+Pro"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-center text-[11px] text-[#76b900] hover:underline block mt-2 font-mono font-medium"
+                  >
+                    Or Book a Call via Cal.com &rarr;
+                  </a>
+                </div>
               </div>
 
               {/* Cluster Team Tier */}
@@ -678,13 +696,22 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => openModal("Cluster Team ($1950/mo)")}
-                  className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-dashed border-[#444] hover:border-[#76b900] font-semibold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer"
-                >
-                  Apply for Cluster Team <ChevronRight size={14} className="ml-1" />
-                </button>
+                <div className="pt-2">
+                  <a
+                    href="https://cal.com/vegito?tier=Cluster+Team&notes=Tier%3A+Cluster+Team"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-dashed border-[#444] hover:border-[#76b900] font-semibold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer"
+                  >
+                    Book a Call via Cal.com <ChevronRight size={14} className="ml-1" />
+                  </a>
+                  <Link
+                    href="/sign-up?plan=cluster-team"
+                    className="text-center text-[11px] text-[#888] hover:text-[#76b900] hover:underline block mt-2 font-mono"
+                  >
+                    Or Direct Signup &rarr;
+                  </Link>
+                </div>
               </div>
             </div>
           </section>
@@ -709,14 +736,15 @@ export default function PricingPage() {
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => openModal("Enterprise & Physical AI Cohort")}
+                <a
+                  href="https://cal.com/vegito?tier=Physical+AI+Dedicated+Cohort&notes=Tier%3A+Physical+AI+Dedicated+Cohort"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-[#76b900] hover:bg-[#86dc00] text-black font-semibold text-xs py-2 sm:py-2.5 px-5 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm shrink-0 whitespace-nowrap self-start md:self-auto"
                 >
-                  <span>Apply for Dedicated Cohort</span>
+                  <span>Book a Call via Cal.com</span>
                   <ArrowRight size={14} strokeWidth={2.5} />
-                </button>
+                </a>
               </div>
 
               {/* 2 Program Columns: Spacious, de-cluttered, unified split layout */}
@@ -995,9 +1023,28 @@ export default function PricingPage() {
                     FOUNDING COHORT ACCESS
                   </span>
                   <h3 className="text-xl font-bold">{modalPlan}</h3>
-                  <p className="text-xs text-[#888] mt-1">
+                  <p className="text-xs text-[#888] mt-1 mb-3">
                     Reserve your allocation in our phased research cluster deployment.
                   </p>
+
+                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-dashed border-[#2b2b2b]">
+                    <Link
+                      href={`/sign-up?plan=${encodeURIComponent(modalPlan)}`}
+                      className="bg-[#76b900] text-black text-center text-xs py-2 font-semibold hover:bg-[#86dc00] transition-colors flex items-center justify-center gap-1"
+                    >
+                      <span>Direct Signup</span>
+                      <ChevronRight size={13} strokeWidth={2.5} />
+                    </Link>
+                    <a
+                      href={`https://cal.com/vegito?tier=${encodeURIComponent(modalPlan)}&notes=Tier%3A+${encodeURIComponent(modalPlan)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#202020] border border-dashed border-[#444] text-[#F0EFE2] text-center text-xs py-2 font-medium hover:border-[#76b900] transition-colors flex items-center justify-center gap-1"
+                    >
+                      <span>Book a Call</span>
+                      <ArrowRight size={13} />
+                    </a>
+                  </div>
                 </div>
 
                 <form onSubmit={handleSubmitApplication} className="space-y-3">
