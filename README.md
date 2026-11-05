@@ -1,7 +1,7 @@
 <div align="center">
 
 <a href="https://www.horoslab.org/">
-  <img src="./assets/horos-banner.png" alt="HOROS Lab Logo" width="400" />
+  <img src="./assets/horos-banner.png" alt="HOROS Lab Logo" width="420" />
 </a>
 
 # HOROS Lab
@@ -15,23 +15,29 @@
 [![GitHub Stars](https://img.shields.io/github/stars/Sunilkumarchavhan9/horoslab?style=for-the-badge&color=76b900&logo=github)](https://github.com/Sunilkumarchavhan9/horoslab)
 
 <p align="center">
-  <b>High-throughput model endpoints, autonomous research loops, and physical AI compute.</b><br>
-  Deploy verified inference kernels, run post-training pipelines, and simulate contact-rich humanoid robotics.
+  <b>High-throughput model endpoints, autonomous post-training loops, and physical AI compute.</b><br>
+  Deploy verified inference kernels, run autonomous research missions, and simulate contact-rich humanoid robotics.
 </p>
 
-[**Explore Website**](https://www.horoslab.org/) • [**Pricing & APIs**](https://www.horoslab.org/pricing) • [**Developer Sign Up**](https://www.horoslab.org/sign-up) • [**Book a Demo**](https://cal.com/vegito) • [**Research Dossier**](./research/PROBE-1)
+<p align="center">
+  <a href="https://www.horoslab.org/"><b>Explore Website</b></a> •
+  <a href="https://www.horoslab.org/pricing"><b>Pricing & Cohorts</b></a> •
+  <a href="https://www.horoslab.org/sign-up"><b>Sign Up</b></a> •
+  <a href="https://cal.com/vegito"><b>Book Demo</b></a> •
+  <a href="./research/PROBE-1"><b>Research Dossier</b></a>
+</p>
 
 ---
 
 </div>
 
 <p align="center">
-  <img src="./assets/developer-console.jpg" alt="HOROS Developer Console & Research Harness" width="94%" />
+  <img src="./assets/developer-console.jpg" alt="HOROS Developer Console and Research Harness" width="94%" />
 </p>
 
 ## 🌐 The HOROS Platform
 
-HOROS is an end-to-end foundation research and physical AI infrastructure platform. It bridges frontier model inference, autonomous post-training loops, and real-world contact-rich physical dynamics.
+HOROS is an end-to-end foundation research and physical AI infrastructure platform bridging frontier model inference, autonomous post-training loops, and real-world contact-rich physical dynamics.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
@@ -48,12 +54,71 @@ HOROS is an end-to-end foundation research and physical AI infrastructure platfo
 
 ---
 
+## 🔬 Track 2: Autonomous Lab Cohorts & Compute Pricing
+
+Predictable monthly plans with dedicated compute credits, autonomous post-training runners, and priority GPU cluster allocation.
+
+| Plan | Pricing | Included Compute | Capabilities & Features | Action |
+| :--- | :--- | :--- | :--- | :--- |
+| **Lab Explorer**<br>`[RESEARCH]` | **$190** / mo | **$100** compute credits | • 5 concurrent research missions<br>• LoRA & SFT task adaptation engine<br>• 15-point benchmark harness<br>• Trajectory store for 1,000 episodes | [**Apply for Explorer Cohort >**](https://cal.com/vegito?tier=explorer) |
+| **Frontier Lab Pro**<br>`[RECOMMENDED FOR LABS]` | **$690** / mo | **$450** compute credits | • Unlimited autonomous research missions<br>• Full Post-Training: SFT, DPO, GRPO & RFT<br>• Causal Experiment Engine & failure mining<br>• RL Environment Factory with rollouts<br>• Priority allocation on H100 SXM5 nodes | [**Apply for Pro Lab Cohort >**](https://cal.com/vegito?tier=pro) |
+| **Cluster Team**<br>`[SCALE]` | **$1,950** / mo | **$1,500** compute credits | • Distributed rollout & trainer worker pools<br>• Teaching-Data Admission Gate & contamination check<br>• Multi-node benchmarking & cold-start profiling<br>• Full team RBAC & workspace isolation | [**Apply for Cluster Team >**](https://cal.com/vegito?tier=cluster) |
+
+> 💡 **Developer Onboarding:** Direct signup and API token generation are available at [**horoslab.org/sign-up**](https://www.horoslab.org/sign-up). Founder architecture sessions can be booked directly via [**cal.com/vegito**](https://cal.com/vegito).
+
+---
+
+## 🤖 Track 3: Physical Intelligence & Dedicated GPU Infrastructure
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│ ■ FIRST-PARTY MODEL PROGRAMS & INDUSTRIAL COHORTS                                       │
+│                                                                                         │
+│ Physical Intelligence & Dedicated GPU Infrastructure                                    │
+│ Deploy dedicated bare-metal H100/H200 clusters with certified p-CBF safety and private   │
+│ weights for robotics, aerospace, and defense facilities.                                │
+│                                                      [ Apply for Dedicated Cohort -> ]  │
+├────────────────────────────────────────────┬────────────────────────────────────────────┤
+│ PROGRAM 01           [ HUMANOID ROBOTICS ] │ PROGRAM 02         [ AEROSPACE ENGINEERING ] │
+│                                            │                                            │
+│ HOROS PROBE-1 Tactile & Contact Policy     │ HOROS AEROPROBE-1 Fluid & CFD Surrogate    │
+│ Multifingered hand manipulation,           │ Aerodynamic pressure and velocity field    │
+│ nonstationary contact states, and          │ surrogate models with inverse parameter    │
+│ predictive Control Barrier Functions       │ estimation calibrated against wind tunnel   │
+│ (0.0% drops/crushes).                      │ and OpenFOAM data.                         │
+│                                            │                                            │
+│ • Hardware-in-the-Loop                     │ • Mach/Reynolds Inputs                     │
+│ • MuJoCo & Isaac Sim                       │ • Mesh Conditioning                        │
+│ • ROS2 Telemetry                           │ • Inverse Solvers                          │
+└────────────────────────────────────────────┴────────────────────────────────────────────┘
+```
+
+<p align="center">
+  <img src="./assets/hero-hands.png" alt="HOROS PROBE-1 Multifingered Dexterous Manipulation" width="90%" />
+</p>
+
+### 1. HOROS PROBE-1 — Research-001: Uncertainty-Aware Safe Adaptation
+- **Paper:** *Uncertainty-Aware Safe Adaptation for Multifingered Grasping* ([PDF Download](./research/PROBE-1/HOROS_PROBE-1_Research_Paper.pdf))
+- **Key Breakthrough:** First multifingered grasp controller integrating deep generative flow policies with certified Predictive Control Barrier Functions (p-CBF), achieving **0.0% crush and drop violations** under dynamic friction shifts.
+
+### 2. HOROS PROBE-1 — Research-002: Trustworthy Contact World Models
+- **Focus:** *Contact-Mode-Stratified, Planner-Selection-Aware Conformal Dynamics (CMS-PSACD)*
+- **Problem Statement:** Standard world models appear accurate on passive datasets, but optimizing planners (CEM/MPPI) systematically exploit model blindspots at contact-mode transitions (*the optimizer's curse*).
+- **Core Components:**
+  - **7-Mode Hybrid Contact Manifold:** $\Sigma \in \{\text{Free}, \text{FirstContact}, \text{Sticking}, \text{Sliding}, \text{Impact}, \text{Jamming}, \text{Release}\}$
+  - **Multi-Horizon Conformal Quantile Engine:** $\mathbf{Q} \in \mathbb{R}^{7 \times 5}$ across $H \in \{1, 3, 5, 10, 20\}$
+  - **Planner-Selection-Aware Calibration:** CAP selection correction
+  - **Active Contact-Mode Mining (ACMM):** Targeted at Coulomb cone boundaries
+  - **Independent p-CBF Runtime Safety Filter:** Zero observed safety violations
+
+---
+
 ## ⚡ Track 1: Compute & Frontier Model APIs
 
 Pay only for generated model tokens with zero idle capacity fees. All endpoints offer native OpenAI and Anthropic API compatibility, prefix caching, and session-aware routing.
 
 <p align="center">
-  <img src="./assets/horos-chip.png" alt="HOROS Compute Silicon & Kernel Optimization" width="85%" />
+  <img src="./assets/horos-chip.png" alt="HOROS Compute Silicon and Kernel Optimization" width="85%" />
 </p>
 
 ### Supported Model Endpoints
@@ -92,30 +157,6 @@ response = client.chat.completions.create(
 
 print(response.choices[0].message.content)
 ```
-
----
-
-## 🤖 Track 3: Physical AI & Humanoid Robotics
-
-HOROS houses first-party robotics foundation research programs targeted at hardware-in-the-loop manipulation, contact world modeling, and certified safety.
-
-<p align="center">
-  <img src="./assets/hero-hands.png" alt="HOROS PROBE-1 Multifingered Dexterous Manipulation" width="90%" />
-</p>
-
-### 1. HOROS PROBE-1 — Research-001: Uncertainty-Aware Safe Adaptation
-- **Paper:** *Uncertainty-Aware Safe Adaptation for Multifingered Grasping* ([PDF Download](./research/PROBE-1/HOROS_PROBE-1_Research_Paper.pdf))
-- **Key Breakthrough:** First multifingered grasp controller integrating deep generative flow policies with certified Predictive Control Barrier Functions (p-CBF), achieving **0.0% crush and drop violations** under dynamic friction shifts.
-
-### 2. HOROS PROBE-1 — Research-002: Trustworthy Contact World Models
-- **Focus:** *Contact-Mode-Stratified, Planner-Selection-Aware Conformal Dynamics (CMS-PSACD)*
-- **Problem Statement:** Standard world models appear accurate on passive datasets, but optimizing planners (CEM/MPPI) systematically exploit model blindspots at contact-mode transitions (*the optimizer's curse*).
-- **Core Components:**
-  - 7-Mode Hybrid Contact Manifold ($\Sigma \in \{\text{Free}, \text{FirstContact}, \text{Sticking}, \text{Sliding}, \text{Impact}, \text{Jamming}, \text{Release}\}$)
-  - Multi-Horizon Conformal Quantile Engine ($\mathbf{Q} \in \mathbb{R}^{7 \times 5}$ across $H \in \{1, 3, 5, 10, 20\}$)
-  - Planner-Selection-Aware Calibration (CAP selection correction)
-  - Active Contact-Mode Mining (ACMM) targeted at Coulomb cone boundaries
-  - Independent p-CBF Runtime Safety Filter
 
 ---
 
