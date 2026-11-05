@@ -31,6 +31,10 @@
 
 </div>
 
+<p align="center">
+  <img src="./assets/horos-console-hero.jpg" alt="HOROS Developer Console & Workload Optimizer" width="100%" />
+</p>
+
 ## 🌐 The HOROS Platform
 
 HOROS is an end-to-end foundation research and physical AI infrastructure platform bridging frontier model inference, autonomous post-training loops, and real-world contact-rich physical dynamics.
@@ -47,6 +51,12 @@ HOROS is an end-to-end foundation research and physical AI infrastructure platfo
 │ • Up to 90% cache discount│ • Trajectory episode stores │ • Dedicated bare-metal H100s  │
 └───────────────────────────┴─────────────────────────────┴───────────────────────────────┘
 ```
+
+### Verified Intelligence Disciplines & Model Capabilities
+
+<p align="center">
+  <img src="./assets/horos-capabilities-grid.jpg" alt="HOROS 15-Domain Capabilities & Intelligence Grid" width="100%" />
+</p>
 
 ---
 
@@ -90,8 +100,17 @@ Predictable monthly plans with dedicated compute credits, autonomous post-traini
 ```
 
 ### 1. HOROS PROBE-1 — Research-001: Uncertainty-Aware Safe Adaptation
-- **Paper:** *Uncertainty-Aware Safe Adaptation for Multifingered Grasping* ([PDF Download](./research/PROBE-1/HOROS_PROBE-1_Research_Paper.pdf))
-- **Key Breakthrough:** First multifingered grasp controller integrating deep generative flow policies with certified Predictive Control Barrier Functions (p-CBF), achieving **0.0% crush and drop violations** under dynamic friction shifts.
+
+<p align="center">
+  <img src="./assets/horos-research-probe1.jpg" alt="HOROS PROBE-1 Research Paper - arXiv 2611.05810" width="100%" />
+</p>
+
+- **Paper Title:** *HOROS PROBE-1: Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Nonstationary Contacts*
+- **Publication Identifier:** [`arXiv:2611.05810 [cs.RO, eess.SY]`](./research/PROBE-1)
+- **Author:** **Sunil Kumar Chavhan**
+- **Resources:** [📄 Read Paper (PDF)](./research/PROBE-1/HOROS_PROBE-1_Research_Paper.pdf) • [🔬 Research Dossier](./research/PROBE-1) • [💻 Experiment Code](./research/PROBE-1/Research-002)
+- **Abstract & Empirical Verification:**
+  > An uncertainty-aware physical intelligence model for multifingered humanoid hands facing nonstationary contacts. Couples linearized Hunt-Crossley dynamics with an 8-sided predictive Control Barrier Function (p-CBF) and Adaptive Conformal Inference (ACI), delivering **0.0% drops and 0.0% crush damage** across **6,200 Isaac Lab episodes**.
 
 ### 2. HOROS PROBE-1 — Research-002: Trustworthy Contact World Models
 - **Focus:** *Contact-Mode-Stratified, Planner-Selection-Aware Conformal Dynamics (CMS-PSACD)*
@@ -108,6 +127,24 @@ Predictable monthly plans with dedicated compute credits, autonomous post-traini
 ## ⚡ Track 1: Compute & Frontier Model APIs
 
 Pay only for generated model tokens with zero idle capacity fees. All endpoints offer native OpenAI and Anthropic API compatibility, prefix caching, and session-aware routing.
+
+### Intelligence Optimization & Prefix Caching
+
+> **Measured Efficiency:** Optimizing intelligence across models, compute runtimes, tools, and execution paths delivers **3.4× to 9.0× cost reduction** with sub-cent effective input pricing through deep prefix caching.
+
+<p align="center">
+  <img src="./assets/horos-intelligence-optimization.jpg" alt="HOROS Intelligence Optimization & Cache Efficiency Benchmark" width="96%" />
+</p>
+
+| Model | List Price / 1M | Effective Cached Input | Measured Cache Hit | Net Savings Factor |
+| :--- | :--- | :--- | :--- | :--- |
+| **GLM-4-9B** | $0.10 | **$0.011** | 98.9% | **9.0× cheaper** |
+| **DeepSeek-V3** | $0.10 | **$0.012** | 98.3% | **8.6× cheaper** |
+| **Physical Intelligence $\pi_0$** | $0.15 | **$0.020** | 88.5% | **7.5× cheaper** |
+| **InternVL2** | $0.10 | **$0.014** | 96.1% | **6.8× cheaper** |
+| **Llama-3.1-405B** | $0.80 | **$0.120** | 91.2% | **6.6× cheaper** |
+| **OLMo-2-13B** | $2.00 | **$0.530** | 82.4% | **3.7× cheaper** |
+| **Qwen2.5-Coder-32B** | $0.05 | **$0.015** | 87.7% | **3.4× cheaper** |
 
 ### Supported Model Endpoints
 
