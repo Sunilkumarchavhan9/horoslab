@@ -693,17 +693,18 @@ export default function PricingPage() {
         {/* TRACK 3: Physical AI & Dedicated Clusters */}
         {selectedTrack === "physical" && (
           <section className="mb-14">
-            <div className="border border-dashed border-[#76b900]/50 bg-[#151515] p-6 sm:p-7 md:p-8">
-              <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-6">
-                <div className="space-y-1.5 max-w-2xl">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-[#76b900]/10 border border-dashed border-[#76b900]/40 text-[#76b900] text-[10px] font-mono uppercase tracking-wider font-semibold">
+            <div className="border border-dashed border-[#333] bg-[#151515]">
+              {/* Top Header Row */}
+              <div className="p-6 sm:p-8 lg:p-9 border-b border-dashed border-[#333] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div className="space-y-2 max-w-3xl">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#76b900]/10 border border-dashed border-[#76b900]/40 text-[#76b900] text-[10px] font-mono uppercase tracking-wider font-semibold">
                     <span className="w-1.5 h-1.5 bg-[#76b900] animate-pulse" />
                     FIRST-PARTY MODEL PROGRAMS & INDUSTRIAL COHORTS
                   </div>
-                  <h2 className="text-2xl font-medium text-[#F0EFE2] tracking-tight">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#F0EFE2] tracking-tight">
                     Physical Intelligence & Dedicated GPU Infrastructure
                   </h2>
-                  <p className="text-xs text-[#aaa] leading-relaxed">
+                  <p className="text-xs sm:text-[13px] text-[#888] leading-relaxed">
                     Deploy dedicated bare-metal H100/H200 clusters with certified p-CBF safety and private weights for robotics, aerospace, and defense facilities.
                   </p>
                 </div>
@@ -711,46 +712,100 @@ export default function PricingPage() {
                 <button
                   type="button"
                   onClick={() => openModal("Enterprise & Physical AI Cohort")}
-                  className="w-full md:w-auto bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs sm:text-sm px-6 py-2.5 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shrink-0"
+                  className="bg-[#76b900] hover:bg-[#86dc00] text-black font-semibold text-xs py-2 sm:py-2.5 px-5 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm shrink-0 whitespace-nowrap self-start md:self-auto"
                 >
                   <span>Apply for Dedicated Cohort</span>
                   <ArrowRight size={14} strokeWidth={2.5} />
                 </button>
               </div>
 
-              {/* 2 Program Callout Cards: Clean, concise, no walls of text */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-dashed border-[#333]">
+              {/* 2 Program Columns: Spacious, de-cluttered, unified split layout */}
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#333]">
                 {/* PROBE-1 */}
-                <div className="p-5 bg-[#151515] border border-dashed border-[#333] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-[#76b900]">PROGRAM 01</span>
-                    <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-dashed border-[#333]">HUMANOID ROBOTICS</span>
+                <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-mono text-xs font-bold text-[#76b900] tracking-wider">PROGRAM 01</span>
+                      <span className="text-[10px] font-mono text-[#aaa] bg-[#202020] border border-dashed border-[#333] px-2.5 py-0.5">
+                        HUMANOID ROBOTICS
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl font-bold text-[#F0EFE2] mb-2 tracking-tight">
+                      PROBE-1 Tactile & Contact Policy
+                    </h3>
+
+                    <p className="text-xs sm:text-[13px] text-[#888] leading-relaxed mb-6">
+                      Multifingered hand manipulation, nonstationary contact states, and predictive Control Barrier Functions with guaranteed zero crush damage.
+                    </p>
+
+                    <div className="space-y-3 mb-6 text-xs sm:text-[13px] text-[#ccc]">
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>Hardware-in-the-Loop (HIL) tactile policy execution</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>MuJoCo, Isaac Sim, and Isaac Lab simulation rollouts</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>Sub-millisecond ROS2 & DDS sensor telemetry streaming</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>Certified p-CBF safety contracts (0.0% drops/crushes)</span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-semibold text-[#F0EFE2]">PROBE-1 Tactile & Contact Policy</h3>
-                  <p className="text-xs text-[#888] leading-relaxed">
-                    Multifingered hand manipulation, nonstationary contact states, and predictive Control Barrier Functions (0.0% drops/crushes).
-                  </p>
-                  <div className="flex items-center gap-2.5 text-[11px] text-[#76b900] font-mono pt-1">
-                    <span>• Hardware-in-the-Loop</span>
-                    <span>• MuJoCo & Isaac Sim</span>
-                    <span>• ROS2 Telemetry</span>
+
+                  <div className="pt-4 border-t border-dashed border-[#262626] flex items-center justify-between text-[11px] font-mono">
+                    <span className="text-[#76b900]">Certified p-CBF Safety</span>
+                    <span className="text-[#777]">Private VPC & Air-Gapped</span>
                   </div>
                 </div>
 
                 {/* AEROPROBE-1 */}
-                <div className="p-5 bg-[#151515] border border-dashed border-[#333] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-[#76b900]">PROGRAM 02</span>
-                    <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-dashed border-[#333]">AEROSPACE ENGINEERING</span>
+                <div className="p-6 sm:p-8 lg:p-9 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-mono text-xs font-bold text-[#76b900] tracking-wider">PROGRAM 02</span>
+                      <span className="text-[10px] font-mono text-[#aaa] bg-[#202020] border border-dashed border-[#333] px-2.5 py-0.5">
+                        AEROSPACE ENGINEERING
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl font-bold text-[#F0EFE2] mb-2 tracking-tight">
+                      AEROPROBE-1 Fluid & CFD Surrogate
+                    </h3>
+
+                    <p className="text-xs sm:text-[13px] text-[#888] leading-relaxed mb-6">
+                      Aerodynamic pressure and velocity field surrogate models with inverse parameter estimation calibrated against wind tunnel and OpenFOAM data.
+                    </p>
+
+                    <div className="space-y-3 mb-6 text-xs sm:text-[13px] text-[#ccc]">
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>Mach & Reynolds parametric aerodynamic field inputs</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>Automated 3D surface mesh conditioning & prefix caching</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>Real-time inverse airfoil optimization solver (&gt;200 fps)</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 leading-relaxed">
+                        <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
+                        <span>Continuous Navier-Stokes latent neural operators</span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-semibold text-[#F0EFE2]">AEROPROBE-1 Fluid & CFD Surrogate</h3>
-                  <p className="text-xs text-[#888] leading-relaxed">
-                    Aerodynamic pressure and velocity field surrogate models with inverse parameter estimation calibrated against wind tunnel and OpenFOAM data.
-                  </p>
-                  <div className="flex items-center gap-2.5 text-[11px] text-[#76b900] font-mono pt-1">
-                    <span>• Mach/Reynolds Inputs</span>
-                    <span>• Mesh Conditioning</span>
-                    <span>• Inverse Solvers</span>
+
+                  <div className="pt-4 border-t border-dashed border-[#262626] flex items-center justify-between text-[11px] font-mono">
+                    <span className="text-[#76b900]">OpenFOAM Validated</span>
+                    <span className="text-[#777]">Bare-Metal H100 / H200</span>
                   </div>
                 </div>
               </div>
