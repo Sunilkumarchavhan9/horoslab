@@ -550,34 +550,36 @@ export default function PricingPage() {
         {/* TRACK 2: Autonomous Research Lab */}
         {selectedTrack === "lab" && (
           <section className="mb-14">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {/* Explorer Tier */}
-              <div className="border border-[#262626] bg-[#151515] p-5 sm:p-6 flex flex-col justify-between hover:border-[#444] transition-colors">
+              <div className="border border-dashed border-[#333] bg-[#151515] p-6 sm:p-7 md:p-8 flex flex-col justify-between hover:border-[#555] transition-all min-h-[470px]">
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <h3 className="text-base font-semibold text-[#F0EFE2]">Lab Explorer</h3>
-                    <span className="text-[10px] font-mono text-[#76b900] bg-[#182012] border border-[#76b900]/40 px-1.5 py-0.2">RESEARCH</span>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-semibold text-[#F0EFE2] tracking-tight">Lab Explorer</h3>
+                    <span className="text-[10px] font-mono text-[#76b900] bg-[#76b900]/10 border border-dashed border-[#76b900]/40 px-2 py-0.5">
+                      RESEARCH
+                    </span>
                   </div>
-                  <div className="text-3xl font-bold text-[#F0EFE2] font-mono tracking-tight my-2">
+                  <div className="text-3xl sm:text-4xl font-bold text-[#F0EFE2] font-mono tracking-tight my-3">
                     $190 <span className="text-xs font-normal text-[#888]">/ mo</span>
                   </div>
-                  <p className="text-xs text-[#76b900] font-mono mb-4">Includes $100 compute credits</p>
+                  <p className="text-xs text-[#76b900] font-mono mb-6">Includes $100 compute credits</p>
 
-                  <div className="space-y-2 text-xs mb-6 text-[#aaa]">
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                  <div className="space-y-3.5 mb-8 text-xs sm:text-[13px] text-[#aaa]">
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>5 concurrent research missions</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>LoRA & SFT task adaptation engine</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>15-point benchmark harness</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Trajectory store for 1,000 episodes</span>
                     </div>
                   </div>
@@ -586,46 +588,48 @@ export default function PricingPage() {
                 <button
                   type="button"
                   onClick={() => openModal("Lab Explorer ($190/mo)")}
-                  className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-[#333] hover:border-[#76b900] font-semibold text-xs py-2.5 flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-dashed border-[#444] hover:border-[#76b900] font-semibold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer"
                 >
                   Apply for Explorer Cohort <ChevronRight size={14} className="ml-1" />
                 </button>
               </div>
 
-              {/* Lab Pro Tier */}
-              <div className="border border-[#76b900] bg-[#151c11] p-5 sm:p-6 flex flex-col justify-between shadow-[0_0_20px_-10px_rgba(118,185,0,0.3)] relative">
-                <div className="absolute -top-2.5 right-3 bg-[#76b900] text-black font-mono text-[9px] font-bold px-2 py-0.5 uppercase tracking-wider">
+              {/* Lab Pro Tier (Recommended) */}
+              <div className="border border-dashed border-[#76b900] bg-[#151515] p-6 sm:p-7 md:p-8 flex flex-col justify-between shadow-[0_0_25px_-10px_rgba(118,185,0,0.25)] relative min-h-[470px]">
+                <div className="absolute -top-3 right-4 bg-[#76b900] text-black font-mono text-[10px] font-bold px-2.5 py-0.5 uppercase tracking-wider">
                   RECOMMENDED FOR LABS
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <h3 className="text-base font-semibold text-[#F0EFE2]">Frontier Lab Pro</h3>
-                    <span className="text-[10px] font-mono text-[#76b900] bg-[#182012] border border-[#76b900]/40 px-1.5 py-0.2">AUTONOMOUS</span>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-semibold text-[#F0EFE2] tracking-tight">Frontier Lab Pro</h3>
+                    <span className="text-[10px] font-mono text-[#76b900] bg-[#76b900]/10 border border-dashed border-[#76b900]/40 px-2 py-0.5">
+                      AUTONOMOUS
+                    </span>
                   </div>
-                  <div className="text-3xl font-bold text-[#F0EFE2] font-mono tracking-tight my-2">
+                  <div className="text-3xl sm:text-4xl font-bold text-[#F0EFE2] font-mono tracking-tight my-3">
                     $690 <span className="text-xs font-normal text-[#888]">/ mo</span>
                   </div>
-                  <p className="text-xs text-[#76b900] font-mono mb-4">Includes $450 compute credits</p>
+                  <p className="text-xs text-[#76b900] font-mono mb-6">Includes $450 compute credits</p>
 
-                  <div className="space-y-2 text-xs mb-6 text-[#bbb]">
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                  <div className="space-y-3.5 mb-8 text-xs sm:text-[13px] text-[#ccc]">
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Unlimited autonomous research missions</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Full Post-Training: SFT, DPO, GRPO & RFT</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Causal Experiment Engine & failure mining</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>RL Environment Factory with rollouts</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Priority allocation on H100 SXM5 nodes</span>
                     </div>
                   </div>
@@ -634,39 +638,41 @@ export default function PricingPage() {
                 <button
                   type="button"
                   onClick={() => openModal("Frontier Lab Pro ($690/mo)")}
-                  className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs py-2.5 flex items-center justify-center transition-colors cursor-pointer shadow-md"
+                  className="w-full bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer shadow-sm"
                 >
                   Apply for Pro Lab Cohort <ChevronRight size={14} className="ml-1" />
                 </button>
               </div>
 
               {/* Cluster Team Tier */}
-              <div className="border border-[#262626] bg-[#151515] p-5 sm:p-6 flex flex-col justify-between hover:border-[#444] transition-colors">
+              <div className="border border-dashed border-[#333] bg-[#151515] p-6 sm:p-7 md:p-8 flex flex-col justify-between hover:border-[#555] transition-all min-h-[470px]">
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <h3 className="text-base font-semibold text-[#F0EFE2]">Cluster Team</h3>
-                    <span className="text-[10px] font-mono text-[#76b900] bg-[#182012] border border-[#76b900]/40 px-1.5 py-0.2">SCALE</span>
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-semibold text-[#F0EFE2] tracking-tight">Cluster Team</h3>
+                    <span className="text-[10px] font-mono text-[#76b900] bg-[#76b900]/10 border border-dashed border-[#76b900]/40 px-2 py-0.5">
+                      SCALE
+                    </span>
                   </div>
-                  <div className="text-3xl font-bold text-[#F0EFE2] font-mono tracking-tight my-2">
+                  <div className="text-3xl sm:text-4xl font-bold text-[#F0EFE2] font-mono tracking-tight my-3">
                     $1,950 <span className="text-xs font-normal text-[#888]">/ mo</span>
                   </div>
-                  <p className="text-xs text-[#76b900] font-mono mb-4">Includes $1,500 compute credits</p>
+                  <p className="text-xs text-[#76b900] font-mono mb-6">Includes $1,500 compute credits</p>
 
-                  <div className="space-y-2 text-xs mb-6 text-[#aaa]">
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                  <div className="space-y-3.5 mb-8 text-xs sm:text-[13px] text-[#aaa]">
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Distributed rollout & trainer worker pools</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Teaching-Data Admission Gate & contamination check</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Multi-node benchmarking & cold-start profiling</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-[#76b900] shrink-0" />
+                    <div className="flex items-start gap-2.5 leading-relaxed">
+                      <Check size={14} className="text-[#76b900] shrink-0 mt-0.5" />
                       <span>Full team RBAC & workspace isolation</span>
                     </div>
                   </div>
@@ -675,7 +681,7 @@ export default function PricingPage() {
                 <button
                   type="button"
                   onClick={() => openModal("Cluster Team ($1950/mo)")}
-                  className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-[#333] hover:border-[#76b900] font-semibold text-xs py-2.5 flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-full bg-[#1e1e1e] hover:bg-[#252525] text-[#F0EFE2] border border-dashed border-[#444] hover:border-[#76b900] font-semibold text-xs py-2 sm:py-2.5 flex items-center justify-center transition-all cursor-pointer"
                 >
                   Apply for Cluster Team <ChevronRight size={14} className="ml-1" />
                 </button>
@@ -687,10 +693,10 @@ export default function PricingPage() {
         {/* TRACK 3: Physical AI & Dedicated Clusters */}
         {selectedTrack === "physical" && (
           <section className="mb-14">
-            <div className="border border-[#76b900]/40 bg-[#141812] p-6 sm:p-7">
+            <div className="border border-dashed border-[#76b900]/50 bg-[#151515] p-6 sm:p-7 md:p-8">
               <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-6">
                 <div className="space-y-1.5 max-w-2xl">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-[#76b900]/10 border border-[#76b900]/40 text-[#76b900] text-[10px] font-mono uppercase tracking-wider font-semibold">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-[#76b900]/10 border border-dashed border-[#76b900]/40 text-[#76b900] text-[10px] font-mono uppercase tracking-wider font-semibold">
                     <span className="w-1.5 h-1.5 bg-[#76b900] animate-pulse" />
                     FIRST-PARTY MODEL PROGRAMS & INDUSTRIAL COHORTS
                   </div>
@@ -705,7 +711,7 @@ export default function PricingPage() {
                 <button
                   type="button"
                   onClick={() => openModal("Enterprise & Physical AI Cohort")}
-                  className="w-full md:w-auto bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs sm:text-sm px-6 py-3 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shrink-0"
+                  className="w-full md:w-auto bg-[#76b900] hover:bg-[#86dc00] text-black font-bold text-xs sm:text-sm px-6 py-2.5 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shrink-0"
                 >
                   <span>Apply for Dedicated Cohort</span>
                   <ArrowRight size={14} strokeWidth={2.5} />
@@ -713,12 +719,12 @@ export default function PricingPage() {
               </div>
 
               {/* 2 Program Callout Cards: Clean, concise, no walls of text */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-[#262626]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-dashed border-[#333]">
                 {/* PROBE-1 */}
-                <div className="p-4 bg-[#151515] border border-[#262626] space-y-2">
+                <div className="p-5 bg-[#151515] border border-dashed border-[#333] space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold text-[#76b900]">PROGRAM 01</span>
-                    <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-[#333]">HUMANOID ROBOTICS</span>
+                    <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-dashed border-[#333]">HUMANOID ROBOTICS</span>
                   </div>
                   <h3 className="text-sm font-semibold text-[#F0EFE2]">PROBE-1 Tactile & Contact Policy</h3>
                   <p className="text-xs text-[#888] leading-relaxed">
@@ -732,10 +738,10 @@ export default function PricingPage() {
                 </div>
 
                 {/* AEROPROBE-1 */}
-                <div className="p-4 bg-[#151515] border border-[#262626] space-y-2">
+                <div className="p-5 bg-[#151515] border border-dashed border-[#333] space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold text-[#76b900]">PROGRAM 02</span>
-                    <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-[#333]">AEROSPACE ENGINEERING</span>
+                    <span className="text-[10px] font-mono text-[#888] bg-[#1a1a1a] px-2 py-0.5 border border-dashed border-[#333]">AEROSPACE ENGINEERING</span>
                   </div>
                   <h3 className="text-sm font-semibold text-[#F0EFE2]">AEROPROBE-1 Fluid & CFD Surrogate</h3>
                   <p className="text-xs text-[#888] leading-relaxed">
