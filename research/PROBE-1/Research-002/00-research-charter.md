@@ -170,3 +170,4 @@ Proceed to a new method only if the baseline experiment demonstrates at least on
 - a safety filter reduces violations but creates an unacceptable task-success or conservatism cost.
 
 If existing methods already solve the measured problem, revise the research question rather than manufacture novelty.
+

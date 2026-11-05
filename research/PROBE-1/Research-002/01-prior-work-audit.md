@@ -216,3 +216,4 @@ Based on this exhaustive 10-paper audit, we formally delineate what is already k
 ├─ 4. Independent runtime safety filtering (p-CBF) guarding against planner exploitation
 └─ 5. Reproducible open protocol measuring the Planner Exploitation Gap (PEG) in manipulation
 ```
+

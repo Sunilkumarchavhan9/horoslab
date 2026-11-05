@@ -126,3 +126,4 @@ To protect our production environment while ensuring 100% fair baseline comparis
 1. **Zero Contamination:** The active PROBE-1 development workstation remains clean; legacy Isaac Gym dependencies are quarantined inside a dedicated Docker container.
 2. **Defensible Science:** Reviewers cannot claim that baselines were handicapped or misimplemented, because ContactWorld's original checkpoints and scripts run in their native environment.
 3. **Future-Proof Benchmark:** The native Isaac Lab 2.3 benchmark provides reproducible USD assets, accurate friction cones, and high-speed multi-GPU rollouts for the entire robotics community.
+

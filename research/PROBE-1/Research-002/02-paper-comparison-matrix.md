@@ -89,3 +89,4 @@ Candidate Action Pool A ~ N(μ, Σ)
 - Most prior works (ContactWorld, DexTacWAM, DexTouch-WM) provide **zero runtime safety filtering**. If the planner selects a destructive action (excessive insertion force causing shaft buckling or jamming), the robot executes it directly.
 - TouchWorld introduces a reactive 200 Hz tactile reflex, but this is reactive (acts *after* slip has commenced).
 - **PROBE-1 Research-002:** Deploys an **independent Predictive Control Barrier Function (p-CBF)** runtime filter downstream of the planner. The filter certifies candidate trajectories against contact force limits ($F_n \le F_{\max}$) and slip boundaries ($\|F_t\| \le \mu F_n$) before actuation, ensuring zero catastrophic failures (crushes, jams, drops) while measuring the exact conservatism cost.
+

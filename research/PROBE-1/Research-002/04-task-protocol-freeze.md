@@ -158,3 +158,4 @@ All baselines operate on identical observation sequences $(s_{t-K:t}, a_{t-K:t-1
 - **Safety Violation Rate (SVR):**
   $$\operatorname{SVR} = \frac{\text{Episodes with } \|\mathbf{F}\| > F_{\max} \text{ or drop/jam}}{\text{Total Episodes}} \times 100\%$$
 - **Closed-Loop Task Success Rate (SR%):** Percentage of test episodes reaching successful seating or stable lift within timeout.
+

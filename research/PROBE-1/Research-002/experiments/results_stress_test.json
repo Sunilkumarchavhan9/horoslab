@@ -1,0 +1,235 @@
+{
+  "timestamp": "2026-11-05T17:45:33Z",
+  "task_1_peg_in_hole": {
+    "In-Distribution": {
+      "Behavior (Passive)": {
+        "mean_realized_return": 197.64,
+        "mean_predicted_return": 169.51,
+        "planner_exploitation_gap": -28.13,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 0.496,
+        "interventions_count": 0
+      },
+      "CEM + Deterministic WM (ContactWorld)": {
+        "mean_realized_return": -24.49,
+        "mean_predicted_return": -4.5,
+        "planner_exploitation_gap": 19.99,
+        "safety_violation_rate_pct": 13.3,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.344,
+        "interventions_count": 0
+      },
+      "CEM + Uncertainty Penalty (Li et al.)": {
+        "mean_realized_return": -17.57,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 17.57,
+        "safety_violation_rate_pct": 6.7,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.852,
+        "interventions_count": 0
+      },
+      "PROBE-1 (Uncertainty CEM + p-CBF)": {
+        "mean_realized_return": -10.91,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 10.91,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.817,
+        "interventions_count": 203
+      }
+    },
+    "Physical OOD (Low Friction / Shift)": {
+      "Behavior (Passive)": {
+        "mean_realized_return": 200.9,
+        "mean_predicted_return": 173.01,
+        "planner_exploitation_gap": -27.89,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 0.52,
+        "interventions_count": 0
+      },
+      "CEM + Deterministic WM (ContactWorld)": {
+        "mean_realized_return": -21.84,
+        "mean_predicted_return": 36.92,
+        "planner_exploitation_gap": 58.76,
+        "safety_violation_rate_pct": 13.3,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.222,
+        "interventions_count": 0
+      },
+      "CEM + Uncertainty Penalty (Li et al.)": {
+        "mean_realized_return": -15.49,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 15.49,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.913,
+        "interventions_count": 0
+      },
+      "PROBE-1 (Uncertainty CEM + p-CBF)": {
+        "mean_realized_return": -10.67,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 10.67,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.837,
+        "interventions_count": 206
+      }
+    },
+    "Transition Stress (Jamming / Slip)": {
+      "Behavior (Passive)": {
+        "mean_realized_return": 200.84,
+        "mean_predicted_return": 173.02,
+        "planner_exploitation_gap": -27.82,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 0.508,
+        "interventions_count": 0
+      },
+      "CEM + Deterministic WM (ContactWorld)": {
+        "mean_realized_return": -35.91,
+        "mean_predicted_return": -7.57,
+        "planner_exploitation_gap": 28.35,
+        "safety_violation_rate_pct": 20.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.159,
+        "interventions_count": 0
+      },
+      "CEM + Uncertainty Penalty (Li et al.)": {
+        "mean_realized_return": -14.58,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 14.58,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.927,
+        "interventions_count": 0
+      },
+      "PROBE-1 (Uncertainty CEM + p-CBF)": {
+        "mean_realized_return": -11.63,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 11.63,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.887,
+        "interventions_count": 193
+      }
+    }
+  },
+  "task_2_multifinger_lift": {
+    "In-Distribution": {
+      "Behavior (Passive)": {
+        "mean_realized_return": 714.08,
+        "mean_predicted_return": 656.64,
+        "planner_exploitation_gap": -57.44,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 0.23,
+        "interventions_count": 0
+      },
+      "CEM + Deterministic WM (ContactWorld)": {
+        "mean_realized_return": -35374.37,
+        "mean_predicted_return": -254162.39,
+        "planner_exploitation_gap": -218788.02,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.489,
+        "interventions_count": 0
+      },
+      "CEM + Uncertainty Penalty (Li et al.)": {
+        "mean_realized_return": 0.0,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 0.0,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.288,
+        "interventions_count": 0
+      },
+      "PROBE-1 (Uncertainty CEM + p-CBF)": {
+        "mean_realized_return": 0.0,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 0.0,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.299,
+        "interventions_count": 0
+      }
+    },
+    "Physical OOD (Low Friction / Shift)": {
+      "Behavior (Passive)": {
+        "mean_realized_return": 329.07,
+        "mean_predicted_return": 283.47,
+        "planner_exploitation_gap": -45.6,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 0.226,
+        "interventions_count": 0
+      },
+      "CEM + Deterministic WM (ContactWorld)": {
+        "mean_realized_return": -164857.31,
+        "mean_predicted_return": -1217672.24,
+        "planner_exploitation_gap": -1052814.93,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.639,
+        "interventions_count": 0
+      },
+      "CEM + Uncertainty Penalty (Li et al.)": {
+        "mean_realized_return": 0.0,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 0.0,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.293,
+        "interventions_count": 0
+      },
+      "PROBE-1 (Uncertainty CEM + p-CBF)": {
+        "mean_realized_return": 0.0,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 0.0,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.29,
+        "interventions_count": 0
+      }
+    },
+    "Transition Stress (Jamming / Slip)": {
+      "Behavior (Passive)": {
+        "mean_realized_return": 719.98,
+        "mean_predicted_return": 662.38,
+        "planner_exploitation_gap": -57.6,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 0.23,
+        "interventions_count": 0
+      },
+      "CEM + Deterministic WM (ContactWorld)": {
+        "mean_realized_return": -35011.95,
+        "mean_predicted_return": -251878.55,
+        "planner_exploitation_gap": -216866.6,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.422,
+        "interventions_count": 0
+      },
+      "CEM + Uncertainty Penalty (Li et al.)": {
+        "mean_realized_return": 0.0,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 0.0,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.289,
+        "interventions_count": 0
+      },
+      "PROBE-1 (Uncertainty CEM + p-CBF)": {
+        "mean_realized_return": 0.0,
+        "mean_predicted_return": 0.0,
+        "planner_exploitation_gap": 0.0,
+        "safety_violation_rate_pct": 0.0,
+        "success_rate_pct": 0.0,
+        "mean_state_rmse": 1.284,
+        "interventions_count": 0
+      }
+    }
+  }
+}
