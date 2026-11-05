@@ -73,3 +73,4 @@ The PROBE-1 framework achieved **$0.0\%$ safety violations across all 90 evaluat
 - In Task 1, the p-CBF filter intervened **203 times (ID)**, **206 times (OOD)**, and **193 times (Transition Stress)**.
 - When CEM commanded aggressive downward steps during wedging, the barrier function $h(x) = F_{\max} - \|F_{\text{wrench}}\|$ projected the Cartesian impedance command onto the certified safe hyperplane, preventing physical jamming and shaft buckling.
 - This proves that **runtime safety assurance must be decoupled from the learned world model**.
+

@@ -67,3 +67,4 @@ The baseline stress test has established the existence of a reproducible, high-i
 2. Formulate **Active Contact Mode Mining (ACMM)**: an offline active learning algorithm that oversamples transitions near the Coulomb friction boundary and critical wedging angle.
 3. Integrate the validated **Predictive Control Barrier Function (p-CBF)** runtime assurance layer into the official HOROS PROBE-1 manipulation library.
 4. Scale up the evaluation on full Isaac Lab 2.3 GPU environments for paper preparation.
+
