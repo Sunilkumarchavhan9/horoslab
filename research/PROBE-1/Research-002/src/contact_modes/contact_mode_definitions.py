@@ -21,6 +21,8 @@ class ContactMode(IntEnum):
     RELEASE = 6         # Detachment / separation breaking contact
 
 
+NUM_MODES = 7
+
 MODE_NAMES = {
     ContactMode.FREE: "Free",
     ContactMode.FIRST_CONTACT: "FirstContact",

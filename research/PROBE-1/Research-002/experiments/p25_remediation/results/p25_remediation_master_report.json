@@ -1,0 +1,1290 @@
+{
+  "program": "HOROS PROBE-1 \u2014 Humanoid Robotics & Physical AI",
+  "project": "Research-002: Trustworthy Action-Conditioned Contact World Models",
+  "stage": "P2.5 Remediation: Integrated Manipulation & Safety Coordination",
+  "total_runtime_seconds": 441.04,
+  "task1_peg_in_hole_remediation": {
+    "M0_passive": {
+      "corrupted_baseline_H25": {
+        "model": "M0_passive",
+        "reward_config": "corrupted_baseline",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 0.0,
+        "insertion_depth_max_mm": 0.0,
+        "jammed_count": 0
+      },
+      "corrupted_baseline_H40": {
+        "model": "M0_passive",
+        "reward_config": "corrupted_baseline",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 0.0,
+        "insertion_depth_max_mm": 0.0,
+        "jammed_count": 0
+      },
+      "corrected_linear_H25": {
+        "model": "M0_passive",
+        "reward_config": "corrected_linear",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 1.29,
+        "insertion_depth_max_mm": 4.72,
+        "jammed_count": 0
+      },
+      "corrected_linear_H40": {
+        "model": "M0_passive",
+        "reward_config": "corrected_linear",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 5.02,
+        "insertion_depth_max_mm": 8.04,
+        "jammed_count": 0
+      },
+      "seating_guided_H25": {
+        "model": "M0_passive",
+        "reward_config": "seating_guided",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 0.88,
+        "insertion_depth_max_mm": 3.8,
+        "jammed_count": 0
+      },
+      "seating_guided_H40": {
+        "model": "M0_passive",
+        "reward_config": "seating_guided",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 4.76,
+        "insertion_depth_max_mm": 6.89,
+        "jammed_count": 0
+      }
+    },
+    "M2_boundary": {
+      "corrupted_baseline_H25": {
+        "model": "M2_boundary",
+        "reward_config": "corrupted_baseline",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 0.01,
+        "insertion_depth_max_mm": 0.3,
+        "jammed_count": 0
+      },
+      "corrupted_baseline_H40": {
+        "model": "M2_boundary",
+        "reward_config": "corrupted_baseline",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 0.12,
+        "insertion_depth_max_mm": 1.08,
+        "jammed_count": 0
+      },
+      "corrected_linear_H25": {
+        "model": "M2_boundary",
+        "reward_config": "corrected_linear",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 1.1,
+        "insertion_depth_max_mm": 4.99,
+        "jammed_count": 0
+      },
+      "corrected_linear_H40": {
+        "model": "M2_boundary",
+        "reward_config": "corrected_linear",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 3.54,
+        "insertion_depth_max_mm": 6.28,
+        "jammed_count": 1
+      },
+      "seating_guided_H25": {
+        "model": "M2_boundary",
+        "reward_config": "seating_guided",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 1.48,
+        "insertion_depth_max_mm": 5.1,
+        "jammed_count": 0
+      },
+      "seating_guided_H40": {
+        "model": "M2_boundary",
+        "reward_config": "seating_guided",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 3.23,
+        "insertion_depth_max_mm": 6.64,
+        "jammed_count": 2
+      }
+    },
+    "M4_acmm": {
+      "corrupted_baseline_H25": {
+        "model": "M4_acmm",
+        "reward_config": "corrupted_baseline",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 0.03,
+        "insertion_depth_max_mm": 0.59,
+        "jammed_count": 0
+      },
+      "corrupted_baseline_H40": {
+        "model": "M4_acmm",
+        "reward_config": "corrupted_baseline",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 0.18,
+        "insertion_depth_max_mm": 2.59,
+        "jammed_count": 0
+      },
+      "corrected_linear_H25": {
+        "model": "M4_acmm",
+        "reward_config": "corrected_linear",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 1.49,
+        "insertion_depth_max_mm": 4.97,
+        "jammed_count": 0
+      },
+      "corrected_linear_H40": {
+        "model": "M4_acmm",
+        "reward_config": "corrected_linear",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 4.52,
+        "insertion_depth_max_mm": 7.22,
+        "jammed_count": 3
+      },
+      "seating_guided_H25": {
+        "model": "M4_acmm",
+        "reward_config": "seating_guided",
+        "horizon_steps": 25,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 1.57,
+        "insertion_depth_max_mm": 4.75,
+        "jammed_count": 0
+      },
+      "seating_guided_H40": {
+        "model": "M4_acmm",
+        "reward_config": "seating_guided",
+        "horizon_steps": 40,
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "insertion_depth_mean_mm": 3.83,
+        "insertion_depth_max_mm": 7.13,
+        "jammed_count": 0
+      }
+    }
+  },
+  "task2_multifinger_lift_remediation": {
+    "M0_passive": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M0_passive",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M0_passive",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C3_tuned": {
+        "configuration": "C3_tuned",
+        "model": "M0_passive",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C4_recovery": {
+        "configuration": "C4_recovery",
+        "model": "M0_passive",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 14,
+          "total": 750,
+          "rate": 0.0187,
+          "formatted": "14/750 (1.87%)",
+          "ci_95": [
+            1.12,
+            3.11
+          ]
+        },
+        "mean_consecutive_interventions": 0.4,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      }
+    },
+    "M1_random": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M1_random",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 26,
+          "total": 30,
+          "rate": 0.8667,
+          "formatted": "26/30 (86.67%)",
+          "ci_95": [
+            70.32,
+            94.69
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0009,
+        "max_lift_height_m": 0.0257
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M1_random",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 19,
+          "total": 750,
+          "rate": 0.0253,
+          "formatted": "19/750 (2.53%)",
+          "ci_95": [
+            1.63,
+            3.92
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C3_tuned": {
+        "configuration": "C3_tuned",
+        "model": "M1_random",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 22,
+          "total": 750,
+          "rate": 0.0293,
+          "formatted": "22/750 (2.93%)",
+          "ci_95": [
+            1.94,
+            4.4
+          ]
+        },
+        "mean_consecutive_interventions": 0.6,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C4_recovery": {
+        "configuration": "C4_recovery",
+        "model": "M1_random",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 42,
+          "total": 750,
+          "rate": 0.056,
+          "formatted": "42/750 (5.6%)",
+          "ci_95": [
+            4.17,
+            7.48
+          ]
+        },
+        "mean_consecutive_interventions": 0.8,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      }
+    },
+    "M2_boundary": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M2_boundary",
+        "task_success": {
+          "count": 5,
+          "total": 30,
+          "rate": 0.1667,
+          "formatted": "5/30 (16.67%)",
+          "ci_95": [
+            7.34,
+            33.56
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 4,
+          "total": 30,
+          "rate": 0.1333,
+          "formatted": "4/30 (13.33%)",
+          "ci_95": [
+            5.31,
+            29.68
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 3.1664,
+        "max_lift_height_m": 7.803
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M2_boundary",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 25,
+          "total": 30,
+          "rate": 0.8333,
+          "formatted": "25/30 (83.33%)",
+          "ci_95": [
+            66.44,
+            92.66
+          ]
+        },
+        "interventions": {
+          "count": 306,
+          "total": 750,
+          "rate": 0.408,
+          "formatted": "306/750 (40.8%)",
+          "ci_95": [
+            37.34,
+            44.36
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0414,
+        "max_lift_height_m": 0.8555
+      },
+      "C3_tuned": {
+        "configuration": "C3_tuned",
+        "model": "M2_boundary",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 27,
+          "total": 30,
+          "rate": 0.9,
+          "formatted": "27/30 (90.0%)",
+          "ci_95": [
+            74.38,
+            96.54
+          ]
+        },
+        "interventions": {
+          "count": 359,
+          "total": 750,
+          "rate": 0.4787,
+          "formatted": "359/750 (47.87%)",
+          "ci_95": [
+            44.31,
+            51.44
+          ]
+        },
+        "mean_consecutive_interventions": 9.6,
+        "mean_lift_height_m": 0.1186,
+        "max_lift_height_m": 2.1347
+      },
+      "C4_recovery": {
+        "configuration": "C4_recovery",
+        "model": "M2_boundary",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 29,
+          "total": 30,
+          "rate": 0.9667,
+          "formatted": "29/30 (96.67%)",
+          "ci_95": [
+            83.33,
+            99.41
+          ]
+        },
+        "interventions": {
+          "count": 364,
+          "total": 750,
+          "rate": 0.4853,
+          "formatted": "364/750 (48.53%)",
+          "ci_95": [
+            44.97,
+            52.11
+          ]
+        },
+        "mean_consecutive_interventions": 7.8,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      }
+    },
+    "M3_uncertainty": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M3_uncertainty",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 29,
+          "total": 30,
+          "rate": 0.9667,
+          "formatted": "29/30 (96.67%)",
+          "ci_95": [
+            83.33,
+            99.41
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0929,
+        "max_lift_height_m": 2.7874
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M3_uncertainty",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 47,
+          "total": 750,
+          "rate": 0.0627,
+          "formatted": "47/750 (6.27%)",
+          "ci_95": [
+            4.75,
+            8.23
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C3_tuned": {
+        "configuration": "C3_tuned",
+        "model": "M3_uncertainty",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C4_recovery": {
+        "configuration": "C4_recovery",
+        "model": "M3_uncertainty",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 7,
+          "total": 750,
+          "rate": 0.0093,
+          "formatted": "7/750 (0.93%)",
+          "ci_95": [
+            0.45,
+            1.91
+          ]
+        },
+        "mean_consecutive_interventions": 0.2,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      }
+    },
+    "M4_acmm": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M4_acmm",
+        "task_success": {
+          "count": 6,
+          "total": 30,
+          "rate": 0.2,
+          "formatted": "6/30 (20.0%)",
+          "ci_95": [
+            9.51,
+            37.31
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 1,
+          "total": 30,
+          "rate": 0.0333,
+          "formatted": "1/30 (3.33%)",
+          "ci_95": [
+            0.59,
+            16.67
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 3.5209,
+        "max_lift_height_m": 8.8196
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M4_acmm",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 328,
+          "total": 750,
+          "rate": 0.4373,
+          "formatted": "328/750 (43.73%)",
+          "ci_95": [
+            40.22,
+            47.31
+          ]
+        },
+        "mean_consecutive_interventions": 0.0,
+        "mean_lift_height_m": 0.0,
+        "max_lift_height_m": 0.0
+      },
+      "C3_tuned": {
+        "configuration": "C3_tuned",
+        "model": "M4_acmm",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 29,
+          "total": 30,
+          "rate": 0.9667,
+          "formatted": "29/30 (96.67%)",
+          "ci_95": [
+            83.33,
+            99.41
+          ]
+        },
+        "interventions": {
+          "count": 361,
+          "total": 750,
+          "rate": 0.4813,
+          "formatted": "361/750 (48.13%)",
+          "ci_95": [
+            44.58,
+            51.71
+          ]
+        },
+        "mean_consecutive_interventions": 8.7,
+        "mean_lift_height_m": 0.0104,
+        "max_lift_height_m": 0.3127
+      },
+      "C4_recovery": {
+        "configuration": "C4_recovery",
+        "model": "M4_acmm",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 29,
+          "total": 30,
+          "rate": 0.9667,
+          "formatted": "29/30 (96.67%)",
+          "ci_95": [
+            83.33,
+            99.41
+          ]
+        },
+        "interventions": {
+          "count": 332,
+          "total": 750,
+          "rate": 0.4427,
+          "formatted": "332/750 (44.27%)",
+          "ci_95": [
+            40.75,
+            47.84
+          ]
+        },
+        "mean_consecutive_interventions": 7.8,
+        "mean_lift_height_m": 0.0188,
+        "max_lift_height_m": 0.5641
+      }
+    }
+  }
+}
