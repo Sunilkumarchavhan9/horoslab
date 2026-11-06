@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-06T01:14:04Z",
+  "timestamp": "2026-11-06T13:23:06Z",
   "program": "HOROS PROBE-1, Research-002",
   "stage": "P2.3",
   "method": "Planner-Selection-Aware Conformal Dynamics (Target A & B) + CAP Comparator",
@@ -96,12 +96,41 @@
             100.0
           ]
         }
+      },
+      "prediction_intervals": {
+        "q_state": 758.5997,
+        "q_wrench": 147.3152,
+        "q_mode": 0.9836,
+        "state_interval_width": 1517.1993,
+        "wrench_interval_width": 294.6304
       }
     },
     "condition_2_planner_matched_target_a": {
       "description": "Planner-matched Target A selected open-loop plan calibration (Primary)",
       "marginal_coverage": {
         "state": {
+          "count": 25,
+          "total": 30,
+          "rate": 0.8333,
+          "percentage_str": "25/30 (83.33%)",
+          "formatted": "25/30 (83.33%)",
+          "ci_95": [
+            66.44,
+            92.66
+          ]
+        },
+        "wrench": {
+          "count": 26,
+          "total": 30,
+          "rate": 0.8667,
+          "percentage_str": "26/30 (86.67%)",
+          "formatted": "26/30 (86.67%)",
+          "ci_95": [
+            70.32,
+            94.69
+          ]
+        },
+        "mode": {
           "count": 30,
           "total": 30,
           "rate": 1.0,
@@ -110,6 +139,19 @@
           "ci_95": [
             88.65,
             100.0
+          ]
+        }
+      },
+      "joint_coverage": {
+        "state": {
+          "count": 28,
+          "total": 30,
+          "rate": 0.9333,
+          "percentage_str": "28/30 (93.33%)",
+          "formatted": "28/30 (93.33%)",
+          "ci_95": [
+            78.68,
+            98.15
           ]
         },
         "wrench": {
@@ -133,53 +175,25 @@
             88.65,
             100.0
           ]
-        }
-      },
-      "joint_coverage": {
-        "state": {
-          "count": 30,
-          "total": 30,
-          "rate": 1.0,
-          "percentage_str": "30/30 (100.0%)",
-          "formatted": "30/30 (100.0%)",
-          "ci_95": [
-            88.65,
-            100.0
-          ]
-        },
-        "wrench": {
-          "count": 30,
-          "total": 30,
-          "rate": 1.0,
-          "percentage_str": "30/30 (100.0%)",
-          "formatted": "30/30 (100.0%)",
-          "ci_95": [
-            88.65,
-            100.0
-          ]
-        },
-        "mode": {
-          "count": 30,
-          "total": 30,
-          "rate": 1.0,
-          "percentage_str": "30/30 (100.0%)",
-          "formatted": "30/30 (100.0%)",
-          "ci_95": [
-            88.65,
-            100.0
-          ]
         },
         "joint_simultaneous": {
-          "count": 30,
+          "count": 27,
           "total": 30,
-          "rate": 1.0,
-          "percentage_str": "30/30 (100.0%)",
-          "formatted": "30/30 (100.0%)",
+          "rate": 0.9,
+          "percentage_str": "27/30 (90.0%)",
+          "formatted": "27/30 (90.0%)",
           "ci_95": [
-            88.65,
-            100.0
+            74.38,
+            96.54
           ]
         }
+      },
+      "prediction_intervals": {
+        "q_state": 9.8458,
+        "q_wrench": 8.0413,
+        "q_mode": 0.9829,
+        "state_interval_width": 19.6916,
+        "wrench_interval_width": 16.0826
       },
       "pointwise_horizon": {
         "1": {
@@ -293,25 +307,25 @@
         "10": {
           "total_decisions": 300,
           "state": {
-            "count": 300,
+            "count": 294,
             "total": 300,
-            "rate": 1.0,
-            "percentage_str": "300/300 (100.0%)",
-            "formatted": "300/300 (100.0%)",
+            "rate": 0.98,
+            "percentage_str": "294/300 (98.0%)",
+            "formatted": "294/300 (98.0%)",
             "ci_95": [
-              98.74,
-              100.0
+              95.71,
+              99.08
             ]
           },
           "wrench": {
-            "count": 296,
+            "count": 294,
             "total": 300,
-            "rate": 0.9867,
-            "percentage_str": "296/300 (98.67%)",
-            "formatted": "296/300 (98.67%)",
+            "rate": 0.98,
+            "percentage_str": "294/300 (98.0%)",
+            "formatted": "294/300 (98.0%)",
             "ci_95": [
-              96.62,
-              99.48
+              95.71,
+              99.08
             ]
           },
           "mode": {
@@ -325,6 +339,10 @@
               100.0
             ]
           }
+        },
+        "20": {
+          "status": "Omitted from open-loop evaluation",
+          "reason": "Horizon H=20 exceeds CEM planning horizon (H_plan=10); open-loop plan sequences terminate at step 10."
         }
       }
     },
@@ -332,60 +350,60 @@
       "description": "Target B closed-loop receding-horizon replanned policy future",
       "marginal_coverage": {
         "state": {
-          "count": 24,
+          "count": 27,
           "total": 30,
-          "rate": 0.8,
-          "percentage_str": "24/30 (80.0%)",
-          "formatted": "24/30 (80.0%)",
+          "rate": 0.9,
+          "percentage_str": "27/30 (90.0%)",
+          "formatted": "27/30 (90.0%)",
           "ci_95": [
-            62.69,
-            90.49
+            74.38,
+            96.54
           ]
         },
         "wrench": {
-          "count": 27,
+          "count": 25,
           "total": 30,
-          "rate": 0.9,
-          "percentage_str": "27/30 (90.0%)",
-          "formatted": "27/30 (90.0%)",
+          "rate": 0.8333,
+          "percentage_str": "25/30 (83.33%)",
+          "formatted": "25/30 (83.33%)",
           "ci_95": [
-            74.38,
-            96.54
+            66.44,
+            92.66
           ]
         },
         "mode": {
-          "count": 27,
+          "count": 29,
           "total": 30,
-          "rate": 0.9,
-          "percentage_str": "27/30 (90.0%)",
-          "formatted": "27/30 (90.0%)",
+          "rate": 0.9667,
+          "percentage_str": "29/30 (96.67%)",
+          "formatted": "29/30 (96.67%)",
           "ci_95": [
-            74.38,
-            96.54
+            83.33,
+            99.41
           ]
         }
       },
       "joint_coverage": {
         "state": {
-          "count": 29,
+          "count": 30,
           "total": 30,
-          "rate": 0.9667,
-          "percentage_str": "29/30 (96.67%)",
-          "formatted": "29/30 (96.67%)",
+          "rate": 1.0,
+          "percentage_str": "30/30 (100.0%)",
+          "formatted": "30/30 (100.0%)",
           "ci_95": [
-            83.33,
-            99.41
+            88.65,
+            100.0
           ]
         },
         "wrench": {
-          "count": 29,
+          "count": 30,
           "total": 30,
-          "rate": 0.9667,
-          "percentage_str": "29/30 (96.67%)",
-          "formatted": "29/30 (96.67%)",
+          "rate": 1.0,
+          "percentage_str": "30/30 (100.0%)",
+          "formatted": "30/30 (100.0%)",
           "ci_95": [
-            83.33,
-            99.41
+            88.65,
+            100.0
           ]
         },
         "mode": {
@@ -400,34 +418,41 @@
           ]
         },
         "joint_simultaneous": {
-          "count": 28,
+          "count": 30,
           "total": 30,
-          "rate": 0.9333,
-          "percentage_str": "28/30 (93.33%)",
-          "formatted": "28/30 (93.33%)",
+          "rate": 1.0,
+          "percentage_str": "30/30 (100.0%)",
+          "formatted": "30/30 (100.0%)",
           "ci_95": [
-            78.68,
-            98.15
+            88.65,
+            100.0
           ]
         }
+      },
+      "prediction_intervals": {
+        "q_state": 10.397,
+        "q_wrench": 8.0413,
+        "q_mode": 0.9829,
+        "state_interval_width": 20.7941,
+        "wrench_interval_width": 16.0826
       }
     },
     "condition_4_cap_online_comparator": {
       "description": "CAP online selective prediction controlling FCR",
-      "selection_optimism_threshold": 1.6381,
+      "selection_optimism_threshold": 1.6761,
       "total_decisions": 300,
-      "selected_decisions": 180,
+      "selected_decisions": 150,
       "unadjusted_baseline": {
         "miscoverages": 0,
         "empirical_fcr": 0.0,
         "fcr_controlled": true,
-        "ratio": "0/180 (0.0% error)"
+        "ratio": "0/150 (0.0% error)"
       },
       "cap_adjusted": {
-        "miscoverages": 7,
-        "empirical_fcr": 0.0389,
+        "miscoverages": 3,
+        "empirical_fcr": 0.02,
         "fcr_controlled": true,
-        "ratio": "7/180 (3.89% miscoverage)"
+        "ratio": "3/150 (2.0% miscoverage)"
       }
     },
     "condition_5_optimism_terciles": {
@@ -493,7 +518,25 @@
           11.35
         ]
       },
-      "mean_pure_peg": 128.6
+      "mean_pure_peg": 132.636,
+      "median_pure_peg": 136.048,
+      "goal_progress": {
+        "metric_name": "insertion_depth_mm",
+        "mean_progress": 0.0,
+        "target_threshold": 50.0,
+        "explanation": "Peg insertion requires -z >= 50mm (net downward travel >= 65mm from z=+15mm). Max travel in 10 steps is 50mm, reaching max z = -35mm. Truncation at step 10 prevents full seating."
+      },
+      "mean_action_magnitude": 1.417,
+      "p_cbf_interventions": {
+        "count": 0,
+        "total": 30,
+        "rate": 0.0,
+        "formatted": "0/30 (0.0%)",
+        "ci_95": [
+          0.0,
+          11.35
+        ]
+      }
     }
   },
   "task_2_multifinger_lift": {
@@ -506,14 +549,14 @@
       "description": "Passive/behavior calibration evaluated on planner-selected actions",
       "marginal_coverage": {
         "state": {
-          "count": 7,
+          "count": 10,
           "total": 30,
-          "rate": 0.2333,
-          "percentage_str": "7/30 (23.33%)",
-          "formatted": "7/30 (23.33%)",
+          "rate": 0.3333,
+          "percentage_str": "10/30 (33.33%)",
+          "formatted": "10/30 (33.33%)",
           "ci_95": [
-            11.79,
-            40.93
+            19.23,
+            51.22
           ]
         },
         "wrench": {
@@ -528,27 +571,27 @@
           ]
         },
         "mode": {
-          "count": 18,
+          "count": 15,
           "total": 30,
-          "rate": 0.6,
-          "percentage_str": "18/30 (60.0%)",
-          "formatted": "18/30 (60.0%)",
+          "rate": 0.5,
+          "percentage_str": "15/30 (50.0%)",
+          "formatted": "15/30 (50.0%)",
           "ci_95": [
-            42.32,
-            75.41
+            33.15,
+            66.85
           ]
         }
       },
       "joint_coverage": {
         "state": {
-          "count": 17,
+          "count": 10,
           "total": 30,
-          "rate": 0.5667,
-          "percentage_str": "17/30 (56.67%)",
-          "formatted": "17/30 (56.67%)",
+          "rate": 0.3333,
+          "percentage_str": "10/30 (33.33%)",
+          "formatted": "10/30 (33.33%)",
           "ci_95": [
-            39.2,
-            72.62
+            19.23,
+            51.22
           ]
         },
         "wrench": {
@@ -563,6 +606,40 @@
           ]
         },
         "mode": {
+          "count": 29,
+          "total": 30,
+          "rate": 0.9667,
+          "percentage_str": "29/30 (96.67%)",
+          "formatted": "29/30 (96.67%)",
+          "ci_95": [
+            83.33,
+            99.41
+          ]
+        },
+        "joint_simultaneous": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "percentage_str": "0/30 (0.0%)",
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        }
+      },
+      "prediction_intervals": {
+        "q_state": 166.0018,
+        "q_wrench": 6.3868,
+        "q_mode": 0.984,
+        "state_interval_width": 332.0037,
+        "wrench_interval_width": 12.7735
+      }
+    },
+    "condition_2_planner_matched_target_a": {
+      "description": "Planner-matched Target A selected open-loop plan calibration (Primary)",
+      "marginal_coverage": {
+        "state": {
           "count": 24,
           "total": 30,
           "rate": 0.8,
@@ -573,66 +650,39 @@
             90.49
           ]
         },
-        "joint_simultaneous": {
-          "count": 0,
-          "total": 30,
-          "rate": 0.0,
-          "percentage_str": "0/30 (0.0%)",
-          "formatted": "0/30 (0.0%)",
-          "ci_95": [
-            0.0,
-            11.35
-          ]
-        }
-      }
-    },
-    "condition_2_planner_matched_target_a": {
-      "description": "Planner-matched Target A selected open-loop plan calibration (Primary)",
-      "marginal_coverage": {
-        "state": {
-          "count": 23,
-          "total": 30,
-          "rate": 0.7667,
-          "percentage_str": "23/30 (76.67%)",
-          "formatted": "23/30 (76.67%)",
-          "ci_95": [
-            59.07,
-            88.21
-          ]
-        },
         "wrench": {
-          "count": 29,
+          "count": 27,
           "total": 30,
-          "rate": 0.9667,
-          "percentage_str": "29/30 (96.67%)",
-          "formatted": "29/30 (96.67%)",
+          "rate": 0.9,
+          "percentage_str": "27/30 (90.0%)",
+          "formatted": "27/30 (90.0%)",
           "ci_95": [
-            83.33,
-            99.41
+            74.38,
+            96.54
           ]
         },
         "mode": {
-          "count": 29,
+          "count": 27,
           "total": 30,
-          "rate": 0.9667,
-          "percentage_str": "29/30 (96.67%)",
-          "formatted": "29/30 (96.67%)",
+          "rate": 0.9,
+          "percentage_str": "27/30 (90.0%)",
+          "formatted": "27/30 (90.0%)",
           "ci_95": [
-            83.33,
-            99.41
+            74.38,
+            96.54
           ]
         }
       },
       "joint_coverage": {
         "state": {
-          "count": 29,
+          "count": 28,
           "total": 30,
-          "rate": 0.9667,
-          "percentage_str": "29/30 (96.67%)",
-          "formatted": "29/30 (96.67%)",
+          "rate": 0.9333,
+          "percentage_str": "28/30 (93.33%)",
+          "formatted": "28/30 (93.33%)",
           "ci_95": [
-            83.33,
-            99.41
+            78.68,
+            98.15
           ]
         },
         "wrench": {
@@ -658,51 +708,58 @@
           ]
         },
         "joint_simultaneous": {
-          "count": 29,
+          "count": 28,
           "total": 30,
-          "rate": 0.9667,
-          "percentage_str": "29/30 (96.67%)",
-          "formatted": "29/30 (96.67%)",
+          "rate": 0.9333,
+          "percentage_str": "28/30 (93.33%)",
+          "formatted": "28/30 (93.33%)",
           "ci_95": [
-            83.33,
-            99.41
+            78.68,
+            98.15
           ]
         }
+      },
+      "prediction_intervals": {
+        "q_state": 170.5022,
+        "q_wrench": 47.1748,
+        "q_mode": 0.9884,
+        "state_interval_width": 341.0044,
+        "wrench_interval_width": 94.3497
       },
       "pointwise_horizon": {
         "1": {
           "total_decisions": 300,
           "state": {
-            "count": 293,
+            "count": 294,
             "total": 300,
-            "rate": 0.9767,
-            "percentage_str": "293/300 (97.67%)",
-            "formatted": "293/300 (97.67%)",
+            "rate": 0.98,
+            "percentage_str": "294/300 (98.0%)",
+            "formatted": "294/300 (98.0%)",
             "ci_95": [
-              95.26,
-              98.87
+              95.71,
+              99.08
             ]
           },
           "wrench": {
-            "count": 300,
+            "count": 299,
             "total": 300,
-            "rate": 1.0,
-            "percentage_str": "300/300 (100.0%)",
-            "formatted": "300/300 (100.0%)",
+            "rate": 0.9967,
+            "percentage_str": "299/300 (99.67%)",
+            "formatted": "299/300 (99.67%)",
             "ci_95": [
-              98.74,
-              100.0
+              98.14,
+              99.94
             ]
           },
           "mode": {
-            "count": 300,
+            "count": 299,
             "total": 300,
-            "rate": 1.0,
-            "percentage_str": "300/300 (100.0%)",
-            "formatted": "300/300 (100.0%)",
+            "rate": 0.9967,
+            "percentage_str": "299/300 (99.67%)",
+            "formatted": "299/300 (99.67%)",
             "ci_95": [
-              98.74,
-              100.0
+              98.14,
+              99.94
             ]
           }
         },
@@ -720,14 +777,14 @@
             ]
           },
           "wrench": {
-            "count": 300,
+            "count": 299,
             "total": 300,
-            "rate": 1.0,
-            "percentage_str": "300/300 (100.0%)",
-            "formatted": "300/300 (100.0%)",
+            "rate": 0.9967,
+            "percentage_str": "299/300 (99.67%)",
+            "formatted": "299/300 (99.67%)",
             "ci_95": [
-              98.74,
-              100.0
+              98.14,
+              99.94
             ]
           },
           "mode": {
@@ -756,17 +813,6 @@
             ]
           },
           "wrench": {
-            "count": 300,
-            "total": 300,
-            "rate": 1.0,
-            "percentage_str": "300/300 (100.0%)",
-            "formatted": "300/300 (100.0%)",
-            "ci_95": [
-              98.74,
-              100.0
-            ]
-          },
-          "mode": {
             "count": 299,
             "total": 300,
             "rate": 0.9967,
@@ -775,6 +821,17 @@
             "ci_95": [
               98.14,
               99.94
+            ]
+          },
+          "mode": {
+            "count": 300,
+            "total": 300,
+            "rate": 1.0,
+            "percentage_str": "300/300 (100.0%)",
+            "formatted": "300/300 (100.0%)",
+            "ci_95": [
+              98.74,
+              100.0
             ]
           }
         },
@@ -792,14 +849,14 @@
             ]
           },
           "wrench": {
-            "count": 299,
+            "count": 297,
             "total": 300,
-            "rate": 0.9967,
-            "percentage_str": "299/300 (99.67%)",
-            "formatted": "299/300 (99.67%)",
+            "rate": 0.99,
+            "percentage_str": "297/300 (99.0%)",
+            "formatted": "297/300 (99.0%)",
             "ci_95": [
-              98.14,
-              99.94
+              97.1,
+              99.66
             ]
           },
           "mode": {
@@ -813,6 +870,10 @@
               100.0
             ]
           }
+        },
+        "20": {
+          "status": "Omitted from open-loop evaluation",
+          "reason": "Horizon H=20 exceeds CEM planning horizon (H_plan=10); open-loop plan sequences terminate at step 10."
         }
       }
     },
@@ -820,14 +881,14 @@
       "description": "Target B closed-loop receding-horizon replanned policy future",
       "marginal_coverage": {
         "state": {
-          "count": 24,
+          "count": 28,
           "total": 30,
-          "rate": 0.8,
-          "percentage_str": "24/30 (80.0%)",
-          "formatted": "24/30 (80.0%)",
+          "rate": 0.9333,
+          "percentage_str": "28/30 (93.33%)",
+          "formatted": "28/30 (93.33%)",
           "ci_95": [
-            62.69,
-            90.49
+            78.68,
+            98.15
           ]
         },
         "wrench": {
@@ -855,14 +916,14 @@
       },
       "joint_coverage": {
         "state": {
-          "count": 27,
+          "count": 30,
           "total": 30,
-          "rate": 0.9,
-          "percentage_str": "27/30 (90.0%)",
-          "formatted": "27/30 (90.0%)",
+          "rate": 1.0,
+          "percentage_str": "30/30 (100.0%)",
+          "formatted": "30/30 (100.0%)",
           "ci_95": [
-            74.38,
-            96.54
+            88.65,
+            100.0
           ]
         },
         "wrench": {
@@ -888,65 +949,72 @@
           ]
         },
         "joint_simultaneous": {
-          "count": 26,
+          "count": 29,
           "total": 30,
-          "rate": 0.8667,
-          "percentage_str": "26/30 (86.67%)",
-          "formatted": "26/30 (86.67%)",
+          "rate": 0.9667,
+          "percentage_str": "29/30 (96.67%)",
+          "formatted": "29/30 (96.67%)",
           "ci_95": [
-            70.32,
-            94.69
+            83.33,
+            99.41
           ]
         }
+      },
+      "prediction_intervals": {
+        "q_state": 170.5023,
+        "q_wrench": 47.1748,
+        "q_mode": 0.9882,
+        "state_interval_width": 341.0047,
+        "wrench_interval_width": 94.3497
       }
     },
     "condition_4_cap_online_comparator": {
       "description": "CAP online selective prediction controlling FCR",
-      "selection_optimism_threshold": 1.6734,
+      "selection_optimism_threshold": 1.6826,
       "total_decisions": 300,
-      "selected_decisions": 155,
+      "selected_decisions": 147,
       "unadjusted_baseline": {
         "miscoverages": 0,
         "empirical_fcr": 0.0,
         "fcr_controlled": true,
-        "ratio": "0/155 (0.0% error)"
+        "ratio": "0/147 (0.0% error)"
       },
       "cap_adjusted": {
-        "miscoverages": 3,
-        "empirical_fcr": 0.0194,
+        "miscoverages": 8,
+        "empirical_fcr": 0.0544,
         "fcr_controlled": true,
-        "ratio": "3/155 (1.94% miscoverage)"
+        "ratio": "8/147 (5.44% miscoverage)"
       }
     },
     "condition_5_optimism_terciles": {
       "T1_Low": {
-        "count": 93,
+        "count": 97,
         "total": 99,
-        "rate": 0.9394,
-        "formatted": "93/99 (93.94%)",
+        "rate": 0.9798,
+        "formatted": "97/99 (97.98%)",
         "ci_95": [
-          87.4,
-          97.19
+          92.93,
+          99.44
         ]
       },
       "T2_Med": {
-        "count": 102,
+        "count": 101,
         "total": 102,
-        "rate": 1.0,
-        "formatted": "102/102 (100.0%)",
+        "rate": 0.9902,
+        "formatted": "101/102 (99.02%)",
         "ci_95": [
-          96.37,
-          100.0
+          94.65,
+          99.83
         ]
       },
       "T3_High": {
-        "count": 98,
+        "count": 96,
         "total": 99,
-        "rate": 0.9899,
-        "formatted": "98/99 (98.99%)",
+        "rate": 0.9697,
+        "formatted": "96/99 (96.97%)",
         "ci_95": [
-          94.5,
-          99.82
+          91.47,
+          98.96
         ]
       }
     },
@@ -981,7 +1049,25 @@
           11.35
         ]
       },
-      "mean_pure_peg": 7453.553
+      "mean_pure_peg": 7616.265,
+      "median_pure_peg": 540.137,
+      "goal_progress": {
+        "metric_name": "lift_height_mm",
+        "mean_progress": 0.01,
+        "target_threshold": 5.0,
+        "explanation": "Multifinger lift requires z >= 5mm. Passive-trained world model hallucinates upward lift (PEG=7453.55), inducing optimizer exploitation that yields gross slip and zero real lift."
+      },
+      "mean_action_magnitude": 1.255,
+      "p_cbf_interventions": {
+        "count": 0,
+        "total": 30,
+        "rate": 0.0,
+        "formatted": "0/30 (0.0%)",
+        "ci_95": [
+          0.0,
+          11.35
+        ]
+      }
     }
   }
 }

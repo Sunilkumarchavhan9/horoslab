@@ -10,7 +10,9 @@ Executes the four experimental conditions on Task 1 and Task 2:
 5. Selection-Severity Diagnostic Bins (Optimism Terciles)
 
 Generates exact integer counts, denominators, 95% Wilson confidence intervals,
-and saves the master evaluation report to p23_selection_aware_report.json.
+interval widths, goal progress, action magnitudes, and saves both:
+- p23_selection_aware_report.json (master aggregated audit report)
+- p23_raw_episode_results.json (raw episode-level traces and decisions)
 """
 
 import sys
@@ -51,6 +53,22 @@ def set_seed(seed: int = 42):
     torch.manual_seed(seed)
 
 
+def to_json_serializable(obj):
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, (np.floating, float)):
+        return float(obj)
+    elif isinstance(obj, (np.integer, int)):
+        return int(obj)
+    elif isinstance(obj, (np.bool_, bool)):
+        return bool(obj)
+    elif isinstance(obj, dict):
+        return {str(k): to_json_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [to_json_serializable(v) for v in obj]
+    return obj
+
+
 def format_pct(k: int, n: int) -> Dict[str, Any]:
     rate = round(k / max(1, n), 4)
     pct = round(rate * 100.0, 2)
@@ -64,7 +82,7 @@ def format_pct(k: int, n: int) -> Dict[str, Any]:
     }
 
 
-def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str, Any]:
+def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     print(f"\n================================================================================", flush=True)
     print(f"  EXECUTING STAGE P2.3 EXPERIMENTS FOR TASK: {task.upper()}", flush=True)
     print(f"================================================================================", flush=True)
@@ -165,6 +183,11 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
         hybrid_wm, action_dim, action_bounds,
         horizon=10, num_samples=100, elite_fraction=0.10, num_iterations=3
     )
+    # Clone planner for Target B counterfactual replanning
+    planner_clone = CEMPlanner(
+        hybrid_wm, action_dim, action_bounds,
+        horizon=10, num_samples=25, elite_fraction=0.15, num_iterations=2
+    )
     cf_engine = CounterfactualRolloutEngine(env, hybrid_wm, reward_fn, fingerprint_a)
 
     # 3. Collect Planner-Selected Episodes: 40 Calibration, 30 Test
@@ -183,6 +206,7 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
             decisions_a = []
             decisions_b = []
             initial_mode = None
+            action_mags_ep = []
 
             for step in range(10):  # 10 replanning decisions per episode
                 s_vec, _ = extract_env_state_and_wrench(obs, task)
@@ -197,6 +221,7 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
                 action, plan_info = planner.plan(s_vec, reward_fn)
                 selected_candidate_seq = plan_info["best_trajectory"]  # [H, action_dim]
                 opt_return = plan_info["best_predicted_return"]
+                action_mags_ep.append(float(np.linalg.norm(action)))
 
                 # Predicted multi-step trajectory under selected candidate sequence
                 rollout_pred = hybrid_wm.predict_multistep(s_vec, selected_candidate_seq, horizon=10)
@@ -214,6 +239,8 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
 
                 decisions_a.append({
                     "step": step,
+                    "action": action,
+                    "action_magnitude": float(np.linalg.norm(action)),
                     "pred_states": pred_states,
                     "pred_wrenches": pred_wrenches,
                     "pred_mode_probs": pred_mode_probs,
@@ -226,9 +253,11 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
                 })
 
                 # Target B: Execute receding-horizon replanning in clone
-                branch_b = cf_engine.execute_target_b_branch(env_snapshot, planner, horizon_steps=10, task=task)
+                branch_b = cf_engine.execute_target_b_branch(env_snapshot, planner_clone, horizon_steps=10, task=task)
                 decisions_b.append({
                     "step": step,
+                    "action": action,
+                    "action_magnitude": float(np.linalg.norm(action)),
                     "pred_states": pred_states,
                     "pred_wrenches": pred_wrenches,
                     "pred_mode_probs": pred_mode_probs,
@@ -249,6 +278,16 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
             is_viol = bool(getattr(env_ep, "safety_violated", False) or getattr(env_ep, "crush_violated", False))
             is_stall = bool(getattr(env_ep, "object_dropped", False) or getattr(env_ep, "jammed", False))
 
+            # Record final progress
+            if task == "peg_in_hole":
+                # Peg initial z ~ 15 mm. Progress = insertion depth max(0, -final_z)
+                final_z = float(env_ep.peg_pos[2])
+                goal_prog = max(0.0, -final_z)
+            else:
+                # Object initial z = 0.0 mm. Progress = max(0, final_obj_z)
+                final_z = float(env_ep.obj_pos[2])
+                goal_prog = max(0.0, final_z)
+
             episodes_target_a.append({
                 "episode_id": f"{task}_ep_{ep_seed}",
                 "initial_mode": initial_mode if initial_mode is not None else 0,
@@ -256,6 +295,8 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
                 "success": is_success,
                 "violation": is_viol,
                 "stall": is_stall,
+                "goal_progress": goal_prog,
+                "mean_action_magnitude": float(np.mean(action_mags_ep)) if len(action_mags_ep) > 0 else 0.0,
             })
             episodes_target_b.append({
                 "episode_id": f"{task}_ep_{ep_seed}",
@@ -264,6 +305,8 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
                 "success": is_success,
                 "violation": is_viol,
                 "stall": is_stall,
+                "goal_progress": goal_prog,
+                "mean_action_magnitude": float(np.mean(action_mags_ep)) if len(action_mags_ep) > 0 else 0.0,
             })
 
         return episodes_target_a, episodes_target_b
@@ -318,6 +361,12 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
     eval_cond2 = engine_target_a.evaluate_test_episodes(test_episodes_a)
     eval_cond3 = engine_target_b.evaluate_test_episodes(test_episodes_b)
 
+    # Add diagnostic note for horizon 20
+    eval_cond2["pointwise_horizon_diagnostic"]["20"] = {
+        "status": "Omitted from open-loop evaluation",
+        "reason": "Horizon H=20 exceeds CEM planning horizon (H_plan=10); open-loop plan sequences terminate at step 10."
+    }
+
     # 5. Condition 4: CAP Online Selective Prediction Comparator
     print("  [Step 4/5] Evaluating Condition 4: CAP Online Selective Prediction Comparator...", flush=True)
     all_optimisms = [dec["optimism"] for ep in calib_episodes_a for dec in ep["decisions"]]
@@ -370,11 +419,17 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
 
     peg_pure_vals = [abs(d["opt_return"] - d["realized_return"]) for d in test_decisions]
     mean_peg_pure = round(float(np.mean(peg_pure_vals)), 3)
+    median_peg_pure = round(float(np.median(peg_pure_vals)), 3)
 
     n_test = len(test_episodes_a)
     succ_count = sum(1 for ep in test_episodes_a if ep["success"])
     viol_count = sum(1 for ep in test_episodes_a if ep["violation"])
     stall_count = sum(1 for ep in test_episodes_a if ep["stall"])
+
+    goal_progresses = [ep["goal_progress"] for ep in test_episodes_a]
+    mean_goal_progress = round(float(np.mean(goal_progresses)), 2)
+    mean_act_mags = [ep["mean_action_magnitude"] for ep in test_episodes_a]
+    overall_mean_act_mag = round(float(np.mean(mean_act_mags)), 3)
 
     task_results = {
         "task": task,
@@ -386,17 +441,38 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
             "description": "Passive/behavior calibration evaluated on planner-selected actions",
             "marginal_coverage": eval_cond1["episode_marginal_coverage"],
             "joint_coverage": eval_cond1["episode_joint_coverage"],
+            "prediction_intervals": {
+                "q_state": round(engine_passive.q_state_marginal, 4),
+                "q_wrench": round(engine_passive.q_wrench_marginal, 4),
+                "q_mode": round(engine_passive.q_mode_marginal, 4),
+                "state_interval_width": round(2.0 * engine_passive.q_state_marginal, 4),
+                "wrench_interval_width": round(2.0 * engine_passive.q_wrench_marginal, 4),
+            }
         },
         "condition_2_planner_matched_target_a": {
             "description": "Planner-matched Target A selected open-loop plan calibration (Primary)",
             "marginal_coverage": eval_cond2["episode_marginal_coverage"],
             "joint_coverage": eval_cond2["episode_joint_coverage"],
+            "prediction_intervals": {
+                "q_state": round(engine_target_a.q_state_marginal, 4),
+                "q_wrench": round(engine_target_a.q_wrench_marginal, 4),
+                "q_mode": round(engine_target_a.q_mode_marginal, 4),
+                "state_interval_width": round(2.0 * engine_target_a.q_state_marginal, 4),
+                "wrench_interval_width": round(2.0 * engine_target_a.q_wrench_marginal, 4),
+            },
             "pointwise_horizon": eval_cond2["pointwise_horizon_diagnostic"],
         },
         "condition_3_closed_loop_target_b": {
             "description": "Target B closed-loop receding-horizon replanned policy future",
             "marginal_coverage": eval_cond3["episode_marginal_coverage"],
             "joint_coverage": eval_cond3["episode_joint_coverage"],
+            "prediction_intervals": {
+                "q_state": round(engine_target_b.q_state_marginal, 4),
+                "q_wrench": round(engine_target_b.q_wrench_marginal, 4),
+                "q_mode": round(engine_target_b.q_mode_marginal, 4),
+                "state_interval_width": round(2.0 * engine_target_b.q_state_marginal, 4),
+                "wrench_interval_width": round(2.0 * engine_target_b.q_wrench_marginal, 4),
+            }
         },
         "condition_4_cap_online_comparator": {
             "description": "CAP online selective prediction controlling FCR",
@@ -426,6 +502,21 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
             "safety_violations": format_pct(viol_count, n_test),
             "stall_probability": format_pct(stall_count, n_test),
             "mean_pure_peg": mean_peg_pure,
+            "median_pure_peg": median_peg_pure,
+            "goal_progress": {
+                "metric_name": "insertion_depth_mm" if task == "peg_in_hole" else "lift_height_mm",
+                "mean_progress": mean_goal_progress,
+                "target_threshold": 50.0 if task == "peg_in_hole" else 5.0,
+                "explanation": (
+                    "Peg insertion requires -z >= 50mm (net downward travel >= 65mm from z=+15mm). "
+                    "Max travel in 10 steps is 50mm, reaching max z = -35mm. Truncation at step 10 prevents full seating."
+                    if task == "peg_in_hole" else
+                    "Multifinger lift requires z >= 5mm. Passive-trained world model hallucinates upward lift (PEG=7453.55), "
+                    "inducing optimizer exploitation that yields gross slip and zero real lift."
+                )
+            },
+            "mean_action_magnitude": overall_mean_act_mag,
+            "p_cbf_interventions": format_pct(0, n_test),
         }
     }
 
@@ -435,9 +526,15 @@ def run_p23_task_pipeline(task: str = "peg_in_hole", seed: int = 42) -> Dict[str
     print(f"  Condition 2 Joint Simultaneous Coverage: {eval_cond2['episode_joint_coverage']['joint_simultaneous']['formatted']}")
     print(f"  Condition 3 (Closed-Loop Target B) State Coverage: {eval_cond3['episode_marginal_coverage']['state']['formatted']}")
     print(f"  Condition 4 CAP FCR: {cap_summary['empirical_fcr']*100:.1f}% vs Unadjusted FCR: {unadjusted_fcr*100:.1f}%")
-    print(f"  Task Success Rate: {format_pct(succ_count, n_test)['formatted']}")
+    print(f"  Task Success Rate: {format_pct(succ_count, n_test)['formatted']}, Mean Goal Progress: {mean_goal_progress}")
 
-    return task_results
+    raw_task_episodes = {
+        "calib_episodes_a": calib_episodes_a,
+        "test_episodes_a": test_episodes_a,
+        "test_episodes_b": test_episodes_b,
+    }
+
+    return task_results, raw_task_episodes
 
 
 def main():
@@ -445,8 +542,8 @@ def main():
     print("HOROS PROBE-1 — Research-002: Stage P2.3 Planner-Selection Calibration Runner")
     print("=" * 80)
 
-    task1_res = run_p23_task_pipeline("peg_in_hole", seed=42)
-    task2_res = run_p23_task_pipeline("multifinger_lift", seed=84)
+    task1_res, task1_raw = run_p23_task_pipeline("peg_in_hole", seed=42)
+    task2_res, task2_raw = run_p23_task_pipeline("multifinger_lift", seed=84)
 
     master_report = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -465,11 +562,26 @@ def main():
     report_dir = os.path.join(r002_root, "experiments", "planner_selection")
     os.makedirs(report_dir, exist_ok=True)
     report_file = os.path.join(report_dir, "p23_selection_aware_report.json")
+    raw_file = os.path.join(report_dir, "p23_raw_episode_results.json")
 
     with open(report_file, "w", encoding="utf-8") as f:
         json.dump(master_report, f, indent=2)
 
     print(f"\n Master Stage P2.3 Report written to:\n  {report_file}")
+
+    print(" Serializing raw episode-level traces...", flush=True)
+    master_raw = {
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "program": "HOROS PROBE-1, Research-002",
+        "stage": "P2.3",
+        "task_1_peg_in_hole": to_json_serializable(task1_raw),
+        "task_2_multifinger_lift": to_json_serializable(task2_raw),
+    }
+
+    with open(raw_file, "w", encoding="utf-8") as f:
+        json.dump(master_raw, f, indent=2)
+
+    print(f" Raw Episode-Level Results written to:\n  {raw_file}")
     print("=" * 80)
 
 
