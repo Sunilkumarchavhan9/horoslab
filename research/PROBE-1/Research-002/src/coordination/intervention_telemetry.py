@@ -68,23 +68,22 @@ class InterventionTelemetryLogger:
         ft_profile = []
         slip_ratios = []
 
-        if "normal_forces" in obs and obs["normal_forces"] is not None:
+        if "finger_fn" in obs and obs["finger_fn"] is not None:
+            fn_profile = [float(x) for x in obs["finger_fn"]]
+        elif "normal_forces" in obs and obs["normal_forces"] is not None:
             fn_profile = [float(x) for x in obs["normal_forces"]]
         elif "finger_normal_force" in obs and obs["finger_normal_force"] is not None:
             fn_profile = [float(x) for x in obs["finger_normal_force"]]
 
-        if "finger_shear_force" in obs and obs["finger_shear_force"] is not None:
+        raw_ft = None
+        if "finger_ft" in obs and obs["finger_ft"] is not None:
+            raw_ft = obs["finger_ft"]
+        elif "finger_shear_force" in obs and obs["finger_shear_force"] is not None:
             raw_ft = obs["finger_shear_force"]
-            try:
-                ft_arr = np.asarray(raw_ft, dtype=float)
-                if ft_arr.ndim == 1:
-                    ft_profile = [float(abs(x)) for x in ft_arr]
-                elif ft_arr.ndim == 2:
-                    ft_profile = [float(np.linalg.norm(x)) for x in ft_arr]
-            except Exception:
-                ft_profile = []
         elif "shear_forces" in obs and obs["shear_forces"] is not None:
             raw_ft = obs["shear_forces"]
+
+        if raw_ft is not None:
             try:
                 ft_arr = np.asarray(raw_ft, dtype=float)
                 if ft_arr.ndim == 1:
@@ -94,7 +93,9 @@ class InterventionTelemetryLogger:
             except Exception:
                 ft_profile = []
 
-        if "slip_ratios" in obs and obs["slip_ratios"] is not None:
+        if "slip_ratio" in obs and obs["slip_ratio"] is not None:
+            slip_ratios = [float(x) for x in obs["slip_ratio"]]
+        elif "slip_ratios" in obs and obs["slip_ratios"] is not None:
             slip_ratios = [float(x) for x in obs["slip_ratios"]]
 
         max_slip = float(np.max(slip_ratios)) if slip_ratios else float(filter_info.get("max_slip_ratio", 0.0))

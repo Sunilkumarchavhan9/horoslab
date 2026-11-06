@@ -277,7 +277,9 @@ class ContactAwareActionSubstitutor:
         has_sensor_fault = False
         fn_profile = None
 
-        if "normal_forces" in obs and obs["normal_forces"] is not None:
+        if "finger_fn" in obs and obs["finger_fn"] is not None:
+            fn_profile = obs["finger_fn"]
+        elif "normal_forces" in obs and obs["normal_forces"] is not None:
             fn_profile = obs["normal_forces"]
         elif "finger_normal_force" in obs and obs["finger_normal_force"] is not None:
             fn_profile = obs["finger_normal_force"]
@@ -299,17 +301,25 @@ class ContactAwareActionSubstitutor:
         # 3. Strict Shear Force Telemetry Validation (Blocker A & B)
         ft_arr = None
         shear_measured = False
+        raw_ft = None
 
-        if "finger_shear_force" in obs and obs["finger_shear_force"] is not None:
+        if "finger_ft" in obs and obs["finger_ft"] is not None:
+            raw_ft = obs["finger_ft"]
+        elif "finger_shear_force" in obs and obs["finger_shear_force"] is not None:
+            raw_ft = obs["finger_shear_force"]
+        elif "shear_forces" in obs and obs["shear_forces"] is not None:
+            raw_ft = obs["shear_forces"]
+
+        if raw_ft is not None:
             try:
-                raw_ft = np.asarray(obs["finger_shear_force"], dtype=float)
-                if not np.all(np.isfinite(raw_ft)):
+                ft_np = np.asarray(raw_ft, dtype=float)
+                if not np.all(np.isfinite(ft_np)):
                     has_sensor_fault = True
-                elif raw_ft.ndim == 1 and raw_ft.shape == (self.N_f,):
-                    ft_arr = raw_ft
+                elif ft_np.ndim == 1 and ft_np.shape == (self.N_f,):
+                    ft_arr = ft_np
                     shear_measured = True
-                elif raw_ft.ndim == 2 and raw_ft.shape == (self.N_f, 2):
-                    ft_arr = raw_ft
+                elif ft_np.ndim == 2 and ft_np.shape == (self.N_f, 2):
+                    ft_arr = ft_np
                     shear_measured = True
                 else:
                     has_sensor_fault = True
@@ -352,6 +362,7 @@ class ContactAwareActionSubstitutor:
                 reason = "sensor_fault"
             else:
                 reason = "contact_loss"
+                all_free = bool(np.all(fn_arr < self.F_min_valid))
                 for i in range(self.N_f):
                     if fn_arr[i] >= self.F_hard_limit:
                         a_sub[i] = -2.0
@@ -359,7 +370,12 @@ class ContactAwareActionSubstitutor:
                         retract = -self.K_retract * ((fn_arr[i] - self.F_ceiling) / self.k_elastic)
                         a_sub[i] = float(np.clip(retract, -2.0, 0.0))
                     elif fn_arr[i] < self.F_min_valid:
-                        a_sub[i] = 0.20
+                        if all_free:
+                            # Pre-grasp free space approach: allow planner squeeze (min 0.20 mm/step)
+                            a_sub[i] = float(np.clip(max(a_prop[i], 0.20), 0.20, 2.0))
+                        else:
+                            # Asymmetric contact loss: controlled search rate
+                            a_sub[i] = 0.20
                     else:
                         a_sub[i] = 0.0
 

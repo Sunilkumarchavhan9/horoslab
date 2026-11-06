@@ -33,6 +33,7 @@ from src.integrated.model_training_runner import ModelTrainingRunner
 from src.planners.cem_planner import CEMPlanner
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
 from src.contact_modes.contact_mode_definitions import classify_contact_mode
+from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
 from src.coordination.action_substitutor import ContactAwareActionSubstitutor
 from src.coordination.intervention_telemetry import InterventionTelemetryLogger
 from src.integrated.statistical_analysis import compute_wilson_ci, to_json_serializable
@@ -196,16 +197,22 @@ def run_p26_exp02_pilot(
 
     episode_counter = 0
 
+    def lift_reward(s, a):
+        obj_z = s[20] if len(s) >= 23 else s[2]
+        slip = np.linalg.norm(s[16:20]) if len(s) >= 23 else 0.0
+        force_err = abs(np.sum(s[8:12]) - 16.0) if len(s) >= 23 else 0.0
+        return float(obj_z * 15.0 - slip * 5.0 - force_err * 0.1)
+
     for model_name in target_models:
         model = models[model_name]
         planner = CEMPlanner(
-            model=model,
-            horizon=5,
-            num_samples=25,
-            num_elites=5,
+            world_model=model,
+            action_dim=5,
             action_bounds=action_bounds,
-            task="multifinger_lift",
-            seed=100
+            horizon=10,
+            num_samples=60,
+            elite_fraction=0.15,
+            num_iterations=2,
         )
 
         for variant in variants:
@@ -223,7 +230,7 @@ def run_p26_exp02_pilot(
             for ep_idx, ep_seed in enumerate(pilot_seeds):
                 episode_counter += 1
                 env = MultifingerLiftEnv(seed=ep_seed)
-                obs = env.reset(seed=ep_seed)
+                obs = env.reset()
                 substitutor.reset()
                 damping_tracker.reset_episode()
 
@@ -242,8 +249,9 @@ def run_p26_exp02_pilot(
                 )
 
                 for step in range(25):
-                    contact_mode = classify_contact_mode(obs)
-                    action_prop = planner.plan(obs)
+                    s_vec, _ = extract_env_state_and_wrench(obs, "multifinger_lift")
+                    contact_mode = classify_contact_mode(obs, task="multifinger_lift")
+                    action_prop, _ = planner.plan(s_vec, lift_reward)
 
                     # Coordinate action substitution
                     action_sub, intervened, sub_info = substitutor.substitute_action(
@@ -276,7 +284,7 @@ def run_p26_exp02_pilot(
                     task_progress_mm = float(next_obs.get("obj_pos", [0.0, 0.0, 0.0])[2])
 
                     # Issue 3: Dynamic 18 N damping tracking
-                    step_fn = np.asarray(next_obs.get("finger_normal_force", [0.0] * 4), dtype=float)
+                    step_fn = np.asarray(next_obs.get("finger_fn", next_obs.get("finger_normal_force", [0.0] * 4)), dtype=float)
                     damping_tracker.update_step(step, step_fn)
 
                     # Monitor physical normal force

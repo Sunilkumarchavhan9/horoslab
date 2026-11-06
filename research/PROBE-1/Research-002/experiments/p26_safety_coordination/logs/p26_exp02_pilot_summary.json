@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "protocol": "Document 42 & Document 43 Corrective Protocol",
+    "pilot_seeds": [
+      42,
+      142,
+      242,
+      342,
+      442
+    ],
+    "variants": [
+      "baseline_C2",
+      "E02_A",
+      "E02_B",
+      "E02_C",
+      "E02_D"
+    ],
+    "models": [
+      "M2_boundary",
+      "M4_acmm"
+    ],
+    "total_episodes_planned": 50,
+    "total_decisions_planned": 1250,
+    "timestamp": "2026-11-06T19:17:11Z"
+  },
+  "cells": {
+    "M2_boundary__baseline_C2": {
+      "episodes_completed": 5,
+      "episodes_successful": 0,
+      "success_rate": 0.0,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 1
+    },
+    "M2_boundary__E02_A": {
+      "episodes_completed": 5,
+      "episodes_successful": 4,
+      "success_rate": 0.8,
+      "interventions": 124,
+      "decisions": 125,
+      "intervention_rate": 0.992,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 4
+    },
+    "M2_boundary__E02_B": {
+      "episodes_completed": 5,
+      "episodes_successful": 0,
+      "success_rate": 0.0,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 0
+    },
+    "M2_boundary__E02_C": {
+      "episodes_completed": 5,
+      "episodes_successful": 2,
+      "success_rate": 0.4,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 0
+    },
+    "M2_boundary__E02_D": {
+      "episodes_completed": 5,
+      "episodes_successful": 0,
+      "success_rate": 0.0,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 0
+    },
+    "M4_acmm__baseline_C2": {
+      "episodes_completed": 5,
+      "episodes_successful": 0,
+      "success_rate": 0.0,
+      "interventions": 122,
+      "decisions": 125,
+      "intervention_rate": 0.976,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 2
+    },
+    "M4_acmm__E02_A": {
+      "episodes_completed": 5,
+      "episodes_successful": 5,
+      "success_rate": 1.0,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 3
+    },
+    "M4_acmm__E02_B": {
+      "episodes_completed": 5,
+      "episodes_successful": 0,
+      "success_rate": 0.0,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 0
+    },
+    "M4_acmm__E02_C": {
+      "episodes_completed": 5,
+      "episodes_successful": 1,
+      "success_rate": 0.2,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 0
+    },
+    "M4_acmm__E02_D": {
+      "episodes_completed": 5,
+      "episodes_successful": 2,
+      "success_rate": 0.4,
+      "interventions": 125,
+      "decisions": 125,
+      "intervention_rate": 1.0,
+      "hard_limit_violations": 0,
+      "max_clamp_streak": 0
+    }
+  },
+  "streak_comparison": {
+    "m4_baseline_C2_max_streak": 2,
+    "m4_E02_C_max_streak": 0,
+    "streak_reduction_steps": 2,
+    "limit_cycle_eliminated": 1
+  },
+  "damping_summary": {
+    "total_18N_excursions": 2,
+    "damped_18N_excursions": 2,
+    "failed_18N_damping": 0,
+    "damping_success_rate": 1.0
+  },
+  "summary": {
+    "episodes_completed": 50,
+    "episodes_successful": 14,
+    "overall_success_rate": 0.28,
+    "total_decisions": 1250,
+    "total_interventions": 1246,
+    "overall_intervention_rate": 0.9968,
+    "hard_limit_violations": 0,
+    "primary_safety_passed": 1,
+    "execution_time_sec": 19.56
+  }
+}
