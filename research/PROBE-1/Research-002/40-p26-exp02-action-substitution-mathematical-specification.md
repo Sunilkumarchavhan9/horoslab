@@ -1,26 +1,25 @@
 # HOROS PROBE-1 Research-002 — Stage P2.6
-## Document 40 (Revision 2.0): Experiment 02 — Action Substitution Mathematical Specification & Controlled Factorial Protocol
+## Document 40 (Revision 2.1): Experiment 02 — Action Substitution Mathematical Specification & Controlled Factorial Protocol
 
 **Program:** HOROS PROBE-1, Research-002 — Trustworthy Action-Conditioned Contact World Models  
 **Stage:** P2.6 — Contact-Aware Safety Coordination  
-**Document:** 40 (Formal Revision 2.0 incorporating Co-Founder Mathematical & Experimental Review)  
-**Status:** **Pre-Implementation Specification Frozen for Signoff**  
+**Document:** 40 (Formal Revision 2.1 incorporating Co-Founder Technical Audit)  
+**Status:** **Pre-Implementation Specification Frozen for Authorization**  
 **Author:** HOROS Physical Intelligence Research Group  
 **Date:** November 6, 2026  
 
 ---
 
-## 1. Executive Context & Review Amendments Summary
+## 1. Executive Context & Co-Founder Review Audit
 
-Following co-founder audit of Revision 1.0, this revised specification resolves three blocking mathematical issues and two experimental-design issues prior to any code implementation:
+Following technical co-founder review of Revision 2.0, this **Revision 2.1** formalizes four final mathematical and experimental amendments before source code implementation is authorized:
 
-| Issue | Audit Finding in Revision 1.0 | Resolution in Revision 2.0 |
+| Amendment | Issue Addressed | Formal Resolution in Revision 2.1 |
 | :--- | :--- | :--- |
-| **40.1 (Squeeze Command)** | $\Delta x_{\text{sqz}}\ [\text{mm}]$ displacement target compared directly to per-step increment $a_{\text{prop, sqz}}\ [\text{mm/step}]$ | Separated displacement target from command via stateful bounded proportional controller with $K_p$ and anti-crush ceiling |
-| **40.2 (Lift Velocity Controller)** | $\Delta z_{\text{safe}} = \frac{1}{2} a_{z,\max} \Delta t^2$ represented only single-step acceleration from rest | Formulated stateful discrete velocity integrator $v_{z,t+1} = \operatorname{clip}(v_{z,t} + a_{z,\text{cmd}}\Delta t, 0, v_{z,\max})$ converted to mm per step |
-| **40.3 (Per-Contact Friction Bottleneck)** | Aggregate sum $\eta \mu \sum F_{n,i}$ ignored load asymmetry and multi-finger geometry | Derived per-contact friction cone constraints $\|\mathbf{F}_{t,i}\| \le \eta \mu_i F_{n,i}$ bounded by weakest contact $\min_i(\eta \mu_i F_{n,i})$ |
-| **40.4 (Experimental Disambiguation)** | E02-A clamp release logic unspecified; E02-D factorial overlap unclear | Defined explicit threshold release condition for E02-A; formally defined E02-D as E02-C filter + coordinated CEM prior |
-| **40.5 (Sampling & Reporting)** | Episode counts and model-specific baselines ambiguous | Standardized 30 episodes/seed $\times$ 3 seeds = 90 episodes/condition; differentiated acceptance thresholds for $M_2$ vs $M_4$ |
+| **40.6 (Directional Branching)** | Upward clipping prevented negative (downward) commands from passing | Explicit 3-way branching: (1) Upward friction-aware velocity controller, (2) Downward descent with table-boundary guard, (3) Zero-contact / sensor-fault safe fallback |
+| **40.7 ($K_p$ Units & Active Retraction)** | $K_p$ lacked dimensional units; anti-crush was passive inhibit | Defined $K_p = 1.0\text{ step}^{-1}$ ($10\text{ ms}$ time constant); implemented active outward proportional retraction ($K_{\text{retract}} = 1.5\text{ step}^{-1}$) for $F_n \ge 18.0\text{ N}$ |
+| **40.8 (Singularity Guard & Contact Model)** | Divide-by-zero when $F_{n,i} \to 0$; equal-load assumption scope | Regularized friction ratio with singular cutoff at $F_{n,i} < 0.10\text{ N} \implies \rho_i = \infty$ (clamp locked); documented antipodal load-sharing scope |
+| **40.9 (Exact Wilson CI & Denominators)** | Stated $3.98\%$ upper bound for $0/90$ | Corrected 95% Wilson upper bound to $4.09\%$ ($z^2 / (n + z^2)$); froze unpooled per-variant denominator rules |
 
 ---
 
@@ -45,66 +44,96 @@ In `MultifingerLiftEnv`:
 
 ---
 
-### 2.2 Squeeze Preload Substitution Controller (Amendment 40.1)
+### 2.2 Squeeze Preload Substitution Controller (Amendments 40.1 & 40.7)
 
 #### A. Required Normal Force per Contact
-To support object weight $F_g$ with friction coefficient $\mu$ under dynamic safety margin $\gamma = 1.25$ (accounting for upward acceleration and minor grip asymmetries):
+To support object weight $F_g$ with friction coefficient $\mu = 0.60$ under dynamic safety margin $\gamma = 1.25$:
 $$F_{n,\text{required}} = \frac{\gamma \cdot F_g}{N_f \cdot \mu} = \frac{1.25 \times 4.905}{4 \times 0.60} = 2.5547\text{ N}$$
 
 #### B. Normal Force Deficit & Indentation Target
 At step $t$, the normal force deficit for finger $i$ is:
 $$\Delta F_{n,i,t} = \max\left(0, F_{n,\text{required}} - F_{n,i,t}\right) \quad [\text{N}]$$
 
-The corresponding required elastic indentation target is:
+The required elastic indentation target is:
 $$\delta_{\text{target}, i,t} = \delta_{i,t} + \frac{\Delta F_{n,i,t}}{k_{\text{elastic}}} \quad [\text{mm}]$$
 
-#### C. Bounded Proportional Displacement Controller
-Rather than equating the static displacement target with a velocity increment, we synthesize a bounded proportional displacement controller with gain $K_p \in (0, 1]$ (default $K_p = 1.0$):
+#### C. Bounded Proportional Displacement Controller (Amendment 40.7)
+The proportional gain $K_p$ possesses physical units of **inverse control steps**:
+$$[K_p] = \text{step}^{-1}$$
+For $\Delta t = 0.01\text{ s}$ ($100\text{ Hz}$), setting $K_p = 1.0\text{ step}^{-1}$ yields a closed-loop tracking time constant $\tau = \Delta t / K_p = 10.0\text{ ms}$.
+
+The displacement command increment per step is:
 $$\Delta a_{\text{cmd}, \text{sqz}, i, t} = \operatorname{clip}\left(K_p \cdot (\delta_{\text{target}, i,t} - \delta_{i,t}), -\Delta a_{\max}, \Delta a_{\max}\right) = \operatorname{clip}\left(K_p \cdot \frac{\Delta F_{n,i,t}}{k_{\text{elastic}}}, -2.0, 2.0\right) \quad [\text{mm/step}]$$
 
-#### D. Substituted Squeeze Action & Anti-Crush Enforcement
-The substituted squeeze action merges the planner proposal with the required preload command:
+#### D. Substituted Squeeze Command & Active Anti-Crush Retraction (Amendment 40.7)
+When operating below the crush threshold ($F_{n,i,t} < 18.0\text{ N}$):
 $$a_{\text{sub}, \text{sqz}, i, t} = \operatorname{clip}\left(\max\left(a_{\text{prop}, \text{sqz}, i, t}, \Delta a_{\text{cmd}, \text{sqz}, i, t}\right), -2.0, 2.0\right) \quad [\text{mm/step}]$$
 
-**Anti-Crush Safety Override:**
-To guarantee that preload augmentation never violates the physical crush ceiling $F_{\max} = 18.0\text{ N}$ ($25.0\text{ N}$ hard environment limit):
-$$\text{If } F_{n,i,t} \ge 18.0\text{ N}: \quad a_{\text{sub}, \text{sqz}, i, t} = \min\left(0.0, a_{\text{prop}, \text{sqz}, i, t}\right) \quad (\text{Strict Inward Inhibit / Retract})$$
+**Active Anti-Crush Outward Retraction Policy:**
+Merely inhibiting positive squeeze is insufficient to rapidly bleed off excessive normal force under dynamic transients. When contact force reaches or exceeds the protective ceiling $F_{\text{ceiling}} = 18.0\text{ N}$ ($25.0\text{ N}$ hard environment limit), the controller commands active outward retraction:
+$$\Delta a_{\text{retract}, i, t} = -K_{\text{retract}} \cdot \frac{F_{n,i,t} - F_{\text{ceiling}}}{k_{\text{elastic}}} \quad [\text{mm/step}]$$
+where $K_{\text{retract}} = 1.5\text{ step}^{-1}$.  
+The command is strictly bounded to outward travel:
+$$a_{\text{sub}, \text{sqz}, i, t} = \operatorname{clip}\left(\Delta a_{\text{retract}, i, t}, -2.0, 0.0\right) \quad [\text{mm/step}]$$
 
 ---
 
-### 2.3 Stateful Lift Velocity & Friction-Aware Scaling Controller (Amendment 40.2 & 40.3)
+### 2.3 Explicit Three-Way Lift Command Architecture (Amendments 40.2, 40.3 & 40.6)
 
-#### A. Per-Contact Multi-Finger Friction Constraint (Amendment 40.3)
-In multi-finger grasp mechanics, gross slip initiates at the **weakest contact point**. For antipodal vertical lifting with $N_f$ contacts:
-$$\forall i \in \{1, \dots, N_f\}: \quad \|\mathbf{F}_{t,i}\| \le \eta \mu_i F_{n,i}$$
-where $\eta = 0.85$ is the conservative friction cone margin ($15\%$ buffer against micro-slip).
+The vertical lift safety layer executes through **three mutually exclusive, deterministic operational branches**:
 
-Assuming vertical load distribution, the maximum total sustainable vertical shear force before any finger slips is bounded by the minimum contact normal force:
-$$F_{t,\max, t} = N_f \cdot \min_{i=1 \dots N_f} \left(\eta \mu_i F_{n,i,t}\right) \quad [\text{N}]$$
+```
++---------------------------------------------------------------------------------------+
+|                       THREE-WAY VERTICAL COMMAND BRANCHING                            |
++---------------------------------------------------------------------------------------+
+| Condition                                     | Execution Policy                      |
++-----------------------------------------------+---------------------------------------+
+| 1. Upward Lift Command (a_prop > 0)           | Stateful Friction-Aware Integrator    |
+| 2. Downward Descent Command (a_prop <= 0)     | Descent with Table Collision Guard    |
+| 3. Sensor Fault or Contact Loss (Fn < 0.10 N) | Emergency Hover & Inward Search       |
++-----------------------------------------------+---------------------------------------+
+```
 
-#### B. Dynamic Acceleration Bound
-The maximum safe upward vertical acceleration $a_{z,\max, t}$ without slip is:
-$$a_{z,\max, t} = \frac{F_{t,\max, t} - m g}{m} \quad [\text{m/s}^2]$$
+#### Branch 1: Upward Motion ($a_{\text{prop}, \text{lift}, t} > 0$)
+1. **Per-Contact Friction Bottleneck (Amendment 40.3):**
+   In multi-finger antipodal grasping, gross slip initiates at the weakest contact. The conservative sustainable vertical shear force is:
+   $$F_{t,\max, t} = N_f \cdot \min_{i=1 \dots N_f} \left(\eta \mu_i F_{n,i,t}\right) \quad [\text{N}]$$
+   where $\eta = 0.85$ ($15\%$ friction cone safety buffer).
+   *Scope note:* This formulation represents a conservative diagnostic bound under symmetrical antipodal grasping. Individual contact constraints $\|\mathbf{F}_{t,i}\| \le \mu_i F_{n,i}$ remain independently monitored in the safety audit.
 
-**Sign & Feasibility Regimes:**
-1. **Preload Deficit Regime ($F_{t,\max, t} < m g$):** $a_{z,\max, t} < 0$. The available friction cannot support static gravity. Safe upward acceleration is strictly zero; any upward motion causes immediate slip.
-2. **Sufficient Preload Regime ($F_{t,\max, t} \ge m g$):** $a_{z,\max, t} \ge 0$. The contact grasp has positive net upward force capacity.
+2. **Maximum Permissible Upward Acceleration:**
+   $$a_{z,\max, t} = \frac{F_{t,\max, t} - m g}{m} \quad [\text{m/s}^2]$$
+   - If $F_{t,\max, t} \le m g$ (preload deficit): $a_{z,\max, t} \le 0 \implies v_{z,\max, t} = 0.0$ (Strict upward lock).
+   - If $F_{t,\max, t} > m g$ (sufficient preload):
+     $$v_{z,\max, t} = \max\left(0.0, v_{z,t} + a_{z,\max, t} \cdot \Delta t\right) \quad [\text{m/s}]$$
 
-#### C. Stateful Velocity Integrator (Amendment 40.2)
-We track stateful hand vertical velocity $v_{z,t}\ [\text{m/s}]$ across steps.
-1. The planner proposes vertical displacement increment $a_{\text{prop}, \text{lift}, t}\ [\text{mm/step}]$, representing an intended velocity:
+3. **Stateful Velocity Integration & Step Conversion (Amendment 40.2):**
    $$v_{\text{prop}, t+1} = \frac{a_{\text{prop}, \text{lift}, t} \cdot 10^{-3}}{\Delta t} \quad [\text{m/s}]$$
-2. The maximum allowable velocity $v_{z,\max, t}$ is constrained by available upward acceleration and dynamic braking:
-   $$v_{z,\max, t} = \max\left(0.0, v_{z,t} + a_{z,\max, t} \cdot \Delta t\right) \quad [\text{m/s}]$$
-3. When $F_{t,\max, t} < m g$ (preload deficit), the maximum upward velocity is strictly zero:
-   $$v_{z,\max, t} = 0.0 \quad (\text{if } a_{z,\max, t} \le 0)$$
-4. The integrated safe velocity for step $t+1$ is:
    $$v_{z,t+1} = \operatorname{clip}\left(v_{\text{prop}, t+1}, 0.0, v_{z,\max, t}\right) \quad [\text{m/s}]$$
-5. Converting to the simulator's commanded displacement increment ($\text{mm/step}$):
-   $$\Delta z_{\text{safe}, t} = v_{z,t+1} \cdot \Delta t \cdot 10^3 \quad [\text{mm/step}]$$
-   $$a_{\text{sub}, \text{lift}, t} = \operatorname{clip}\left(\Delta z_{\text{safe}, t}, -2.0, 5.0\right) \quad [\text{mm/step}]$$
+   $$a_{\text{sub}, \text{lift}, t} = \operatorname{clip}\left(v_{z,t+1} \cdot \Delta t \cdot 10^3, 0.0, 5.0\right) \quad [\text{mm/step}]$$
 
-**Downward Motion Handling:** If the planner proposes downward arm travel ($a_{\text{prop}, \text{lift}, t} < 0$), downward acceleration does not cause friction slip against gravity; $a_{\text{sub}, \text{lift}, t} = a_{\text{prop}, \text{lift}, t}$.
+#### Branch 2: Downward Motion ($a_{\text{prop}, \text{lift}, t} \le 0$) (Amendment 40.6)
+Downward arm motion lowers the object in the direction of gravity and does not threaten friction-cone collapse. However, downward motion must strictly prevent table penetration:
+$$z_{\text{safe\_descent}} = \max\left(a_{\text{prop}, \text{lift}, t}, -z_{\text{obj}, t}\right) \quad [\text{mm/step}]$$
+$$a_{\text{sub}, \text{lift}, t} = \operatorname{clip}\left(z_{\text{safe\_descent}}, -2.0, 0.0\right) \quad [\text{mm/step}]$$
+$$v_{z,t+1} = \frac{a_{\text{sub}, \text{lift}, t} \cdot 10^{-3}}{\Delta t} \quad [\text{m/s}]$$
+
+#### Branch 3: Contact Loss & Sensor Fault Fallback (Amendment 40.8)
+If sensor telemetry reports invalid/NaN values, or if fingertip contact is broken ($\exists i: F_{n,i,t} < F_{n,\text{min\_valid}} = 0.10\text{ N}$) during an active grasp phase:
+- Vertical motion is immediately arrested: $a_{\text{sub}, \text{lift}, t} = 0.0\text{ mm/step}$, $v_{z,t+1} = 0.0\text{ m/s}$.
+- Squeeze actuators enter gentle inward search: $a_{\text{sub}, \text{sqz}, i, t} = +0.20\text{ mm/step}$.
+
+---
+
+### 2.4 Singularity-Guarded Clamp Release Logic (Amendment 40.8)
+
+In Variant E02-A, the lift clamp is evaluated for release. To eliminate division-by-zero singularities when normal force is zero or near-zero, the regularized friction ratio $\rho_i$ is formally defined:
+$$\rho_i(t) = \begin{cases} \infty & \text{if } F_{n,i,t} < 0.10\text{ N} \quad (\text{Singular / Inactive Contact}) \\ \frac{\|\mathbf{F}_{t,i,t}\|}{\mu_i F_{n,i,t}} & \text{if } F_{n,i,t} \ge 0.10\text{ N} \end{cases}$$
+
+**E02-A Clamp-Release Condition:**
+The vertical arm lift action is released to the planner proposal ($a_{\text{sub}, \text{lift}, t} = a_{\text{prop}, \text{lift}, t}$) if and only if **all** contacts simultaneously satisfy:
+$$\min_{i=1 \dots N_f} F_{n,i,t} \ge F_{n,\text{required}} \quad \text{AND} \quad \max_{i=1 \dots N_f} \rho_i(t) \le \eta$$
+If either condition is violated, $a_{\text{sub}, \text{lift}, t} = 0.0\text{ mm/step}$ while squeeze preload augmentation proceeds.
 
 ---
 
@@ -113,98 +142,77 @@ We track stateful hand vertical velocity $v_{z,t}\ [\text{m/s}]$ across steps.
 Experiment 02 implements a strict $2 \times 2$ factorial ablation plus baseline negative control:
 
 ```
-+-----------------------------------------------------------------------------------------------+
-|                             FACTORIAL COMPARISON MATRIX (EXP-02)                              |
-+---------------+-------------------------------+-------------------------------+---------------+
-| Condition     | Squeeze Action a[:4]          | Lift Action a[4]              | Planner Prior |
-+---------------+-------------------------------+-------------------------------+---------------+
-| Baseline (C2) | a_prop[:4] (Unmodified)       | 0.0 mm/step (Hard Zero-Clamp) | Uncoordinated |
-| Variant E02-A | a_sub[:4] (Preload Controller)| Stateful Clamp Release Logic  | Uncoordinated |
-| Variant E02-B | a_prop[:4] (Unmodified)       | a_sub[4] (Stateful Integrator)| Uncoordinated |
-| Variant E02-C | a_sub[:4] (Preload Controller)| a_sub[4] (Stateful Integrator)| Uncoordinated |
-| Variant E02-D | a_sub[:4] (Preload Controller)| a_sub[4] (Stateful Integrator)| Coordinated   |
-+---------------+-------------------------------+-------------------------------+---------------+
++-------------------------------------------------------------------------------------------------------+
+|                                 FACTORIAL COMPARISON MATRIX (EXP-02)                                  |
++---------------+---------------------------------------+-------------------------------+---------------+
+| Condition     | Squeeze Action Command                | Lift Action Command           | Planner Prior |
++---------------+---------------------------------------+-------------------------------+---------------+
+| Baseline (C2) | a_prop[:4] (Unmodified)               | 0.0 mm/step (Hard Zero Clamp) | Uncoordinated |
+| Variant E02-A | a_sub[:4] (Preload Controller)        | Stateful Clamp Release Logic  | Uncoordinated |
+| Variant E02-B | a_prop[:4] (Unmodified)               | Three-Way Stateful Integrator | Uncoordinated |
+| Variant E02-C | a_sub[:4] (Preload Controller)        | Three-Way Stateful Integrator | Uncoordinated |
+| Variant E02-D | a_sub[:4] (Preload Controller)        | Three-Way Stateful Integrator | Coordinated   |
++---------------+---------------------------------------+-------------------------------+---------------+
 ```
 
-### 3.1 Variant Disambiguation & Clamp Release Logic
+### 3.1 Variant Causal Isolation Objectives
 
-#### Variant E02-A: Normal Preload Compensation with State-Triggered Clamp Release
-- **Squeeze Command:** $a_{\text{sub}, \text{sqz}, i, t}$ active (commands $\Delta a_{\text{cmd}, \text{sqz}}$).
-- **Lift Clamp Release Criterion:**
-  $$\text{Lift Action: } a_{\text{sub}, \text{lift}, t} = \begin{cases} a_{\text{prop}, \text{lift}, t} & \text{if } \min_{i} F_{n,i,t} \ge F_{n,\text{required}} \text{ and } \max_i \frac{\|F_{t,i,t}\|}{\mu F_{n,i,t}} \le \eta \\ 0.0 & \text{otherwise (clamp active while preloading)} \end{cases}$$
-- **Purpose:** Isolates whether active normal preloading alone breaks the limit cycle once normal force reaches threshold, without needing continuous velocity scaling.
-
-#### Variant E02-B: Stateful Velocity Scaling Only (Zero Squeeze Augmentation)
-- **Squeeze Command:** $a_{\text{prop}, \text{sqz}, i, t}$ (no preload compensation).
-- **Lift Command:** $a_{\text{sub}, \text{lift}, t}$ via stateful velocity integrator ($v_{z,t+1}$).
-- **Purpose:** Isolates whether smooth proportional velocity scaling alone prevents stalls if the hand happens to build preload naturally through accidental friction.
-
-#### Variant E02-C: Full Action Substitution (Preload + Stateful Velocity Scaling)
-- **Squeeze Command:** $a_{\text{sub}, \text{sqz}, i, t}$ active.
-- **Lift Command:** $a_{\text{sub}, \text{lift}, t}$ active.
-- **Planner:** Standard uncoordinated CEM planner.
-- **Purpose:** Evaluates runtime filter action substitution without modifying the planner's internal optimization objective.
-
-#### Variant E02-D: Action Substitution + Coordinated CEM Planner Prior
-- **Safety Filter:** Identical to Variant E02-C (full action substitution).
-- **Planner Coordination (CEM Prior Bias):**
-  At replanning step $t$, the CEM planner inspects current state $\mathbf{F}_{n,t}$:
-  - If $\min_i F_{n,i,t} < F_{n,\text{required}}$:
-    - Squeeze sampling prior mean initialized to: $\boldsymbol{\mu}_{\text{CEM}, \text{sqz}} = \Delta a_{\text{cmd}, \text{sqz}}$.
-    - Lift sampling prior mean initialized to: $\mu_{\text{CEM}, \text{lift}} = 0.0$.
-  - If $\min_i F_{n,i,t} \ge F_{n,\text{required}}$:
-    - Squeeze prior mean initialized to: $\boldsymbol{\mu}_{\text{CEM}, \text{sqz}} = 0.0$.
-    - Lift prior mean initialized to: $\mu_{\text{CEM}, \text{lift}} = \Delta z_{\text{safe}, t}$.
-- **Purpose:** Isolates the additive value of planner-filter coordination over filter substitution alone by reducing proposed action distortion $\|a_{\text{prop}} - a_{\text{sub}}\|$ at the source.
+1. **Baseline ($C_2$ Negative Control):** Original decoupled p-CBF filter. Serves as reference reproducing the $90.0\%$ stall rate and 16-step streak.
+2. **Variant E02-A (Normal Preload Only):** Evaluates whether active normal force building alone breaks the deadband once the threshold is crossed, without changing the binary lift clamping logic.
+3. **Variant E02-B (Velocity Scaling Only):** Evaluates whether smooth proportional lift velocity alone prevents stalls if the hand builds normal force naturally.
+4. **Variant E02-C (Full Action Substitution):** Combines preload augmentation and friction-aware velocity scaling in the runtime filter.
+5. **Variant E02-D (Coordinated CEM Planner + E02-C Filter):** Integrates E02-C filter with CEM prior coordination:
+   - When $\min_i F_{n,i,t} < F_{n,\text{required}}$, CEM prior sampling mean is initialized to:
+     $$\boldsymbol{\mu}_{\text{CEM}, \text{sqz}} = \Delta \mathbf{a}_{\text{cmd}, \text{sqz}, t}, \quad \mu_{\text{CEM}, \text{lift}} = 0.0$$
+   - When $\min_i F_{n,i,t} \ge F_{n,\text{required}}$, CEM prior sampling mean is initialized to:
+     $$\boldsymbol{\mu}_{\text{CEM}, \text{sqz}} = 0.0, \quad \mu_{\text{CEM}, \text{lift}} = \Delta z_{\text{safe}, t}$$
+   - **Isolation Purpose:** Cleanly separates the additive value of planner-level adaptation over filter-level substitution by measuring reduction in proposed action distortion $\|a_{\text{prop}} - a_{\text{sub}}\|$.
 
 ---
 
-## 4. Sampling Protocol, Seeds & Acceptance Gates (Amendment 40.5)
+## 4. Sampling Protocol, Exact Statistics & Acceptance Gates (Amendment 40.5 & 40.9)
 
-### 4.1 Frozen Episode Allocation
-- **Evaluation Splits:** 30 episodes per seed $\times$ 3 independent seeds = **90 episodes per condition**.
-- **Frozen Random Seeds:**
+### 4.1 Frozen Episode Allocation & Denominators
+- **Per-Seed Sample Size:** 30 episodes per seed.
+- **Seeds Evaluated:** 3 independent random seeds:
   - Seed 1: $s = 100$ (Episodes 0–29, base seed 6000)
   - Seed 2: $s = 200$ (Episodes 0–29, base seed 7000)
   - Seed 3: $s = 300$ (Episodes 0–29, base seed 8000)
-- **Total Experiment 02 Benchmark Size:**
-  - 5 conditions ($C_2$ Baseline, E02-A, E02-B, E02-C, E02-D) $\times$ 2 active models ($M_2$ Boundary, $M_4$ ACMM) $\times$ 90 episodes = **900 episodes**.
-  - Reference check: $M_0$ Passive evaluated on $C_2$ and E02-C across 30 episodes (negative control).
-  - Total planned episodes: **960 episodes**.
+- **Total Sample per Model-Variant Condition:** $n = 90$ episodes ($30 \times 3$).
+- **Benchmark Scale:** 5 conditions $\times$ 2 active models ($M_2, M_4$) $\times$ 90 episodes = **900 episodes**, plus $M_0$ passive reference check = **960 episodes total**.
 
-### 4.2 Model-Specific Acceptance Thresholds
-Because $M_2$ (Boundary) and $M_4$ (Combined ACMM) demonstrated different unconstrained baseline capabilities in Experiment 01 ($13.33\%$ vs $26.67\%$ success; 16 vs 12 max streak), acceptance gates are declared **separately per model**:
+### 4.2 Strict Reporting & Disaggregation Protocol (Amendment 40.9)
+1. **No Artificial Denominator Inflation:** Results will be reported strictly per model ($M_2$ and $M_4$ separate) and per variant. Zero-violation results will be reported as $0/90$ for each individual model-variant combination, never pooled across conditions.
+2. **Paired Comparisons:** Seeds and initial object/hand states are strictly identical across variants to guarantee valid paired statistical tests.
+3. **Exact 95% Wilson Score Confidence Bounds:**
+   For $n = 90$ episodes and $k = 0$ observed violations, the two-sided 95% Wilson interval upper bound is:
+   $$U = \frac{z^2}{n + z^2} = \frac{1.96^2}{90 + 1.96^2} = \frac{3.8416}{93.8416} = 4.0938\% \approx 4.09\%$$
+   The previous $3.98\%$ typo is formally deprecated and replaced by **$4.09\%$**.
 
-| Metric | Baseline $C_2$ ($M_2$) | Baseline $C_2$ ($M_4$) | Acceptance Threshold ($M_2$) | Acceptance Threshold ($M_4$) |
-| :--- | :---: | :---: | :---: | :---: |
-| **Intervention Rate** | $46.53\%$ ($349/750$) | $38.67\%$ ($290/750$) | **$\le 20.0\%$** ($\ge 57\%$ reduction) | **$\le 18.0\%$** ($\ge 53\%$ reduction) |
-| **Max Intervention Streak** | 16 steps | 12 steps | **$\le 3$ steps** | **$\le 3$ steps** |
-| **Stall Rate** | $90.0\%$ ($27/30$) | $96.67\%$ ($29/30$) | **$\le 20.0\%$** | **$\le 15.0\%$** |
-| **Task Success Rate** | $0.0\%$ ($0/30$) | $0.0\%$ ($0/30$) | **$\ge 15.0\%$** (Ambitious recovery) | **$\ge 25.0\%$** (Full skill recovery) |
-| **Hard Safety Violations** | $0.0\%$ ($0/30$) | $0.0\%$ ($0/30$) | **$0/90$ ($0.0\%$, CI upper $\le 3.98\%$)** | **$0/90$ ($0.0\%$, CI upper $\le 3.98\%$)** |
+### 4.3 Model-Specific Acceptance Gates
 
-*Note on Safety Claim:* Observing $0/90$ hard violations establishes an empirical 95% Wilson confidence upper bound of $3.98\%$. In compliance with HOROS research integrity rules, this will be reported strictly as an empirical non-violation record, not a formal certified safety guarantee.
+| Gate | Target Metric | Baseline $C_2$ ($M_2$) | Baseline $C_2$ ($M_4$) | Acceptance Threshold ($M_2$) | Acceptance Threshold ($M_4$) |
+| :---: | :--- | :---: | :---: | :---: | :---: |
+| **2.1** | Intervention Frequency ($N_{\text{int}} / N_{\text{dec}}$) | $46.53\%$ ($349/750$) | $38.67\%$ ($290/750$) | **$\le 20.0\%$** ($\ge 57\%$ reduction) | **$\le 18.0\%$** ($\ge 53\%$ reduction) |
+| **2.2** | Max Consecutive Intervention Streak | 16 steps | 12 steps | **$\le 3$ steps** | **$\le 3$ steps** |
+| **2.3** | Stall Rate ($k/N$, %) | $90.0\%$ ($27/30$) | $96.67\%$ ($29/30$) | **$\le 20.0\%$** | **$\le 15.0\%$** |
+| **2.4** | Task Success Rate ($k/N$, %) | $0.0\%$ ($0/30$) | $0.0\%$ ($0/30$) | **$\ge 15.0\%$** ($> 13.3\%$ C1 level) | **$\ge 25.0\%$** (Recovers 26.7% C1 level) |
+| **2.5** | Hard Violations (Crush / Drop) | $0/30$ ($0.0\%$) | $0/30$ ($0.0\%$) | **$0/90$ (CI upper $\le 4.09\%$)** | **$0/90$ (CI upper $\le 4.09\%$)** |
+| **2.6** | Multi-Seed Stability | N/A | N/A | Monotonic gain across all 3 seeds | Monotonic gain across all 3 seeds |
 
----
-
-## 5. Implementation Architecture & Phased Rollout
-
-Following co-founder approval of Document 40, implementation will proceed through strict verified phases:
-
-1. **Phase 1: Unit & Physics Test Suite (`tests/test_p26_action_substitution.py`)**
-   - Test 1: Squeeze displacement target $\Delta x_{\text{sqz}}$ vs command increment $\Delta a_{\text{cmd}}$ scaling.
-   - Test 2: Anti-crush override at $F_n \ge 18.0\text{ N}$.
-   - Test 3: Weakest-contact friction bottleneck calculation $\min_i(\eta \mu_i F_{n,i})$.
-   - Test 4: Stateful velocity integrator deceleration and zero-velocity clamping when $a_{z,\max} \le 0$.
-2. **Phase 2: Source Module Implementation (`src/coordination/action_substitutor.py`)**
-   - Implements `ContactAwareActionSubstitutor` adhering to Section 2 and 3 contracts.
-3. **Phase 3: Execution of Controlled Factorial Suite (`run_p26_exp02_action_substitution.py`)**
-   - Evaluates Baseline $C_2$, E02-A, E02-B, E02-C, E02-D across 900 episodes.
-4. **Phase 4: Publication of Results Audit (`41-p26-exp02-empirical-results-audit.md`)**
-   - Reports per-seed, pooled, and model-stratified metrics against frozen acceptance gates.
+*Formal Non-Claim:* Achieving $0/90$ hard violations demonstrates strong empirical compliance ($p < 0.0409$), but is explicitly designated as empirical non-violation evidence, **not** a formal mathematical safety certificate.
 
 ---
 
-## 6. Signoff Decision Request
+## 5. Phased Rollout Sequence
 
-This revised Document 40 is submitted for formal technical review and authorization to proceed with Phase 1 (Unit Tests) and Phase 2 (`src/coordination/action_substitutor.py`).
+```mermaid
+flowchart TD
+    A["Document 40 Revision 2.1 (All Amendments Resolved)"] --> B["Co-Founder Final Review & Authorization"]
+    B --> C["Phase 1: Unit & Physics Tests (tests/test_p26_action_substitution.py)"]
+    C --> D["Phase 2: Source Module (src/coordination/action_substitutor.py)"]
+    D --> E["Phase 3: Controlled 900-Episode Factorial Benchmark"]
+    E --> F["Phase 4: Empirical Audit (41-p26-exp02-empirical-results-audit.md)"]
+```
+
+**Instruction:** No lines of production controller code will be authored until Document 40 Revision 2.1 receives formal co-founder authorization.
