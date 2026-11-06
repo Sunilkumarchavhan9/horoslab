@@ -52,8 +52,11 @@ class DynamicDampingTracker:
         # Resolve any trailing events at episode termination
         for ev in self.active_events:
             if not ev["resolved"]:
-                # If episode ended before 2 steps and force did not blow up past 25N, mark damped
-                self.damped_excursions += 1
+                if ev.get("last_observed", ev["f_thresh"]) <= ev["f_thresh"]:
+                    self.damped_excursions += 1
+                else:
+                    self.failed_excursions += 1
+                ev["resolved"] = True
         self.active_events = []
 
     def update_step(self, step_idx: int, normal_forces: np.ndarray):
@@ -68,10 +71,12 @@ class DynamicDampingTracker:
             delta_t = step_idx - t_start
 
             if delta_t == 1:
+                ev["last_observed"] = fn[f_idx]
                 if fn[f_idx] <= f_thresh:
                     ev["resolved"] = True
                     self.damped_excursions += 1
             elif delta_t >= 2:
+                ev["last_observed"] = fn[f_idx]
                 ev["resolved"] = True
                 if fn[f_idx] <= f_thresh:
                     self.damped_excursions += 1
@@ -92,6 +97,7 @@ class DynamicDampingTracker:
                         "finger": i,
                         "step": step_idx,
                         "f_thresh": fn[i],
+                        "last_observed": fn[i],
                         "resolved": False
                     })
 

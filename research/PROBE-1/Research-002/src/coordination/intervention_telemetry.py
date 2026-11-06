@@ -68,12 +68,33 @@ class InterventionTelemetryLogger:
         ft_profile = []
         slip_ratios = []
 
-        if "normal_forces" in obs:
+        if "normal_forces" in obs and obs["normal_forces"] is not None:
             fn_profile = [float(x) for x in obs["normal_forces"]]
-        elif "finger_normal_force" in obs:
+        elif "finger_normal_force" in obs and obs["finger_normal_force"] is not None:
             fn_profile = [float(x) for x in obs["finger_normal_force"]]
 
-        if "slip_ratios" in obs:
+        if "finger_shear_force" in obs and obs["finger_shear_force"] is not None:
+            raw_ft = obs["finger_shear_force"]
+            try:
+                ft_arr = np.asarray(raw_ft, dtype=float)
+                if ft_arr.ndim == 1:
+                    ft_profile = [float(abs(x)) for x in ft_arr]
+                elif ft_arr.ndim == 2:
+                    ft_profile = [float(np.linalg.norm(x)) for x in ft_arr]
+            except Exception:
+                ft_profile = []
+        elif "shear_forces" in obs and obs["shear_forces"] is not None:
+            raw_ft = obs["shear_forces"]
+            try:
+                ft_arr = np.asarray(raw_ft, dtype=float)
+                if ft_arr.ndim == 1:
+                    ft_profile = [float(abs(x)) for x in ft_arr]
+                elif ft_arr.ndim == 2:
+                    ft_profile = [float(np.linalg.norm(x)) for x in ft_arr]
+            except Exception:
+                ft_profile = []
+
+        if "slip_ratios" in obs and obs["slip_ratios"] is not None:
             slip_ratios = [float(x) for x in obs["slip_ratios"]]
 
         max_slip = float(np.max(slip_ratios)) if slip_ratios else float(filter_info.get("max_slip_ratio", 0.0))
@@ -93,7 +114,10 @@ class InterventionTelemetryLogger:
             "proposed_action": [round(float(x), 4) for x in a_prop],
             "filtered_action": [round(float(x), 4) for x in a_filt],
             "action_distortion_norm": round(distortion_norm, 5),
+            "normal_forces_N": [round(float(x), 4) for x in fn_profile],
             "normal_force_mean_N": round(mean_fn, 4),
+            "shear_forces_N": [round(float(x), 4) for x in ft_profile],
+            "slip_ratios": [round(float(x), 4) for x in slip_ratios] if slip_ratios else ([round(max_slip, 4)] * len(fn_profile) if fn_profile else []),
             "max_slip_ratio": round(max_slip, 4),
             "barrier_h_slip": round(h_slip, 4),
             "barrier_h_crush": round(h_crush, 4),

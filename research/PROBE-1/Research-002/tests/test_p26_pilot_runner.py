@@ -98,11 +98,18 @@ class TestP26PilotRunner(unittest.TestCase):
         self.assertEqual(rec["contact_mode"], 4)
         self.assertEqual(rec["contact_mode_name"], "Incipient_Micro_Slip")
 
-        # Assert Channel 2: Normal Forces
+        # Assert Channel 2: Normal Forces (both per-finger array and mean)
+        self.assertIn("normal_forces_N", rec)
+        self.assertEqual(len(rec["normal_forces_N"]), 4)
+        self.assertEqual(rec["normal_forces_N"], [3.2, 3.1, 2.9, 3.0])
         self.assertIn("normal_force_mean_N", rec)
         self.assertAlmostEqual(rec["normal_force_mean_N"], 3.05, places=2)
 
-        # Assert Channel 3 & 4: Slip Ratio & Friction Cone
+        # Assert Channel 3 & 4: Shear Forces & Slip Ratio (per-finger arrays and scalar)
+        self.assertIn("shear_forces_N", rec)
+        self.assertEqual(len(rec["shear_forces_N"]), 4)
+        self.assertEqual(rec["shear_forces_N"], [0.8, 0.9, 0.7, 0.8])
+        self.assertIn("slip_ratios", rec)
         self.assertIn("max_slip_ratio", rec)
         self.assertAlmostEqual(rec["max_slip_ratio"], 0.55, places=2)
 
@@ -210,3 +217,4 @@ class TestP26PilotRunner(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
