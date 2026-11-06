@@ -146,3 +146,4 @@ Pilot Allocation: 50 Episodes Pre-Registered (5 variants × 2 modes × 5 episode
 Full Factorial Simulation Matrix (450 episodes): STRICTLY BLOCKED PENDING PILOT REVIEW
 ========================================================================================
 ```
+
