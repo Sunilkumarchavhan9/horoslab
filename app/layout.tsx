@@ -15,8 +15,43 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MemoryOS",
-  description: "MemoryOS session workspace and Devin-style continuity shell",
+  metadataBase: new URL("https://www.horoslab.org"),
+  title: {
+    default: "HOROS | Frontier AI Research & Physical Intelligence Infrastructure",
+    template: "HOROS | %s",
+  },
+  description:
+    "High-throughput model endpoints, autonomous post-training loops, and physical AI compute for humanoid robotics and aerospace.",
+  openGraph: {
+    title: "HOROS | Frontier AI Research & Physical Intelligence Infrastructure",
+    description:
+      "High-throughput model endpoints, autonomous post-training loops, and physical AI compute for humanoid robotics and aerospace.",
+    url: "https://www.horoslab.org",
+    siteName: "HOROS Lab",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HOROS Lab",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HOROS | Frontier AI Research & Physical Intelligence Infrastructure",
+    description:
+      "High-throughput model endpoints, autonomous post-training loops, and physical AI compute for humanoid robotics and aerospace.",
+    images: ["/og-image.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" }
+    ],
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

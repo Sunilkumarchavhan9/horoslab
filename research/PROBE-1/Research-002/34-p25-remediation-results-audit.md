@@ -124,3 +124,4 @@ Comparing C1 against C2, C3, and C4 reveals the exact mechanism of the safety-pe
 
 ### Final Scientific Conclusion
 Stage P2.5 Remediation has successfully separated **model competence** from **runtime safety conservatism**. The learned contact world model and active boundary acquisition strategy are thoroughly validated. The remaining challenge for full autonomous hardware deployment is the synthesis of a joint MPC-CBF controller that couples normal force preloading with lift velocity, resolving the decoupled safety filter limit cycle.
+
