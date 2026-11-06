@@ -102,7 +102,7 @@ Predictable monthly plans with dedicated compute credits, autonomous post-traini
 ### 1. HOROS PROBE-1 — Research-001: Uncertainty-Aware Safe Adaptation
 
 <p align="center">
-  <img src="./assets/horos-research-probe1.jpg" alt="HOROS PROBE-1 Research Paper - arXiv 2611.05810" width="100%" />
+  <img src="./assets/horos-probe1-paper-card.jpg" alt="HOROS PROBE-1 Research Paper - arXiv 2611.05810" width="100%" />
 </p>
 
 - **Paper Title:** *HOROS PROBE-1: Uncertainty-Aware Safe Adaptation for Multifingered Grasping Under Nonstationary Contacts*
