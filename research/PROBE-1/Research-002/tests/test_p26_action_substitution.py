@@ -1,11 +1,13 @@
 """
 HOROS PROBE-1 — Research-002: Trustworthy Action-Conditioned Contact World Models
 Stage P2.6: Contact-Aware Safety Coordination
-Test Suite: Action Substitution Verification (Document 40 Revision 2.1)
+Test Suite: Action Substitution Verification & Adversarial Safety Audit
+(Document 40 Revision 2.1 & Document 41 Implementation Audit)
 
 Author: Sunil Kumar Chavhan (contact@horoslab.org)
-Co-Founder Authorized: Phase 1 Unit and Physics Tests
-Coverage: 10 Required Test Groups
+Coverage:
+- 13 Baseline Unit & Kinematic Physics Tests
+- 5 Adversarial & Border Safety Tests (Issues 1-4 Verification)
 """
 
 import math
@@ -61,15 +63,14 @@ class TestP26ActionSubstitution(unittest.TestCase):
 
     def test_02_squeeze_proportional_command_and_clipping(self):
         """Assert proportional command delta_a = Kp * (Delta F_n / k_elastic) clipped to [-2.0, 2.0]."""
-        # When deficit is 2.0 N, delta_a = 1.0 * (2.0 / 4.0) = 0.50 mm/step
         fn_profile = np.array([self.sub.F_n_required - 2.0] * 4)
         proposed_a = np.zeros(4)
         cmd = self.sub.calculate_squeeze_command(fn_profile, proposed_a)
         for i in range(4):
             self.assertAlmostEqual(cmd[i], 0.50, places=4)
 
-        # Huge deficit (12 N) should saturate at upper limit 2.0 mm/step
-        fn_huge_deficit = np.array([0.15] * 4)  # above loss threshold
+        # Large deficit saturates at upper limit 2.0 mm/step
+        fn_huge_deficit = np.array([0.15] * 4)
         cmd_saturated = self.sub.calculate_squeeze_command(fn_huge_deficit, proposed_a)
         for i in range(4):
             self.assertLessEqual(cmd_saturated[i], 2.0)
@@ -79,8 +80,7 @@ class TestP26ActionSubstitution(unittest.TestCase):
     # -------------------------------------------------------------
     def test_03_anti_crush_protective_threshold_and_retraction(self):
         """Assert active outward retraction for F_n >= 18.0 N with K_retract = 1.5 step^-1."""
-        # At 22.0 N (excess 4.0 N):
-        # retract = -1.5 * (4.0 / 4.0) = -1.50 mm/step
+        # Excess 4.0 N at 22.0 N: retract = -1.5 * (4.0 / 4.0) = -1.50 mm/step
         fn_excess = np.array([22.0, 22.0, 22.0, 22.0])
         proposed_squeeze = np.array([0.5, 0.5, 0.5, 0.5])
         cmd = self.sub.calculate_squeeze_command(fn_excess, proposed_squeeze)
@@ -100,11 +100,9 @@ class TestP26ActionSubstitution(unittest.TestCase):
     def test_05_lift_acceleration_and_velocity_integration(self):
         """Assert upward acceleration and velocity integration in Branch 1."""
         self.sub.reset()
-        # With high normal forces (e.g. 5.0 N each), friction capacity is large:
-        # F_t_max = 4 * (0.85 * 0.60 * 5.0) = 10.20 N
-        # a_z_max = (10.20 - 4.905) / 0.50 = 10.59 m/s^2
         obs = {
             "normal_forces": [5.0, 5.0, 5.0, 5.0],
+            "finger_shear_force": [1.0, 1.0, 1.0, 1.0],
             "obj_pos": [0.0, 0.0, 10.0]
         }
         proposed_action = np.array([0.0, 0.0, 0.0, 0.0, 0.05])  # 0.05 mm/step -> 0.005 m/s
@@ -116,11 +114,10 @@ class TestP26ActionSubstitution(unittest.TestCase):
 
     def test_06_stale_velocity_safeguard(self):
         """Assert that if preload deficit occurs, upward velocity v_z is strictly zeroed."""
-        self.sub.v_z = 0.05  # Stale velocity from previous step
-        # Low normal force (1.0 N each) -> a_z_max is negative:
-        # F_t_max = 4 * (0.85 * 0.60 * 1.0) = 2.04 N < 4.905 N
+        self.sub.v_z = 0.05
         obs = {
             "normal_forces": [1.0, 1.0, 1.0, 1.0],
+            "finger_shear_force": [0.2, 0.2, 0.2, 0.2],
             "obj_pos": [0.0, 0.0, 10.0]
         }
         proposed_action = np.array([0.0, 0.0, 0.0, 0.0, 1.0])
@@ -136,31 +133,35 @@ class TestP26ActionSubstitution(unittest.TestCase):
     def test_07_downward_command_passthrough_and_table_guard(self):
         """Assert Branch 2 passes negative commands and enforces table collision guard z_obj + a_lift >= 0."""
         self.sub.reset()
-        # Safe descent: z_obj = 5.0 mm, proposed lift = -1.0 mm/step -> -1.0 allowed
         obs = {
             "normal_forces": [3.0, 3.0, 3.0, 3.0],
+            "finger_shear_force": [1.0, 1.0, 1.0, 1.0],
             "obj_pos": [0.0, 0.0, 5.0]
         }
         proposed_action = np.array([0.0, 0.0, 0.0, 0.0, -1.0])
         sub_action, intervened, info = self.sub.substitute_action(obs, proposed_action, variant="E02_C")
         self.assertEqual(info["branch"], "Branch_2_Downward")
         self.assertEqual(sub_action[4], -1.0)
-        self.assertAlmostEqual(self.sub.v_z, -0.10, places=4)  # -1.0 mm / 0.01 s = -0.10 m/s
+        self.assertAlmostEqual(self.sub.v_z, -0.10, places=4)
 
-        # Collision risk: z_obj = 0.5 mm, proposed lift = -1.5 mm/step -> clipped to -0.5 mm
+        # Collision risk: z_obj = 0.5 mm, proposed lift = -1.5 mm -> clipped to -0.5 mm
         obs["obj_pos"] = [0.0, 0.0, 0.5]
         sub_action, intervened, info = self.sub.substitute_action(obs, proposed_action, variant="E02_C")
         self.assertEqual(info["branch"], "Branch_2_Downward")
         self.assertAlmostEqual(sub_action[4], -0.5, places=4)
 
     # -------------------------------------------------------------
-    # 5. Contact-Loss Fallback
+    # 5. Contact-Loss Fallback (Issue 1)
     # -------------------------------------------------------------
-    def test_08_contact_loss_fallback(self):
-        """Assert F_n < 0.10 N triggers Branch 3 Fallback: lift arrest and gentle search (+0.20 mm)."""
+    def test_08_contact_loss_fallback_per_finger(self):
+        """
+        Assert contact loss triggers Branch 3 Fallback: lift arrest and per-finger response.
+        Unseated finger searches (+0.2mm), seated finger holds stationary (0.0mm).
+        """
         self.sub.v_z = 0.02
         obs = {
-            "normal_forces": [3.0, 0.05, 3.0, 3.0],  # finger 1 has contact loss (0.05 N < 0.10 N)
+            "normal_forces": [3.0, 0.05, 3.0, 3.0],  # finger 1 lost contact (0.05 N < 0.10 N)
+            "finger_shear_force": [0.5, 0.0, 0.5, 0.5],
             "obj_pos": [0.0, 0.0, 10.0]
         }
         proposed_action = np.array([0.0, 0.0, 0.0, 0.0, 1.0])
@@ -170,19 +171,22 @@ class TestP26ActionSubstitution(unittest.TestCase):
         self.assertEqual(info["reason"], "contact_loss")
         self.assertTrue(intervened)
         self.assertEqual(sub_action[4], 0.0)  # Immediate arrest
-        for i in range(4):
-            self.assertAlmostEqual(sub_action[i], 0.20, places=4)  # Gentle inward search
         self.assertEqual(self.sub.v_z, 0.0)
+
+        # Per-finger check: finger 1 searches (+0.20), fingers 0, 2, 3 hold (0.0)
+        self.assertAlmostEqual(sub_action[1], 0.20, places=4)
+        self.assertEqual(sub_action[0], 0.0)
+        self.assertEqual(sub_action[2], 0.0)
+        self.assertEqual(sub_action[3], 0.0)
 
     # -------------------------------------------------------------
     # 6. Friction Constraints
     # -------------------------------------------------------------
     def test_09_weakest_contact_friction_bottleneck(self):
         """Assert multi-finger friction capacity is bounded by the weakest contact min_i(F_n,i)."""
-        # If three fingers have 10 N but one finger has 1.0 N:
-        # min_fn = 1.0 N -> F_t_max = 4 * (0.85 * 0.60 * 1.0) = 2.04 N < 4.905 N -> a_z_max <= 0
         obs = {
             "normal_forces": [10.0, 10.0, 10.0, 1.0],
+            "finger_shear_force": [1.0, 1.0, 1.0, 1.0],
             "obj_pos": [0.0, 0.0, 10.0]
         }
         proposed_action = np.array([0.0, 0.0, 0.0, 0.0, 0.5])
@@ -190,14 +194,12 @@ class TestP26ActionSubstitution(unittest.TestCase):
         self.assertEqual(sub_action[4], 0.0)
 
     # -------------------------------------------------------------
-    # 7. Clamp Release Evaluation
+    # 7. Clamp Release Evaluation (Issue 3)
     # -------------------------------------------------------------
     def test_10_clamp_release_conditions(self):
-        """Assert E02-A clamp release iff all F_n >= F_req AND all rho_i <= eta."""
-        # Satisfied: all Fn = 3.0 N > 2.5547 N and low shear
+        """Assert E02-A clamp release iff all F_n >= F_req AND all rho_i <= eta with measured shear."""
         fn_good = np.array([3.0, 3.0, 3.0, 3.0])
         ft_good = np.array([1.0, 1.0, 1.0, 1.0])
-        # rho_i = 1.0 / (0.60 * 3.0) = 0.5556 <= 0.85
         self.assertTrue(self.sub.evaluate_clamp_release(fn_good, ft_good))
 
         # Failed: one finger has deficit
@@ -206,14 +208,13 @@ class TestP26ActionSubstitution(unittest.TestCase):
 
         # Failed: high shear violating eta
         ft_high = np.array([2.0, 2.0, 2.0, 2.0])
-        # rho_i = 2.0 / (0.60 * 3.0) = 1.11 > 0.85
         self.assertFalse(self.sub.evaluate_clamp_release(fn_good, ft_high))
 
         # Singularity cutoff: contact loss force (< 0.10 N) produces rho = inf
         fn_cutoff = np.array([0.05, 3.0, 3.0, 3.0])
-        ratios = self.sub.calculate_regularized_slip_ratios(fn_cutoff)
+        ratios = self.sub.calculate_regularized_slip_ratios(fn_cutoff, ft_good)
         self.assertTrue(math.isinf(ratios[0]))
-        self.assertFalse(self.sub.evaluate_clamp_release(fn_cutoff))
+        self.assertFalse(self.sub.evaluate_clamp_release(fn_cutoff, ft_good))
 
     # -------------------------------------------------------------
     # 8. Invalid Inputs Handling
@@ -228,6 +229,7 @@ class TestP26ActionSubstitution(unittest.TestCase):
         self.assertEqual(info["branch"], "Branch_3_Fallback")
         self.assertEqual(info["reason"], "sensor_fault")
         self.assertEqual(sub_action[4], 0.0)
+        np.testing.assert_array_equal(sub_action[:4], np.zeros(4))
 
         obs_neg = {
             "normal_forces": [-1.0, 3.0, 3.0, 3.0],
@@ -244,6 +246,7 @@ class TestP26ActionSubstitution(unittest.TestCase):
         """Assert identical inputs produce bitwise identical outputs across repeated calls."""
         obs = {
             "normal_forces": [2.1, 2.8, 3.4, 1.9],
+            "finger_shear_force": [0.5, 0.6, 0.7, 0.4],
             "obj_pos": [0.0, 0.0, 2.5]
         }
         action = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
@@ -262,17 +265,7 @@ class TestP26ActionSubstitution(unittest.TestCase):
     # 10. Physical Units & Dimensional Consistency
     # -------------------------------------------------------------
     def test_13_physical_units_and_dimensions(self):
-        """
-        Dimensional audit:
-        F_g: [kg * m/s^2 = N]
-        k_elastic: [N/mm]
-        delta_x: [mm]
-        Kp: [step^-1]
-        delta_a_cmd: [mm/step]
-        a_z_max: [(N - N) / kg = m/s^2]
-        v_z: [m/s]
-        delta_z: [m/s * s * 10^3 mm/m = mm]
-        """
+        """Dimensional audit for forces, stiffnesses, accelerations, and velocities."""
         m = 0.50          # kg
         g = 9.81          # m/s^2
         F_g = m * g       # N = 4.905
@@ -286,16 +279,149 @@ class TestP26ActionSubstitution(unittest.TestCase):
         self.assertAlmostEqual(delta_x, 0.5, places=4)
         self.assertAlmostEqual(delta_a, 0.5, places=4)
 
-        # Acceleration and velocity
         f_shear = 10.0    # N
-        a_z = (f_shear - F_g) / m  # m/s^2 = (10.0 - 4.905)/0.5 = 10.19 m/s^2
+        a_z = (f_shear - F_g) / m
         dt = 0.01         # s
-        v_z = a_z * dt    # m/s = 0.1019 m/s
-        delta_z = v_z * dt * 1000.0  # mm = 0.1019 * 0.01 * 1000 = 1.019 mm/step
+        v_z = a_z * dt
+        delta_z = v_z * dt * 1000.0
 
         self.assertAlmostEqual(a_z, 10.19, places=2)
         self.assertAlmostEqual(v_z, 0.1019, places=4)
         self.assertAlmostEqual(delta_z, 1.019, places=3)
+
+    # -------------------------------------------------------------
+    # 11. Adversarial Test: Contact Loss Combined with Overforce (Issue 1 & 4)
+    # -------------------------------------------------------------
+    def test_14_adversarial_contact_loss_with_overforce(self):
+        """
+        Adversarial test for Issue 1 & Issue 4:
+        Finger 0: 0.05 N (contact loss) -> must search (+0.20 mm/step)
+        Finger 1: 22.0 N (protective crush ceiling) -> must actively retract (-1.50 mm/step)
+        Finger 2: 3.0 N (nominal seated) -> must hold stationary (0.00 mm/step, NOT squeeze)
+        Finger 3: 26.0 N (hard environment limit breach) -> must hard-saturate retract (-2.00 mm/step)
+        Upward lift: must be completely arrested (0.00 mm/step).
+        """
+        self.sub.v_z = 0.05
+        obs = {
+            "normal_forces": [0.05, 22.0, 3.0, 26.0],
+            "finger_shear_force": [0.0, 2.0, 0.5, 2.0],
+            "obj_pos": [0.0, 0.0, 10.0]
+        }
+        proposed_action = np.array([0.5, 0.5, 0.5, 0.5, 1.0])
+
+        sub_action, intervened, info = self.sub.substitute_action(obs, proposed_action, variant="E02_C")
+
+        self.assertEqual(info["branch"], "Branch_3_Fallback")
+        self.assertEqual(info["reason"], "contact_loss")
+        self.assertTrue(intervened)
+        self.assertEqual(sub_action[4], 0.0)  # Lift strictly arrested
+        self.assertEqual(self.sub.v_z, 0.0)
+
+        # Per-finger verification
+        self.assertAlmostEqual(sub_action[0], 0.20, places=4)   # Finger 0: search
+        self.assertAlmostEqual(sub_action[1], -1.50, places=4)  # Finger 1: proportional retract
+        self.assertEqual(sub_action[2], 0.0)                    # Finger 2: stationary hold (NO crush)
+        self.assertEqual(sub_action[3], -2.0)                   # Finger 3: hard limit saturation
+
+    # -------------------------------------------------------------
+    # 12. Adversarial Test: NaN/Inf Shear Telemetry Rejection (Issue 2)
+    # -------------------------------------------------------------
+    def test_15_nan_inf_shear_telemetry_rejection(self):
+        """Assert NaN or Inf shear force cannot bypass slip check and routes to sensor fault."""
+        obs_nan_shear = {
+            "normal_forces": [3.0, 3.0, 3.0, 3.0],
+            "finger_shear_force": [float("nan"), 1.0, 1.0, 1.0],
+            "obj_pos": [0.0, 0.0, 5.0]
+        }
+        proposed_action = np.array([0.0, 0.0, 0.0, 0.0, 1.0])
+        sub_action, intervened, info = self.sub.substitute_action(obs_nan_shear, proposed_action, variant="E02_C")
+        self.assertEqual(info["branch"], "Branch_3_Fallback")
+        self.assertEqual(info["reason"], "sensor_fault")
+        self.assertEqual(sub_action[4], 0.0)
+        np.testing.assert_array_equal(sub_action[:4], np.zeros(4))
+
+        # Check slip ratio calculation returns infinity on NaN shear
+        ratios = self.sub.calculate_regularized_slip_ratios(
+            np.array([3.0, 3.0, 3.0, 3.0]),
+            np.array([float("inf"), 1.0, 1.0, 1.0])
+        )
+        self.assertTrue(np.all(np.isinf(ratios)))
+
+    # -------------------------------------------------------------
+    # 13. Missing Shear Blocks Clamp Release (Issue 3)
+    # -------------------------------------------------------------
+    def test_16_unmeasured_shear_blocks_clamp_release(self):
+        """Assert evaluate_clamp_release strictly returns False when shear is unmeasured (None)."""
+        fn_good = np.array([3.0, 3.0, 3.0, 3.0])  # Normal forces are adequate
+        # Without empirical shear measurements, clamp release MUST be denied
+        self.assertFalse(self.sub.evaluate_clamp_release(fn_good, ft_profile=None))
+
+        # Even in substitute_action E02_A, missing shear must prevent clamp release
+        obs_no_shear = {
+            "normal_forces": [3.0, 3.0, 3.0, 3.0],
+            "obj_pos": [0.0, 0.0, 5.0]
+        }
+        proposed_action = np.array([0.0, 0.0, 0.0, 0.0, 1.0])
+        sub_action, intervened, info = self.sub.substitute_action(obs_no_shear, proposed_action, variant="E02_A")
+        self.assertEqual(info["branch"], "E02_A_Clamped")
+        self.assertEqual(sub_action[4], 0.0)
+
+    # -------------------------------------------------------------
+    # 14. Independent 18 N vs 25 N Boundary Responses (Issue 4)
+    # -------------------------------------------------------------
+    def test_17_independent_18N_vs_25N_boundaries(self):
+        """Assert independent and distinct behavior across 18 N protective ceiling and 25 N hard limit."""
+        # Zone B: 18 N <= Fn < 25 N -> Proportional active retraction
+        # Fn = 20.0 N -> Excess 2.0 N -> Retract = -1.5 * (2.0 / 4.0) = -0.75 mm/step
+        fn_20 = np.array([20.0, 20.0, 20.0, 20.0])
+        cmd_20 = self.sub.calculate_squeeze_command(fn_20, np.zeros(4))
+        for i in range(4):
+            self.assertAlmostEqual(cmd_20[i], -0.75, places=4)
+
+        # Zone A: Fn >= 25.0 N -> Hard environment limit saturation (-2.00 mm/step)
+        fn_25 = np.array([25.0, 25.0, 25.0, 25.0])
+        cmd_25 = self.sub.calculate_squeeze_command(fn_25, np.zeros(4))
+        for i in range(4):
+            self.assertEqual(cmd_25[i], -2.0)
+
+        # In substitute_action: Fn >= 25 N triggers immediate lift arrest override
+        obs_hard_breach = {
+            "normal_forces": [25.5, 3.0, 3.0, 3.0],
+            "finger_shear_force": [1.0, 1.0, 1.0, 1.0],
+            "obj_pos": [0.0, 0.0, 5.0]
+        }
+        sub_action, intervened, info = self.sub.substitute_action(
+            obs_hard_breach, np.array([0.0, 0.0, 0.0, 0.0, 2.0]), variant="E02_C"
+        )
+        self.assertEqual(info["branch"], "Branch_Hard_Limit_Arrest")
+        self.assertEqual(sub_action[4], 0.0)
+        self.assertEqual(sub_action[0], -2.0)
+
+    # -------------------------------------------------------------
+    # 15. Malformed Proposed Action Guarding (Issue 4)
+    # -------------------------------------------------------------
+    def test_18_malformed_proposed_action_guarding(self):
+        """Assert truncated vectors, non-finite values, and None actions are safely arrested."""
+        obs = {
+            "normal_forces": [3.0, 3.0, 3.0, 3.0],
+            "finger_shear_force": [1.0, 1.0, 1.0, 1.0],
+            "obj_pos": [0.0, 0.0, 5.0]
+        }
+
+        # None action
+        sub_a, intv, info = self.sub.substitute_action(obs, None)
+        self.assertEqual(info["reason"], "none_proposed_action")
+        np.testing.assert_array_equal(sub_a, np.zeros(5))
+
+        # Truncated action (length 3 < 5)
+        sub_a, intv, info = self.sub.substitute_action(obs, np.array([0.1, 0.2, 0.3]))
+        self.assertEqual(info["reason"], "malformed_proposed_action_dimension_or_nonfinite")
+        np.testing.assert_array_equal(sub_a, np.zeros(5))
+
+        # Non-finite action (NaN)
+        sub_a, intv, info = self.sub.substitute_action(obs, np.array([0.0, 0.0, float("nan"), 0.0, 1.0]))
+        self.assertEqual(info["reason"], "malformed_proposed_action_dimension_or_nonfinite")
+        np.testing.assert_array_equal(sub_a, np.zeros(5))
 
 
 if __name__ == "__main__":
