@@ -124,5 +124,6 @@ class HybridContactStateModel(nn.Module):
             "mode_probabilities": mode_dist_arr,
             "mode_sets": mode_sets,
             "predicted_modes": np.array(top_modes, dtype=np.int64),
+            "top_modes": np.array(top_modes, dtype=np.int64),
             "contact_forces": forces,
         }

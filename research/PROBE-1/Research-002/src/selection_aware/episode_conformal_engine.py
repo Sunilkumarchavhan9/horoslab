@@ -113,7 +113,11 @@ class EpisodeConformalEngine:
             true_modes = dec["realized_modes"]        # [H]
             pred_mode_probs = dec["pred_mode_probs"]  # [H, 7]
 
-            H_avail = len(true_states)
+            H_avail = min(
+                len(true_states), len(pred_states),
+                len(true_wrenches), len(pred_wrenches),
+                len(true_modes), len(pred_mode_probs)
+            )
             for h in self.horizons:
                 h_idx = h - 1  # 0-indexed horizon step
                 if h_idx < H_avail:
@@ -281,9 +285,10 @@ class EpisodeConformalEngine:
                 t_m = dec["realized_modes"]
                 p_m_prob = dec["pred_mode_probs"]
 
+                h_min = min(len(t_s), len(p_s), len(t_w), len(p_w), len(t_m), len(p_m_prob))
                 for h in self.horizons:
                     h_idx = h - 1
-                    if h_idx < len(t_s):
+                    if h_idx < h_min:
                         diff_x = np.abs(t_s[h_idx] - p_s[h_idx])
                         if self.state_scale is not None:
                             diff_x = diff_x / np.maximum(self.state_scale, 1e-4)
