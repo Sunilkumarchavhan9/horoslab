@@ -1,0 +1,417 @@
+{
+  "timestamp": "2026-11-06T14:53:47Z",
+  "program": "HOROS PROBE-1, Research-002",
+  "stage": "P2.4",
+  "method": "Active Contact-Mode Mining (ACMM)",
+  "experimental_design_corrections": {
+    "task_1_evaluation_horizon": "Extended from 10 steps to 25 steps to enable physical seating completion (>=65mm displacement).",
+    "task_2_coordinated_manipulation": "Exploration pool includes multi-finger normal force preload regulation and synchronized dynamic arm lift.",
+    "test_split_isolation": "All active mining operates exclusively in training simulation; held-out test splits remain 100% untouched."
+  },
+  "task_1_peg_in_hole": {
+    "task": "peg_in_hole",
+    "eval_horizon_steps": 25,
+    "active_budget_episodes": 40,
+    "strategies": {
+      "D0_passive": {
+        "strategy": "D0_passive",
+        "total_training_episodes": 25,
+        "total_transitions": 512,
+        "mining_diagnostics": {
+          "strategy": "D0_passive",
+          "admitted_count": 0,
+          "unique_contact_modes": [
+            0,
+            4
+          ],
+          "num_unique_modes": 2,
+          "success_count_in_mined": 0
+        },
+        "prediction_accuracy": {
+          "state_rmse": 11.6115,
+          "force_rmse": 3.4399,
+          "mode_macro_f1": 0.1212
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.0,
+          "max_goal_progress": 0.0,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.153
+        },
+        "elapsed_seconds": 10.53
+      },
+      "D1_random": {
+        "strategy": "D1_random",
+        "total_training_episodes": 65,
+        "total_transitions": 1415,
+        "mining_diagnostics": {
+          "strategy": "D1_random",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            4,
+            5
+          ],
+          "num_unique_modes": 3,
+          "success_count_in_mined": 0
+        },
+        "prediction_accuracy": {
+          "state_rmse": 11.4114,
+          "force_rmse": 3.448,
+          "mode_macro_f1": 0.1008
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.0,
+          "max_goal_progress": 0.0,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.117
+        },
+        "elapsed_seconds": 11.73
+      },
+      "D2_boundary": {
+        "strategy": "D2_boundary",
+        "total_training_episodes": 65,
+        "total_transitions": 1448,
+        "mining_diagnostics": {
+          "strategy": "D2_boundary",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "num_unique_modes": 4,
+          "success_count_in_mined": 5
+        },
+        "prediction_accuracy": {
+          "state_rmse": 11.0858,
+          "force_rmse": 3.2845,
+          "mode_macro_f1": 0.263
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.02,
+          "max_goal_progress": 0.67,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.273
+        },
+        "elapsed_seconds": 10.33
+      },
+      "D3_uncertainty": {
+        "strategy": "D3_uncertainty",
+        "total_training_episodes": 65,
+        "total_transitions": 1449,
+        "mining_diagnostics": {
+          "strategy": "D3_uncertainty",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "num_unique_modes": 5,
+          "success_count_in_mined": 1
+        },
+        "prediction_accuracy": {
+          "state_rmse": 11.107,
+          "force_rmse": 3.2881,
+          "mode_macro_f1": 0.2414
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.0,
+          "max_goal_progress": 0.0,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.136
+        },
+        "elapsed_seconds": 9.96
+      },
+      "D4_acmm": {
+        "strategy": "D4_acmm",
+        "total_training_episodes": 65,
+        "total_transitions": 1450,
+        "mining_diagnostics": {
+          "strategy": "D4_acmm",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            1,
+            2,
+            3,
+            5
+          ],
+          "num_unique_modes": 5,
+          "success_count_in_mined": 7
+        },
+        "prediction_accuracy": {
+          "state_rmse": 11.0805,
+          "force_rmse": 3.2437,
+          "mode_macro_f1": 0.3547
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.0,
+          "max_goal_progress": 0.1,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.24
+        },
+        "elapsed_seconds": 9.58
+      }
+    }
+  },
+  "task_2_multifinger_lift": {
+    "task": "multifinger_lift",
+    "eval_horizon_steps": 25,
+    "active_budget_episodes": 40,
+    "strategies": {
+      "D0_passive": {
+        "strategy": "D0_passive",
+        "total_training_episodes": 25,
+        "total_transitions": 600,
+        "mining_diagnostics": {
+          "strategy": "D0_passive",
+          "admitted_count": 0,
+          "unique_contact_modes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "num_unique_modes": 4,
+          "success_count_in_mined": 0
+        },
+        "prediction_accuracy": {
+          "state_rmse": 1.3248,
+          "force_rmse": 0.8709,
+          "mode_macro_f1": 0.0189
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.96,
+          "max_goal_progress": 3.46,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.124
+        },
+        "elapsed_seconds": 9.46
+      },
+      "D1_random": {
+        "strategy": "D1_random",
+        "total_training_episodes": 65,
+        "total_transitions": 1560,
+        "mining_diagnostics": {
+          "strategy": "D1_random",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "num_unique_modes": 4,
+          "success_count_in_mined": 0
+        },
+        "prediction_accuracy": {
+          "state_rmse": 1.3495,
+          "force_rmse": 0.8902,
+          "mode_macro_f1": 0.0189
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.09,
+          "max_goal_progress": 0.69,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.161
+        },
+        "elapsed_seconds": 11.27
+      },
+      "D2_boundary": {
+        "strategy": "D2_boundary",
+        "total_training_episodes": 65,
+        "total_transitions": 1560,
+        "mining_diagnostics": {
+          "strategy": "D2_boundary",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "num_unique_modes": 4,
+          "success_count_in_mined": 39
+        },
+        "prediction_accuracy": {
+          "state_rmse": 0.8066,
+          "force_rmse": 0.6307,
+          "mode_macro_f1": 0.2397
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 16,
+          "success_rate": 0.5333,
+          "success_formatted": "16/30 (53.33%)",
+          "success_ci_95": [
+            36.14,
+            69.77
+          ],
+          "mean_goal_progress": 4.63,
+          "max_goal_progress": 9.77,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.142
+        },
+        "elapsed_seconds": 11.71
+      },
+      "D3_uncertainty": {
+        "strategy": "D3_uncertainty",
+        "total_training_episodes": 65,
+        "total_transitions": 1560,
+        "mining_diagnostics": {
+          "strategy": "D3_uncertainty",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "num_unique_modes": 5,
+          "success_count_in_mined": 20
+        },
+        "prediction_accuracy": {
+          "state_rmse": 0.9728,
+          "force_rmse": 0.6713,
+          "mode_macro_f1": 0.2449
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 2,
+          "success_rate": 0.0667,
+          "success_formatted": "2/30 (6.67%)",
+          "success_ci_95": [
+            1.85,
+            21.32
+          ],
+          "mean_goal_progress": 2.66,
+          "max_goal_progress": 5.72,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.14
+        },
+        "elapsed_seconds": 11.52
+      },
+      "D4_acmm": {
+        "strategy": "D4_acmm",
+        "total_training_episodes": 65,
+        "total_transitions": 1560,
+        "mining_diagnostics": {
+          "strategy": "D4_acmm",
+          "admitted_count": 40,
+          "unique_contact_modes": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "num_unique_modes": 5,
+          "success_count_in_mined": 40
+        },
+        "prediction_accuracy": {
+          "state_rmse": 0.8106,
+          "force_rmse": 0.6296,
+          "mode_macro_f1": 0.2397
+        },
+        "closed_loop_manipulation": {
+          "eval_horizon_steps": 25,
+          "test_episodes": 30,
+          "success_count": 0,
+          "success_rate": 0.0,
+          "success_formatted": "0/30 (0.0%)",
+          "success_ci_95": [
+            0.0,
+            11.35
+          ],
+          "mean_goal_progress": 0.68,
+          "max_goal_progress": 4.2,
+          "safety_violations": "0/30 (0.0%)",
+          "stall_rate": "0/30 (0.0%)",
+          "mean_action_magnitude": 1.14
+        },
+        "elapsed_seconds": 10.96
+      }
+    }
+  },
+  "total_benchmark_runtime_seconds": 107.4
+}
