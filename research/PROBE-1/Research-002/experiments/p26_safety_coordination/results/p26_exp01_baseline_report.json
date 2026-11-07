@@ -1,0 +1,458 @@
+{
+  "experiment": "P2.6_EXP01_Instrumented_Baseline_Replay",
+  "seed": 100,
+  "models_evaluated": [
+    "M0_passive",
+    "M2_boundary",
+    "M4_acmm"
+  ],
+  "configurations": [
+    "C1_open",
+    "C2_original"
+  ],
+  "telemetry_records": {},
+  "model_summaries": {
+    "M0_passive": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M0_passive",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_max_streak": 0.0,
+        "max_observed_streak": 0,
+        "mean_lift_height_mm": 0.0,
+        "max_lift_height_mm": 0.0,
+        "mode_distribution": {
+          "0": {
+            "decisions": 739,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "2": {
+            "decisions": 7,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "1": {
+            "decisions": 2,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "3": {
+            "decisions": 2,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          }
+        }
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M0_passive",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 30,
+          "total": 30,
+          "rate": 1.0,
+          "formatted": "30/30 (100.0%)",
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "interventions": {
+          "count": 2,
+          "total": 750,
+          "rate": 0.0027,
+          "formatted": "2/750 (0.27%)",
+          "ci_95": [
+            0.07,
+            0.97
+          ]
+        },
+        "mean_max_streak": 0.03,
+        "max_observed_streak": 1,
+        "mean_lift_height_mm": 0.0,
+        "max_lift_height_mm": 0.0,
+        "mode_distribution": {
+          "0": {
+            "decisions": 742,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "1": {
+            "decisions": 1,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "3": {
+            "decisions": 7,
+            "interventions": 2,
+            "intervention_rate": 0.2857
+          }
+        }
+      }
+    },
+    "M2_boundary": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M2_boundary",
+        "task_success": {
+          "count": 4,
+          "total": 30,
+          "rate": 0.1333,
+          "formatted": "4/30 (13.33%)",
+          "ci_95": [
+            5.31,
+            29.68
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 4,
+          "total": 30,
+          "rate": 0.1333,
+          "formatted": "4/30 (13.33%)",
+          "ci_95": [
+            5.31,
+            29.68
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_max_streak": 0.0,
+        "max_observed_streak": 0,
+        "mean_lift_height_mm": 2.7464,
+        "max_lift_height_mm": 7.6026,
+        "mode_distribution": {
+          "0": {
+            "decisions": 283,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "2": {
+            "decisions": 59,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "3": {
+            "decisions": 131,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "4": {
+            "decisions": 268,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "1": {
+            "decisions": 9,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          }
+        }
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M2_boundary",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 27,
+          "total": 30,
+          "rate": 0.9,
+          "formatted": "27/30 (90.0%)",
+          "ci_95": [
+            74.38,
+            96.54
+          ]
+        },
+        "interventions": {
+          "count": 349,
+          "total": 750,
+          "rate": 0.4653,
+          "formatted": "349/750 (46.53%)",
+          "ci_95": [
+            42.99,
+            50.11
+          ]
+        },
+        "mean_max_streak": 7.83,
+        "max_observed_streak": 16,
+        "mean_lift_height_mm": 0.0348,
+        "max_lift_height_mm": 0.6456,
+        "mode_distribution": {
+          "0": {
+            "decisions": 244,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "2": {
+            "decisions": 73,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "3": {
+            "decisions": 76,
+            "interventions": 70,
+            "intervention_rate": 0.9211
+          },
+          "4": {
+            "decisions": 347,
+            "interventions": 279,
+            "intervention_rate": 0.804
+          },
+          "1": {
+            "decisions": 10,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          }
+        }
+      }
+    },
+    "M4_acmm": {
+      "C1_open": {
+        "configuration": "C1_open",
+        "model": "M4_acmm",
+        "task_success": {
+          "count": 8,
+          "total": 30,
+          "rate": 0.2667,
+          "formatted": "8/30 (26.67%)",
+          "ci_95": [
+            14.18,
+            44.45
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 2,
+          "total": 30,
+          "rate": 0.0667,
+          "formatted": "2/30 (6.67%)",
+          "ci_95": [
+            1.85,
+            21.32
+          ]
+        },
+        "interventions": {
+          "count": 0,
+          "total": 750,
+          "rate": 0.0,
+          "formatted": "0/750 (0.0%)",
+          "ci_95": [
+            0.0,
+            0.51
+          ]
+        },
+        "mean_max_streak": 0.0,
+        "max_observed_streak": 0,
+        "mean_lift_height_mm": 3.5249,
+        "max_lift_height_mm": 7.1531,
+        "mode_distribution": {
+          "0": {
+            "decisions": 297,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "2": {
+            "decisions": 73,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "3": {
+            "decisions": 117,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "4": {
+            "decisions": 253,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "1": {
+            "decisions": 10,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          }
+        }
+      },
+      "C2_original": {
+        "configuration": "C2_original",
+        "model": "M4_acmm",
+        "task_success": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "safety_violations": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "formatted": "0/30 (0.0%)",
+          "ci_95": [
+            0.0,
+            11.35
+          ]
+        },
+        "stall_rate": {
+          "count": 29,
+          "total": 30,
+          "rate": 0.9667,
+          "formatted": "29/30 (96.67%)",
+          "ci_95": [
+            83.33,
+            99.41
+          ]
+        },
+        "interventions": {
+          "count": 290,
+          "total": 750,
+          "rate": 0.3867,
+          "formatted": "290/750 (38.67%)",
+          "ci_95": [
+            35.25,
+            42.2
+          ]
+        },
+        "mean_max_streak": 6.77,
+        "max_observed_streak": 12,
+        "mean_lift_height_mm": 0.0,
+        "max_lift_height_mm": 0.0,
+        "mode_distribution": {
+          "0": {
+            "decisions": 325,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "2": {
+            "decisions": 76,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          },
+          "3": {
+            "decisions": 62,
+            "interventions": 57,
+            "intervention_rate": 0.9194
+          },
+          "4": {
+            "decisions": 277,
+            "interventions": 233,
+            "intervention_rate": 0.8412
+          },
+          "1": {
+            "decisions": 10,
+            "interventions": 0,
+            "intervention_rate": 0.0
+          }
+        }
+      }
+    }
+  },
+  "total_runtime_seconds": 47.48
+}
