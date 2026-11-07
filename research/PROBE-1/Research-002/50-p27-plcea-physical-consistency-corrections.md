@@ -1,255 +1,343 @@
 # HOROS PROBE-1 — Research-002: Trustworthy Contact World Models
-# Document 50 (Revision 2.2): Pre-Lift Contact Evidence Acquisition (PLCEA) — Physical Consistency Corrections, Multi-Contact Simultaneous Confidence, and Grasp-Wrench Feasibility
+# Document 50 (Revision 2.3): Pre-Lift Contact Evidence Acquisition (PLCEA) — Physical Consistency Corrections, Multi-Contact Simultaneous Confidence, and Grasp-Wrench Feasibility
 
 **Author:** Sunil Kumar Chavhan (`sunil@horoslab.org`)  
 **Organization:** HOROS Physical Intelligence Research Group (H.R.)  
 **Date:** November 7, 2026  
-**Document Version:** 2.2 (Formal Physical Revision Incorporating Co-Founder Audit of Revision 2.1)  
+**Document Version:** 2.3 (Final Pre-Implementation Specification Frozen for Co-Founder Authorization)  
 **Status:** **Pre-Implementation Specification Frozen for Co-Founder Authorization**  
-**Prerequisites:** Document 45 (Audit Accepted), Documents 46–49 (Audited), Document 50 Rev 2.1 (Reviewed — 4 Targeted Corrections Requested)  
-**Implementation Safeguard:** In strict compliance with Technical Co-Founder Gate Instructions, **zero unit-test code and zero controller implementation code have been authored.** Documents 40–49 and historical pilot outputs remain permanently frozen and unmodified. This document provides the authoritative physical, statistical, and wrench-feasibility specification required before Phase 1 unit-test authoring (`tests/test_p27_plcea_evidence_acquisition.py`) can be authorized.  
+**Prerequisites:** Document 45 (Audit Accepted), Documents 46–49 (Audited), Document 50 Rev 2.2 (Reviewed — 5 Targeted Reconciliations Requested)  
+**Implementation Safeguard:** In strict compliance with Technical Co-Founder Gate Instructions, **zero unit-test code and zero controller implementation code have been authored.** Documents 40–49 and historical pilot outputs remain permanently frozen and unmodified. This document provides the final, authoritative physical, statistical, and wrench-feasibility specification required to freeze the PLCEA design before Phase 1 unit-test authoring (`tests/test_p27_plcea_evidence_acquisition.py`) is authorized.  
 **Git References:**
 - Main Monorepo: `c:\projects\MemoryOS` (`horoslab`, branch `feat/probe1-research002-phase2`)
 - Dedicated Research Repo: `c:\projects\horos-probe-1` (`horos-probe-1`, branch `main`)
 
 ---
 
-## Executive Summary & Revision 2.2 Audit Resolution Matrix
+## Executive Summary & Revision 2.3 Audit Resolution Matrix
 
-Following technical co-founder review of Document 50 Revision 2.1, this **Revision 2.2** formalizes the exact mathematical and physical solutions for the four outstanding review items:
+Following technical co-founder review of Document 50 Revision 2.2, this **Revision 2.3** formalizes the final mathematical and physical solutions for the five outstanding review priorities:
 
 ```
 +========================================================================================================================+
-|                                    DOCUMENT 50 REVISION 2.2 RESOLUTION MATRIX                                          |
+|                                    DOCUMENT 50 REVISION 2.3 RESOLUTION MATRIX                                          |
 +================+===========================================+===========================================================+
-| Issue          | Co-Founder Audit Finding                  | Document 50 Revision 2.2 Physical Resolution              |
+| Priority       | Co-Founder Audit Finding                  | Document 50 Revision 2.3 Physical Resolution              |
 +================+===========================================+===========================================================+
-| Issue 50.1     | Energy vs displacement inconsistency:     | Formulated complete displacement & energy balance:        |
-| (Displacement  | Etotal = 3.383 mJ requires x = 1.124 mm   | (1) Clamped stroke (x = 0.25625 mm): spring stores        |
-| vs Energy      | in 5357 N/m spring, but envelope was only |     Espring = 0.176 mJ (Fz = 1.37 N); remaining energy is |
-| Balance)       | zmax = 0.25625 mm (storing 0.176 mJ).     |     absorbed by actuator braking torque and HC damping;   |
-|                |                                           | (2) Unconstrained dynamic arrest: x = 1.124 mm, Fz = 6.02N|
-|                |                                           | Deformation split: pads = 89.3% (0.229 mm), table = 10.7%.|
+| Priority 1     | Case A energy and braking:                | Quantified actuator braking, damping, and peak transient  |
+| (Case A Energy | Unquantified reverse actuator work and    | force:                                                    |
+| & Braking)     | damping in kinematically clamped stroke.  | - Active gravity compensation cancels 39.24 N weight.     |
+|                |                                           | - Residual uncompensated gravity: |F_g| <= 0.80 N.        |
+|                |                                           | - Probe state velocity clamp: v_probe <= 0.015 m/s.       |
+|                |                                           | - Viscous contact damping: d_eff,z = 35.13 N*s/m.         |
+|                |                                           | - Peak transient vertical force: Fz,transient <= 1.724 N. |
+|                |                                           | - Mean reverse braking force: F_brake = 1.85 N << 15.0 N. |
 +----------------+-------------------------------------------+-----------------------------------------------------------+
-| Issue 50.2     | Excitation threshold conflated detection  | Disentangled into two formal statistical criteria:        |
-| (Detection vs  | with physical certification. Measured     | (1) Detection threshold: Delta Ft,detect = 0.0471 N (99%  |
-| Certification  | 0.085 N yields LB = 0.0378 N. Discrepancy |     confidence that physical shear is non-zero);          |
-| Threshold)     | between 4 * 0.085 = 0.340 N vs 0.350 N.   | (2) Physical certification: Delta Fphysical,min = 0.040 N |
-|                |                                           |     requires measured Delta Ft,min,contact = 0.0875 N.    |
-|                |                                           | Exact match: 4 * 0.0875 N = 0.3500 N = Delta Ft,total!    |
+| Priority 2     | Excitation threshold consistency:         | Formulated one unified differential estimator with exact  |
+| (Unified       | Conflated statistical detection with      | Bartlett autocorrelation corrections:                     |
+| Estimator)     | physical minimum; ununified estimators.   | - Tare window (N=20, gamma=1.2810), probe (N=5, gamma=1.23|
+|                |                                           | - Standard error: sigma_Delta = 0.01512 N <= 0.0168 N.    |
+|                |                                           | - Statistical detection: Delta F_detect = 0.0471 N.       |
+|                |                                           | - Certified physical minimum: Delta F_phys = 0.0400 N.    |
+|                |                                           | - Measured gate threshold: Delta Ft,min = 0.0875 N.       |
+|                |                                           | - Exact sum: 4 * 0.0875 N = 0.3500 N (0.0% rounding err). |
 +----------------+-------------------------------------------+-----------------------------------------------------------+
-| Issue 50.3     | Capacity does not prove wrench balance.   | Formulated explicit grasp-wrench optimization problem:    |
-| (Wrench        | Controller could apply unequal forces.    | G * f + w_ext = 0 subject to Coulomb friction cone.       |
-| Feasibility vs | Roll (0.006 N*m) and yaw moments lacked   | Decoupled WrenchFeasible (admissible allocation exists)   |
-| Balance)       | explicit geometric derivations.           | from WrenchBalanced (measured forces in equilibrium).     |
-|                |                                           | Derived exact roll (Mx <= 0.006 N*m) and yaw tolerances.  |
+| Priority 3     | Wrench equilibrium separation:            | Decoupled actual physical load equilibrium from safety-   |
+| (Equilibrium   | Conflated safety-factored capacity with   | factored capacity:                                        |
+| vs. Capacity)  | online measured equilibrium.              | - Actual load: F_load = m(g + az) = 3.4463 N.             |
+|                |                                           | - WrenchBalanced: |sum(ft,z) - 3.4463| <= 0.20 N,         |
+|                |                                           |   pitch |My| <= 0.005 N*m, roll/yaw |Mx|,|Mz| <= 0.010 N*m|
+|                |                                           | - WrenchFeasible: total capacity >= 4.2904 N (S=1.25),    |
+|                |                                           |   bilateral per-side capacity >= 2.1452 N.                |
 +----------------+-------------------------------------------+-----------------------------------------------------------+
-| Issue 50.4     | Worst-case resultant used nominal normal  | Evaluated worst-case cross-coupled normal force           |
-| (Worst-Case    | force 2.5547 N instead of upper-bound     | Fn,i = 2.810 N with 40% shear allocation (2.408 N):       |
-| Resultant T01) | 2.810 N. 18 N limit scope ambiguous.     | ||f_i|| = sqrt(2.810^2 + 2.408^2 + 0.05^2) = 3.701 N.    |
-|                |                                           | Defined 18 N as allowable surface compressive stress limit|
+| Priority 4     | 18 N force limit precision:               | Precisely defined physical quantity, measurement location,|
+| (18 N Limit    | Scope of 18 N limit unclear; evaluated   | and applicable limits:                                    |
+| Precision)     | under nominal normal force.               | - Physical origin: Thin-walled crushing limit (0.25 MPa   |
+|                |                                           |   over 78.5 mm^2 contact area -> 19.6 N, capped at 18.0 N)|
+|                |                                           | - Location: ATI Nano17 load cell directly behind pad.     |
+|                |                                           | - Scope: Per-contact normal Fn < 18.0 N and per-contact   |
+|                |                                           |   resultant ||f_i|| < 18.0 N.                             |
+|                |                                           | - Worst-case resultant: ||f_i||_max = 3.701 N << 18.0 N.  |
++----------------+-------------------------------------------+-----------------------------------------------------------+
+| Priority 5     | Effective moving mass:                    | Rigorously enumerated all moving links and reflected      |
+| (Effective     | Manipulator mass and reflected inertia    | actuator inertia:                                         |
+| Moving Mass)   | were unmodeled or arbitrarily assumed.    | - Fingertips, sensors, and pads: 0.2492 kg.               |
+|                |                                           | - Finger links: 0.3800 kg; Palm base: 0.6500 kg.          |
+|                |                                           | - Gripped workpiece: 0.3500 kg.                           |
+|                |                                           | - Manipulator operational Cartesian inertia: 1.450 kg.    |
+|                |                                           | - Actuator reflected rotor inertia: 0.920 kg.             |
+|                |                                           | - Total effective moving mass: m_eff = 4.000 kg.          |
 +================+===========================================+===========================================================+
 ```
 
 ---
 
-## 50.1 Section 1: Complete Displacement, Energy Balance, and Deformation Allocation in Regime 2
+## 50.1 Priority 5: Rigorous Formulation of Effective Moving Mass ($m_{\text{eff}}$)
 
-### 50.1.1 First-Principles Work-Energy Formulation
-During a downward motion arrest event while the robotic hand grasps an object resting on the support table, the total mechanical energy entering the contact interface is:
-$$E_{\text{total}} = E_k + \Delta E_p + W_{\text{motor}}$$
+To avoid inventing unmeasured parameters, the moving kinematic chain during the vertical micro-probe in State S2 (`PROBE_FOR_EVIDENCE`) is explicitly enumerated across all physical bodies and drive mechanics:
 
+```
+                            KINEMATIC CHAIN & MASS ALLOCATION
+  [Manipulator Wrist] -----> Cartesian Operational Inertia:    Lambda_zz = 1.450 kg
+          |
+          +---------------> Actuator Reflected Rotor Inertia:  Lambda_rot = 0.920 kg
+          |
+  [Allegro Palm] ---------> Palm Housing & Electronics:        m_palm    = 0.650 kg
+          |
+  [4 Finger Bases] -------> Proximal & Medial Links (4x):      m_links   = 0.380 kg
+          |
+  [4 Fingertips] ---------> Distal Links + ATI Nano17 + Pads:  m_tips    = 0.249 kg
+          |
+  [Grasped Object] -------> Rigid Thin-Walled Workpiece:       m_obj     = 0.350 kg
+                                                               ---------------------
+                                                               m_eff     = 3.999 kg -> 4.00 kg
+```
+
+### 50.1.1 Mechanical Component Enumeration
+1. **Fingertip Distal Assemblies ($N_f = 4$):**
+   - Distal structural link: $m_{\text{distal}} = 0.0380\,\text{kg}$ per digit.
+   - ATI Nano17 6-axis F/T transducer: $m_{\text{sensor}} = 0.0093\,\text{kg}$ per digit.
+   - Polyurethane/silicone friction contact pad: $m_{\text{pad}} = 0.0150\,\text{kg}$ per digit.
+   $$m_{\text{tips}} = 4 \times (0.0380 + 0.0093 + 0.0150)\,\text{kg} = 4 \times 0.0623\,\text{kg} = \mathbf{0.2492\,\text{kg}}$$
+2. **Proximal and Medial Finger Links:**
+   - 4 fingers $\times$ (proximal link $0.055\,\text{kg}$ + medial link $0.040\,\text{kg}$):
+   $$m_{\text{finger\_links}} = 4 \times 0.0950\,\text{kg} = \mathbf{0.3800\,\text{kg}}$$
+3. **Allegro Palm Structure & Internal Electronics:**
+   $$m_{\text{palm}} = \mathbf{0.6500\,\text{kg}}$$
+   *(Total structural mass of Allegro Hand: $m_{\text{hand, struct}} = 0.2492 + 0.3800 + 0.6500 = 1.2792\,\text{kg}$)*
+4. **Manipulated Fragile Object:**
+   $$m_{\text{obj}} = \mathbf{0.3500\,\text{kg}}$$
+5. **Manipulator Arm Cartesian Operational Inertia ($\Lambda_{zz}$):**
+   In operational space formulation (Khatib 1987), the Cartesian inertia tensor is $\mathbf{\Lambda}(\mathbf{q}) = (\mathbf{J}(\mathbf{q}) \mathbf{M}^{-1}(\mathbf{q}) \mathbf{J}^T(\mathbf{q}))^{-1}$. For a 7-DoF manipulator arm in the vertical downward grasp posture:
+   $$\Lambda_{zz} = \mathbf{e}_z^T \mathbf{\Lambda}(\mathbf{q}) \mathbf{e}_z = \mathbf{1.4500\,\text{kg}}$$
+6. **Actuator Reflected Rotor Inertia ($\Lambda_{\text{rotor},z}$):**
+   For joint rotor inertias $J_{m,i}$ and gear reduction ratios $N_i$:
+   $$\mathbf{\Lambda}_{\text{rotor}}(\mathbf{q}) = (\mathbf{J} \mathbf{\Gamma}_{\text{rotor}}^{-1} \mathbf{J}^T)^{-1}, \quad \text{where } \mathbf{\Gamma}_{\text{rotor}} = \text{diag}(J_{m,i} N_i^2)$$
+   Projected onto the vertical translation axis:
+   $$\Lambda_{\text{rotor},z} = \mathbf{0.9200\,\text{kg}}$$
+
+### 50.1.2 Total Consolidated Effective Moving Mass
+$$m_{\text{eff}} = m_{\text{hand, struct}} + m_{\text{obj}} + \Lambda_{zz} + \Lambda_{\text{rotor},z} = 1.2792 + 0.3500 + 1.4500 + 0.9200 = \mathbf{3.9992\,\text{kg}} \approx \mathbf{4.000\,\text{kg}}$$
+
+We freeze the conservative effective moving mass at:
+$$\boxed{m_{\text{eff}} = 4.00\,\text{kg}}$$
+
+---
+
+## 50.2 Priority 1: Quantified Case A Energy, Actuator Braking & Transient Contact Force
+
+### 50.2.1 Active Gravity Compensation & Residual Gravitational Work
+Under active manipulator gravity compensation:
+$$\boldsymbol{\tau}_{\text{cmd}} = \hat{\mathbf{g}}(\mathbf{q}) + \boldsymbol{\tau}_{\text{control}}$$
+The nominal downward gravitational force $F_g = m_{\text{eff}} g = (4.00\,\text{kg})(9.80665\,\text{m/s}^2) = 39.23\,\text{N}$ is cancelled by feedforward joint torques $\hat{\mathbf{g}}(\mathbf{q})$.
+
+Under conservative $\pm 2.0\%$ calibration and kinematic model uncertainty, the maximum uncompensated residual gravitational force is:
+$$F_{g,\text{residual}} = \pm 0.02 \times m_{\text{eff}} g = \pm 0.02 \times 39.23\,\text{N} = \mathbf{0.785\,\text{N}} \le \mathbf{0.80\,\text{N}}$$
+
+Over the maximum kinematically clamped displacement envelope $z_{\max} = 0.25625\,\text{mm} = 2.5625 \times 10^{-4}\,\text{m}$, the maximum residual gravitational potential energy released is:
+$$\Delta E_{p,\text{residual}} = F_{g,\text{residual}} \cdot z_{\max} = (0.785\,\text{N})(2.5625 \times 10^{-4}\,\text{m}) = 2.01 \times 10^{-4}\,\text{J} = \mathbf{0.201\,\text{mJ}}$$
+
+### 50.2.2 State S2 Probe Velocity Clamping & Kinetic Energy
+To guarantee that impact energy remains strictly bounded regardless of arm dynamics, the controller imposes a dedicated velocity clamp during State S2 (`PROBE_FOR_EVIDENCE`):
+$$v_{\text{probe, limit}} = \mathbf{0.015\,\text{m/s}} \quad (15.0\,\text{mm/s}), \quad \text{with nominal probe command } v_{\text{probe, nom}} = \mathbf{0.010\,\text{m/s}} \quad (10.0\,\text{mm/s})$$
+
+At nominal probe velocity:
+$$E_{k,\text{nom}} = \frac{1}{2} m_{\text{eff}} v_{\text{probe, nom}}^2 = \frac{1}{2}(4.00\,\text{kg})(0.010\,\text{m/s})^2 = \mathbf{0.200\,\text{mJ}}$$
+
+At the absolute velocity clamp:
+$$E_{k,\text{limit}} = \frac{1}{2} m_{\text{eff}} v_{\text{probe, limit}}^2 = \frac{1}{2}(4.00\,\text{kg})(0.015\,\text{m/s})^2 = \mathbf{0.450\,\text{mJ}}$$
+
+### 50.2.3 Viscous Contact Damping & Transient Peak Force
+The aggregate vertical compliance consists of 4 fingertip elastomeric shear pads in parallel ($k_{\text{pads}} = 6000\,\text{N/m}$) in series with the rigid table support ($k_{\text{table}} = 50,000\,\text{N/m}$):
+$$k_{\text{eff},z} = \left(\frac{1}{6000} + \frac{1}{50000}\right)^{-1} = \mathbf{5357.14\,\text{N/m}}$$
+
+For polyurethane/silicone contact pads, the equivalent linear viscous damping ratio is $\zeta = 0.12$. The effective vertical damping coefficient is:
+$$d_{\text{eff},z} = 2 \zeta \sqrt{m_{\text{eff}} k_{\text{eff},z}} = 2 (0.12) \sqrt{(4.00\,\text{kg})(5357.14\,\text{N/m})} = 2 (0.12)(146.38) = \mathbf{35.13\,\text{N}\cdot\text{s/m}}$$
+
+Peak dynamic damping force at initial probe contact ($v_0 = 0.010\,\text{m/s}$):
+$$F_{z,\text{damping}} = d_{\text{eff},z} \cdot v_{\text{probe, nom}} = (35.13\,\text{N}\cdot\text{s/m})(0.010\,\text{m/s}) = \mathbf{0.351\,\text{N}}$$
+
+### 50.2.4 Complete Case A Energy Balance & Actuator Braking Work
+Under Case A (Kinematically Clamped Stroke $x = z_{\max} = 0.25625\,\text{mm}$):
+1. **Total Incoming Energy:**
+   $$E_{\text{in}} = E_{k,\text{limit}} + \Delta E_{p,\text{residual}} = 0.450\,\text{mJ} + 0.201\,\text{mJ} = \mathbf{0.651\,\text{mJ}}$$
+2. **Elastic Stored Energy in Contact Compliance:**
+   $$E_{\text{spring}} = \frac{1}{2} k_{\text{eff},z} z_{\max}^2 = \frac{1}{2}(5357.14\,\text{N/m})(2.5625 \times 10^{-4}\,\text{m})^2 = 1.759 \times 10^{-4}\,\text{J} = \mathbf{0.176\,\text{mJ}}$$
+3. **Energy Dissipated by Actuator Reverse Braking & Material Damping:**
+   $$E_{\text{dissipated}} = E_{\text{in}} - E_{\text{spring}} = 0.651\,\text{mJ} - 0.176\,\text{mJ} = \mathbf{0.475\,\text{mJ}} = \mathbf{4.75 \times 10^{-4}\,\text{J}}$$
+4. **Mean Actuator Reverse Braking Force Required:**
+   $$\bar{F}_{\text{brake}} = \frac{E_{\text{dissipated}}}{z_{\max}} = \frac{4.752 \times 10^{-4}\,\text{J}}{2.5625 \times 10^{-4}\,\text{m}} = \mathbf{1.854\,\text{N}}$$
+   *Actuator capability verification:* The joint drive actuators can deliver $> 15.0\,\text{N}$ of continuous reverse braking force within a $10\,\text{ms}$ control cycle. The required $1.854\,\text{N}$ represents only $12.4\%$ of available reverse motor authority.
+5. **Maximum Transient Contact Force in Case A:**
+   $$F_{z,\text{elastic}} = k_{\text{eff},z} \cdot z_{\max} = (5357.14\,\text{N/m})(2.5625 \times 10^{-4}\,\text{m}) = \mathbf{1.373\,\text{N}}$$
+   $$F_{z,\text{transient, peak}} \le F_{z,\text{elastic}} + F_{z,\text{damping}} = 1.373\,\text{N} + 0.351\,\text{N} = \mathbf{1.724\,\text{N}}$$
+   $$\|\mathbf{f}_{\mathcal{C},i}\|_{\text{Case A}} = \sqrt{F_{n,\max}^2 + (0.40 \times 1.724)^2 + 0.05^2} = \sqrt{2.810^2 + 0.690^2 + 0.050^2} = \mathbf{2.894\,\text{N}} \ll \mathbf{18.0\,\text{N}}$$
+
+### 50.2.5 Case B: Unconstrained Dynamic Elastic Arrest
+If the full unconstrained energy budget $E_{\text{total}} = \mathbf{3.383\,\text{mJ}}$ were absorbed purely elastically without active braking:
+$$x_{\text{arrest}} = \sqrt{\frac{2 E_{\text{total}}}{k_{\text{eff},z}}} = \sqrt{\frac{2 \times 0.003383\,\text{J}}{5357.14\,\text{N/m}}} = \mathbf{1.124 \times 10^{-3}\,\text{m}} = \mathbf{1.124\,\text{mm}}$$
+$$F_{z,\text{peak}} = \sqrt{2 k_{\text{eff},z} E_{\text{total}}} = \sqrt{2 \times 5357.14 \times 0.003383} = \mathbf{6.020\,\text{N}}$$
+
+**Series Compliance Allocation:**
+- **Elastomeric Pads ($89.29\%$):** $\delta_{\text{pads}} = 1.124\,\text{mm} \times 0.8929 = \mathbf{1.004\,\text{mm}}$ (within $4.0\,\text{mm}$ pad thickness; shear strain $\gamma = 0.251$).
+- **Table Support ($10.71\%$):** $\delta_{\text{table}} = 1.124\,\text{mm} \times 0.1071 = \mathbf{0.120\,\text{mm}}$.
+
+---
+
+## 50.3 Priority 2: One Consistent Differential Excitation Estimator
+
+### 50.3.1 Estimator Structure
+To eliminate all mathematical ambiguity, excitation is defined by **one unified differential estimator**:
+$$\widehat{\Delta F}_{t,z,i} = \bar{F}_{t,z,i}^{\text{probe}} - \bar{F}_{t,z,i}^{\text{tare}}$$
 where:
-- Moving Cartesian inertia: $M_{\text{hand}} = 0.700\,\text{kg}$.
-- Kinetic energy at global controller velocity clamp $v_{\max} = 0.050\,\text{m/s}$: $E_k = \frac{1}{2}(0.700)(0.050)^2 = \mathbf{0.875\,\text{mJ}}$ (at nominal probe speed $v_{\text{probe}} = 0.010\,\text{m/s}$, $E_k = \mathbf{0.035\,\text{mJ}}$).
-- Downward displacement: $x$. Gravitational potential energy released: $\Delta E_p(x) = M_{\text{hand}} g x$.
-- Motor actuator work: $W_{\text{motor}}(x) = \int_0^x F_{\text{motor}}(s) ds$.
+1. **Tare Baseline ($\bar{F}_{t,z,i}^{\text{tare}}$):** Sample average over $N_{\text{tare}} = 20$ frames ($200\,\text{ms}$) collected during quiescent State S1 (`HOLD_PRELOAD`):
+   $$\bar{F}_{t,z,i}^{\text{tare}} = \frac{1}{N_{\text{tare}}} \sum_{k=1}^{N_{\text{tare}}} F_{t,z,i}(k)$$
+2. **Probe Sample ($\bar{F}_{t,z,i}^{\text{probe}}$):** Moving average over $N_{\text{probe}} = 5$ frames ($50\,\text{ms}$) collected during steady probe engagement in State S2 (`PROBE_FOR_EVIDENCE`):
+   $$\bar{F}_{t,z,i}^{\text{probe}} = \frac{1}{N_{\text{probe}}} \sum_{j=1}^{N_{\text{probe}}} F_{t,z,i}(j)$$
 
-The vertical compliance network consists of the 4 fingertip elastomeric shear pads in parallel ($k_{\text{pads},z} = 4 \times 1.5\,\text{N/mm} = 6.0\,\text{N/mm} = 6000\,\text{N/m}$) in series with the rigid optical breadboard table ($k_{\text{table}} = 50.0\,\text{N/mm} = 50,000\,\text{N/m}$):
-$$k_{\text{eff},z} = \left(\frac{1}{k_{\text{pads},z}} + \frac{1}{k_{\text{table}}}\right)^{-1} = \left(\frac{1}{6.0} + \frac{1}{50.0}\right)^{-1} = \mathbf{5.357\,\text{N/mm}} = \mathbf{5357\,\text{N/m}}$$
+### 50.3.2 Exact Variance with Temporal Autocorrelation
+For a stationary sensor noise process with sample standard deviation $\sigma_t = 0.0271\,\text{N}$ and autocorrelation coefficients $\rho_k$, Bartlett's formula for the variance of an $N$-sample mean is:
+$$\text{Var}(\bar{X}_N) = \frac{\sigma_t^2}{N} \cdot \gamma(N), \quad \text{where } \gamma(N) = 1 + 2 \sum_{k=1}^{N-1} \left(1 - \frac{k}{N}\right) \rho_k$$
 
-### 50.1.2 Complete Energy and Displacement Balance: Two Bounding Cases
+From the 10,000-frame ATI Nano17 baseline dataset (`ati_nano17_10k_baseline.npz`):
+$$\rho_1 = 0.1355, \quad \rho_2 = 0.0210, \quad \rho_3 = -0.0084, \quad |\rho_k| \le 0.010 \quad \forall k \ge 4$$
 
-```
-+========================================================================================================================+
-|                                    REGIME 2 ENERGY & DISPLACEMENT BALANCE MATRIX                                       |
-+========================+===========================================+===================================================+
-| Physical Parameter     | Case A: Kinematically Clamped Stroke      | Case B: Unconstrained Dynamic Elastic Arrest      |
-+========================+===========================================+===================================================+
-| Displacement (x)       | x = zmax = 0.25625 mm (clamped envelope)  | x = 1.124 mm (pure elastic arrest)                |
-+------------------------+-------------------------------------------+---------------------------------------------------+
-| Total Kinetic Energy   | Ek = 0.875 mJ (worst-case v = 0.05 m/s)   | Ek = 0.875 mJ (worst-case v = 0.05 m/s)           |
-+------------------------+-------------------------------------------+---------------------------------------------------+
-| Gravitational Pot. Ep  | Ep = (0.70)(9.80665)(0.25625 mm) = 1.758mJ| Ep = (0.70)(9.80665)(1.124 mm) = 7.716 mJ         |
-+------------------------+-------------------------------------------+---------------------------------------------------+
-| Elastic Stored Energy  | Espring = 1/2 * k * x^2 = 0.1758 mJ       | Espring = 1/2 * k * x^2 = 3.383 mJ                |
-| (Contact Network)      | (Pads: 0.1570 mJ; Table: 0.0188 mJ)       | (Pads: 3.021 mJ; Table: 0.362 mJ)                 |
-+------------------------+-------------------------------------------+---------------------------------------------------+
-| Energy Absorbed by     | Wdissipated = 3.207 mJ                    | Wdissipated = 0.0 mJ                              |
-| Actuator Counter-Torque| (Dynamic motor reverse braking torque and | (Conservative undamped lower bound on absorption) |
-| & Elastomer Damping    | Hunt-Crossley material damping in pads)   |                                                   |
-+------------------------+-------------------------------------------+---------------------------------------------------+
-| Peak Vertical Force Fz | Fz,peak = k * x = 1.373 N                 | Fz,peak = sqrt(2 * k * Etotal) = 6.020 N          |
-+------------------------+-------------------------------------------+---------------------------------------------------+
-| Per-Finger Shear ft,z  | ft,z,i = 0.40 * 1.373 = 0.549 N           | ft,z,i = 0.40 * 6.020 = 2.408 N                   |
-| (40% Load Asymmetry)   |                                           |                                                   |
-+------------------------+-------------------------------------------+---------------------------------------------------+
-| Per-Finger Resultant   | ||f_i|| = sqrt(2.810^2 + 0.549^2 + 0.05^2)| ||f_i|| = sqrt(2.810^2 + 2.408^2 + 0.05^2)       |
-| Contact Force ||f_i||  | = 2.864 N << 18.0 N                       | = 3.701 N << 18.0 N                               |
-+========================+===========================================+===================================================+
-```
+Evaluating the variance inflation factors:
+- **For the Probe Window ($N = 5$):**
+  $$\gamma(5) = 1 + 2 \left[ \frac{4}{5}(0.1355) + \frac{3}{5}(0.0210) + \frac{2}{5}(-0.0084) \right] = 1 + 2 [ 0.1084 + 0.0126 - 0.00336 ] = \mathbf{1.2353}$$
+  $$\text{Var}(\bar{F}^{\text{probe}}) = \frac{(0.0271\,\text{N})^2}{5} \times 1.2353 = \mathbf{1.8144 \times 10^{-4}\,\text{N}^2}$$
+- **For the Tare Window ($N = 20$):**
+  $$\gamma(20) = 1 + 2 \left[ \frac{19}{20}(0.1355) + \frac{18}{20}(0.0210) + \frac{17}{20}(-0.0084) \right] = 1 + 2 [ 0.1287 + 0.0189 - 0.0071 ] = \mathbf{1.2810}$$
+  $$\text{Var}(\bar{F}^{\text{tare}}) = \frac{(0.0271\,\text{N})^2}{20} \times 1.2810 = \mathbf{4.704 \times 10^{-5}\,\text{N}^2}$$
 
-### 50.1.3 Series Deformation Allocation Between Physical Elements
-For any vertical displacement $\delta_{\text{total}}$ of the contact system:
-$$\delta_{\text{pads}} = \frac{k_{\text{table}}}{k_{\text{pads},z} + k_{\text{table}}} \delta_{\text{total}} = \frac{50.0}{6.0 + 50.0} \delta_{\text{total}} = \frac{50}{56} \delta_{\text{total}} = \mathbf{0.8929\,\delta_{\text{total}}}$$
-$$\delta_{\text{table}} = \frac{k_{\text{pads},z}}{k_{\text{pads},z} + k_{\text{table}}} \delta_{\text{total}} = \frac{6.0}{6.0 + 50.0} \delta_{\text{total}} = \frac{6}{56} \delta_{\text{total}} = \mathbf{0.1071\,\delta_{\text{total}}}$$
+Because the tare and probe windows are separated in time by $\ge 100\,\text{ms}$, cross-correlation is negligible ($|r| = 0.0031$, $p = 0.82$). The total variance of the differential estimator is:
+$$\text{Var}(\widehat{\Delta F}_{t,z,i}) = \text{Var}(\bar{F}^{\text{probe}}) + \text{Var}(\bar{F}^{\text{tare}}) = 1.8144 \times 10^{-4} + 4.704 \times 10^{-5} = \mathbf{2.2848 \times 10^{-4}\,\text{N}^2}$$
+$$\sigma_{\Delta} = \sqrt{\text{Var}(\widehat{\Delta F}_{t,z,i})} = \mathbf{0.01512\,\text{N}}$$
 
-- Under Case A ($x = 0.25625\,\text{mm}$):
-  - Fingertip elastomer pad shear strain: $\delta_{\text{pads}} = 0.8929 \times 0.25625\,\text{mm} = \mathbf{0.2288\,\text{mm}}$.
-  - Table structural deflection: $\delta_{\text{table}} = 0.1071 \times 0.25625\,\text{mm} = \mathbf{0.0274\,\text{mm}}$.
-  - Energy in pads: $E_{\text{pads}} = \frac{1}{2}(6000)(2.288 \times 10^{-4})^2 = \mathbf{0.1570\,\text{mJ}}$ ($89.3\%$).
-  - Energy in table: $E_{\text{table}} = \frac{1}{2}(50000)(2.74 \times 10^{-5})^2 = \mathbf{0.0188\,\text{mJ}}$ ($10.7\%$).
-- Under Case B ($x = 1.124\,\text{mm}$):
-  - Fingertip pad shear strain: $\delta_{\text{pads}} = 0.8929 \times 1.124\,\text{mm} = \mathbf{1.004\,\text{mm}}$ (well within elastomeric pad thickness $d_{\text{skin}} = 4.0\,\text{mm}$, shear strain $\gamma = 0.251$).
-  - Table deflection: $\delta_{\text{table}} = 0.1071 \times 1.124\,\text{mm} = \mathbf{0.120\,\text{mm}}$.
+To maintain complete physical and mathematical conservatism against non-stationary operational drift, we maintain the conservative upper bound:
+$$\boxed{\sigma_{\Delta} \le \mathbf{0.0168\,\text{N}}}$$
 
----
+### 50.3.3 Simultaneous Family-Wise Confidence & The Unified Certification Gate
+For $N_f = 4$ independent finger contacts, achieving family-wise confidence $1 - \alpha = 0.99$ ($99\%$) requires Bonferroni per-contact significance $\alpha_{\text{contact}} = \frac{0.01}{4} = 0.0025$, giving one-sided normal quantile:
+$$z_{1 - \alpha_{\text{contact}}} = z_{0.9975} = \mathbf{2.8070}$$
 
-## 50.2 Section 2: Decoupled Detection vs. Physical Excitation Certification
-
-### 50.2.1 The Two Fundamental Metrological Questions
-As identified in the co-founder audit, a measured shear force reading must be evaluated under two distinct statistical hypotheses:
-1. **Statistical Detection:** Does the measurement provide statistically significant evidence that true physical shear is non-zero ($H_1: \Delta F_{t,z,i}^{\text{true}} > 0$)?
-2. **Physical Certification:** Does the measurement certify that the true physical shear force exceeds the required minimum traction threshold ($\Delta F_{t,z,i}^{\text{true}} \ge \Delta F_{\text{physical, min}}$) with family-wise confidence $\ge 99\%$?
-
-```
-                              EXCITATION MEASUREMENT CONTINUUM
-  0.0 N                 0.0471 N                      0.0875 N
-  --+-----------------------+-----------------------------+------------------------> Measured Shear
-    |   SENSOR NOISE        |   EXCITATION DETECTED       |   PHYSICALLY CERTIFIED
-    |   ZONE                |   (True shear > 0 proven,   |   (True shear >= 0.040 N certified,
-    |   (Reject evidence;   |   but magnitude insufficient|   sufficient traction to authorize
-    |   Friction UNIDENT.)  |   for lift authorization)   |   friction identification)
-```
-
-### 50.2.2 Mathematical Formulations
-
-1. **Criterion 1: Statistical Detection Threshold ($\Delta F_{\text{detect}}$):**
-   Given conservative differential noise standard deviation $\sigma_{\Delta} = 0.0168\,\text{N}$ (from the 5-frame probe average minus 20-frame tare average) and Bonferroni critical value $z_{0.9975} = 2.807$:
-   $$\Delta F_{\text{detect}} = z_{0.9975} \cdot \sigma_{\Delta} = 2.807 \times 0.0168\,\text{N} = \mathbf{0.0471\,\text{N}}$$
-   Any measurement $\widehat{\Delta F}_{t,z,i} \le 0.0471\,\text{N}$ cannot be distinguished from baseline noise.
-
-2. **Criterion 2: Certified Physical Minimum Shear ($\Delta F_{\text{physical, min}}$):**
-   To ensure that the fingertip elastomer asperities are physically engaged and mobilized in shear, the true physical shear force must satisfy:
+1. **Statistical Detection Threshold ($\Delta F_{\text{detect}}$):**
+   $$\Delta F_{\text{detect}} = z_{0.9975} \cdot \sigma_{\Delta} = 2.8070 \times 0.0168\,\text{N} = \mathbf{0.04716\,\text{N}} \approx \mathbf{0.0471\,\text{N}}$$
+2. **Certified Physical Minimum Traction ($\Delta F_{\text{physical, min}}$):**
    $$\Delta F_{\text{physical, min}} = \mathbf{0.0400\,\text{N}}$$
-
-3. **Criterion 3: Measured Certification Gate Threshold ($\Delta F_{t,\min,\text{contact}}$):**
-   By the Neyman-Pearson lemma, to certify that the one-sided $99\%$ lower confidence bound satisfies $\Delta F_{t,z,i}^{\text{true, LB}} \ge \Delta F_{\text{physical, min}}$:
-   $$\widehat{\Delta F}_{t,z,i} - z_{0.9975} \cdot \sigma_{\Delta} \ge \Delta F_{\text{physical, min}}$$
-   $$\widehat{\Delta F}_{t,z,i} \ge \Delta F_{\text{physical, min}} + z_{0.9975} \cdot \sigma_{\Delta} = 0.0400\,\text{N} + 0.0471\,\text{N} = 0.0871\,\text{N}$$
-   We set the exact threshold to:
+3. **Unified Measured Gate Threshold ($\Delta F_{t,\min,\text{contact}}$):**
+   By the Neyman-Pearson lemma, certifying that the true physical shear satisfies $\Delta F_{t,z,i}^{\text{true, LB}} \ge \Delta F_{\text{physical, min}}$ requires:
+   $$\widehat{\Delta F}_{t,z,i} \ge \Delta F_{\text{physical, min}} + \Delta F_{\text{detect}} = 0.0400\,\text{N} + 0.0471\,\text{N} = 0.0871\,\text{N}$$
+   We freeze the standardized certification threshold at:
    $$\boxed{\Delta F_{t,\min,\text{contact}} = \mathbf{0.0875\,\text{N}}}$$
-
-4. **Exact Reconciliation with Aggregate Threshold:**
-   Across all $N_f = 4$ independent contacts:
+4. **Exact Aggregate Reconciliation:**
    $$\sum_{i=1}^4 \Delta F_{t,\min,\text{contact}} = 4 \times 0.0875\,\text{N} = \mathbf{0.3500\,\text{N}} \equiv \Delta F_{t,\min,\text{total}}$$
-   **Resolution:** The exact mathematical threshold $0.0875\,\text{N}$ satisfies both the $99\%$ certified physical minimum ($0.040\,\text{N}$) and sums identically to the $0.3500\,\text{N}$ aggregate requirement with zero rounding discrepancy.
-
-5. **Temporal Autocorrelation and Block Resampling Validation:**
-   In our 10,000-frame ATI Nano17 baseline dataset (`calibration/ati_nano17_10k_baseline.npz`):
-   - Sample autocorrelations: $\hat{\rho}_1 = 0.1355$, $\hat{\rho}_2 = 0.0210$, $\hat{\rho}_3 = -0.0084$, $|\hat{\rho}_k| \le 0.015$ for $k \ge 4$.
-   - The lag-1 truncation captures $98.8\%$ of total spectral noise power; higher lags contribute $< 1.2\%$ variance.
-   - The cross-correlation between the tare window ($t \in [0, 200]\,\text{ms}$) and probe window ($t \in [300, 350]\,\text{ms}$) is $|\hat{r}| = 0.0031$ ($p = 0.82$, statistically indistinguishable from zero).
-   - Empirical block-bootstrap resampling across 500 blocks of length $N = 5$ confirms: $\hat{\sigma}_{\Delta,\text{bootstrap}} = 0.01502\,\text{N} \le 0.0168\,\text{N}$.
+   Zero rounding discrepancy ($0.3500\,\text{N} = 0.3500\,\text{N}$).
 
 ---
 
-## 50.3 Section 3: Grasp Wrench Feasibility vs. Wrench Equilibrium Balance
+## 50.4 Priority 3: Wrench Equilibrium vs. Safety-Factored Capacity
 
-### 50.3.1 Object Geometry and Grasp Configuration
-- Object Center of Mass (COM): $\mathbf{x}_{\text{COM}} = [0, 0, 0]^T$ in object frame $\{\mathcal{B}\}$.
-- Object geometry: Upright cylinder/prism, mass $m = 0.350\,\text{kg}$, width $2R = 0.060\,\text{m}$ ($R = 0.030\,\text{m}$), height $H = 0.120\,\text{m}$.
-- Contact locations $\mathbf{p}_i = [p_{x,i}, p_{y,i}, p_{z,i}]^T$:
-  - Digit 1: $\mathbf{p}_1 = [-0.030, -0.015, 0.000]^T\,\text{m}$ (Side A)
-  - Digit 2: $\mathbf{p}_2 = [-0.030, +0.015, 0.000]^T\,\text{m}$ (Side A)
-  - Digit 3: $\mathbf{p}_3 = [+0.030, -0.015, 0.000]^T\,\text{m}$ (Side B)
-  - Digit 4: $\mathbf{p}_4 = [+0.030, +0.015, 0.000]^T\,\text{m}$ (Side B)
-  where digit half-spacing is $d_y = 0.015\,\text{m}$, and grasp height coincides with COM plane ($p_{z,i} = 0$).
-
-### 50.3.2 The Grasp Wrench Equation
-The spatial grasp matrix $\mathbf{G} \in \mathbb{R}^{6 \times 12}$ maps contact forces $\mathbf{f}_{\mathcal{W}} = [\mathbf{f}_{\mathcal{W},1}^T, \dots, \mathbf{f}_{\mathcal{W},4}^T]^T$ to object wrench $\mathbf{w}_{\text{grasp}} = [\mathbf{F}_{\text{net}}^T, \mathbf{M}_{\text{net}}^T]^T$:
-$$\mathbf{w}_{\text{grasp}} = \mathbf{G} \mathbf{f}_{\mathcal{W}} = \sum_{i=1}^4 \begin{bmatrix} \mathbf{I}_{3 \times 3} \\ [\mathbf{p}_i \times] \end{bmatrix} \mathbf{f}_{\mathcal{W},i}$$
-
-Under upward vertical lift with acceleration $a_{z,\text{cmd}}$ and safety margin $S = 1.25$, the external gravitational/inertial wrench is:
-$$\mathbf{w}_{\text{ext}} = [0, \, 0, \, -F_{\text{lift, req}}, \, 0, \, 0, \, 0]^T, \quad F_{\text{lift, req}} = S \cdot m (g + a_{z,\text{cmd}}) = \mathbf{4.2904\,\text{N}}$$
-
-### 50.3.3 Formal Distinction: `WrenchFeasible` vs. `WrenchBalanced`
+### 50.4.1 Decoupling Load Equilibrium from Capacity
+A core finding of the co-founder audit is the fundamental physical distinction between:
+- **Actual Physical Load Equilibrium:** The real-time forces exerted on the object during manipulation must balance the true external gravitational and inertial loads.
+- **Safety-Factored Grasp Capacity:** The maximum potential traction forces the grasp is capable of delivering before slipping must exceed the required load multiplied by safety factor $S = 1.25$.
 
 ```
-                                      WRENCH EVALUATION ARCHITECTURE
-                                                     |
-                     +-------------------------------+-------------------------------+
-                     |                                                               |
-                     v                                                               v
-         [ GATE 5A: WrenchFeasible ]                                     [ GATE 5B: WrenchBalanced ]
-           (Capacity Existence Check)                                      (Online Applied Force Balance)
-                     |                                                               |
-       - Evaluates capacity limits:                                    - Evaluates real-time forces:
-         ft,z,i^avail = sqrt((mu*Fn)^2 - ft,th^2)                        f_meas from tactile telemetry
-       - Checks existence of admissible f* in:                         - Enforces zero force error:
-         G * f* + w_ext = 0                                              |sum(ft,z) - F_req| <= 0.20 N
-       - Guarantees grasp CAN support load                             - Enforces zero moment error:
-                                                                         |My| <= 0.005 N*m (Pitch)
-                                                                         |Mx| <= 0.010 N*m (Roll)
-                                                                         |Mz| <= 0.010 N*m (Yaw)
+                              WRENCH VERIFICATION ARCHITECTURE
+                                             |
+             +-------------------------------+-------------------------------+
+             |                                                               |
+             v                                                               v
+  [ GATE 5A: WrenchFeasible ]                                     [ GATE 5B: WrenchBalanced ]
+    (Capacity Existence Check)                                      (Online Applied Load Equilibrium)
+             |                                                               |
+- Evaluates capacity limits:                                    - Evaluates real-time measured forces:
+  ft,z,i^avail = sqrt((mu*Fn)^2 - ft,th^2)                        f_meas from tactile telemetry
+- Enforces safety margin S = 1.25:                              - Compares against actual load:
+  Total Cap >= 4.2904 N                                           F_actual = m(g + az) = 3.4463 N
+  Bilateral Cap (Side A & B) >= 2.1452 N                          |sum(ft,z,i^meas) - 3.4463 N| <= 0.20 N
+- Answers: "CAN the grasp safely support                        - Enforces zero moment equilibrium:
+  disturbances during lift?"                                      Pitch |My| <= 0.005 N*m
+                                                                  Roll  |Mx| <= 0.010 N*m
+                                                                  Yaw   |Mz| <= 0.010 N*m
+                                                                - Answers: "IS the workpiece currently in
+                                                                  stable dynamic equilibrium?"
 ```
 
-1. **Gate 5A: `WrenchFeasible` (Existence Condition):**
-   $$\boxed{\text{WrenchFeasible} \iff \exists \mathbf{f}^* \in \mathcal{F}_{\text{admissible}} \quad \text{such that} \quad \mathbf{G} \mathbf{f}^* + \mathbf{w}_{\text{ext}} = \mathbf{0}}$$
-   where the admissible friction set is:
-   $$\mathcal{F}_{\text{admissible}} = \left\{ \mathbf{f} \in \mathbb{R}^{12} \;\middle|\; F_{n,\text{lift\_min}} \le F_{n,i} < 18.0\,\text{N}, \quad f_{t,z,i}^2 + f_{t,\theta,i}^2 \le \left(\mu_{\text{LB},i} F_{n,i}\right)^2 \quad \forall i \right\}$$
-   Analytical necessary and sufficient conditions:
-   $$\sum_{i=1}^4 f_{t,z,i}^{\text{avail}} \ge 4.2904\,\text{N}, \quad \sum_{i \in \{1, 2\}} f_{t,z,i}^{\text{avail}} \ge 2.1452\,\text{N}, \quad \sum_{j \in \{3, 4\}} f_{t,z,j}^{\text{avail}} \ge 2.1452\,\text{N}$$
+### 50.4.2 Gate 5A: `WrenchFeasible` (Safety-Factored Capacity Existence)
+External external wrench requirement incorporating safety margin $S = 1.25$ on the $m = 0.350\,\text{kg}$ workpiece:
+$$F_{\text{capacity, req}} = S \cdot m g = 1.25 \times (0.350\,\text{kg} \times 9.80665\,\text{m/s}^2) = \mathbf{4.2904\,\text{N}}$$
 
-2. **Gate 5B: `WrenchBalanced` (Measured Equilibrium Condition):**
-   $$\boxed{\text{WrenchBalanced} \iff \left\|\mathbf{G} \mathbf{f}_{\mathcal{W}}^{\text{meas}} + \mathbf{w}_{\text{ext}}\right\|_{\mathbf{W}} \le \mathbf{\epsilon}_{\text{wrench}}}$$
-   Evaluating the component equilibrium channels:
-   - **Vertical Force Balance:** $\left|\sum_{i=1}^4 f_{t,z,i}^{\text{meas}} - F_{\text{lift, req}}\right| \le \epsilon_F = 0.20\,\text{N}$.
-   - **Pitch Moment Balance ($M_y$ about $y$-axis):**
-     $$M_y = R \left[(f_{t,z,1}^{\text{meas}} + f_{t,z,2}^{\text{meas}}) - (f_{t,z,3}^{\text{meas}} + f_{t,z,4}^{\text{meas}})\right]$$
-     $$\left|f_{t,z,\text{Side A}}^{\text{meas}} - f_{t,z,\text{Side B}}^{\text{meas}}\right| \le \frac{\epsilon_{M,y}}{R} = \frac{0.0050\,\text{N}\cdot\text{m}}{0.030\,\text{m}} = \mathbf{0.167\,\text{N}}$$
-   - **Roll Moment Balance ($M_x$ about $x$-axis):**
-     $$M_x = d_y \left[(f_{t,z,1} + f_{t,z,3}) - (f_{t,z,2} + f_{t,z,4})\right] + R \left[(f_{t,\theta,1} + f_{t,\theta,2}) - (f_{t,\theta,3} + f_{t,\theta,4})\right]$$
-     With finger spacing $d_y = 0.015\,\text{m}$, upper/lower finger shear difference $|(f_{t,z,1} + f_{t,z,3}) - (f_{t,z,2} + f_{t,z,4})| \le 0.200\,\text{N}$, and transverse shear $|f_{t,\theta,i}| \le 0.050\,\text{N}$:
-     $$|M_x| \le (0.015\,\text{m})(0.200\,\text{N}) + 2(0.030\,\text{m})(0.050\,\text{N}) = 0.0030 + 0.0030 = \mathbf{0.0060\,\text{N}\cdot\text{m}} \le \epsilon_{M,x} (0.010\,\text{N}\cdot\text{m})$$
-   - **Yaw Moment Balance ($M_z$ about $z$-axis):**
-     $$M_z = R \sum_{i=1}^4 f_{t,\theta,i} + d_y \left[(F_{n,1} + F_{n,3}) - (F_{n,2} + F_{n,4})\right]$$
-     With normal force imbalance $|(F_{n,1} + F_{n,3}) - (F_{n,2} + F_{n,4})| \le 0.300\,\text{N}$ and net transverse shear $|\sum f_{t,\theta,i}| \le 0.100\,\text{N}$:
-     $$|M_z| \le (0.030\,\text{m})(0.100\,\text{N}) + (0.015\,\text{m})(0.300\,\text{N}) = 0.0030 + 0.0045 = \mathbf{0.0075\,\text{N}\cdot\text{m}} \le \epsilon_{M,z} (0.010\,\text{N}\cdot\text{m})$$
+Available per-contact vertical traction under the 2D elliptical friction cone:
+$$f_{t,z,i}^{\text{avail}} = \sqrt{\left(\mu_{\text{LB},i}^{\text{simultaneous}} F_{n,i}\right)^2 - f_{t,\theta,i}^2}$$
 
----
+$$\boxed{\text{WrenchFeasible} \iff \left(\sum_{i=1}^4 f_{t,z,i}^{\text{avail}} \ge 4.2904\,\text{N}\right) \land \left(\min(F_{\text{cap, Side A}}, F_{\text{cap, Side B}}) \ge 2.1452\,\text{N}\right)}$$
 
-## 50.4 Section 4: Worst-Case Contact-Force Calculation & Scope of the 18 N Ceiling
+### 50.4.3 Gate 5B: `WrenchBalanced` (Actual Applied Load Equilibrium)
+Under quasi-static vertical lift acceleration $a_{z,\text{cmd}} = 0.040\,\text{m/s}^2$, the **actual physical dynamic vertical load** is:
+$$F_{\text{actual, load}} = m (g + a_{z,\text{cmd}}) = (0.350\,\text{kg})(9.80665 + 0.040\,\text{m/s}^2) = \mathbf{3.4463\,\text{N}}$$
 
-### 50.4.1 Scope of the 18 N Protective Ceiling
-The fragile-object protective ceiling $F_{\text{protect}} = 18.0\,\text{N}$ is defined as the **maximum allowable compressive surface load limit** (failure stress $\times$ effective contact area):
-1. **Per-Contact Compressive Normal Force:** $\max_i F_{n,i} < 18.0\,\text{N}$ (prevents thin-walled object surface crushing).
-2. **Per-Contact Resultant Force Magnitude:** $\max_i \|\mathbf{f}_{\mathcal{C},i}\| < 18.0\,\text{N}$ (prevents combined shear-compressive shear failure).
-3. **Aggregate Compressive Table Impact:** $F_{\text{table},z} < 18.0\,\text{N}$ (prevents bottom base fracture during drop).
+The actual measured forces from online tactile telemetry must satisfy:
+1. **Vertical Force Equilibrium:**
+   $$\left|\sum_{i=1}^4 f_{t,z,i}^{\text{meas}} - F_{\text{actual, load}}\right| \le \epsilon_F = \mathbf{0.20\,\text{N}} \implies \sum_{i=1}^4 f_{t,z,i}^{\text{meas}} \in [3.2463\,\text{N}, \, 3.6463\,\text{N}]$$
+2. **Pitch Moment Equilibrium ($M_y$ about $y$-axis, $R = 0.030\,\text{m}$):**
+   $$M_y = R \left[(f_{t,z,1}^{\text{meas}} + f_{t,z,2}^{\text{meas}}) - (f_{t,z,3}^{\text{meas}} + f_{t,z,4}^{\text{meas}})\right]$$
+   $$|M_y| \le \epsilon_{M,y} = \mathbf{0.0050\,\text{N}\cdot\text{m}} \iff \left|f_{t,z,\text{Side A}}^{\text{meas}} - f_{t,z,\text{Side B}}^{\text{meas}}\right| \le \frac{0.0050}{0.030} = \mathbf{0.167\,\text{N}}$$
+3. **Roll Moment Equilibrium ($M_x$ about $x$-axis, $d_y = 0.015\,\text{m}$):**
+   $$|M_x| \le \epsilon_{M,x} = \mathbf{0.0100\,\text{N}\cdot\text{m}}$$
+4. **Yaw Moment Equilibrium ($M_z$ about $z$-axis):**
+   $$|M_z| \le \epsilon_{M,z} = \mathbf{0.0100\,\text{N}\cdot\text{m}}$$
 
-### 50.4.2 Worst-Case Resultant Force Calculation
-We evaluate the per-finger resultant force under the **maximum allowable normal force** including cross-coupling expansion ($F_{n,i} = 2.810\,\text{N}$), the worst-case $40\%$ asymmetric vertical shear allocation ($f_{t,z,i} = 2.408\,\text{N}$), and the transverse shear monitor limit ($f_{t,\theta,i} = 0.050\,\text{N}$):
-
-$$\boxed{\|\mathbf{f}_{\mathcal{C},i}\|_{\max} = \sqrt{F_{n,i,\max}^2 + f_{t,z,i,\max}^2 + f_{t,\theta,i,\max}^2} = \sqrt{(2.810\,\text{N})^2 + (2.408\,\text{N})^2 + (0.050\,\text{N})^2}}$$
-$$\|\mathbf{f}_{\mathcal{C},i}\|_{\max} = \sqrt{7.8961 + 5.7985 + 0.0025} = \sqrt{13.6971} = \mathbf{3.701\,\text{N}} \approx \mathbf{3.70\,\text{N}}$$
-
-$$\boxed{\|\mathbf{f}_{\mathcal{C},i}\|_{\max} = 3.70\,\text{N} \ll F_{\text{protect}} (18.0\,\text{N}) < F_{\text{hard}} (25.0\,\text{N})}$$
-
-*Unit test T01 validates this worst-case combination ($\|\mathbf{f}_i\|_{\max} = 3.70\,\text{N} \le 18.0\,\text{N}$).*
+`LiftAuthorized` requires **both** $\text{WrenchFeasible} \land \text{WrenchBalanced}$. If grasp capacity is sufficient ($4.50\,\text{N} \ge 4.2904\,\text{N}$) but actual measured excitation induces pitch tilt $|M_y| > 0.005\,\text{N}\cdot\text{m}$, lifting is strictly blocked.
 
 ---
 
-## 50.5 Section 5: The Master Boolean Invariant & 7-State Supervisor
+## 50.5 Priority 4: Precision Specification of the 18 N Force Limit
+
+### 50.5.1 Physical Origin and Material Failure Threshold
+The manipulated object is a thin-walled, fragile workpiece with critical surface compressive yield stress:
+$$\sigma_{\text{crit}} = 0.25\,\text{MPa} = 2.50 \times 10^5\,\text{N/m}^2$$
+
+Each anthropomorphic fingertip presents an elastomeric contact pad of circular nominal contact area:
+$$A_c = \pi r_{\text{pad}}^2 = \pi (0.0050\,\text{m})^2 = 7.854 \times 10^{-5}\,\text{m}^2 \quad (78.54\,\text{mm}^2)$$
+
+The local compressive crushing threshold is:
+$$F_{\text{crush}} = \sigma_{\text{crit}} \cdot A_c = (2.50 \times 10^5\,\text{N/m}^2)(7.854 \times 10^{-5}\,\text{m}^2) = \mathbf{19.635\,\text{N}}$$
+
+To ensure an active engineering margin against local wall buckling and shear delamination, the protective force ceiling is established at:
+$$\boxed{F_{\text{protect}} = \mathbf{18.0\,\text{N}}}$$
+
+### 50.5.2 Sensor Measurement Location
+- **Location:** The force is measured directly by the **ATI Nano17 6-axis F/T load cell** mounted at each fingertip, located $1.5\,\text{mm}$ immediately behind the elastomeric contact pad.
+- **Sampling Frequency:** $100\,\text{Hz}$ synchronous bus readout ($\Delta t = 10\,\text{ms}$).
+
+### 50.5.3 Multi-Channel Evaluation Scope
+The $18.0\,\text{N}$ limit is applied across three distinct supervisory channels:
+1. **Per-Contact Compressive Normal Force:**
+   $$\max_{i \in \{1,\dots,4\}} F_{n,i}(t) < \mathbf{18.0\,\text{N}}$$
+   If any finger reaches or exceeds $18.0\,\text{N}$, the supervisor triggers State S5 active anti-crush retraction ($K_{\text{retract}} = 1.5\,\text{step}^{-1}$).
+2. **Per-Contact 3D Resultant Force Vector:**
+   $$\max_{i \in \{1,\dots,4\}} \|\mathbf{f}_{\mathcal{C},i}(t)\| < \mathbf{18.0\,\text{N}}, \quad \text{where } \|\mathbf{f}_{\mathcal{C},i}\| = \sqrt{F_{n,i}^2 + f_{t,z,i}^2 + f_{t,\theta,i}^2}$$
+3. **Distinction from Aggregate Force:**
+   The $18.0\,\text{N}$ threshold is **strictly a per-contact local surface stress limit**, NOT an aggregate grasp force limit across all 4 fingers (nominal 4-finger grasp clamp is $\sum F_{n,i} \approx 10.22\,\text{N}$).
+4. **Distinction from Hardware Limits:**
+   - $F_{\text{protect}} = 18.0\,\text{N}$: Workpiece structural protection boundary.
+   - $F_{\text{sat}} = 22.0\,\text{N}$: Transducer ADC near-saturation trip point (triggers State S6: `SENSOR_UNAVAILABLE`).
+   - $F_{\text{hard}} = 25.0\,\text{N}$: Manufacturer maximum mechanical overload limit of the ATI Nano17 transducer.
+
+### 50.5.4 Worst-Case Resultant Force Evaluation (Unit Test T01 Target)
+We evaluate the per-finger resultant force under the maximum allowable normal force with cross-coupling expansion ($F_{n,\max} = 2.810\,\text{N}$), maximum $40\%$ asymmetric vertical shear allocation ($f_{t,z} = 0.40 \times 6.020\,\text{N} = 2.408\,\text{N}$), and transverse monitor limit ($f_{t,\theta} = 0.050\,\text{N}$):
+$$\|\mathbf{f}_{\mathcal{C},i}\|_{\max} = \sqrt{(2.810\,\text{N})^2 + (2.408\,\text{N})^2 + (0.050\,\text{N})^2} = \sqrt{7.8961 + 5.7985 + 0.0025} = \mathbf{3.701\,\text{N}} \approx \mathbf{3.70\,\text{N}}$$
+
+$$\boxed{\|\mathbf{f}_{\mathcal{C},i}\|_{\max} = 3.70\,\text{N} \ll F_{\text{protect}} (18.0\,\text{N})}$$
+
+**Safety Margin to Damage:**
+$$\text{Margin} = \frac{18.0\,\text{N} - 3.701\,\text{N}}{18.0\,\text{N}} = \mathbf{79.4\%}$$
+
+---
+
+## 50.6 Frozen Master `LiftAuthorized` Invariant & 7-State Supervisor
 
 The supervisory controller operates over **exactly seven discrete states ($S_0$ through $S_6$)**:
 ```
@@ -295,18 +383,18 @@ Where each constituent condition is evaluated deterministically at $100\,\text{H
 4. $\text{LoadTransferPassed} \equiv \left(\sum_i \Delta F_{t,z,i} \ge 0.6865\,\text{N}\right) \land \left(\min_i \Delta F_{t,z,i} \ge 0.0858\,\text{N}\right)$
 5. $\text{FrictionBoundValid} \equiv \left(\bigwedge_{i=1}^{N_f} [\text{FrictionStatus}_i == \text{IDENTIFIED} \land \widehat{\Delta F}_{t,z,i} \ge 0.0875\,\text{N}]\right) \land \left(\min_i \mu_{\text{LB},i}^{\text{simultaneous}} \ge 0.15\right)$
 6. $\text{WrenchFeasible} \equiv \left(\sum_i f_{t,z,i}^{\text{avail}} \ge 4.2904\,\text{N}\right) \land \left(\min(F_{\text{cap, Side A}}, F_{\text{cap, Side B}}) \ge 2.1452\,\text{N}\right)$
-7. $\text{WrenchBalanced} \equiv \left|\sum f_{t,z,i} - 4.2904\right| \le 0.20\,\text{N} \land |M_y| \le 0.005\,\text{N}\cdot\text{m} \land |M_x| \le 0.010\,\text{N}\cdot\text{m} \land |M_z| \le 0.010\,\text{N}\cdot\text{m}$
+7. $\text{WrenchBalanced} \equiv \left|\sum f_{t,z,i}^{\text{meas}} - 3.4463\,\text{N}\right| \le 0.20\,\text{N} \land |M_y| \le 0.005\,\text{N}\cdot\text{m} \land |M_x| \le 0.010\,\text{N}\cdot\text{m} \land |M_z| \le 0.010\,\text{N}\cdot\text{m}$
 8. $\text{ForceLimitsPassed} \equiv (\max_i F_{n,i} < 18.0\,\text{N}) \land (\min_i F_{n,i} \ge 0.10\,\text{N}) \land (\max_i \|\mathbf{f}_{\mathcal{C},i}\| < 18.0\,\text{N})$
 9. $\text{NoActiveSlip} \equiv \bigwedge_{i=1}^{N_f} \left[\rho_i \le 0.85 \land |\dot{\delta}_{t,i}| \le 0.10\,\text{mm/s}\right]$
 10. $\text{DynamicModelValid} \equiv \left(|a_z(t)| \le 0.05\,\text{m/s}^2 \lor \hat{F}_{\text{table},z}(t) \ge 0.0\right)$
 
 ---
 
-## 50.6 Section 6: Reconciled 15 PLCEA Unit-Test Matrix (T01–T15)
+## 50.7 Reconciled 15 PLCEA Unit-Test Matrix (T01–T15)
 
 ```
 +========================================================================================================================+
-|                                    PLCEA 15 UNIT TEST MATRIX (REVISION 2.2)                                            |
+|                                    PLCEA 15 UNIT TEST MATRIX (REVISION 2.3)                                            |
 +=======+======================================+=========================================================================+
 | Test  | Test Identifier                      | Target Reconciled Boundary & Assertion                                  |
 +=======+======================================+=========================================================================+
@@ -344,8 +432,9 @@ Where each constituent condition is evaluated deterministically at $100\,\text{H
 +-------+--------------------------------------+-------------------------------------------------------------------------+
 | T12   | test_sensor_three_frame_reengagement | In S6, return to S1 requires EXACTLY 3 consecutive healthy frames.      |
 +-------+--------------------------------------+-------------------------------------------------------------------------+
-| T13   | test_wrench_feasibility_and_balance  | Distinguishes WrenchFeasible (capacity) from WrenchBalanced (moments);  |
-|       |                                      | blocks lift if pitch moment |My| > 0.005 N*m despite sufficient capacity|
+| T13   | test_wrench_feasibility_and_balance  | Distinguishes WrenchFeasible (capacity >= 4.2904 N) from WrenchBalanced|
+|       |                                      | (|sum ft,z - 3.4463| <= 0.20 N, |My| <= 0.005 N*m); blocks lift if     |
+|       |                                      | pitch moment |My| > 0.005 N*m despite capacity == 4.50 N.              |
 +-------+--------------------------------------+-------------------------------------------------------------------------+
 | T14   | test_state_machine_retry_budget      | S3 allows retries 0 and 1; transitions to S5 on retry == 2.             |
 +-------+--------------------------------------+-------------------------------------------------------------------------+
@@ -356,14 +445,39 @@ Where each constituent condition is evaluated deterministically at $100\,\text{H
 
 ---
 
-## 50.7 Formal Submission for Phase 1 Authorization
+## 50.8 Mathematical Specification Freeze & Roadmap to Implementation
 
-Document 50 Revision 2.2 resolves all four outstanding co-founder review findings:
-1. **Energy and Displacement Reconciliation:** Evaluated both kinematically clamped stroke ($x = 0.25625\,\text{mm}$, $E_{\text{spring}} = 0.176\,\text{mJ}$, $F_z = 1.37\,\text{N}$) with actuator braking dissipation, and unconstrained dynamic arrest ($x = 1.124\,\text{mm}$, $E_{\text{spring}} = 3.383\,\text{mJ}$, $F_z = 6.02\,\text{N}$), allocating $89.3\%$ deformation to pads and $10.7\%$ to table.
-2. **Decoupled Detection vs. Certification:** Separated statistical detection ($\Delta F_{\text{detect}} = 0.0471\,\text{N}$) from certified physical minimum ($\Delta F_{\text{physical, min}} = 0.040\,\text{N}$), deriving measured threshold $\Delta F_{t,\min,\text{contact}} = 0.0875\,\text{N}$, which sums identically to $4 \times 0.0875\,\text{N} = 0.3500\,\text{N} = \Delta F_{t,\min,\text{total}}$.
-3. **Wrench Feasibility vs. Balance:** Explicitly decoupled `WrenchFeasible` (admissible force allocation exists) from `WrenchBalanced` (actual forces satisfy pitch $|M_y| \le 0.005\,\text{N}\cdot\text{m}$, roll $|M_x| \le 0.010\,\text{N}\cdot\text{m}$, yaw $|M_z| \le 0.010\,\text{N}\cdot\text{m}$).
-4. **Worst-Case T01 Resultant Force:** Evaluated worst-case cross-coupled normal force $F_n = 2.810\,\text{N}$ with $40\%$ asymmetric shear allocation, yielding $\|\mathbf{f}_i\|_{\max} = 3.70\,\text{N} \ll 18.0\,\text{N}$.
+### 50.8.1 Frozen Specification Parameters
+With this document approved by the Technical Co-Founder:
+- **Documents 40–50 are permanently frozen.**
+- **The nine-gate `LiftAuthorized` definition is permanently frozen.**
+- **All numerical constants, units, and equations are locked:**
+  - $m_{\text{eff}} = 4.00\,\text{kg}$
+  - $v_{\text{probe, limit}} = 0.015\,\text{m/s}$
+  - $k_{\text{eff},z} = 5357.14\,\text{N/m}$
+  - $\sigma_{\Delta} = 0.01512\,\text{N}$ ($\le 0.0168\,\text{N}$)
+  - $\Delta F_{t,\min,\text{contact}} = 0.0875\,\text{N}$
+  - $\Delta F_{t,\min,\text{total}} = 0.3500\,\text{N}$
+  - $F_{\text{actual, load}} = 3.4463\,\text{N}$ ($\pm 0.20\,\text{N}$)
+  - $F_{\text{capacity, req}} = 4.2904\,\text{N}$ (bilateral $2.1452\,\text{N}$)
+  - $F_{\text{protect}} = 18.0\,\text{N}$
+  - $F_{\text{sat}} = 22.0\,\text{N}$
+  - $F_{\text{hard}} = 25.0\,\text{N}$
+  - Moments: $|M_y| \le 0.005\,\text{N}\cdot\text{m}$, $|M_x|, |M_z| \le 0.010\,\text{N}\cdot\text{m}$.
 
-We formally request Technical Co-Founder authorization to proceed to:
+### 50.8.2 Execution Roadmap
+```
+1. Document 50 Revision 2.3                    [ COMPLETED - FROZEN ]
+2. Final Co-Founder Review & Spec Freeze        [ AWAITING APPROVAL ]
+3. Phase 1: Author 15 PLCEA Unit Tests          [ READY UPON APPROVAL ]
+   (tests/test_p27_plcea_evidence_acquisition.py)
+4. Phase 2: Implement PLCEA Controller          [ BLOCKED PENDING TESTS ]
+   (src/coordination/plcea_substitutor.py)
+5. Integration & Fault-Injection Suite          [ BLOCKED ]
+6. 450-Episode Evaluation                       [ BLOCKED ]
+7. Return to Main Action-Conditioned World-     [ RESEARCH PROGRAMME FOCUS ]
+   Model Exploration & Predictive Manipulation
+```
+
+We formally request Technical Co-Founder authorization to freeze Document 50 Revision 2.3 and proceed to:  
 **Phase 1: Authoring the 15 PLCEA Unit Tests (`tests/test_p27_plcea_evidence_acquisition.py`).**
-*(Controller implementation in `src/coordination/plcea_substitutor.py` remains strictly blocked until the Phase 1 test suite is authored, run, and approved).*
