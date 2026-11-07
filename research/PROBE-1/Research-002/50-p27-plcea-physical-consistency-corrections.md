@@ -1,7 +1,7 @@
 # HOROS PROBE-1 — Research-002: Trustworthy Contact World Models
 # Document 50 (Revision 2.2): Pre-Lift Contact Evidence Acquisition (PLCEA) — Physical Consistency Corrections, Multi-Contact Simultaneous Confidence, and Grasp-Wrench Feasibility
 
-**Author:** Sunil Kumar Chavhan (`contact@horoslab.org`)  
+**Author:** Sunil Kumar Chavhan (`sunil@horoslab.org`)  
 **Organization:** HOROS Physical Intelligence Research Group (H.R.)  
 **Date:** November 7, 2026  
 **Document Version:** 2.2 (Formal Physical Revision Incorporating Co-Founder Audit of Revision 2.1)  
