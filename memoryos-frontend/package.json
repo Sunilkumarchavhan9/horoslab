@@ -75,7 +75,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.10",
+    "@babel/core": "^8.1.0",
     "@babel/generator": "^8.0.6",
     "@babel/parser": "^8.0.6",
     "@babel/preset-react": "^8.0.1",
@@ -87,7 +87,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "concurrently": "^10.0.6",
     "eslint": "^10",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.5",
     "typescript": "^5.9.3"
   }
 }
