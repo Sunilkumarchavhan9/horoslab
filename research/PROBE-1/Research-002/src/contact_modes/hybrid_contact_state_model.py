@@ -87,6 +87,7 @@ class HybridContactStateModel(nn.Module):
         init_state: np.ndarray,
         action_sequence: np.ndarray,
         horizon: int,
+        task: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Executes open-loop multi-step autoregressive rollout over horizon H.
@@ -112,11 +113,19 @@ class HybridContactStateModel(nn.Module):
         states_arr = np.array(states, dtype=np.float32)
         mode_dist_arr = np.array(mode_distributions, dtype=np.float32)
 
-        # Contact forces (approx from wrench channel or state slice)
-        if states_arr.shape[1] >= 15:
+        # Contact forces (wrench channel for 15-D peg_in_hole, normal forces for 23-D multifinger_lift)
+        if states_arr.shape[0] == 0:
+            forces = np.zeros((0, 6), dtype=np.float32)
+        elif task == "peg_in_hole" or (task is None and states_arr.shape[1] == 15):
             forces = states_arr[:, 9:15]
+        elif task in ("multifinger_lift", "compliant_prelift") or (task is None and states_arr.shape[1] == 23):
+            forces = np.pad(states_arr[:, 12:16], ((0, 0), (0, 2)), mode="constant").astype(np.float32)
+        elif states_arr.shape[1] >= 15:
+            forces = states_arr[:, 9:15]
+        elif states_arr.shape[1] >= 6:
+            forces = states_arr[:, :6]
         else:
-            forces = states_arr[:, :min(6, states_arr.shape[1])]
+            forces = np.pad(states_arr, ((0, 0), (0, 6 - states_arr.shape[1])), mode="constant").astype(np.float32)
 
         return {
             "states": states_arr,

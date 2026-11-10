@@ -72,9 +72,9 @@ class PlannerEvaluator:
                 np.array([1.0, 1.0, 1.0, 1.0, 1.0])
             )
             def reward_fn(s: np.ndarray, a: np.ndarray) -> float:
-                obj_z = s[20] if len(s) >= 23 else s[2]
+                obj_z = s[22] if len(s) >= 23 else s[2]
                 slip = np.linalg.norm(s[16:20]) if len(s) >= 23 else 0.0
-                force_err = abs(np.sum(s[8:12]) - 16.0) if len(s) >= 23 else 0.0
+                force_err = abs(np.sum(s[12:16]) - 16.0) if len(s) >= 23 else 0.0
                 return float(obj_z * 15.0 - slip * 5.0 - force_err * 0.1)
             self.reward_fn = reward_fn
 
@@ -152,7 +152,9 @@ class PlannerEvaluator:
                 pred_reward = float(plan_info.get("best_predicted_return", 0.0))
 
                 # Multi-step autoregressive rollout with learned world model
-                rollout_pred = hybrid_wm.predict_multistep(s_current, candidate_sequence, horizon=len(candidate_sequence))
+                rollout_pred = hybrid_wm.predict_multistep(
+                    s_current, candidate_sequence, horizon=len(candidate_sequence), task=self.task
+                )
                 pred_traj_states = rollout_pred["states"]
                 pred_traj_wrenches = np.zeros((len(candidate_sequence), 6), dtype=np.float32)
                 cf_slice = rollout_pred["contact_forces"]

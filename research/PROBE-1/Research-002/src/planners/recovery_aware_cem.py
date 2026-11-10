@@ -88,13 +88,13 @@ class RecoveryAwareCEMPlanner:
                         # Predictive Barrier Penalties
                         barrier_penalty = 0.0
                         if len(s_np[i]) >= 23:  # multifinger lift
-                            # slip ratio in s[16:20], normal force in s[8:12]
+                            # slip ratio in s[16:20], normal force in s[12:16]
                             slip_vals = s_np[i, 16:20]
                             max_slip = float(np.max(slip_vals))
                             if max_slip > 0.80:
                                 barrier_penalty += self.slip_penalty_weight * (max_slip - 0.80)
 
-                            fn_vals = s_np[i, 8:12]
+                            fn_vals = s_np[i, 12:16]
                             max_fn = float(np.max(fn_vals))
                             if max_fn > 20.0:
                                 barrier_penalty += self.crush_penalty_weight * (max_fn - 20.0)
