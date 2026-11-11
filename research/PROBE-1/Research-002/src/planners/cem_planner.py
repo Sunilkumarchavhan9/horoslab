@@ -11,6 +11,42 @@ import torch
 from typing import Dict, Any, Callable, Tuple, Optional
 
 
+def compute_peg_in_hole_planner_reward(s: np.ndarray, a: Optional[np.ndarray] = None) -> float:
+    """
+    Canonical Peg-in-Hole state/action planning objective in task physical units (mm, deg, N, N*m):
+    - Penalizes hover height above the hole rim (peg_z > 0).
+    - Rewards insertion depth monotonically toward seating threshold z = -50.0 mm.
+    - Caps insertion progress at 50.0 mm and deters over-penetration beyond -50.0 mm.
+    - Penalizes radial misalignment, tilt, excessive wrench loads, and erratic step effort.
+    """
+    peg_z = float(s[2])
+    lateral_err = float(np.linalg.norm(s[:2]))
+    tilt_deg = float(np.linalg.norm(s[6:8])) if len(s) >= 9 else 0.0
+    wrench_norm = float(np.linalg.norm(s[9:15])) if len(s) >= 15 else float(np.linalg.norm(s[:3]))
+
+    above_rim_pen = 2.0 * max(0.0, peg_z)
+    bounded_depth = min(max(0.0, -peg_z), 50.0)
+    overshoot_pen = 3.0 * max(0.0, -peg_z - 50.0)
+    seating_bonus = 50.0 if (peg_z <= -50.0 and wrench_norm < 15.0) else 0.0
+
+    align_pen = 8.0 * lateral_err + 4.0 * tilt_deg
+    load_pen = 0.1 * wrench_norm + 3.0 * max(0.0, wrench_norm - 30.0)
+    effort_pen = 0.0
+    if a is not None and len(a) >= 5:
+        a_arr = np.asarray(a, dtype=np.float64)
+        effort_pen = 0.8 * float(np.sum(a_arr[:2] ** 2)) + 0.5 * float(np.sum(a_arr[3:5] ** 2))
+
+    return float(
+        5.0 * bounded_depth
+        + seating_bonus
+        - above_rim_pen
+        - overshoot_pen
+        - align_pen
+        - load_pen
+        - effort_pen
+    )
+
+
 class CEMPlanner:
     """
     Batched Cross-Entropy Method (CEM) for high-speed Model-Predictive Control.
@@ -27,6 +63,8 @@ class CEMPlanner:
         elite_fraction: float = 0.10,
         num_iterations: int = 4,
         temperature: float = 1.0,
+        init_std: Optional[Any] = None,
+        seed: Optional[int] = None,
     ):
         self.world_model = world_model
         self.action_dim = action_dim
@@ -36,6 +74,8 @@ class CEMPlanner:
         self.num_elites = max(1, int(num_samples * elite_fraction))
         self.num_iterations = num_iterations
         self.temperature = temperature
+        self.init_std = init_std
+        self.rng = np.random.RandomState(seed) if seed is not None else None
 
     def plan(
         self,
@@ -50,15 +90,21 @@ class CEMPlanner:
           - info: plan diagnostic stats
         """
         self.world_model.eval()
-        mean = warm_start_mean if warm_start_mean is not None else np.zeros((self.horizon, self.action_dim))
-        std = np.ones((self.horizon, self.action_dim)) * 0.5
+        mean = warm_start_mean.copy() if warm_start_mean is not None else np.zeros((self.horizon, self.action_dim))
+        if self.init_std is None:
+            std = np.ones((self.horizon, self.action_dim)) * 0.5
+        else:
+            std = np.broadcast_to(np.asarray(self.init_std, dtype=np.float64), (self.horizon, self.action_dim)).copy()
 
         best_trajectory = None
         best_predicted_return = -float("inf")
         s_curr_tensor = torch.tensor(current_state, dtype=torch.float32)
 
         for iteration in range(self.num_iterations):
-            samples = np.random.normal(mean, std, size=(self.num_samples, self.horizon, self.action_dim))
+            if self.rng is not None:
+                samples = self.rng.normal(mean, std, size=(self.num_samples, self.horizon, self.action_dim))
+            else:
+                samples = np.random.normal(mean, std, size=(self.num_samples, self.horizon, self.action_dim))
             samples = np.clip(samples, self.lower_bound, self.upper_bound)
             samples_tensor = torch.tensor(samples, dtype=torch.float32)
 

@@ -17,7 +17,7 @@ import torch
 
 from src.contact_modes.contact_mode_definitions import ContactMode, classify_contact_mode, NUM_MODES
 from src.contact_modes.hybrid_contact_state_model import HybridContactStateModel
-from src.planners.cem_planner import CEMPlanner
+from src.planners.cem_planner import CEMPlanner, compute_peg_in_hole_planner_reward
 from src.planners.uncertainty_penalized_cem import UncertaintyPenalizedCEM
 from src.planners.recovery_aware_cem import RecoveryAwareCEMPlanner
 from src.environment.peg_in_hole_env import PegInHoleEnv
@@ -49,6 +49,7 @@ class PlannerEvaluator:
         elite_fraction: float = 0.15,
         cem_iterations: int = 2,
         seed: int = 42,
+        init_std: Optional[Any] = None,
     ):
         self.task = task
         self.eval_horizon = eval_horizon
@@ -57,6 +58,7 @@ class PlannerEvaluator:
         self.elite_fraction = elite_fraction
         self.cem_iterations = cem_iterations
         self.seed = seed
+        self.init_std = init_std
 
         self.safety_evaluator = SafetyEvaluator(task=task)
 
@@ -67,12 +69,7 @@ class PlannerEvaluator:
                 np.array([-5.0, -5.0, -5.0, -2.0, -2.0, -2.0]),
                 np.array([5.0, 5.0, 5.0, 2.0, 2.0, 2.0])
             )
-            def reward_fn(s: np.ndarray, a: np.ndarray) -> float:
-                peg_z = s[2]
-                lateral_err = np.linalg.norm(s[:2])
-                wrench_norm = np.linalg.norm(s[9:15]) if len(s) >= 15 else np.linalg.norm(s[:3])
-                return -float(lateral_err * 2.0 + max(0.0, peg_z) * 1.5 - min(0.0, peg_z) * 5.0 + wrench_norm * 0.1)
-            self.reward_fn = reward_fn
+            self.reward_fn = compute_peg_in_hole_planner_reward
         else:
             self.state_dim = 23
             self.action_dim = 5
@@ -156,6 +153,7 @@ class PlannerEvaluator:
                 beta=uncertainty_beta,
                 uncertainty_source=src_mode,
                 seed=self.seed,
+                init_std=self.init_std,
             )
             planner_class = "UncertaintyPenalizedCEM"
             planner_identity = f"{resolved_arch}_UncertaintyPenalizedCEM_{src_mode}"
@@ -181,6 +179,8 @@ class PlannerEvaluator:
             num_samples=self.num_candidates,
             elite_fraction=self.elite_fraction,
             num_iterations=self.cem_iterations,
+            seed=self.seed,
+            init_std=self.init_std,
         )
         return planner, f"{resolved_arch}_CEMPlanner", "CEMPlanner", resolved_arch, "none"
 

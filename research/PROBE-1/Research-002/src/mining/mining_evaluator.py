@@ -23,7 +23,7 @@ from src.contact_modes.contact_mode_classifier import ContactModeClassifier
 from src.contact_modes.hybrid_contact_state_model import HybridContactStateModel
 from src.models.deterministic_wm import DeterministicWorldModel
 from src.models.stratified_conformal_wm import ContactStratifiedConformalWM
-from src.planners.cem_planner import CEMPlanner
+from src.planners.cem_planner import CEMPlanner, compute_peg_in_hole_planner_reward
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
 from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
@@ -54,13 +54,7 @@ class MiningEvaluator:
             self.action_dim = 6
             self.action_bounds = (np.array([-5.0, -5.0, -5.0, -2.0, -2.0, -2.0]),
                                   np.array([5.0, 5.0, 5.0, 2.0, 2.0, 2.0]))
-            def reward_fn(s, a):
-                peg_z = s[2]
-                lateral_err = np.linalg.norm(s[:2])
-                wrench_norm = np.linalg.norm(s[9:15]) if len(s) >= 15 else np.linalg.norm(s[:3])
-                # Direct downward guidance + lateral centering penalty
-                return -float(lateral_err * 2.0 + max(0.0, peg_z) * 1.5 - min(0.0, peg_z) * 5.0 + wrench_norm * 0.1)
-            self.reward_fn = reward_fn
+            self.reward_fn = compute_peg_in_hole_planner_reward
         else:
             self.state_dim = 23
             self.action_dim = 5

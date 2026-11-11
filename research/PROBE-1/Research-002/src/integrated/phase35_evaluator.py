@@ -1111,19 +1111,24 @@ def _evaluate_closed_loop_cell(
     b4_model=None,
     eval_horizon: int = 50,
     seed_offset: int = 42,
+    num_candidates: int = 60,
+    cem_iterations: int = 2,
+    init_std: Optional[Any] = None,
+    warm_start: bool = False,
 ) -> Dict[str, Any]:
     """
-    Runs a single 25-episode closed-loop cell under the frozen Document 53 v1.1 configuration,
-    recording every episode verbatim (success, failures, drops, safety limits, PEG, latency).
+    Runs a single closed-loop cell under Document 53 v1.1 (or Phase 3.5.1 corrected Peg-in-Hole
+    configuration), recording every episode verbatim (success, failures, drops, safety limits, PEG, latency).
     """
     pe = PlannerEvaluator(
         task=task,
         eval_horizon=eval_horizon,
         plan_horizon=10,
-        num_candidates=60,
+        num_candidates=num_candidates,
         elite_fraction=0.15,
-        cem_iterations=2,
+        cem_iterations=cem_iterations,
         seed=seed_offset,
+        init_std=init_std,
     )
     safety_eval = SafetyEvaluator(task=task)
     planner, planner_identity, planner_class, resolved_arch, resolved_unc_src = pe._create_planner_for_model(
@@ -1172,14 +1177,19 @@ def _evaluate_closed_loop_cell(
         step_positions: List[float] = []
         term_reason = "horizon_reached"
         steps_exec = 0
+        warm_mean = None
 
         for step in range(eval_horizon):
             t_step_0 = time.perf_counter()
             s_curr, _ = extract_env_state_and_wrench(obs, task)
-            best_first_action, plan_info = planner.plan(s_curr, pe.reward_fn)
-            cand_seq = plan_info.get("best_trajectory")
+            plan_kwargs = {"warm_start_mean": warm_mean} if warm_mean is not None else {}
+            best_first_action, plan_info = planner.plan(s_curr, pe.reward_fn, **plan_kwargs)
+            raw_cand_seq = plan_info.get("best_trajectory")
+            cand_seq = raw_cand_seq
             if cand_seq is None:
                 cand_seq = np.repeat(best_first_action[np.newaxis, :], pe.plan_horizon, axis=0)
+            if warm_start and raw_cand_seq is not None and len(raw_cand_seq) > 1:
+                warm_mean = np.vstack([raw_cand_seq[1:], raw_cand_seq[-1:]])
 
             pred_ret = float(plan_info.get("best_predicted_return", 0.0))
             if "best_uncertainty_penalty" in plan_info:

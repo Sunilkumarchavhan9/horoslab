@@ -30,6 +30,7 @@ class UncertaintyPenalizedCEM:
         beta: float = 1.5,
         uncertainty_source: str = "auto",
         seed: Optional[int] = None,
+        init_std: Optional[Any] = None,
     ):
         self.ensemble_model = ensemble_model
         self.action_dim = action_dim
@@ -40,6 +41,7 @@ class UncertaintyPenalizedCEM:
         self.num_iterations = num_iterations
         self.beta = float(beta)
         self.uncertainty_source = uncertainty_source
+        self.init_std = init_std
         self.rng = np.random.RandomState(seed) if seed is not None else None
 
     def _select_variance_tensor(
@@ -67,7 +69,10 @@ class UncertaintyPenalizedCEM:
         """Optimizes action trajectories under penalized objective using batched tensors."""
         self.ensemble_model.eval()
         mean = warm_start_mean.copy() if warm_start_mean is not None else np.zeros((self.horizon, self.action_dim))
-        std = np.ones((self.horizon, self.action_dim)) * 0.5
+        if self.init_std is None:
+            std = np.ones((self.horizon, self.action_dim)) * 0.5
+        else:
+            std = np.broadcast_to(np.asarray(self.init_std, dtype=np.float64), (self.horizon, self.action_dim)).copy()
 
         best_trajectory = None
         best_penalized_return = -float("inf")
