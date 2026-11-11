@@ -14,11 +14,13 @@ Verifies all Document 53 v1.1 Phase 3.5 constraints without touching frozen Phas
 
 from __future__ import annotations
 
+import json
 import math
 import os
 import sys
 import unittest
 import numpy as np
+import torch
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 r002_root = os.path.abspath(os.path.join(current_dir, ".."))
@@ -29,15 +31,19 @@ if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
 
 from src.environment import CompliantPreLiftContactEnv, PegInHoleEnv
+from src.integrated.phase35_closure_addendum import verify_archived_phase35_immutability
 from src.integrated.phase35_evaluator import (
     _compute_auroc,
     _compute_gaussian_ece,
+    _evaluate_classifier_and_aps,
     _evaluate_closed_loop_cell,
     apply_holm_bonferroni,
     compute_paired_binary_comparison,
     compute_paired_continuous_comparison,
     create_phase35_env,
+    format_exact_pvalue,
     generate_offline_test_bundles,
+    validate_aps_quantile_matches_calibrated,
     verify_phase34_artifacts_and_load,
 )
 from src.integrated.statistical_analysis import to_json_serializable
@@ -175,6 +181,105 @@ class TestPhase35EvaluationHarness(unittest.TestCase):
         self.assertLess(ece["ece"], 0.05)
         self.assertEqual(_compute_auroc(np.array([0.1, 0.2, 0.8, 0.9]), np.array([0, 0, 1, 1])), 1.0)
         self.assertIsNone(_compute_auroc(np.array([0.1, 0.2]), np.array([0, 0])))
+
+    def test_06_aps_calibrated_quantile_enforced_and_mismatch_rejected(self):
+        ctx = verify_phase34_artifacts_and_load(r002_root)
+        expected = {
+            ("compliant_prelift", "M0_passive"): 0.950168,
+            ("compliant_prelift", "M4_acmm"): 0.968662,
+            ("peg_in_hole", "M0_passive"): 0.991423,
+            ("peg_in_hole", "M4_acmm"): 0.924364,
+        }
+        for (task, cond), exp_q in expected.items():
+            pack = ctx["models"][task][cond]
+            self.assertAlmostEqual(pack["calibrated_aps_quantile"], exp_q, places=6)
+            for arch in ("B1", "B2", "B3"):
+                wm = pack[arch]
+                self.assertAlmostEqual(float(wm.mode_classifier.aps_quantile), exp_q, places=6)
+                validate_aps_quantile_matches_calibrated(wm, pack["b4_artifact"])
+
+        # Regression: evaluation MUST fail if APS quantile diverges (e.g., stale 0.90) from calibrated artifact
+        wm_bad = ctx["models"]["compliant_prelift"]["M0_passive"]["B1"]
+        b4_art = ctx["models"]["compliant_prelift"]["M0_passive"]["b4_artifact"]
+        old_q = wm_bad.mode_classifier.aps_quantile
+        try:
+            wm_bad.mode_classifier.aps_quantile = 0.90
+            with self.assertRaises(ValueError):
+                validate_aps_quantile_matches_calibrated(wm_bad, b4_art)
+            dummy_s = np.zeros(wm_bad.continuous_model.state_dim, dtype=np.float32)
+            dummy_a = np.zeros(wm_bad.continuous_model.action_dim, dtype=np.float32)
+            with self.assertRaises(ValueError):
+                _evaluate_classifier_and_aps(
+                    wm_bad,
+                    [(dummy_s, dummy_a, dummy_s, 0)],
+                    {"0": 10},
+                    calibrated_aps_quantile=b4_art,
+                )
+        finally:
+            wm_bad.mode_classifier.aps_quantile = old_q
+
+    def test_07_exact_pvalue_never_rounds_to_zero_and_holm_preserved(self):
+        # 26 vs 0 and 37 vs 3 discordant pairs must yield strictly positive exact p-values (~2.98e-8, ~1.95e-8)
+        b_succ = compute_paired_binary_comparison([True] * 26 + [False] * 199, [False] * 225, "grand_succ")
+        self.assertGreater(b_succ["mcnemar_exact_p"], 0.0)
+        self.assertAlmostEqual(b_succ["mcnemar_exact_p"], 2.9802322387695312e-08, places=14)
+        self.assertEqual(b_succ["mcnemar_exact_p_sci"], "2.980232e-08")
+
+        b_viol = compute_paired_binary_comparison(
+            [True] * 4 + [True] * 37 + [False] * 3 + [False] * 181,
+            [True] * 4 + [False] * 37 + [True] * 3 + [False] * 181,
+            "grand_viol",
+        )
+        self.assertGreater(b_viol["mcnemar_exact_p"], 0.0)
+        self.assertAlmostEqual(b_viol["mcnemar_exact_p"], 1.946500560734421e-08, places=14)
+        self.assertEqual(b_viol["mcnemar_exact_p_sci"], "1.946501e-08")
+
+        # Continuous n=25 untied strictly positive difference yields exact nonzero Wilcoxon p = 2 * 2^(-25) = 5.960464e-08
+        c_res = compute_paired_continuous_comparison(np.arange(1.0, 26.0), np.zeros(25), "wilcoxon_n25_untied")
+        self.assertGreater(c_res["wilcoxon_p"], 0.0)
+        self.assertEqual(c_res["wilcoxon_p_sci"], "5.960464e-08")
+
+        apply_holm_bonferroni([b_succ, b_viol], "mcnemar_exact_p")
+        self.assertGreater(b_succ["mcnemar_exact_p_holm_adjusted"], 0.0)
+        self.assertGreater(b_viol["mcnemar_exact_p_holm_adjusted"], 0.0)
+        self.assertIn("e-08", b_succ["mcnemar_exact_p_holm_adjusted_sci"])
+
+    def test_08_phase35_archived_artifacts_unchanged_and_addendum_reconciled(self):
+        eval_dir = os.path.join(r002_root, "experiments", "phase3_5_evaluation")
+        hashes = verify_archived_phase35_immutability(eval_dir)
+        self.assertEqual(len(hashes), 4)
+
+        addendum_path = os.path.join(eval_dir, "phase35_closure_addendum.json")
+        self.assertTrue(os.path.exists(addendum_path), "Phase 3.5 closure addendum JSON must exist.")
+        with open(addendum_path, "r", encoding="utf-8") as f:
+            addendum = json.load(f)
+
+        required_sections = {
+            "preserved_original_archive_sha256s",
+            "aps_corrected",
+            "ood_auroc_audit",
+            "task2_1step_vs_h1_reconciliation",
+            "peginhole_truncation_audit",
+            "b4_joint_coverage_audit",
+            "exact_nonzero_pvalues",
+            "safety_vs_success_analysis",
+        }
+        self.assertTrue(required_sections.issubset(addendum.keys()))
+        self.assertFalse(addendum["aps_corrected"]["closed_loop_influence_audit"]["aps_influenced_closed_loop_planner_or_safety"])
+
+        # Verify no exact p-value inside the addendum statistical correction section is 0.0
+        def _assert_nonzero_p(obj):
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    if k in ("wilcoxon_p", "wilcoxon_p_holm_adjusted", "mcnemar_exact_p", "mcnemar_exact_p_holm_adjusted"):
+                        self.assertGreater(float(v), 0.0)
+                    else:
+                        _assert_nonzero_p(v)
+            elif isinstance(obj, list):
+                for item in obj:
+                    _assert_nonzero_p(item)
+
+        _assert_nonzero_p(addendum["exact_nonzero_pvalues"])
 
 
 if __name__ == "__main__":

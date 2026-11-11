@@ -48,6 +48,7 @@ from src.integrated.calibration_runner import PHASE3_SEED_POOLS, verify_disjoint
 from src.integrated.model_training_runner import load_b3_ensemble_from_members, load_hybrid_checkpoint
 from src.integrated.phase34_pipeline import (
     Phase34TrainingPipeline,
+    _evaluate_model_multistep_on_episodes,
     _sha256_file,
     get_runtime_reproducibility_metadata,
 )
@@ -63,6 +64,7 @@ from src.integrated.statistical_analysis import (
 )
 from src.mining.contact_boundary_sampler import ContactBoundarySampler
 from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
+from src.selection_aware.episode_conformal_engine import EpisodeConformalEngine
 
 
 PEG_OOD_CORNERS: Tuple[Tuple[float, float], ...] = (
@@ -258,6 +260,14 @@ def verify_phase34_artifacts_and_load(r002_root: str) -> Dict[str, Any]:
             b3_sub, _ = load_b3_ensemble_from_members(b3_m_paths, ensemble_checkpoint_path=b3_p)
             b4_model, b4_art = Phase34TrainingPipeline.reconstruct_b4_from_artifacts(b4_p, b1_p)
 
+            cal_aps_q_raw = b4_art.get("aps_calibration", {}).get("aps_quantile")
+            if cal_aps_q_raw is None or not math.isfinite(float(cal_aps_q_raw)):
+                raise RuntimeError(f"Missing/non-finite calibrated aps_quantile in {b4_p}.")
+            cal_aps_q = float(cal_aps_q_raw)
+            for m_inst in (b1_model, b2_model, b3_model):
+                m_inst.mode_classifier.aps_quantile = cal_aps_q
+                validate_aps_quantile_matches_calibrated(m_inst, b4_art, context=f"{task}/{cond}")
+
             # Verify B3 ensemble == B3 reconstructed from member_0..4 before eval
             s_probe = torch.zeros((2, b1_model.continuous_model.state_dim), dtype=torch.float32)
             a_probe = torch.zeros((2, b1_model.continuous_model.action_dim), dtype=torch.float32)
@@ -278,6 +288,7 @@ def verify_phase34_artifacts_and_load(r002_root: str) -> Dict[str, Any]:
                 "B3": b3_model,
                 "B4": b4_model,
                 "b4_artifact": b4_art,
+                "calibrated_aps_quantile": cal_aps_q,
                 "train_class_counts": {k: int(v["count"]) for k, v in train_counts_dict.items()},
                 "scaler_sha256": hashlib.sha256(
                     json.dumps(b1_payload.get("normalization"), sort_keys=True).encode("utf-8")
@@ -327,12 +338,40 @@ def _compute_gaussian_ece(
     return {"ece": round(float(np.mean(abs_gaps)), 4), "reliability_curve": curve}
 
 
+def validate_aps_quantile_matches_calibrated(
+    hybrid_wm,
+    b4_artifact_or_quantile: Any,
+    atol: float = 1e-6,
+    context: str = "",
+) -> float:
+    """
+    Guardrail ensuring the evaluated model's mode_classifier.aps_quantile strictly
+    matches the frozen calibrated APS quantile archived in b4_conformal_calibration.json.
+    """
+    if isinstance(b4_artifact_or_quantile, dict):
+        expected_q = float(b4_artifact_or_quantile["aps_calibration"]["aps_quantile"])
+    else:
+        expected_q = float(b4_artifact_or_quantile)
+    actual_q = float(hybrid_wm.mode_classifier.aps_quantile)
+    if not (math.isfinite(actual_q) and math.isfinite(expected_q) and abs(actual_q - expected_q) <= atol):
+        raise ValueError(
+            f"APS quantile mismatch{' (' + context + ')' if context else ''}: "
+            f"model has {actual_q}, calibrated artifact expects {expected_q}."
+        )
+    return actual_q
+
+
 def _evaluate_classifier_and_aps(
     hybrid_wm,
     transitions: Sequence[Tuple[np.ndarray, np.ndarray, np.ndarray, int]],
     train_class_counts: Dict[str, int],
+    calibrated_aps_quantile: Optional[Any] = None,
 ) -> Dict[str, Any]:
     """Read-only 7-class evaluation with confusion matrix, present/absent breakdown, and frozen APS."""
+    if calibrated_aps_quantile is not None:
+        validate_aps_quantile_matches_calibrated(
+            hybrid_wm, calibrated_aps_quantile, context="_evaluate_classifier_and_aps"
+        )
     s_np = np.asarray([x[0] for x in transitions], dtype=np.float32)
     a_np = np.asarray([x[1] for x in transitions], dtype=np.float32)
     y_true = np.asarray([int(x[3]) for x in transitions], dtype=np.int64)
@@ -439,6 +478,18 @@ def _summarize_continuous_distribution(values: Sequence[float]) -> Dict[str, flo
     }
 
 
+def format_exact_pvalue(p_val: float) -> Tuple[float, str]:
+    """
+    Preserves nonzero exact p-values without 6-decimal rounding to 0.0,
+    returning (numeric_value, scientific_notation_str).
+    """
+    val = float(p_val)
+    if not math.isfinite(val) or val < 0.0:
+        raise ValueError(f"Invalid p-value: {p_val}")
+    numeric = round(val, 6) if val >= 1e-4 else val
+    return float(numeric), f"{val:.6e}"
+
+
 def compute_paired_binary_comparison(
     m4_outcomes: Sequence[bool], m0_outcomes: Sequence[bool], label: str
 ) -> Dict[str, Any]:
@@ -479,7 +530,8 @@ def compute_paired_binary_comparison(
         "risk_difference_m4_minus_m0": round(rd, 4),
         "newcombe_wilson_rd_ci_95_pct": [round(rd_lo * 100.0, 2), round(rd_hi * 100.0, 2)],
         "paired_odds_ratio_haldane": round((m4_only + 0.5) / (m0_only + 0.5), 4),
-        "mcnemar_exact_p": round(p_mcnemar_exact, 6),
+        "mcnemar_exact_p": format_exact_pvalue(p_mcnemar_exact)[0],
+        "mcnemar_exact_p_sci": format_exact_pvalue(p_mcnemar_exact)[1],
         "edwards_chi2": round(float(edwards_chi2), 4),
     }
 
@@ -516,7 +568,8 @@ def compute_paired_continuous_comparison(
         "m0_summary": _summarize_continuous_distribution(a0),
         "diff_m4_minus_m0_summary": _summarize_continuous_distribution(diff),
         "wilcoxon_statistic": round(stat, 4),
-        "wilcoxon_p": round(p_val, 6),
+        "wilcoxon_p": format_exact_pvalue(p_val)[0],
+        "wilcoxon_p_sci": format_exact_pvalue(p_val)[1],
         "rank_biserial_r": round(float(rbc), 4),
         "cohens_dz": round(float(dz), 4),
     }
@@ -536,7 +589,9 @@ def apply_holm_bonferroni(comparisons: List[Dict[str, Any]], p_key: str) -> List
         running_max = max(running_max, adj)
         adjusted[orig_idx] = running_max
     for i, item in enumerate(comparisons):
-        item[f"{p_key}_holm_adjusted"] = round(float(adjusted[i]), 6)
+        adj_num, adj_sci = format_exact_pvalue(adjusted[i])
+        item[f"{p_key}_holm_adjusted"] = adj_num
+        item[f"{p_key}_holm_adjusted_sci"] = adj_sci
     return comparisons
 
 
@@ -697,6 +752,24 @@ def _evaluate_frozen_b4_and_conformal_offline(
                 if err_h <= q_mh_global[idx_h]:
                     mh_hits[h] += 1
 
+    eps_with_id = [{"episode_id": f"{task}_{e['seed']}", **e} for e in episodes]
+    conformal_eps, _ = _evaluate_model_multistep_on_episodes(base_model, eps_with_id, task=task, horizons=HORIZONS)
+    matched_eng = EpisodeConformalEngine(alpha=0.10, horizons=HORIZONS, min_stratum_samples=29, seed=42)
+    matched_eng.calibrated = True
+    matched_eng.marginal_calibrated = True
+    matched_eng.joint_calibrated = True
+    matched_eng.has_infinite_quantiles = False
+    matched_eng.n_calib_episodes = int(b4_art.get("num_calibration_episodes", 60))
+    matched_eng.calibration_status = "VALID"
+    matched_eng.q_state_joint = q_s_j
+    matched_eng.q_wrench_joint = q_w_j
+    matched_eng.q_mode_joint = q_m_j
+    marg_q = b4_art["episode_conformal_calibration"].get("marginal_quantiles", {})
+    matched_eng.q_state_marginal = float(marg_q.get("q_state_marginal", q_s_j))
+    matched_eng.q_wrench_marginal = float(marg_q.get("q_wrench_marginal", q_w_j))
+    matched_eng.q_mode_marginal = float(marg_q.get("q_mode_marginal", q_m_j))
+    matched_eval = matched_eng.evaluate_test_episodes(conformal_eps, use_stratified=False)
+
     n_eps = len(episodes)
     return {
         "architecture_id": "B4",
@@ -709,12 +782,19 @@ def _evaluate_frozen_b4_and_conformal_offline(
         "test_transition_fallback_frequency": round(fb_trans / max(1, g_tot), 4),
         "per_stratum_coverage": per_stratum,
         "episode_cms_psacd_heldout": {
+            "event_definition": "L2 norm over all rollout steps 1..T_avail with 1-p(y) mode score",
             "frozen_joint_quantiles": joint_q,
             "all_quantiles_finite": bool(all(math.isfinite(x) for x in (q_s_j, q_w_j, q_m_j))),
             "state_joint_cov": format_count_pct(ep_s_hits, n_eps),
             "wrench_joint_cov": format_count_pct(ep_w_hits, n_eps),
             "mode_joint_cov": format_count_pct(ep_m_hits, n_eps),
             "simultaneous_joint_cov": format_count_pct(ep_joint_hits, n_eps),
+        },
+        "episode_cms_psacd_exact_matched": {
+            "event_definition": "EpisodeConformalEngine L_inf over HORIZONS=(1,3,5,10,20) with compute_aps_score",
+            "frozen_joint_quantiles": joint_q,
+            "joint_coverage": matched_eval["episode_joint_coverage"],
+            "marginal_coverage": matched_eval["episode_marginal_coverage"],
         },
         "multihorizon_global_q_heldout": {
             str(h): format_count_pct(mh_hits[h], mh_totals[h]) if mh_totals[h] > 0 else {"count": 0, "total": 0, "rate": None}
@@ -874,7 +954,12 @@ def evaluate_phase35_offline_suite(
                         "force_rmse_ati_2x": round(float(np.sqrt(np.mean((mu2_np[:, 12:16] - ns2_np[:, 12:16]) ** 2))), 4),
                     }
 
-                clf_eval = _evaluate_classifier_and_aps(wm, transitions, cond_pack["train_class_counts"])
+                clf_eval = _evaluate_classifier_and_aps(
+                    wm,
+                    transitions,
+                    cond_pack["train_class_counts"],
+                    calibrated_aps_quantile=cond_pack["calibrated_aps_quantile"],
+                )
 
                 arch_out[arch] = {
                     "architecture_id": arch,
