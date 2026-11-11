@@ -6,6 +6,7 @@ Provides both point-wise marginal horizon coverage and simultaneous trajectory-l
 """
 
 from __future__ import annotations
+import math
 import numpy as np
 from typing import Dict, List, Tuple, Any, Optional
 from contact_modes.contact_mode_definitions import ContactMode
@@ -23,8 +24,12 @@ class MultiHorizonQuantileEngine:
     """
 
     def __init__(self, alpha: float = 0.10, min_cell_samples: int = 15):
-        self.alpha = alpha
-        self.min_cell_samples = min_cell_samples
+        if not (0.0 < alpha < 1.0):
+            raise ValueError(f"alpha must lie strictly in (0, 1), got {alpha}")
+        self.alpha = float(alpha)
+        self.target_coverage = round(1.0 - self.alpha, 6)
+        self.n_min_marginal = max(1, int(math.ceil(1.0 / self.alpha)) - 1)
+        self.min_cell_samples = max(int(min_cell_samples), self.n_min_marginal)
         self.horizons = HORIZONS
         self.num_modes = NUM_MODES
 
@@ -37,6 +42,12 @@ class MultiHorizonQuantileEngine:
         # Trajectory-level simultaneous inflation factor lambda_sim
         self.lambda_sim = 1.0
 
+        self.fold1_episodes = 0
+        self.fold2_episodes = 0
+        self.cell_sample_counts = np.zeros((self.num_modes, len(self.horizons)), dtype=np.int64)
+        self.cell_fallback_log: Dict[str, Dict[str, Any]] = {}
+        self.any_fallback_to_global = False
+        self.fold2_calibrated = False
         self.calibrated = False
 
     def calibrate(self, calibration_trajectories: List[Dict[str, Any]]):
@@ -47,6 +58,8 @@ class MultiHorizonQuantileEngine:
           - Fold 2 (50%): Calibrates simultaneous trajectory inflation factor lambda_sim
         """
         n_total = len(calibration_trajectories)
+        self.calibrated = False
+        self.fold2_calibrated = False
         if n_total < 2:
             return
 
@@ -54,6 +67,17 @@ class MultiHorizonQuantileEngine:
         n_fold1 = n_total // 2
         fold1_trajs = calibration_trajectories[:n_fold1]
         fold2_trajs = calibration_trajectories[n_fold1:]
+        self.fold1_episodes = len(fold1_trajs)
+        self.fold2_episodes = len(fold2_trajs)
+
+        def _exact_marginal_quantile(scores: List[float]) -> Tuple[float, bool]:
+            n = len(scores)
+            if n < self.n_min_marginal:
+                return float("inf"), False
+            k_idx = int(math.ceil((n + 1) * (1.0 - self.alpha)))
+            if k_idx > n:
+                return float("inf"), False
+            return float(sorted(scores)[k_idx - 1]), True
 
         # Residual storage: cell_residuals[mode_k][h_idx]
         cell_residuals: Dict[Tuple[int, int], List[float]] = {
@@ -78,36 +102,81 @@ class MultiHorizonQuantileEngine:
                     mode_residuals[k].append(res)
 
         # 2. Compute global and mode-level fallbacks on Fold 1
+        global_feasible = [False] * len(self.horizons)
         for h_idx in range(len(self.horizons)):
-            g_scores = global_residuals[h_idx]
-            if len(g_scores) > 0:
-                n = len(g_scores)
-                q_level = min(1.0, np.ceil((n + 1) * (1.0 - self.alpha)) / n)
-                self.q_global[h_idx] = float(np.quantile(g_scores, q_level))
+            q_g, ok_g = _exact_marginal_quantile(global_residuals[h_idx])
+            global_feasible[h_idx] = ok_g
+            if ok_g:
+                self.q_global[h_idx] = q_g
 
+        mode_feasible = [False] * self.num_modes
         for k in range(self.num_modes):
-            m_scores = mode_residuals[k]
-            if len(m_scores) > 0:
-                n = len(m_scores)
-                q_level = min(1.0, np.ceil((n + 1) * (1.0 - self.alpha)) / n)
-                self.q_mode[k] = float(np.quantile(m_scores, q_level))
+            q_m, ok_m = _exact_marginal_quantile(mode_residuals[k])
+            mode_feasible[k] = ok_m
+            if ok_m:
+                self.q_mode[k] = q_m
 
-        # 3. Compute cell quantiles Q[k, h] on Fold 1
-        # Fallback priority: cell (mode, h) -> global (same horizon h) -> global max
+        # 3. Compute cell quantiles Q[k, h] on Fold 1 with explicit source & fallback_to_global log
+        self.cell_sample_counts.fill(0)
+        self.cell_fallback_log = {}
+        all_cells_feasible = True
+
         for k in range(self.num_modes):
             for h_idx, h in enumerate(self.horizons):
                 scores = cell_residuals[(k, h_idx)]
-                if len(scores) >= self.min_cell_samples:
-                    n = len(scores)
-                    q_level = min(1.0, np.ceil((n + 1) * (1.0 - self.alpha)) / n)
-                    self.Q[k, h_idx] = float(np.quantile(scores, q_level))
-                elif len(global_residuals[h_idx]) >= 5:
+                n_cell = len(scores)
+                self.cell_sample_counts[k, h_idx] = n_cell
+                if n_cell >= self.min_cell_samples:
+                    q_cell, ok_cell = _exact_marginal_quantile(scores)
+                    if ok_cell and math.isfinite(q_cell):
+                        self.Q[k, h_idx] = q_cell
+                        source = "empirical_cell"
+                        fallback_to_global = False
+                    elif global_feasible[h_idx]:
+                        self.Q[k, h_idx] = self.q_global[h_idx]
+                        source = "global_fallback"
+                        fallback_to_global = True
+                    else:
+                        self.Q[k, h_idx] = float("inf")
+                        source = "uncalibrated_insufficient_samples"
+                        fallback_to_global = True
+                        all_cells_feasible = False
+                elif global_feasible[h_idx]:
                     # Fallback to the same forecast horizon (preserves multi-step scaling)
                     self.Q[k, h_idx] = self.q_global[h_idx]
-                else:
+                    source = "global_fallback"
+                    fallback_to_global = True
+                elif mode_feasible[k]:
                     self.Q[k, h_idx] = self.q_mode[k]
+                    source = "mode_fallback"
+                    fallback_to_global = True
+                else:
+                    self.Q[k, h_idx] = float("inf")
+                    source = "uncalibrated_insufficient_samples"
+                    fallback_to_global = True
+                    all_cells_feasible = False
+
+                self.cell_fallback_log[f"mode_{k}_H{h}"] = {
+                    "mode": k,
+                    "horizon": h,
+                    "sample_count": n_cell,
+                    "min_cell_samples": self.min_cell_samples,
+                    "fallback_to_global": fallback_to_global,
+                    "source": source,
+                    "finite": bool(math.isfinite(self.Q[k, h_idx])),
+                }
+
+        self.any_fallback_to_global = any(
+            v["fallback_to_global"] for v in self.cell_fallback_log.values()
+        )
 
         # 4. Calibrate Simultaneous Trajectory Inflation Factor lambda_sim on independent Fold 2!
+        if not all_cells_feasible:
+            self.lambda_sim = float("inf")
+            self.fold2_calibrated = False
+            self.calibrated = False
+            return
+
         max_trajectory_scores = []
         for traj in fold2_trajs:
             true_states = traj["true_states"]
@@ -126,12 +195,32 @@ class MultiHorizonQuantileEngine:
             if len(studentized_scores) > 0:
                 max_trajectory_scores.append(float(np.max(studentized_scores)))
 
-        if len(max_trajectory_scores) > 0:
-            n_traj = len(max_trajectory_scores)
-            q_level = min(1.0, np.ceil((n_traj + 1) * (1.0 - self.alpha)) / n_traj)
-            self.lambda_sim = float(np.quantile(max_trajectory_scores, q_level))
+        lambda_val, ok_fold2 = _exact_marginal_quantile(max_trajectory_scores)
+        if ok_fold2 and math.isfinite(lambda_val):
+            self.lambda_sim = lambda_val
+            self.fold2_calibrated = True
+            self.calibrated = True
+        else:
+            self.lambda_sim = float("inf")
+            self.fold2_calibrated = False
+            self.calibrated = False
 
-        self.calibrated = True
+    def get_calibration_diagnostics(self) -> Dict[str, Any]:
+        """Returns Fold-1/Fold-2 sample counts, cell fallback sources, and calibration status."""
+        return {
+            "alpha": self.alpha,
+            "target_coverage": self.target_coverage,
+            "n_min_marginal": self.n_min_marginal,
+            "min_cell_samples": self.min_cell_samples,
+            "fold1_episodes": self.fold1_episodes,
+            "fold2_episodes": self.fold2_episodes,
+            "calibrated": self.calibrated,
+            "fold2_calibrated": self.fold2_calibrated,
+            "lambda_sim": round(self.lambda_sim, 4) if math.isfinite(self.lambda_sim) else float("inf"),
+            "any_fallback_to_global": self.any_fallback_to_global,
+            "cell_sample_counts": self.cell_sample_counts.tolist(),
+            "cell_fallback_log": self.cell_fallback_log,
+        }
 
     def get_marginal_radius(self, mode: int, horizon: int) -> float:
         """Returns marginal conformal radius for given mode and horizon step."""

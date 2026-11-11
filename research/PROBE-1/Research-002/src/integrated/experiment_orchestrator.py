@@ -23,7 +23,11 @@ import torch
 from src.mining.trajectory_selector import TrajectorySelector
 from src.mining.mining_evaluator import MiningEvaluator
 from src.integrated.model_training_runner import ModelTrainingRunner
-from src.integrated.calibration_runner import CalibrationRunner
+from src.integrated.calibration_runner import (
+    CalibrationRunner,
+    get_phase3_task_pools,
+    verify_disjoint_seed_pools,
+)
 from src.integrated.planner_evaluator import PlannerEvaluator
 from src.integrated.safety_evaluator import SafetyEvaluator
 from src.integrated.statistical_analysis import (
@@ -46,8 +50,9 @@ class ExperimentOrchestrator:
         task: str = "peg_in_hole",
         eval_horizon: int = 25,
         test_episodes_count: int = 30,
-        calib_episodes_count: int = 25,
+        calib_episodes_count: int = 60,
         active_budget: int = 40,
+        alpha: float = 0.10,
         seed: int = 42,
     ):
         self.task = task
@@ -55,6 +60,7 @@ class ExperimentOrchestrator:
         self.test_episodes_count = test_episodes_count
         self.calib_episodes_count = calib_episodes_count
         self.active_budget = active_budget
+        self.alpha = float(alpha)
         self.seed = seed
 
         self.mining_evaluator = MiningEvaluator(
@@ -64,7 +70,20 @@ class ExperimentOrchestrator:
             seed=seed,
         )
         self.training_runner = ModelTrainingRunner(task=task, seed=seed)
-        self.calibration_runner = CalibrationRunner(alpha=0.10, seed=seed)
+        self.calibration_runner = CalibrationRunner(
+            alpha=self.alpha,
+            min_calib_episodes=None,
+            min_stratum_samples=29,
+            seed=seed,
+        )
+        if self.calib_episodes_count < self.calibration_runner.min_calib_episodes:
+            raise ValueError(
+                f"calib_episodes_count={self.calib_episodes_count} violates minimum calibration pool "
+                f"N_calib >= {self.calibration_runner.min_calib_episodes} for alpha={self.alpha}."
+            )
+        self.disjoint_pool_audit = verify_disjoint_seed_pools()
+        self.task_seed_pools = get_phase3_task_pools(self.task, alpha=self.alpha)
+
         self.planner_evaluator = PlannerEvaluator(
             task=task,
             eval_horizon=eval_horizon,
@@ -88,24 +107,41 @@ class ExperimentOrchestrator:
         np.random.seed(self.seed)
         torch.manual_seed(self.seed)
 
-        # 1. Dataset Generation: D0 Passive Baseline
-        print(f"  [1/4] Mining D0 baseline dataset (25 passive episodes)...", flush=True)
+        train_start_seed = self.task_seed_pools["training"][0]
+        calib_start_seed = self.task_seed_pools["calibration"][0]
+        offline_start_seed = (
+            self.task_seed_pools["offline_eval"][0]
+            if "offline_eval" in self.task_seed_pools
+            else self.task_seed_pools["offline_eval_id"][0]
+        )
+        closed_loop_start_seed = (
+            self.task_seed_pools["closed_loop_eval"][0]
+            if "closed_loop_eval" in self.task_seed_pools
+            else self.task_seed_pools["closed_loop_id"][0]
+        )
+
+        # 1. Dataset Generation: D0 Passive Baseline (strictly inside task training seed range)
+        print(f"  [1/4] Mining D0 baseline dataset (25 passive episodes, start_seed={train_start_seed})...", flush=True)
         d0_selector = TrajectorySelector(task=self.task, budget=25, seed=self.seed)
         d0_res = d0_selector.mine_trajectories(
             strategy="D1_random",
             num_candidates=25,
-            start_seed=100,
+            start_seed=train_start_seed,
             horizon=self.eval_horizon,
         )
         d0_episodes = d0_res["admitted_trajectories"]
 
-        # 2. Held-Out Evaluation Partitions (Strictly isolated)
-        print(f"  [2/4] Generating held-out calibration ({self.calib_episodes_count}) and test ({self.test_episodes_count}) partitions...", flush=True)
+        # 2. Held-Out Evaluation Partitions (Strictly disjoint calibration & test pools)
+        print(
+            f"  [2/4] Generating held-out calibration (N={self.calib_episodes_count}, start_seed={calib_start_seed}) "
+            f"and test (N={self.test_episodes_count}, start_seed={offline_start_seed}) partitions...",
+            flush=True,
+        )
         calib_selector = TrajectorySelector(task=self.task, budget=self.calib_episodes_count, seed=self.seed + 800)
         calib_res = calib_selector.mine_trajectories(
             strategy="D4_acmm",
             num_candidates=self.calib_episodes_count * 2,
-            start_seed=1000,
+            start_seed=calib_start_seed,
             horizon=self.eval_horizon,
         )
         calib_raw_episodes = calib_res["admitted_trajectories"]
@@ -114,7 +150,7 @@ class ExperimentOrchestrator:
         test_res = test_selector.mine_trajectories(
             strategy="D4_acmm",
             num_candidates=self.test_episodes_count * 2,
-            start_seed=3000,
+            start_seed=offline_start_seed,
             horizon=self.eval_horizon,
         )
         test_raw_episodes = test_res["admitted_trajectories"]
@@ -153,7 +189,7 @@ class ExperimentOrchestrator:
                 mine_res = active_selector.mine_trajectories(
                     strategy=strat,
                     num_candidates=self.active_budget * cand_mult,
-                    start_seed=self.seed + 4000,
+                    start_seed=train_start_seed + 25,
                     horizon=self.eval_horizon,
                 )
                 active_eps = mine_res["admitted_trajectories"]
@@ -175,29 +211,40 @@ class ExperimentOrchestrator:
             print(f"    [Offline] State RMSE: {offline_acc['state_rmse']}, Force RMSE: {offline_acc['force_rmse']}, Mode Macro-F1: {offline_acc['mode_macro_f1']}", flush=True)
 
             # Receding-Horizon Evaluation with p-CBF filter enabled (Target A & B)
-            print(f"    [Closed-Loop] Evaluating 30 test episodes (p-CBF ON, H={self.eval_horizon})...", flush=True)
+            print(
+                f"    [Closed-Loop] Evaluating {self.test_episodes_count} test episodes "
+                f"(p-CBF ON, H={self.eval_horizon}, start_seed={closed_loop_start_seed})...",
+                flush=True,
+            )
             eval_pcbf_on = self.planner_evaluator.evaluate_policy(
                 hybrid_wm=model,
                 num_episodes=self.test_episodes_count,
-                start_seed=self.seed + 6000,
+                start_seed=closed_loop_start_seed,
                 use_safety_filter=True,
             )
 
             # Safety filter ablation: evaluate without p-CBF
-            print(f"    [Ablation] Evaluating 30 test episodes without p-CBF filter...", flush=True)
+            print(
+                f"    [Ablation] Evaluating {self.test_episodes_count} test episodes without p-CBF filter...",
+                flush=True,
+            )
             eval_pcbf_off = self.planner_evaluator.evaluate_policy(
                 hybrid_wm=model,
                 num_episodes=self.test_episodes_count,
-                start_seed=self.seed + 6000,
+                start_seed=closed_loop_start_seed,
                 use_safety_filter=False,
             )
 
-            # Conformal Calibration: CMS-PSACD vs Unstratified Baseline
-            print(f"    [Calibration] Calibrating conformal engines on Target A calibration episodes...", flush=True)
+            # Conformal Calibration: CMS-PSACD vs Unstratified Baseline (disjoint task calibration pool)
+            print(
+                f"    [Calibration] Calibrating conformal engines on {self.calib_episodes_count} Target A "
+                f"episodes (start_seed={calib_start_seed})...",
+                flush=True,
+            )
             calib_a_res = self.planner_evaluator.evaluate_policy(
                 hybrid_wm=model,
                 num_episodes=self.calib_episodes_count,
-                start_seed=self.seed + 1500,
+                start_seed=calib_start_seed,
                 use_safety_filter=True,
             )
             calib_a_episodes = calib_a_res["target_a_episodes"]
@@ -248,6 +295,8 @@ class ExperimentOrchestrator:
                     "planner_exploitation_gap": eval_pcbf_on["planner_exploitation_gap"],
                 },
                 "calibration_ablation": {
+                    "calibration_diagnostics": cms_engine.get_calibration_diagnostics(),
+                    "calibration_start_seed": calib_start_seed,
                     "target_a_evaluation": calib_eval_a,
                     "target_b_evaluation": calib_eval_b,
                     "closed_loop_transfer_gap": {
@@ -277,6 +326,7 @@ class ExperimentOrchestrator:
             "eval_horizon_steps": self.eval_horizon,
             "test_episodes_count": self.test_episodes_count,
             "calibration_episodes_count": self.calib_episodes_count,
+            "disjoint_pool_audit": self.disjoint_pool_audit,
             "total_runtime_seconds": total_elapsed,
             "conditions": condition_results,
         }
