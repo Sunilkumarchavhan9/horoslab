@@ -18,6 +18,38 @@ import numpy as np
 from src.contact_modes.contact_mode_definitions import ContactMode, NUM_MODES
 
 
+PRIMARY_ALPHA = 0.10
+PRIMARY_TARGET_COVERAGE = 0.90
+PRIMARY_N_CALIB = 60
+SECONDARY_N_CALIB_95 = 120
+NUM_CONFORMAL_CHANNELS = 3
+
+
+def compute_min_calib_samples(alpha: float, num_channels: int = NUM_CONFORMAL_CHANNELS) -> int:
+    """
+    Exact finite-sample order-statistic feasibility floor:
+    ceil((n + 1)(1 - alpha / C)) <= n  <=>  n >= ceil(C / alpha) - 1.
+    For alpha=0.10: n_min_joint (C=3) = 29, n_min_marginal (C=1) = 9.
+    For alpha=0.05: n_min_joint (C=3) = 59, n_min_marginal (C=1) = 19.
+    """
+    if not (0.0 < alpha < 1.0):
+        raise ValueError(f"alpha must lie strictly in (0, 1), got {alpha}")
+    return max(1, int(math.ceil(num_channels / alpha)) - 1)
+
+
+def recommended_n_calib(alpha: float) -> int:
+    """
+    Protocol-recommended calibration pool size yielding interior non-max Bonferroni ranks:
+    - alpha = 0.10 (90% primary target): N_calib = 60 (k_joint = 59/60).
+    - alpha = 0.05 (95% secondary check): N_calib = 120 (k_joint = 119/120; never n=60).
+    """
+    if math.isclose(alpha, 0.10, rel_tol=1e-6):
+        return PRIMARY_N_CALIB
+    if math.isclose(alpha, 0.05, rel_tol=1e-6):
+        return SECONDARY_N_CALIB_95
+    return max(PRIMARY_N_CALIB, 2 * compute_min_calib_samples(alpha, NUM_CONFORMAL_CHANNELS))
+
+
 def compute_aps_score(prob_vec: np.ndarray, true_mode: int, rng: Optional[np.random.RandomState] = None) -> float:
     """
     Computes Adaptive Prediction Set (APS) nonconformity score for contact mode prediction:
@@ -56,22 +88,33 @@ class EpisodeConformalEngine:
 
     def __init__(
         self,
-        alpha: float = 0.10,
+        alpha: float = PRIMARY_ALPHA,
         horizons: Tuple[int, ...] = (1, 3, 5, 10, 20),
-        min_stratum_samples: int = 5,
+        min_stratum_samples: int = 29,
         state_scale: Optional[np.ndarray] = None,
         wrench_scale: Optional[np.ndarray] = None,
         seed: int = 42,
     ):
-        self.alpha = alpha
+        if not (0.0 < alpha < 1.0):
+            raise ValueError(f"alpha must lie strictly in (0, 1), got {alpha}")
+        self.alpha = float(alpha)
+        self.target_coverage = round(1.0 - self.alpha, 6)
         self.horizons = horizons
-        self.min_stratum_samples = min_stratum_samples
+        self.n_min_marginal = compute_min_calib_samples(self.alpha, 1)
+        self.n_min_joint = compute_min_calib_samples(self.alpha, NUM_CONFORMAL_CHANNELS)
+        self.recommended_n_calib = recommended_n_calib(self.alpha)
+        # Mathematically enforce floor >= ceil(3/alpha) - 1 (= 29 at alpha=0.10)
+        self.min_stratum_samples = max(int(min_stratum_samples), self.n_min_joint)
         self.state_scale = state_scale
         self.wrench_scale = wrench_scale
         self.rng = np.random.RandomState(seed)
 
-        # Fitted calibration thresholds
+        # Fitted calibration state and strict finiteness guards
         self.calibrated = False
+        self.marginal_calibrated = False
+        self.joint_calibrated = False
+        self.has_infinite_quantiles = True
+        self.calibration_status = "uncalibrated"
         self.n_calib_episodes = 0
 
         # Marginal episode thresholds at level alpha
@@ -80,15 +123,17 @@ class EpisodeConformalEngine:
         self.q_mode_marginal = float("inf")
 
         # Joint Bonferroni episode thresholds at level alpha/3
-        self.alpha_state = alpha / 3.0
-        self.alpha_wrench = alpha / 3.0
-        self.alpha_mode = alpha / 3.0
+        self.alpha_state = self.alpha / 3.0
+        self.alpha_wrench = self.alpha / 3.0
+        self.alpha_mode = self.alpha / 3.0
         self.q_state_joint = float("inf")
         self.q_wrench_joint = float("inf")
         self.q_mode_joint = float("inf")
 
-        # Stratified thresholds by initial mode (known at prediction time)
+        # Stratified thresholds and explicit fallback metadata by initial mode
         self.stratified_q_joint: Dict[int, Dict[str, float]] = {}
+        self.stratum_fallback_log: Dict[int, Dict[str, Any]] = {}
+        self.any_fallback_to_global = False
 
     def compute_episode_scores(self, episode_data: Dict[str, Any]) -> Dict[str, float]:
         """
@@ -145,11 +190,15 @@ class EpisodeConformalEngine:
 
         return {"state": S_x, "wrench": S_F, "mode": S_mode}
 
-    def calibrate(self, calib_episodes: List[Dict[str, Any]]):
+    def calibrate(self, calib_episodes: List[Dict[str, Any]], strict: bool = False):
         """
         Fits split-conformal thresholds on n independent calibration episodes:
         k = ceil((n + 1) * (1 - alpha))
         q = k-th order statistic
+
+        Never marks infinite quantiles as calibrated. When a mode stratum has fewer than
+        self.min_stratum_samples (>= ceil(3/alpha) - 1 = 29 at alpha=0.10), assigns the
+        finite global joint threshold and records fallback_to_global=True.
         """
         self.n_calib_episodes = len(calib_episodes)
         if self.n_calib_episodes == 0:
@@ -195,24 +244,110 @@ class EpisodeConformalEngine:
         self.q_wrench_joint, self.k_wrench_joint = calc_quantile(all_S_wrench, self.alpha_wrench)
         self.q_mode_joint, self.k_mode_joint = calc_quantile(all_S_mode, self.alpha_mode)
 
-        # 3. Stratified by initial observed contact mode with hierarchical fallback
+        marginal_finite = all(
+            math.isfinite(q) for q in (self.q_state_marginal, self.q_wrench_marginal, self.q_mode_marginal)
+        )
+        joint_finite = all(
+            math.isfinite(q) for q in (self.q_state_joint, self.q_wrench_joint, self.q_mode_joint)
+        )
+        self.marginal_calibrated = bool(marginal_finite and n >= self.n_min_marginal)
+        self.joint_calibrated = bool(joint_finite and n >= self.n_min_joint)
+        self.has_infinite_quantiles = not (marginal_finite and joint_finite)
+
+        # 3. Stratified by initial observed contact mode with finite global fallback logging
+        self.stratified_q_joint = {}
+        self.stratum_fallback_log = {}
         for m in range(NUM_MODES):
             m_n = len(mode_stratum_scores[m]["state"])
-            if m_n >= self.min_stratum_samples:
-                k_m = int(math.ceil((m_n + 1) * (1.0 - self.alpha_state)))
-                if k_m <= m_n:
-                    q_s = float(sorted(mode_stratum_scores[m]["state"])[k_m - 1])
-                    q_w = float(sorted(mode_stratum_scores[m]["wrench"])[k_m - 1])
-                    q_m = float(sorted(mode_stratum_scores[m]["mode"])[k_m - 1])
-                else:
-                    q_s, q_w, q_m = self.q_state_joint, self.q_wrench_joint, self.q_mode_joint
+            k_m = int(math.ceil((m_n + 1) * (1.0 - self.alpha_state))) if m_n > 0 else 1
+            if m_n >= self.min_stratum_samples and k_m <= m_n:
+                q_s = float(sorted(mode_stratum_scores[m]["state"])[k_m - 1])
+                q_w = float(sorted(mode_stratum_scores[m]["wrench"])[k_m - 1])
+                q_m = float(sorted(mode_stratum_scores[m]["mode"])[k_m - 1])
+                fallback_to_global = False
+                source = "empirical_stratum"
+                reason = None
+                k_rank = k_m
             else:
-                # Hierarchical fallback to global unstratified joint threshold
+                # Undersampled stratum: fall back explicitly to global joint threshold
                 q_s, q_w, q_m = self.q_state_joint, self.q_wrench_joint, self.q_mode_joint
+                fallback_to_global = True
+                k_rank = self.k_state_joint
+                if self.joint_calibrated:
+                    source = "global_joint_fallback"
+                    reason = f"stratum_samples_{m_n}_below_min_{self.min_stratum_samples}"
+                else:
+                    source = "uncalibrated_insufficient_global_samples"
+                    reason = (
+                        f"stratum_samples_{m_n}_below_{self.min_stratum_samples}_and_"
+                        f"global_n_{n}_below_joint_min_{self.n_min_joint}"
+                    )
 
+            is_stratum_finite = all(math.isfinite(val) for val in (q_s, q_w, q_m))
             self.stratified_q_joint[m] = {"state": q_s, "wrench": q_w, "mode": q_m}
+            self.stratum_fallback_log[m] = {
+                "mode": m,
+                "sample_count": m_n,
+                "min_stratum_samples": self.min_stratum_samples,
+                "fallback_to_global": fallback_to_global,
+                "source": source,
+                "reason": reason,
+                "k_rank": k_rank,
+                "finite": is_stratum_finite,
+            }
 
-        self.calibrated = True
+        self.any_fallback_to_global = any(
+            entry["fallback_to_global"] for entry in self.stratum_fallback_log.values()
+        )
+        all_strata_finite = all(
+            entry["finite"] for entry in self.stratum_fallback_log.values()
+        )
+        if not all_strata_finite:
+            self.has_infinite_quantiles = True
+
+        # Do NOT mark calibrated if any quantile is infinite
+        self.calibrated = bool(
+            self.marginal_calibrated
+            and self.joint_calibrated
+            and not self.has_infinite_quantiles
+        )
+
+        if not self.joint_calibrated:
+            self.calibration_status = "uncalibrated_infinite_joint_quantile"
+        elif self.n_calib_episodes < self.recommended_n_calib:
+            self.calibration_status = "calibrated_finite_below_recommended_pool"
+        else:
+            self.calibration_status = "calibrated_finite"
+
+        if strict and not self.calibrated:
+            raise ValueError(
+                f"Calibration failed feasibility check: n_calib={n} < n_min_joint={self.n_min_joint} "
+                f"(alpha={self.alpha}, target_coverage={self.target_coverage}); "
+                "refusing to treat infinite quantile as calibrated."
+            )
+
+    def get_calibration_diagnostics(self) -> Dict[str, Any]:
+        """Returns structured calibration health, quantile finiteness, and fallback audit metadata."""
+        return {
+            "alpha": self.alpha,
+            "target_coverage": self.target_coverage,
+            "n_calibration_episodes": self.n_calib_episodes,
+            "recommended_n_calib": self.recommended_n_calib,
+            "n_min_marginal": self.n_min_marginal,
+            "n_min_joint": self.n_min_joint,
+            "min_stratum_samples": self.min_stratum_samples,
+            "calibrated": self.calibrated,
+            "marginal_calibrated": self.marginal_calibrated,
+            "joint_calibrated": self.joint_calibrated,
+            "has_infinite_quantiles": self.has_infinite_quantiles,
+            "calibration_status": self.calibration_status,
+            "any_fallback_to_global": self.any_fallback_to_global,
+            "fallback_modes": [m for m, info in self.stratum_fallback_log.items() if info["fallback_to_global"]],
+            "empirical_stratified_modes": [
+                m for m, info in self.stratum_fallback_log.items() if not info["fallback_to_global"]
+            ],
+            "stratum_fallback_log": {str(m): dict(info) for m, info in self.stratum_fallback_log.items()},
+        }
 
     def evaluate_test_episodes(
         self,
@@ -223,8 +358,12 @@ class EpisodeConformalEngine:
         Evaluates episode-level simultaneous coverage and diagnostic pointwise horizon coverage.
         All percentages include explicit integer numerators and denominators.
         """
-        if not self.calibrated:
-            raise RuntimeError("Engine must be calibrated before evaluation.")
+        if not self.calibrated or not self.joint_calibrated or self.has_infinite_quantiles:
+            raise RuntimeError(
+                f"Engine is not validly calibrated (status={self.calibration_status}, "
+                f"n_calib={self.n_calib_episodes}, n_min_joint={self.n_min_joint}): "
+                "infinite quantiles cannot be presented as calibrated."
+            )
 
         N = len(test_episodes)
         if N == 0:
@@ -330,10 +469,26 @@ class EpisodeConformalEngine:
             }
 
         return {
+            "alpha": self.alpha,
+            "target_coverage": self.target_coverage,
             "n_calibration_episodes": self.n_calib_episodes,
             "n_test_episodes": N,
-            "target_marginal_coverage": 1.0 - self.alpha,
-            "target_joint_coverage": 1.0 - self.alpha,
+            "recommended_n_calib": self.recommended_n_calib,
+            "n_min_marginal": self.n_min_marginal,
+            "n_min_joint": self.n_min_joint,
+            "min_stratum_samples": self.min_stratum_samples,
+            "calibration_status": self.calibration_status,
+            "marginal_calibrated": self.marginal_calibrated,
+            "joint_calibrated": self.joint_calibrated,
+            "has_infinite_quantiles": self.has_infinite_quantiles,
+            "any_fallback_to_global": self.any_fallback_to_global,
+            "fallback_modes": [m for m, info in self.stratum_fallback_log.items() if info["fallback_to_global"]],
+            "empirical_stratified_modes": [
+                m for m, info in self.stratum_fallback_log.items() if not info["fallback_to_global"]
+            ],
+            "stratum_fallback_log": {str(m): dict(info) for m, info in self.stratum_fallback_log.items()},
+            "target_marginal_coverage": self.target_coverage,
+            "target_joint_coverage": self.target_coverage,
             "marginal_thresholds": {
                 "state": round(self.q_state_marginal, 4),
                 "wrench": round(self.q_wrench_marginal, 4),

@@ -120,9 +120,9 @@ class AcquisitionScorer:
             else:
                 # multifinger_lift: w has finger normal forces in [:4] or [:3]
                 fn = max(0.01, float(np.sum(w[:4]))) if len(w) >= 4 else max(0.01, float(np.sum(w[:3])))
-                # If states provide slip ratio (indices 12:16)
+                # If states provide slip ratio (indices 16:20)
                 if realized_states is not None and len(realized_states) > t and len(realized_states[t]) >= 20:
-                    slip_ratios = realized_states[t][12:16]
+                    slip_ratios = realized_states[t][16:20]
                     # Proximity to slip ratio 1.0 (Coulomb boundary)
                     max_slip = float(np.max(slip_ratios))
                     phi_f = math.exp(-abs(max_slip - 1.0) / 0.20)

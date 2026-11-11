@@ -11,7 +11,13 @@ from src.integrated.statistical_analysis import (
     to_json_serializable,
 )
 from src.integrated.model_training_runner import ModelTrainingRunner
-from src.integrated.calibration_runner import CalibrationRunner
+from src.integrated.calibration_runner import (
+    CalibrationRunner,
+    PHASE3_SEED_POOLS,
+    get_calibration_seed_pool,
+    get_phase3_task_pools,
+    verify_disjoint_seed_pools,
+)
 from src.integrated.safety_evaluator import SafetyEvaluator
 from src.integrated.planner_evaluator import PlannerEvaluator
 from src.integrated.experiment_orchestrator import ExperimentOrchestrator
@@ -25,6 +31,10 @@ __all__ = [
     "to_json_serializable",
     "ModelTrainingRunner",
     "CalibrationRunner",
+    "PHASE3_SEED_POOLS",
+    "get_calibration_seed_pool",
+    "get_phase3_task_pools",
+    "verify_disjoint_seed_pools",
     "SafetyEvaluator",
     "PlannerEvaluator",
     "ExperimentOrchestrator",

@@ -32,7 +32,7 @@ def extract_env_state_and_wrench(obs: Dict[str, Any], task: str = "peg_in_hole")
             obs["slip_ratio"],
             obs["obj_pos"]
         ]).astype(np.float32)
-        wrench = np.pad(obs["finger_fn"][:3], (0, 3)).astype(np.float32)
+        wrench = np.pad(obs["finger_fn"][:4], (0, 2)).astype(np.float32)
     return s_vec, wrench
 
 

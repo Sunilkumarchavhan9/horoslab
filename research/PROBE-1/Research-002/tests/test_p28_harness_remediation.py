@@ -1,0 +1,666 @@
+"""
+HOROS PROBE-1 — Research-002: Trustworthy Action-Conditioned Contact World Models
+Stage P2.8: Action-Conditioned Contact World Model Evaluation
+Test Suite: Phase 3.3 Harness Remediation & Regression Verification
+
+Covers remediation workstreams H1–H5:
+- H1: Wrench Slicing & Extraction:
+  * 15-D state wrench slicing (Task 1: peg_in_hole -> s[:, 9:15]).
+  * 23-D state wrench slicing (Task 2: multifinger_lift -> s[:, 12:16] padded to 6-D).
+  * Strict elimination of finger kinematics contamination (indices 0:11, especially finger 3 at 9:12).
+  * Consistency between HybridContactStateModel.predict_multistep and extract_env_state_and_wrench.
+  * Correct normal force indexing in MiningEvaluator and RecoveryAwareCEMPlanner.
+- H2: Calibration Floors, Fallback Logging & Disjoint Pools:
+  * Explicit 90% coverage target (alpha = 0.10), N_calib = 60, minimum per-mode count = 29.
+  * Finite global fallback when a stratum is undersampled (m_n < 29) with explicit fallback_to_global logging.
+  * Zero infinite quantiles silently marked calibrated.
+  * Separate q_*_joint and q_*_marginal reporting in CalibrationRunner.
+  * Strict pairwise disjointness of 60-episode calibration pools (Lift and PegInHole) from all training and eval pools.
+
+Author: Sunil Kumar Chavhan (sunil@horoslab.org)
+Organization: HOROS Physical Intelligence Research Group (H.R.)
+"""
+
+from __future__ import annotations
+import math
+import os
+import sys
+import unittest
+import numpy as np
+import torch
+import torch.nn as nn
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+r002_root = os.path.abspath(os.path.join(current_dir, ".."))
+if r002_root not in sys.path:
+    sys.path.insert(0, r002_root)
+src_dir = os.path.join(r002_root, "src")
+if src_dir not in sys.path:
+    sys.path.insert(0, src_dir)
+
+from src.contact_modes.hybrid_contact_state_model import HybridContactStateModel
+from src.contact_modes.contact_mode_classifier import ContactModeClassifier
+from src.models.deterministic_wm import DeterministicWorldModel
+from src.models.stratified_conformal_wm import ContactStratifiedConformalWM
+from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
+from src.selection_aware.episode_conformal_engine import (
+    EpisodeConformalEngine,
+    PRIMARY_ALPHA,
+    PRIMARY_TARGET_COVERAGE,
+    PRIMARY_N_CALIB,
+    compute_min_calib_samples,
+)
+from src.conformal.multihorizon_quantile_engine import MultiHorizonQuantileEngine
+from src.integrated.calibration_runner import (
+    CalibrationRunner,
+    PHASE3_SEED_POOLS,
+    get_calibration_seed_pool,
+    get_phase3_task_pools,
+    verify_disjoint_seed_pools,
+)
+from src.integrated.experiment_orchestrator import ExperimentOrchestrator
+from src.mining.mining_evaluator import MiningEvaluator
+from src.planners.recovery_aware_cem import RecoveryAwareCEMPlanner
+
+
+class MockContinuousDynamics(nn.Module):
+    """Deterministic linear transition model for controlled test rollouts."""
+
+    def __init__(self, state_dim: int, action_dim: int):
+        super().__init__()
+        self.state_dim = state_dim
+        self.action_dim = action_dim
+
+    def forward(self, s: torch.Tensor, a: torch.Tensor) -> torch.Tensor:
+        # Constant persistence transition with small action delta
+        delta = torch.zeros_like(s)
+        delta[:, :min(s.shape[1], a.shape[1])] = a[:, :min(s.shape[1], a.shape[1])] * 0.05
+        return s + delta
+
+
+class TestHarnessRemediationH1(unittest.TestCase):
+    """Workstream H1 — Contact Wrench Slicing & Representation Verification."""
+
+    def setUp(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+    def test_h1_01_15d_wrench_slicing_peg_in_hole(self):
+        """Verifies 15-D state wrench slicing extracts s[:, 9:15] for peg_in_hole."""
+        state_dim = 15
+        action_dim = 6
+        horizon = 5
+
+        continuous_model = MockContinuousDynamics(state_dim, action_dim)
+        classifier = ContactModeClassifier(state_dim, action_dim, hidden_dim=32, num_modes=7)
+        hybrid_model = HybridContactStateModel(continuous_model, classifier)
+
+        # Build 15-D initial state: [pos(3), vel(3), rot(3), wrench(6)]
+        init_state = np.zeros(15, dtype=np.float32)
+        init_state[0:3] = [1.0, 2.0, 15.0]       # pos mm
+        init_state[3:6] = [0.1, -0.1, -0.5]      # vel mm/s
+        init_state[6:9] = [0.01, 0.02, 0.0]      # rot rad
+        nominal_wrench = np.array([2.5, -1.8, 14.2, 0.12, -0.05, 0.35], dtype=np.float32)
+        init_state[9:15] = nominal_wrench        # 6-D wrench
+
+        action_seq = np.zeros((horizon, action_dim), dtype=np.float32)
+
+        # Test with explicit task="peg_in_hole"
+        out_explicit = hybrid_model.predict_multistep(init_state, action_seq, horizon=horizon, task="peg_in_hole")
+        forces_explicit = out_explicit["contact_forces"]
+        self.assertEqual(forces_explicit.shape, (horizon, 6))
+        np.testing.assert_allclose(forces_explicit[0], nominal_wrench, atol=1e-5)
+
+        # Test with task=None (automated shape dispatch: dim == 15)
+        out_auto = hybrid_model.predict_multistep(init_state, action_seq, horizon=horizon, task=None)
+        forces_auto = out_auto["contact_forces"]
+        self.assertEqual(forces_auto.shape, (horizon, 6))
+        np.testing.assert_allclose(forces_auto[0], nominal_wrench, atol=1e-5)
+
+    def test_h1_02_23d_wrench_slicing_multifinger_lift_no_kinematics_leakage(self):
+        """
+        Verifies 23-D state wrench slicing extracts finger normal forces s[:, 12:16],
+        pads to 6-D, and has ZERO contamination from finger kinematics (indices 0:11).
+        """
+        state_dim = 23
+        action_dim = 5
+        horizon = 4
+
+        continuous_model = MockContinuousDynamics(state_dim, action_dim)
+        classifier = ContactModeClassifier(state_dim, action_dim, hidden_dim=32, num_modes=7)
+        hybrid_model = HybridContactStateModel(continuous_model, classifier)
+
+        # Build 23-D initial state:
+        # 0:12  = finger_pos (4 fingers x 3 coords)
+        # 12:16 = finger_fn (4 normal forces)
+        # 16:20 = slip_ratio (4 slip ratios)
+        # 20:23 = obj_pos (3 coords: x, y, z)
+        init_state = np.zeros(23, dtype=np.float32)
+
+        # Set distinctive kinematics, especially finger 3 at indices 9:12
+        # Under legacy bug, s[:, 9:15] sliced [finger 3 pos (9:12), finger_fn[:3] (12:15)]
+        init_state[0:12] = [
+            -35.0, 0.0, 40.0,   # Finger 0
+            35.0, 0.0, 40.0,    # Finger 1
+            0.0, 35.0, 40.0,    # Finger 2
+            0.0, -35.0, 40.0,   # Finger 3 (indices 9:12)
+        ]
+
+        expected_fn = np.array([4.25, 3.80, 4.10, 3.95], dtype=np.float32)
+        init_state[12:16] = expected_fn       # Normal forces in N
+        init_state[16:20] = [0.15, 0.12, 0.18, 0.14]  # Slip ratios
+        init_state[20:23] = [0.0, 0.0, 12.5]          # Object pos (z = 12.5 mm)
+
+        action_seq = np.zeros((horizon, action_dim), dtype=np.float32)
+
+        # Rollout with explicit task="multifinger_lift"
+        out_task = hybrid_model.predict_multistep(init_state, action_seq, horizon=horizon, task="multifinger_lift")
+        forces_task = out_task["contact_forces"]
+
+        self.assertEqual(forces_task.shape, (horizon, 6))
+        # Elements 0:4 must be the 4 normal forces
+        np.testing.assert_allclose(forces_task[0, :4], expected_fn, atol=1e-5)
+        # Elements 4:6 must be 0.0 padding
+        np.testing.assert_allclose(forces_task[0, 4:6], np.array([0.0, 0.0], dtype=np.float32), atol=1e-5)
+
+        # STRICT INVARIANT: Verify ZERO kinematics contamination
+        # Finger 3 coords are [-35.0, 40.0]; they must NEVER appear in forces
+        self.assertNotIn(-35.0, forces_task[0])
+        self.assertNotIn(40.0, forces_task[0])
+        self.assertNotIn(35.0, forces_task[0])
+
+        # Test with compliant_prelift task label
+        out_prelift = hybrid_model.predict_multistep(init_state, action_seq, horizon=horizon, task="compliant_prelift")
+        np.testing.assert_allclose(out_prelift["contact_forces"][0, :4], expected_fn, atol=1e-5)
+
+        # Test with task=None (automated shape dispatch: dim == 23)
+        out_auto = hybrid_model.predict_multistep(init_state, action_seq, horizon=horizon, task=None)
+        forces_auto = out_auto["contact_forces"]
+        self.assertEqual(forces_auto.shape, (horizon, 6))
+        np.testing.assert_allclose(forces_auto[0, :4], expected_fn, atol=1e-5)
+        np.testing.assert_allclose(forces_auto[0, 4:6], [0.0, 0.0], atol=1e-5)
+
+    def test_h1_03_consistency_with_extract_env_state_and_wrench(self):
+        """
+        Verifies that extract_env_state_and_wrench and HybridContactStateModel
+        produce identical 6-D wrench representations for both tasks, preserving all 4 fingers.
+        """
+        continuous_model_15 = MockContinuousDynamics(15, 6)
+        clf_15 = ContactModeClassifier(15, 6, hidden_dim=32, num_modes=7)
+        model_15 = HybridContactStateModel(continuous_model_15, clf_15)
+
+        continuous_model_23 = MockContinuousDynamics(23, 5)
+        clf_23 = ContactModeClassifier(23, 5, hidden_dim=32, num_modes=7)
+        model_23 = HybridContactStateModel(continuous_model_23, clf_23)
+
+        # 1. PegInHole (15-D)
+        peg_obs = {
+            "pos": np.array([0.5, -0.2, 8.0], dtype=np.float32),
+            "vel": np.array([0.0, 0.0, -1.0], dtype=np.float32),
+            "rot": np.array([0.01, 0.0, 0.0], dtype=np.float32),
+            "wrench": np.array([1.2, -0.8, 8.5, 0.02, -0.01, 0.05], dtype=np.float32),
+        }
+        s_peg, w_peg = extract_env_state_and_wrench(peg_obs, task="peg_in_hole")
+        self.assertEqual(len(s_peg), 15)
+        self.assertEqual(len(w_peg), 6)
+
+        pred_peg = model_15.predict_multistep(s_peg, np.zeros((1, 6), dtype=np.float32), horizon=1, task="peg_in_hole")
+        np.testing.assert_allclose(pred_peg["contact_forces"][0], w_peg, atol=1e-5)
+
+        # 2. MultifingerLift (23-D)
+        lift_obs = {
+            "finger_pos": np.array([
+                [-35.0, 0.0, 40.0],
+                [35.0, 0.0, 40.0],
+                [0.0, 35.0, 40.0],
+                [0.0, -35.0, 40.0],
+            ], dtype=np.float32),
+            "finger_fn": np.array([4.1, 4.2, 3.9, 4.4], dtype=np.float32),
+            "slip_ratio": np.array([0.1, 0.15, 0.08, 0.12], dtype=np.float32),
+            "obj_pos": np.array([0.0, 0.0, 10.0], dtype=np.float32),
+        }
+        s_lift, w_lift = extract_env_state_and_wrench(lift_obs, task="multifinger_lift")
+        self.assertEqual(len(s_lift), 23)
+        self.assertEqual(len(w_lift), 6)
+
+        # Wrench representation check: 4 normal forces followed by 2 zeros
+        np.testing.assert_allclose(w_lift[:4], lift_obs["finger_fn"], atol=1e-5)
+        np.testing.assert_allclose(w_lift[4:], [0.0, 0.0], atol=1e-5)
+
+        # Verify all 4 fingers are preserved (especially finger 3 at index 3)
+        self.assertAlmostEqual(float(w_lift[3]), 4.4, places=5)
+
+        # Match with hybrid model rollout
+        pred_lift = model_23.predict_multistep(s_lift, np.zeros((1, 5), dtype=np.float32), horizon=1, task="multifinger_lift")
+        np.testing.assert_allclose(pred_lift["contact_forces"][0], w_lift, atol=1e-5)
+
+    def test_h1_04_mining_evaluator_force_rmse_uses_normal_forces(self):
+        """
+        Verifies MiningEvaluator.evaluate_prediction_and_modes compares normal forces
+        at indices 12:16 on Task 2, ignoring kinematics differences in indices 0:11.
+        """
+        evaluator = MiningEvaluator(task="multifinger_lift", seed=42)
+
+        # Create identical mock hybrid WM
+        det_wm = DeterministicWorldModel(state_dim=23, action_dim=5, hidden_dim=32)
+        mode_clf = ContactModeClassifier(state_dim=23, action_dim=5, hidden_dim=32, num_modes=7)
+        hybrid_wm = HybridContactStateModel(det_wm, mode_clf)
+
+        # Define 2 transitions:
+        # s_t: base state
+        s_t = np.zeros(23, dtype=np.float32)
+        s_t[12:16] = [4.0, 4.0, 4.0, 4.0]  # Fn = 4 N
+        a_t = np.zeros(5, dtype=np.float32)
+
+        # Construct true_s_next with perturbed kinematics but IDENTICAL normal forces
+        true_s_next = s_t.copy()
+        true_s_next[0:12] = np.random.randn(12).astype(np.float32) * 5.0  # Big kinematics delta
+        true_s_next[12:16] = [4.0, 4.0, 4.0, 4.0]                        # Normal forces identical
+
+        # Mock the continuous model to output exact s_t (so pred normal forces = 4.0 N)
+        class IdentityWM(nn.Module):
+            def forward(self, s, a):
+                return s
+
+        mock_wm = HybridContactStateModel(IdentityWM(), mode_clf)
+
+        test_trans = [(s_t, a_t, true_s_next, 2)]
+        metrics = evaluator.evaluate_offline_predictions(mock_wm, test_trans)
+
+        # Since normal forces are identical (4.0 vs 4.0), force_rmse MUST be 0.0
+        # Under the legacy bug (slicing 8:12), the kinematics delta in true_s_next would make force_rmse > 0!
+        self.assertAlmostEqual(metrics["force_rmse"], 0.0, places=4)
+
+        # Now perturb normal forces by 1.0 N each
+        perturbed_s_next = s_t.copy()
+        perturbed_s_next[12:16] = [5.0, 5.0, 5.0, 5.0]  # Delta = 1.0 N
+        perturbed_trans = [(s_t, a_t, perturbed_s_next, 2)]
+        metrics_pert = evaluator.evaluate_offline_predictions(mock_wm, perturbed_trans)
+        self.assertAlmostEqual(metrics_pert["force_rmse"], 1.0, places=4)
+
+    def test_h1_05_recovery_aware_cem_crush_barrier_indices(self):
+        """
+        Verifies RecoveryAwareCEMPlanner checks normal forces in s[12:16] rather than s[8:12],
+        preventing false crush triggers from finger 2/3 positions (indices 8:12).
+        """
+        state_dim = 23
+        action_dim = 5
+        action_bounds = (np.array([-1.0]*5), np.array([1.0]*5))
+
+        # Model that outputs state where finger positions at 8:12 are 40.0 mm (standard fingertip height),
+        # but normal forces at 12:16 are safely 4.0 N (< 20.0 N crush limit)
+        class ConstantOutputWM(nn.Module):
+            def forward(self, s, a):
+                out = torch.zeros(s.shape[0], 23, dtype=torch.float32)
+                out[:, 8:12] = 40.0   # Kinematics: 40 mm (would trigger crush under legacy s[8:12] > 20.0)
+                out[:, 12:16] = 4.0   # Safe normal force: 4.0 N (< 20.0 N)
+                out[:, 16:20] = 0.2   # Safe slip: 0.2 (< 0.80)
+                out[:, 22] = 10.0     # Lift height: 10 mm
+                return out
+
+        mode_clf = ContactModeClassifier(state_dim, action_dim, hidden_dim=32, num_modes=7)
+        hybrid_wm = HybridContactStateModel(ConstantOutputWM(), mode_clf)
+
+        planner = RecoveryAwareCEMPlanner(
+            world_model=hybrid_wm,
+            action_dim=action_dim,
+            action_bounds=action_bounds,
+            horizon=3,
+            num_samples=10,
+            num_iterations=2,
+            crush_penalty_weight=100.0,
+        )
+
+        s_init = np.zeros(23, dtype=np.float32)
+        def reward_fn(s, a):
+            return 10.0
+
+        best_action, info = planner.plan(s_init, reward_fn)
+        # If crush penalty was triggered (legacy bug), return would be: 10.0 - 100 * (40 - 20) = -1990 per step!
+        # With fix, normal force is 4.0 N <= 20 N, so return is strictly positive: 3 steps * 10.0 = 30.0
+        self.assertGreater(info["best_predicted_return"], 0.0)
+        self.assertAlmostEqual(info["best_predicted_return"], 30.0, places=2)
+
+    def test_h1_06_edge_cases_empty_horizon_and_arbitrary_dims(self):
+        """Verifies predict_multistep gracefully handles horizon=0 and non-standard dimensions."""
+        model = HybridContactStateModel(MockContinuousDynamics(15, 6), ContactModeClassifier(15, 6, hidden_dim=16, num_modes=7))
+
+        # Horizon 0
+        res_0 = model.predict_multistep(np.zeros(15, dtype=np.float32), np.zeros((0, 6), dtype=np.float32), horizon=0)
+        self.assertEqual(res_0["states"].shape, (0,))
+        self.assertEqual(res_0["contact_forces"].shape, (0, 6))
+
+        # Arbitrary 8-D state: forces slice first 6 channels
+        model_8 = HybridContactStateModel(MockContinuousDynamics(8, 3), ContactModeClassifier(8, 3, hidden_dim=16, num_modes=7))
+        init_8 = np.arange(8, dtype=np.float32)
+        res_8 = model_8.predict_multistep(init_8, np.zeros((2, 3), dtype=np.float32), horizon=2)
+        self.assertEqual(res_8["contact_forces"].shape, (2, 6))
+        np.testing.assert_allclose(res_8["contact_forces"][0], np.arange(6, dtype=np.float32))
+
+
+class TestHarnessRemediationH2(unittest.TestCase):
+    """Workstream H2 — Conformal Calibration Floor, Fallback Logging & Disjoint Pools."""
+
+    def setUp(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+    def _make_episode(
+        self,
+        seed: int,
+        initial_mode: int = 0,
+        noise_scale: float = 0.2,
+        horizon: int = 20,
+        state_dim: int = 23,
+    ) -> dict:
+        rng = np.random.RandomState(seed)
+        true_s = rng.randn(horizon, state_dim).astype(np.float32)
+        pred_s = true_s + rng.normal(0.0, noise_scale, size=(horizon, state_dim)).astype(np.float32)
+        true_w = rng.randn(horizon, 6).astype(np.float32)
+        pred_w = true_w + rng.normal(0.0, noise_scale * 0.5, size=(horizon, 6)).astype(np.float32)
+        true_m = rng.randint(0, 7, size=horizon).astype(np.int64)
+        logits = rng.randn(horizon, 7).astype(np.float32)
+        probs = np.exp(logits) / np.sum(np.exp(logits), axis=-1, keepdims=True)
+        return {
+            "episode_id": f"ep_{seed}",
+            "initial_mode": int(initial_mode),
+            "decisions": [
+                {
+                    "realized_states": true_s,
+                    "pred_states": pred_s,
+                    "realized_wrenches": true_w,
+                    "pred_wrenches": pred_w,
+                    "realized_modes": true_m,
+                    "pred_mode_probs": probs,
+                }
+            ],
+        }
+
+    def test_h2_01_explicit_90pct_target_and_sample_floors(self):
+        """Verifies explicit 90% primary coverage target and finite-sample feasibility floors."""
+        self.assertAlmostEqual(PRIMARY_ALPHA, 0.10, places=6)
+        self.assertAlmostEqual(PRIMARY_TARGET_COVERAGE, 0.90, places=6)
+        self.assertEqual(PRIMARY_N_CALIB, 60)
+
+        # Exact order-statistic feasibility floors: n >= ceil(C / alpha) - 1
+        self.assertEqual(compute_min_calib_samples(0.10, 1), 9)
+        self.assertEqual(compute_min_calib_samples(0.10, 3), 29)
+        self.assertEqual(compute_min_calib_samples(0.05, 1), 19)
+        self.assertEqual(compute_min_calib_samples(0.05, 3), 59)
+        self.assertEqual(compute_min_calib_samples(0.01, 3), 299)
+
+        # Attempting to construct with legacy min_stratum_samples=5 clamps up to 29 at alpha=0.10
+        engine = EpisodeConformalEngine(alpha=0.10, min_stratum_samples=5, seed=42)
+        self.assertAlmostEqual(engine.target_coverage, 0.90, places=6)
+        self.assertEqual(engine.n_min_marginal, 9)
+        self.assertEqual(engine.n_min_joint, 29)
+        self.assertEqual(engine.min_stratum_samples, 29)
+        self.assertEqual(engine.recommended_n_calib, 60)
+
+    def test_h2_02_n_calib_60_enforcement_and_95pct_guard(self):
+        """Verifies CalibrationRunner enforces N_calib >= 60 for 90% target and N=120 for 95% target."""
+        runner = CalibrationRunner(seed=42)
+        self.assertAlmostEqual(runner.alpha, 0.10, places=6)
+        self.assertAlmostEqual(runner.target_coverage, 0.90, places=6)
+        self.assertEqual(runner.min_calib_episodes, 60)
+        self.assertEqual(runner.min_stratum_samples, 29)
+
+        # Undersampled N=25 (legacy defect) and N=40 must be rejected when enforcing protocol pool N=60
+        for n_bad in (25, 40, 59):
+            under_pool = [self._make_episode(seed=2000 + i, initial_mode=0) for i in range(n_bad)]
+            with self.assertRaises(ValueError):
+                runner.calibrate_cms_psacd(under_pool)
+
+        # Protocol N=60 succeeds with interior non-max order statistics:
+        # k_marginal = ceil(61 * 0.90) = 55 <= 60; k_joint = ceil(61 * (1 - 0.10/3)) = 59 <= 60
+        pool_60 = [self._make_episode(seed=2000 + i, initial_mode=i % 2) for i in range(60)]
+        engine = runner.calibrate_cms_psacd(pool_60)
+        self.assertTrue(engine.calibrated)
+        self.assertTrue(engine.marginal_calibrated)
+        self.assertTrue(engine.joint_calibrated)
+        self.assertFalse(engine.has_infinite_quantiles)
+        self.assertEqual(engine.k_state_marginal, 55)
+        self.assertEqual(engine.k_state_joint, 59)
+        self.assertEqual(engine.calibration_status, "calibrated_finite")
+
+        # 95% sensitivity check must NEVER run on n=60; requires N_calib = 120
+        with self.assertRaises(ValueError):
+            CalibrationRunner(alpha=0.05, min_calib_episodes=60)
+        runner_95 = CalibrationRunner(alpha=0.05)
+        self.assertEqual(runner_95.min_calib_episodes, 120)
+        self.assertEqual(runner_95.min_stratum_samples, 59)
+
+    def test_h2_03_minimum_stratum_29_and_explicit_fallback_to_global_logging(self):
+        """
+        Verifies per-mode stratum quantization is only permitted when m_n >= 29;
+        undersampled modes (e.g., 18 samples, which bypassed legacy min=5) must fall back
+        to finite global q_*_joint and explicitly log fallback_to_global=True.
+        """
+        # Build 60-episode pool:
+        # Mode 0: 32 episodes (empirical stratum enabled, noise_scale=0.1)
+        # Mode 1: 18 episodes (5 <= 18 < 29 -> MUST fallback to global, noise_scale=0.5)
+        # Mode 2: 10 episodes (< 29 -> MUST fallback to global, noise_scale=1.5)
+        # Modes 3..6: 0 episodes (< 29 -> MUST fallback to global)
+        episodes = (
+            [self._make_episode(seed=2000 + i, initial_mode=0, noise_scale=0.1) for i in range(32)]
+            + [self._make_episode(seed=2032 + i, initial_mode=1, noise_scale=0.5) for i in range(18)]
+            + [self._make_episode(seed=2050 + i, initial_mode=2, noise_scale=1.5) for i in range(10)]
+        )
+
+        runner = CalibrationRunner(alpha=0.10, seed=42)
+        engine = runner.calibrate_cms_psacd(episodes)
+        diag = engine.get_calibration_diagnostics()
+
+        self.assertTrue(diag["calibrated"])
+        self.assertFalse(diag["has_infinite_quantiles"])
+        self.assertTrue(diag["any_fallback_to_global"])
+        self.assertEqual(diag["empirical_stratified_modes"], [0])
+        self.assertEqual(diag["fallback_modes"], [1, 2, 3, 4, 5, 6])
+
+        # Mode 0 has 32 >= 29 -> empirical stratum threshold (< global because Mode 0 noise=0.1 is low)
+        m0_log = engine.stratum_fallback_log[0]
+        self.assertEqual(m0_log["sample_count"], 32)
+        self.assertFalse(m0_log["fallback_to_global"])
+        self.assertEqual(m0_log["source"], "empirical_stratum")
+        self.assertLess(engine.stratified_q_joint[0]["state"], engine.q_state_joint)
+
+        # Mode 1 has 18 samples (< 29): must NOT emit inf or empirical quantile; uses global joint fallback
+        m1_log = engine.stratum_fallback_log[1]
+        self.assertEqual(m1_log["sample_count"], 18)
+        self.assertTrue(m1_log["fallback_to_global"])
+        self.assertEqual(m1_log["source"], "global_joint_fallback")
+        self.assertTrue(m1_log["finite"])
+        self.assertAlmostEqual(engine.stratified_q_joint[1]["state"], engine.q_state_joint, places=6)
+        self.assertAlmostEqual(engine.stratified_q_joint[1]["wrench"], engine.q_wrench_joint, places=6)
+        self.assertAlmostEqual(engine.stratified_q_joint[1]["mode"], engine.q_mode_joint, places=6)
+
+        # All 7 strata must be finite
+        for m in range(7):
+            th = engine.stratified_q_joint[m]
+            self.assertTrue(math.isfinite(th["state"]))
+            self.assertTrue(math.isfinite(th["wrench"]))
+            self.assertTrue(math.isfinite(th["mode"]))
+
+    def test_h2_04_no_infinite_quantile_silently_presented_as_calibrated(self):
+        """
+        Reproduces the P2.5 Defect G4 regime (n=25 < 29) and verifies the engine
+        refuses to present inf quantiles as calibrated or return 100% coverage reports.
+        """
+        pool_25 = [self._make_episode(seed=2000 + i, initial_mode=i % 3) for i in range(25)]
+        test_pool = [self._make_episode(seed=3000 + i, initial_mode=0) for i in range(15)]
+
+        # strict=True raises ValueError immediately
+        engine_strict = EpisodeConformalEngine(alpha=0.10, seed=42)
+        with self.assertRaises(ValueError):
+            engine_strict.calibrate(pool_25, strict=True)
+
+        # Default calibrate sets calibrated=False and flags infinite quantile transparently
+        engine = EpisodeConformalEngine(alpha=0.10, seed=42)
+        engine.calibrate(pool_25)
+        self.assertFalse(engine.calibrated)
+        self.assertFalse(engine.joint_calibrated)
+        self.assertTrue(engine.has_infinite_quantiles)
+        self.assertEqual(engine.calibration_status, "uncalibrated_infinite_joint_quantile")
+        self.assertEqual(engine.q_state_joint, float("inf"))
+
+        # Attempting to evaluate test episodes must fail closed (RuntimeError), NOT log 100% coverage
+        with self.assertRaises(RuntimeError):
+            engine.evaluate_test_episodes(test_pool, use_stratified=True)
+
+        # Unstratified baseline on tiny (< 9 frames) pool also refuses calibrated=True
+        runner = CalibrationRunner(alpha=0.10, seed=42)
+        tiny_pool = [self._make_episode(seed=2000 + i) for i in range(5)]
+        unstrat_tiny = runner.calibrate_unstratified_baseline(tiny_pool)
+        self.assertFalse(unstrat_tiny["calibrated"])
+        self.assertFalse(unstrat_tiny["is_finite"])
+        with self.assertRaises(ValueError):
+            runner.calibrate_unstratified_baseline(tiny_pool, strict=True)
+
+    def test_h2_05_separate_joint_and_marginal_quantile_reporting(self):
+        """Verifies CalibrationRunner separates q_*_joint from q_*_marginal in reports."""
+        calib_pool = [self._make_episode(seed=2000 + i, initial_mode=i % 4) for i in range(60)]
+        test_pool = [self._make_episode(seed=3000 + i, initial_mode=i % 4) for i in range(25)]
+
+        runner = CalibrationRunner(alpha=0.10, seed=42)
+        engine = runner.calibrate_cms_psacd(calib_pool)
+        unstrat = runner.calibrate_unstratified_baseline(calib_pool)
+        report = runner.evaluate_calibration_regimes(engine, unstrat, test_pool)
+
+        cms = report["cms_psacd"]
+        self.assertEqual(cms["n_calibration_episodes"], 60)
+        self.assertAlmostEqual(cms["target_coverage"], 0.90, places=6)
+        self.assertEqual(cms["min_stratum_samples"], 29)
+        self.assertTrue(cms["any_fallback_to_global"])
+        self.assertIn("stratum_fallback_log", cms)
+
+        # Verify explicit separation and finiteness of marginal vs joint quantiles
+        mq = cms["marginal_quantiles"]
+        jq = cms["joint_quantiles"]
+        self.assertTrue(all(k in mq for k in ("q_state_marginal", "q_wrench_marginal", "q_mode_marginal")))
+        self.assertTrue(all(k in jq for k in ("q_state_joint", "q_wrench_joint", "q_mode_joint")))
+        for v in list(mq.values()) + list(jq.values()):
+            self.assertTrue(math.isfinite(v))
+
+        # Joint Bonferroni thresholds (alpha/3) must be >= marginal thresholds (alpha)
+        self.assertGreaterEqual(jq["q_state_joint"], mq["q_state_marginal"])
+        self.assertGreaterEqual(jq["q_wrench_joint"], mq["q_wrench_marginal"])
+        self.assertGreaterEqual(jq["q_mode_joint"], mq["q_mode_marginal"])
+
+    def test_h2_06_multihorizon_and_stratified_conformal_fallback_logging(self):
+        """Verifies MultiHorizonQuantileEngine and ContactStratifiedConformalWM fallback logging."""
+        # 1. MultiHorizonQuantileEngine on 60 trajectories (30 Fold 1 + 30 Fold 2) with sparse modes
+        trajs = []
+        rng = np.random.RandomState(42)
+        for i in range(60):
+            t_len = 25
+            true_s = np.zeros((t_len, 15), dtype=np.float64)
+            pred_s = true_s + rng.normal(0.0, 0.3, size=(t_len, 15))
+            # Only modes 0 and 1 present -> modes 2..6 must log global_fallback
+            modes = np.full(t_len, i % 2, dtype=np.int64)
+            trajs.append({
+                "true_states": true_s,
+                "pred_states": pred_s,
+                "true_modes": modes,
+                "pred_modes": modes,
+            })
+
+        mh_engine = MultiHorizonQuantileEngine(alpha=0.10, min_cell_samples=15)
+        mh_engine.calibrate(trajs)
+        mh_diag = mh_engine.get_calibration_diagnostics()
+        self.assertTrue(mh_diag["calibrated"])
+        self.assertEqual(mh_diag["fold1_episodes"], 30)
+        self.assertEqual(mh_diag["fold2_episodes"], 30)
+        self.assertTrue(mh_diag["any_fallback_to_global"])
+        self.assertTrue(math.isfinite(mh_diag["lambda_sim"]))
+        self.assertEqual(mh_diag["cell_fallback_log"]["mode_4_H1"]["source"], "global_fallback")
+        self.assertTrue(mh_diag["cell_fallback_log"]["mode_4_H1"]["fallback_to_global"])
+        self.assertEqual(mh_diag["cell_fallback_log"]["mode_0_H1"]["sample_count"], 15)
+        self.assertEqual(mh_diag["cell_fallback_log"]["mode_0_H1"]["source"], "empirical_cell")
+
+        # Undersized Fold 2 (< 9 trajectories) refuses to claim calibrated
+        mh_small = MultiHorizonQuantileEngine(alpha=0.10, min_cell_samples=15)
+        mh_small.calibrate(trajs[:10])  # Fold 1=5, Fold 2=5 (< 9)
+        self.assertFalse(mh_small.calibrated)
+
+        # 2. ContactStratifiedConformalWM logs fallback per stratum
+        wm = ContactStratifiedConformalWM(MockContinuousDynamics(15, 6), num_strata=5, alpha=0.10)
+        s = np.zeros((30, 15), dtype=np.float32)
+        a = np.zeros((30, 6), dtype=np.float32)
+        t = rng.normal(0.0, 0.2, size=(30, 15)).astype(np.float32)
+        strata = np.array([0] * 25 + [1] * 5, dtype=np.int64)  # Strata 2,3,4 empty; 1 undersampled
+        wm.calibrate(s, a, t, strata)
+        wm_diag = wm.get_calibration_diagnostics()
+        self.assertTrue(wm_diag["calibrated"])
+        self.assertEqual(wm_diag["stratum_fallback_log"]["0"]["source"], "empirical_stratum")
+        self.assertFalse(wm_diag["stratum_fallback_log"]["0"]["fallback_to_global"])
+        self.assertEqual(wm_diag["stratum_fallback_log"]["1"]["source"], "global_fallback")
+        self.assertTrue(wm_diag["stratum_fallback_log"]["1"]["fallback_to_global"])
+
+    def test_h2_07_disjoint_60_episode_calibration_pools_and_peginhole_isolation(self):
+        """
+        Verifies that BOTH 60-episode calibration pools (CompliantPreLift 2000-2059 and
+        separate PegInHole 2100-2159) remain strictly disjoint from each other and from
+        all training, offline eval, closed-loop eval, and excluded pilot pools.
+        """
+        audit = verify_disjoint_seed_pools()
+        self.assertTrue(audit["disjoint_verified"])
+        self.assertEqual(audit["pairwise_overlap_count"], 0)
+
+        # Verify exact 60-episode primary calibration pools per task
+        lift_calib = get_calibration_seed_pool("multifinger_lift", alpha=0.10)
+        prelift_calib = get_calibration_seed_pool("compliant_prelift", alpha=0.10)
+        peg_calib = get_calibration_seed_pool("peg_in_hole", alpha=0.10)
+
+        self.assertEqual(len(lift_calib), 60)
+        self.assertEqual(lift_calib, prelift_calib)
+        self.assertEqual(lift_calib, list(range(2000, 2060)))
+
+        self.assertEqual(len(peg_calib), 60)
+        self.assertEqual(peg_calib, list(range(2100, 2160)))
+
+        # Separate PegInHole and CompliantPreLift calibration pools must have zero intersection
+        self.assertEqual(set(lift_calib) & set(peg_calib), set())
+
+        # Both 60-ep calibration pools must have zero overlap with training, eval, or excluded pilot pools
+        non_calib_pool_keys = [
+            "training_compliant_prelift",
+            "training_peg_in_hole",
+            "offline_test_id",
+            "offline_test_ood",
+            "offline_test_peg_in_hole",
+            "closed_loop_id",
+            "closed_loop_ood",
+            "closed_loop_peg_in_hole",
+            "excluded_p26_pilot",
+        ]
+        for key in non_calib_pool_keys:
+            other_set = set(PHASE3_SEED_POOLS[key])
+            self.assertEqual(set(lift_calib) & other_set, set(), f"Lift calib overlaps {key}")
+            self.assertEqual(set(peg_calib) & other_set, set(), f"PegInHole calib overlaps {key}")
+
+        # 95% sensitivity pool extension yields 120 disjoint episodes per task (no 2060..2119 collision)
+        lift_95 = get_calibration_seed_pool("compliant_prelift", alpha=0.05)
+        peg_95 = get_calibration_seed_pool("peg_in_hole", alpha=0.05)
+        self.assertEqual(len(lift_95), 120)
+        self.assertEqual(len(peg_95), 120)
+        self.assertEqual(set(lift_95) & set(peg_95), set())
+
+        # Overlapping pool injection must raise ValueError
+        with self.assertRaises(ValueError):
+            verify_disjoint_seed_pools(extra_pools={"bad_pool": [2050, 2150]})
+
+        # ExperimentOrchestrator defaults to N_calib=60 and disjoint task calibration pools
+        orch_lift = ExperimentOrchestrator(task="multifinger_lift", seed=42)
+        orch_peg = ExperimentOrchestrator(task="peg_in_hole", seed=42)
+        self.assertEqual(orch_lift.calib_episodes_count, 60)
+        self.assertEqual(orch_peg.calib_episodes_count, 60)
+        self.assertEqual(orch_lift.task_seed_pools["calibration"], list(range(2000, 2060)))
+        self.assertEqual(orch_peg.task_seed_pools["calibration"], list(range(2100, 2160)))
+
+        # Reject undersized calibration pool in ExperimentOrchestrator
+        with self.assertRaises(ValueError):
+            ExperimentOrchestrator(task="peg_in_hole", calib_episodes_count=25)
+
+
+if __name__ == "__main__":
+    unittest.main()
