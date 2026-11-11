@@ -8,6 +8,7 @@ import {
   SGLangLogo, HuggingFaceLogo, OpenAILogo, AnthropicLogo, GithubLogo, QwenLogo,
   ClaudeLogo, GeminiLogo, GrokLogo, PerplexityLogo
 } from "@/components/horos/primitives/brand-icons";
+import { NvidiaInceptionBadge } from "@/components/landing/nvidia-inception-badge";
 
 export function FooterCtaSection() {
   return (
@@ -221,7 +222,7 @@ export function FooterCtaSection() {
           <div className="flex flex-col items-end">
 
             {/* Nav Links */}
-            <div className="flex flex-col items-end gap-3 mb-10 w-full">
+            <div className="flex flex-col items-end gap-3 mb-7 w-full">
               <div className="flex items-center gap-x-6">
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Intelligence Agent</a>
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Capability Fabric</a>
@@ -237,6 +238,10 @@ export function FooterCtaSection() {
               </div>
             </div>
 
+            {/* NVIDIA Inception Program */}
+            <div className="mb-6 flex justify-end">
+              <NvidiaInceptionBadge />
+            </div>
 
             {/* Ask AI about HOROS */}
             <div className="flex flex-col items-end">
