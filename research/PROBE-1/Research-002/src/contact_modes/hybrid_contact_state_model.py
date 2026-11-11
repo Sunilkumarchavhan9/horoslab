@@ -26,10 +26,12 @@ class HybridContactStateModel(nn.Module):
         continuous_dynamics_model,
         mode_classifier: ContactModeClassifier,
         architecture_id: Optional[str] = None,
+        feature_scaler=None,
     ):
         super().__init__()
         self.continuous_model = continuous_dynamics_model
         self.mode_classifier = mode_classifier
+        self.feature_scaler = feature_scaler
         if architecture_id is not None:
             self.architecture_id = architecture_id
         else:
@@ -43,6 +45,14 @@ class HybridContactStateModel(nn.Module):
             else:
                 self.architecture_id = cls_name
 
+    def _prepare_inputs(self, s: torch.Tensor, a: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        if self.feature_scaler is None:
+            return s, a
+        return (
+            self.feature_scaler.normalize_state_tensor(s),
+            self.feature_scaler.normalize_action_tensor(a),
+        )
+
     def eval(self):
         super().eval()
         if hasattr(self.continuous_model, "eval"):
@@ -52,12 +62,9 @@ class HybridContactStateModel(nn.Module):
         return self
 
     def forward(self, s: torch.Tensor, a: torch.Tensor) -> torch.Tensor:
-        """Forwards continuous state-transition prediction."""
-        if hasattr(self.continuous_model, "predict_with_uncertainty"):
-            mean, _, _ = self.continuous_model.predict_with_uncertainty(s, a)
-            return mean
-        res = self.continuous_model(s, a)
-        return res[0] if isinstance(res, tuple) else res
+        """Forwards continuous state-transition prediction in physical units."""
+        mean, _, _ = self.predict_with_uncertainty(s, a)
+        return mean
 
     def predict_with_uncertainty(
         self,
@@ -65,20 +72,64 @@ class HybridContactStateModel(nn.Module):
         a: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
-        Unified batched uncertainty prediction returning (mean, epistemic_var, aleatoric_var).
+        Unified batched uncertainty prediction returning (mean, epistemic_var, aleatoric_var)
+        in original physical feature units (inverse-transforming when feature_scaler is attached).
         """
+        s_in, a_in = self._prepare_inputs(s, a)
         if hasattr(self.continuous_model, "predict_with_uncertainty"):
-            return self.continuous_model.predict_with_uncertainty(s, a)
+            mean_raw, epi_raw, alea_raw = self.continuous_model.predict_with_uncertainty(s_in, a_in)
         elif isinstance(self.continuous_model, nn.Module):
-            res = self.continuous_model(s, a)
+            res = self.continuous_model(s_in, a_in)
             if isinstance(res, tuple) and len(res) >= 2:
-                mean, var = res[0], res[1]
-                return mean, torch.zeros_like(var), var
-            mean = res[0] if isinstance(res, tuple) else res
-            zeros = torch.zeros_like(mean)
-            return mean, zeros, zeros
-        zeros = torch.zeros_like(s)
-        return s, zeros, zeros
+                mean_raw, alea_raw = res[0], res[1]
+                epi_raw = torch.zeros_like(alea_raw)
+            else:
+                mean_raw = res[0] if isinstance(res, tuple) else res
+                zeros = torch.zeros_like(mean_raw)
+                epi_raw, alea_raw = zeros, zeros
+        else:
+            zeros = torch.zeros_like(s)
+            return s, zeros, zeros
+
+        if self.feature_scaler is None:
+            return mean_raw, epi_raw, alea_raw
+
+        mean_phys = self.feature_scaler.inverse_transform_next_state_tensor(s, mean_raw)
+        epi_phys = self.feature_scaler.inverse_transform_variance_tensor(epi_raw)
+        alea_phys = self.feature_scaler.inverse_transform_variance_tensor(alea_raw)
+        return mean_phys, epi_phys, alea_phys
+
+    def compute_nll(self, s: torch.Tensor, a: torch.Tensor, target_next_state: torch.Tensor) -> torch.Tensor:
+        """Computes Gaussian negative log-likelihood in original physical units."""
+        mean_phys, epi_var_phys, alea_var_phys = self.predict_with_uncertainty(s, a)
+        total_var = torch.clamp(epi_var_phys + alea_var_phys, min=0.0) + 1e-6
+        mse_weighted = ((target_next_state - mean_phys) ** 2) / total_var
+        log_det = torch.log(total_var)
+        return 0.5 * torch.mean(torch.sum(mse_weighted + log_det, dim=-1))
+
+    def predict_mode_logits(self, s: torch.Tensor, a: torch.Tensor) -> torch.Tensor:
+        """Computes discrete mode logits after applying any attached feature_scaler."""
+        s_in, a_in = self._prepare_inputs(s, a)
+        return self.mode_classifier(s_in, a_in)
+
+    def calibrate_mode_aps(
+        self,
+        calib_states: np.ndarray,
+        calib_actions: np.ndarray,
+        calib_modes: np.ndarray,
+        alpha_mode: float = 0.10,
+    ) -> float:
+        """Calibrates ContactModeClassifier APS threshold in the same input space used at training/inference."""
+        s_t = torch.tensor(calib_states, dtype=torch.float32)
+        a_t = torch.tensor(calib_actions, dtype=torch.float32)
+        s_in, a_in = self._prepare_inputs(s_t, a_t)
+        self.mode_classifier.calibrate_aps(
+            s_in.detach().numpy(),
+            a_in.detach().numpy(),
+            calib_modes,
+            alpha_mode=alpha_mode,
+        )
+        return float(self.mode_classifier.aps_quantile)
 
     def predict_step(
         self,
@@ -88,7 +139,7 @@ class HybridContactStateModel(nn.Module):
         """
         Executes a single step forward prediction without peeking at the future.
         Returns:
-          - next_state: predicted continuous state vector (pose, vel, wrench)
+          - next_state: predicted continuous state vector (pose, vel, wrench) in physical units
           - mode_probs: probability distribution over 7 modes [7]
           - candidate_modes: conformal mode set S_{1-alpha_mode}
           - predicted_mode: top-1 mode index
@@ -107,8 +158,11 @@ class HybridContactStateModel(nn.Module):
             aleatoric_uncertainty = float(np.linalg.norm(np.sqrt(alea_var_np)))
             total_uncertainty = float(np.linalg.norm(np.sqrt(epi_var_np + alea_var_np)))
 
-            mode_probs = self.mode_classifier.predict_mode_distribution(current_state, action)
-            candidate_modes = self.mode_classifier.predict_mode_set(current_state, action)
+            s_in, a_in = self._prepare_inputs(s_tensor, a_tensor)
+            s_clf = s_in.squeeze(0).numpy()
+            a_clf = a_in.squeeze(0).numpy()
+            mode_probs = self.mode_classifier.predict_mode_distribution(s_clf, a_clf)
+            candidate_modes = self.mode_classifier.predict_mode_set(s_clf, a_clf)
             top1_mode = int(np.argmax(mode_probs))
 
         return {

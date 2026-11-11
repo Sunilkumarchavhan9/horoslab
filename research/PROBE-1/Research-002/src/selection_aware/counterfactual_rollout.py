@@ -15,6 +15,7 @@ import numpy as np
 import torch
 from src.contact_modes.contact_mode_definitions import ContactMode, classify_contact_mode, NUM_MODES
 from src.selection_aware.planner_fingerprint import PlannerFingerprint
+from src.environment.step_adapter import get_env_dt, step_env_compatible
 
 
 def extract_env_state_and_wrench(obs: Dict[str, Any], task: str = "peg_in_hole") -> Tuple[np.ndarray, np.ndarray]:
@@ -72,6 +73,7 @@ class CounterfactualRolloutEngine:
         Compares candidate open-loop model predictions against counterfactual realization.
         """
         clone_env = copy.deepcopy(env_state_snapshot)
+        env_dt = get_env_dt(clone_env, task)
         seq_len = len(selected_action_sequence)
 
         realized_states = []
@@ -83,26 +85,22 @@ class CounterfactualRolloutEngine:
         prev_obs = clone_env._get_obs()
         for t in range(seq_len):
             action = selected_action_sequence[t]
-            obs, r, done, info = clone_env.step(action)
+            obs, r, done, info = step_env_compatible(
+                clone_env, action, task=task, reward_fn=self.reward_fn, require_reward=True
+            )
 
             s_vec, wrench = extract_env_state_and_wrench(obs, task)
-            mode = classify_contact_mode(obs, prev_state=prev_obs, task=task)
+            mode = classify_contact_mode(obs, prev_state=prev_obs, dt=env_dt, task=task)
             prev_obs = obs
 
             realized_states.append(s_vec)
             realized_wrenches.append(wrench)
             realized_modes.append(int(mode))
-            realized_rewards.append(r)
+            realized_rewards.append(float(r))
 
             if getattr(clone_env, "safety_violated", False) or getattr(clone_env, "crush_violated", False):
                 safety_violation = True
             if done:
-                # Pad remaining horizon if early termination occurred
-                while len(realized_states) < seq_len:
-                    realized_states.append(s_vec.copy())
-                    realized_wrenches.append(wrench.copy())
-                    realized_modes.append(int(mode))
-                    realized_rewards.append(0.0)
                 break
 
         return {
@@ -127,6 +125,7 @@ class CounterfactualRolloutEngine:
         Measures closed-loop policy future accuracy.
         """
         clone_env = copy.deepcopy(env_state_snapshot)
+        env_dt = get_env_dt(clone_env, task)
         realized_states = []
         realized_wrenches = []
         realized_modes = []
@@ -139,25 +138,22 @@ class CounterfactualRolloutEngine:
 
             # Receding-horizon replanning in clone
             action, _ = planner.plan(s_vec, self.reward_fn)
-            obs, r, done, info = clone_env.step(action)
+            obs, r, done, info = step_env_compatible(
+                clone_env, action, task=task, reward_fn=self.reward_fn, require_reward=True
+            )
 
             curr_s_vec, wrench = extract_env_state_and_wrench(obs, task)
-            mode = classify_contact_mode(obs, prev_state=prev_obs, task=task)
+            mode = classify_contact_mode(obs, prev_state=prev_obs, dt=env_dt, task=task)
             prev_obs = obs
 
             realized_states.append(curr_s_vec)
             realized_wrenches.append(wrench)
             realized_modes.append(int(mode))
-            realized_rewards.append(r)
+            realized_rewards.append(float(r))
 
             if getattr(clone_env, "safety_violated", False) or getattr(clone_env, "crush_violated", False):
                 safety_violation = True
             if done:
-                while len(realized_states) < horizon_steps:
-                    realized_states.append(curr_s_vec.copy())
-                    realized_wrenches.append(wrench.copy())
-                    realized_modes.append(int(mode))
-                    realized_rewards.append(0.0)
                 break
 
         return {

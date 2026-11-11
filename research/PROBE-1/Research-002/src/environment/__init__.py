@@ -8,6 +8,13 @@ from .compliant_prelift_env import (
     get_ood_episode_manifest,
     normalize_regime_name,
 )
+from .step_adapter import (
+    COMPLIANT_TASK_ALIASES,
+    compute_task2_eval_reward,
+    get_env_dt,
+    is_compliant_prelift_task,
+    step_env_compatible,
+)
 
 __all__ = [
     "PegInHoleEnv",
@@ -18,5 +25,10 @@ __all__ = [
     "build_ood_regime_manifests",
     "get_ood_episode_manifest",
     "create_env_from_manifest",
+    "COMPLIANT_TASK_ALIASES",
+    "is_compliant_prelift_task",
+    "get_env_dt",
+    "compute_task2_eval_reward",
+    "step_env_compatible",
 ]
 

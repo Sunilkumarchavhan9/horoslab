@@ -22,6 +22,8 @@ from src.planners.uncertainty_penalized_cem import UncertaintyPenalizedCEM
 from src.planners.recovery_aware_cem import RecoveryAwareCEMPlanner
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
+from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
+from src.environment.step_adapter import get_env_dt, step_env_compatible
 from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
 from src.integrated.safety_evaluator import SafetyEvaluator
 from src.integrated.statistical_analysis import (
@@ -85,10 +87,24 @@ class PlannerEvaluator:
                 return float(obj_z * 15.0 - slip * 5.0 - force_err * 0.1)
             self.reward_fn = reward_fn
 
-    def create_env(self, seed: int):
+    def create_env(
+        self,
+        seed: int,
+        regime: Optional[str] = None,
+        mu_true: Optional[float] = None,
+        object_mass: Optional[float] = None,
+    ):
         if self.task == "peg_in_hole":
             return PegInHoleEnv(seed=seed)
-        return MultifingerLiftEnv(seed=seed)
+        if self.task == "legacy_multifinger_lift":
+            return MultifingerLiftEnv(seed=seed)
+        return CompliantPreLiftContactEnv(
+            mu_true=0.50 if mu_true is None else float(mu_true),
+            object_mass=0.350 if object_mass is None else float(object_mass),
+            dt=0.01,
+            seed=seed,
+            regime=regime,
+        )
 
     def _create_planner_for_model(
         self,
@@ -217,7 +233,9 @@ class PlannerEvaluator:
         for ep_idx in range(num_episodes):
             ep_seed = start_seed + ep_idx
             env = self.create_env(seed=ep_seed)
+            env_dt = get_env_dt(env, self.task)
             obs = env.reset()
+            prev_obs = obs
 
             ep_decisions_a = []
             ep_decisions_b = []
@@ -232,13 +250,13 @@ class PlannerEvaluator:
             s_init, w_init = extract_env_state_and_wrench(obs, self.task)
             realized_states_b.append(s_init)
             realized_wrenches_b.append(w_init)
-            realized_modes_b.append(classify_contact_mode(obs, task=self.task))
+            realized_modes_b.append(classify_contact_mode(obs, dt=env_dt, task=self.task))
 
             step_positions = []
 
             for step in range(self.eval_horizon):
                 s_current, w_current = extract_env_state_and_wrench(obs, self.task)
-                current_mode = classify_contact_mode(obs, task=self.task)
+                current_mode = classify_contact_mode(obs, prev_state=prev_obs, dt=env_dt, task=self.task)
 
                 # 1. Plan candidate trajectory
                 best_first_action, plan_info = planner.plan(s_current, self.reward_fn)
@@ -269,15 +287,19 @@ class PlannerEvaluator:
 
                 # 2. Target A Counterfactual Branch (clone simulator, execute open-loop plan without replanning)
                 clone_env = copy.deepcopy(env)
+                clone_prev_obs = obs
                 target_a_states = []
                 target_a_wrenches = []
                 target_a_modes = []
                 target_a_rewards = []
 
                 for act in candidate_sequence:
-                    c_obs, c_r, c_done, _ = clone_env.step(act)
+                    c_obs, c_r, c_done, _ = step_env_compatible(
+                        clone_env, act, task=self.task, reward_fn=self.reward_fn, require_reward=True
+                    )
                     c_s, c_w = extract_env_state_and_wrench(c_obs, self.task)
-                    c_m = classify_contact_mode(c_obs, task=self.task)
+                    c_m = classify_contact_mode(c_obs, prev_state=clone_prev_obs, dt=env_dt, task=self.task)
+                    clone_prev_obs = c_obs
                     target_a_states.append(c_s)
                     target_a_wrenches.append(c_w)
                     target_a_modes.append(c_m)
@@ -323,10 +345,11 @@ class PlannerEvaluator:
                 action_magnitudes.append(float(np.linalg.norm(chosen_action)))
                 actions_executed.append(chosen_action)
 
-                # 4. Target B: Execute action in real simulator (Receding Horizon)
-                obs, r, done, info = env.step(chosen_action)
+                # 4. Target B: Execute action in real simulator (Receding Horizon; reward not needed)
+                prev_obs = obs
+                obs, _, done, _ = step_env_compatible(env, chosen_action, task=self.task, require_reward=False)
                 s_next, w_next = extract_env_state_and_wrench(obs, self.task)
-                m_next = classify_contact_mode(obs, task=self.task)
+                m_next = classify_contact_mode(obs, prev_state=prev_obs, dt=env_dt, task=self.task)
 
                 realized_states_b.append(s_next)
                 realized_wrenches_b.append(w_next)
@@ -359,7 +382,10 @@ class PlannerEvaluator:
                     break
 
             # Episode outcome calculation
-            is_success = bool(env.seated if self.task == "peg_in_hole" else getattr(env, "object_lifted", False))
+            is_success = bool(
+                env.seated if self.task == "peg_in_hole"
+                else getattr(env, "object_lifted", getattr(env, "lifted", False))
+            )
             if is_success:
                 success_count += 1
             if ep_has_violation:
@@ -388,7 +414,7 @@ class PlannerEvaluator:
                 env_state={
                     "jammed": getattr(env, "jammed", False),
                     "wedged": getattr(env, "wedged", False),
-                    "object_dropped": getattr(env, "object_dropped", False),
+                    "object_dropped": getattr(env, "object_dropped", getattr(env, "dropped", False)),
                     "slip_exceeded": getattr(env, "slip_exceeded", False),
                     "stalled": is_stalled,
                     "safety_violated": ep_has_violation,

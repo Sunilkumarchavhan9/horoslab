@@ -26,6 +26,8 @@ from src.models.stratified_conformal_wm import ContactStratifiedConformalWM
 from src.planners.cem_planner import CEMPlanner
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
+from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
+from src.environment.step_adapter import step_env_compatible
 from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
 from src.selection_aware.episode_conformal_engine import EpisodeConformalEngine, compute_wilson_ci
 
@@ -156,7 +158,10 @@ class MiningEvaluator:
                 epi_var_np = np.zeros_like(pred_s)
                 alea_var_np = res[1].numpy() if isinstance(res, tuple) and len(res) >= 2 else np.zeros_like(pred_s)
 
-            logits = hybrid_wm.mode_classifier(s_arr, a_arr).numpy()
+            if hasattr(hybrid_wm, "predict_mode_logits"):
+                logits = hybrid_wm.predict_mode_logits(s_arr, a_arr).numpy()
+            else:
+                logits = hybrid_wm.mode_classifier(s_arr, a_arr).numpy()
             pred_modes = np.argmax(logits, axis=-1)
 
         state_rmse = float(np.sqrt(np.mean((pred_s - true_s_next) ** 2)))
@@ -173,7 +178,13 @@ class MiningEvaluator:
         total_var_np = epi_var_np + alea_var_np
         gaussian_nll: Optional[float] = None
         if float(np.max(total_var_np)) > 0.0:
-            if hasattr(hybrid_wm.continuous_model, "compute_nll"):
+            if hasattr(hybrid_wm, "compute_nll"):
+                with torch.no_grad():
+                    gaussian_nll = round(
+                        float(hybrid_wm.compute_nll(s_arr, a_arr, true_s_tensor).item()),
+                        4,
+                    )
+            elif hasattr(hybrid_wm.continuous_model, "compute_nll"):
                 with torch.no_grad():
                     gaussian_nll = round(
                         float(hybrid_wm.continuous_model.compute_nll(s_arr, a_arr, true_s_tensor).item()),
@@ -341,7 +352,12 @@ class MiningEvaluator:
 
         for ep_idx in range(num_episodes):
             ep_seed = start_seed + ep_idx
-            env = PegInHoleEnv(seed=ep_seed) if self.task == "peg_in_hole" else MultifingerLiftEnv(seed=ep_seed)
+            if self.task == "peg_in_hole":
+                env = PegInHoleEnv(seed=ep_seed)
+            elif self.task == "legacy_multifinger_lift":
+                env = MultifingerLiftEnv(seed=ep_seed)
+            else:
+                env = CompliantPreLiftContactEnv(mu_true=0.50, dt=0.01, seed=ep_seed)
             obs = env.reset()
 
             for step in range(self.eval_horizon):
@@ -349,12 +365,23 @@ class MiningEvaluator:
                 action, _ = planner.plan(s_vec, self.reward_fn)
                 action_mags.append(float(np.linalg.norm(action)))
 
-                obs, r, done, info = env.step(action)
-                if done: break
+                obs, _, done, _ = step_env_compatible(env, action, task=self.task, require_reward=False)
+                if done:
+                    break
 
-            is_success = bool(env.seated if self.task == "peg_in_hole" else getattr(env, "object_lifted", False))
-            is_viol = bool(getattr(env, "safety_violated", False) or getattr(env, "crush_violated", False))
-            is_stall = bool(getattr(env, "object_dropped", False) or getattr(env, "jammed", False))
+            is_success = bool(
+                env.seated if self.task == "peg_in_hole"
+                else getattr(env, "object_lifted", getattr(env, "lifted", False))
+            )
+            max_fn_obs = float(np.max(obs.get("finger_fn", np.zeros(4)))) if "finger_fn" in obs else 0.0
+            is_viol = bool(
+                getattr(env, "safety_violated", False)
+                or getattr(env, "crush_violated", max_fn_obs > 25.0)
+            )
+            is_stall = bool(
+                getattr(env, "object_dropped", getattr(env, "dropped", False))
+                or getattr(env, "jammed", False)
+            )
 
             if is_success: success_count += 1
             if is_viol: violation_count += 1
