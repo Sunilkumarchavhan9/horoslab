@@ -170,3 +170,71 @@ class ContactStratifiedConformalWM:
 
             radius = self.stratum_quantiles.get(stratum, 2.0)
             return pred_mean.squeeze(0).numpy(), float(radius)
+
+    def evaluate_coverage(
+        self,
+        test_states: np.ndarray,
+        test_actions: np.ndarray,
+        test_targets: np.ndarray,
+        test_strata: np.ndarray,
+    ) -> Dict[str, Any]:
+        """
+        Evaluates contact-stratified conformal prediction intervals on held-out transitions.
+        Produces conformal coverage and interval width metrics distinct from probabilistic neural NLL.
+        """
+        if not self.calibrated:
+            raise RuntimeError(
+                "ContactStratifiedConformalWM must be calibrated before evaluate_coverage."
+            )
+
+        n = len(test_states)
+        if n == 0:
+            raise ValueError("Cannot evaluate conformal coverage with 0 transitions.")
+
+        covered = 0
+        radii: List[float] = []
+        l2_errors: List[float] = []
+        per_stratum_hits: Dict[int, int] = {k: 0 for k in range(self.num_strata)}
+        per_stratum_total: Dict[int, int] = {k: 0 for k in range(self.num_strata)}
+
+        for i in range(n):
+            k = int(test_strata[i])
+            pred_mean, radius = self.predict_region(test_states[i], test_actions[i], stratum=k)
+            err_norm = float(np.linalg.norm(test_targets[i] - pred_mean))
+            l2_errors.append(err_norm)
+            radii.append(float(radius))
+            is_cov = err_norm <= radius
+            if is_cov:
+                covered += 1
+            if k in per_stratum_total:
+                per_stratum_total[k] += 1
+                if is_cov:
+                    per_stratum_hits[k] += 1
+
+        rate = round(covered / n, 4)
+        per_stratum_cov = {
+            str(k): {
+                "covered": per_stratum_hits[k],
+                "total": per_stratum_total[k],
+                "coverage": round(per_stratum_hits[k] / per_stratum_total[k], 4) if per_stratum_total[k] > 0 else None,
+                "radius": round(self.stratum_quantiles.get(k, 2.0), 4),
+                "fallback_to_global": bool(self.stratum_fallback_log.get(k, {}).get("fallback_to_global", True)),
+                "source": self.stratum_fallback_log.get(k, {}).get("source", "unknown"),
+            }
+            for k in range(self.num_strata)
+        }
+
+        return {
+            "architecture_id": "B4",
+            "model_class": "ContactStratifiedConformalWM",
+            "is_conformal_architecture": True,
+            "target_coverage": self.target_coverage,
+            "alpha": self.alpha,
+            "covered_count": covered,
+            "total_count": n,
+            "empirical_coverage": rate,
+            "mean_interval_radius": round(float(np.mean(radii)), 4),
+            "mean_l2_error": round(float(np.mean(l2_errors)), 4),
+            "per_stratum_coverage": per_stratum_cov,
+            "calibration_diagnostics": self.get_calibration_diagnostics(),
+        }

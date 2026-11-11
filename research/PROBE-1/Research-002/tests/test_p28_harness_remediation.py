@@ -16,12 +16,19 @@ Covers remediation workstreams H1–H5:
   * Zero infinite quantiles silently marked calibrated.
   * Separate q_*_joint and q_*_marginal reporting in CalibrationRunner.
   * Strict pairwise disjointness of 60-episode calibration pools (Lift and PegInHole) from all training and eval pools.
+- H3: Evaluation Architecture & Multi-Horizon Wiring:
+  * Multi-horizon RMSE across H in {1, 3, 5, 10, 20} for kinematics, object_position,
+    normal_forces, tangential_forces, and slip_velocity with valid_samples tracking.
+  * No silent zero-replacement of missing horizons or missing Task 2 tangential forces; task isolation.
+  * Full B1/B2/B3 (E=5 ensemble)/B4 conformal wiring with aleatoric & epistemic uncertainty decomposition.
+  * UncertaintyPenalizedCEM planner integration preserving independent B1/B2/B3 planner identities.
 
 Author: Sunil Kumar Chavhan (sunil@horoslab.org)
 Organization: HOROS Physical Intelligence Research Group (H.R.)
 """
 
 from __future__ import annotations
+import json
 import math
 import os
 import sys
@@ -41,6 +48,8 @@ if src_dir not in sys.path:
 from src.contact_modes.hybrid_contact_state_model import HybridContactStateModel
 from src.contact_modes.contact_mode_classifier import ContactModeClassifier
 from src.models.deterministic_wm import DeterministicWorldModel
+from src.models.probabilistic_wm import ProbabilisticWorldModel
+from src.models.ensemble_wm import EnsembleWorldModel
 from src.models.stratified_conformal_wm import ContactStratifiedConformalWM
 from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
 from src.selection_aware.episode_conformal_engine import (
@@ -58,8 +67,18 @@ from src.integrated.calibration_runner import (
     get_phase3_task_pools,
     verify_disjoint_seed_pools,
 )
+from src.integrated.model_training_runner import ModelTrainingRunner
+from src.integrated.planner_evaluator import PlannerEvaluator
 from src.integrated.experiment_orchestrator import ExperimentOrchestrator
+from src.integrated.statistical_analysis import (
+    HORIZONS,
+    MULTIHORIZON_COMPONENTS,
+    compute_multihorizon_rmse,
+    to_json_serializable,
+)
 from src.mining.mining_evaluator import MiningEvaluator
+from src.planners.cem_planner import CEMPlanner
+from src.planners.uncertainty_penalized_cem import UncertaintyPenalizedCEM
 from src.planners.recovery_aware_cem import RecoveryAwareCEMPlanner
 
 
@@ -660,6 +679,396 @@ class TestHarnessRemediationH2(unittest.TestCase):
         # Reject undersized calibration pool in ExperimentOrchestrator
         with self.assertRaises(ValueError):
             ExperimentOrchestrator(task="peg_in_hole", calib_episodes_count=25)
+
+
+class TestHarnessRemediationH3(unittest.TestCase):
+    """Workstream H3 — Multi-Horizon Evaluation & B1–B4 Architecture + Planner Wiring."""
+
+    def setUp(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+    def _make_task_episodes(
+        self,
+        task: str,
+        num_episodes: int = 3,
+        steps: int = 21,
+        seed: int = 100,
+    ) -> list:
+        rng = np.random.RandomState(seed)
+        state_dim = 15 if task == "peg_in_hole" else 23
+        action_dim = 6 if task == "peg_in_hole" else 5
+        episodes = []
+        for ep in range(num_episodes):
+            states = np.cumsum(rng.normal(0.0, 0.25, size=(steps + 1, state_dim)), axis=0).astype(np.float32)
+            actions = rng.uniform(-0.5, 0.5, size=(steps, action_dim)).astype(np.float32)
+            modes = rng.randint(0, 7, size=steps + 1).astype(np.int64)
+            # Ensure modes cover strata 0 and 2 well plus sparse mode 1
+            modes[:] = (ep % 2) * 2
+            modes[-1] = 1
+            episodes.append({
+                "episode_idx": ep,
+                "seed": seed + ep,
+                "realized_states": states,
+                "actions": actions,
+                "realized_modes": modes,
+            })
+        return episodes
+
+    def test_h3_01_multihorizon_rmse_all_five_horizons_and_component_disaggregation(self):
+        """
+        Verifies compute_multihorizon_rmse evaluates H in [1, 3, 5, 10, 20] separately for
+        robot_kinematics, object_position, normal_forces, tangential_forces, and slip_velocity
+        across both Task 1 and Task 2, with exact reproducibility.
+        """
+        self.assertEqual(tuple(HORIZONS), (1, 3, 5, 10, 20))
+        self.assertEqual(
+            set(MULTIHORIZON_COMPONENTS),
+            {"robot_kinematics", "object_position", "normal_forces", "tangential_forces", "slip_velocity"},
+        )
+
+        # Task 1: Peg-in-Hole (15-D)
+        t1_true = [np.zeros((20, 15), dtype=np.float32) for _ in range(2)]
+        t1_pred = [np.zeros((20, 15), dtype=np.float32) for _ in range(2)]
+        for seq in t1_pred:
+            seq[:, 0:9] = 1.0    # robot_kinematics err = 1.0
+            seq[:, 9:11] = 2.0   # tangential_forces (Fx, Fy) err = 2.0
+            seq[:, 11:12] = 3.0  # normal_forces (Fz) err = 3.0
+
+        res_t1_a = compute_multihorizon_rmse(t1_pred, t1_true, horizons=HORIZONS, task="peg_in_hole")
+        res_t1_b = compute_multihorizon_rmse(t1_pred, t1_true, horizons=HORIZONS, task="peg_in_hole")
+        self.assertEqual(res_t1_a, res_t1_b)  # Reproducible
+        self.assertEqual(res_t1_a["task"], "peg_in_hole")
+
+        for h in HORIZONS:
+            h_str = str(h)
+            self.assertEqual(res_t1_a["valid_samples_per_horizon"][h_str], 2)
+            comps = res_t1_a["per_horizon"][h_str]["components"]
+            self.assertAlmostEqual(comps["robot_kinematics"]["rmse"], 1.0, places=4)
+            self.assertAlmostEqual(comps["tangential_forces"]["rmse"], 2.0, places=4)
+            self.assertAlmostEqual(comps["normal_forces"]["rmse"], 3.0, places=4)
+            # Not applicable on Task 1 15-D -> None with valid_samples=0 (never 0.0)
+            self.assertIsNone(comps["object_position"]["rmse"])
+            self.assertFalse(comps["object_position"]["applicable"])
+            self.assertEqual(comps["object_position"]["valid_samples"], 0)
+            self.assertIsNone(comps["slip_velocity"]["rmse"])
+            self.assertFalse(comps["slip_velocity"]["applicable"])
+
+        # Task 2: Multifinger-Lift (23-D) with explicit external tangential forces
+        t2_true = [np.zeros((20, 23), dtype=np.float32) for _ in range(2)]
+        t2_pred = [np.zeros((20, 23), dtype=np.float32) for _ in range(2)]
+        t2_true_tan = [np.zeros((20, 4), dtype=np.float32) for _ in range(2)]
+        t2_pred_tan = [np.full((20, 4), 0.75, dtype=np.float32) for _ in range(2)]
+        for seq in t2_pred:
+            seq[:, 0:12] = 0.5   # robot_kinematics
+            seq[:, 12:16] = 1.5  # normal_forces
+            seq[:, 16:20] = 0.25 # slip_velocity (slip_ratio)
+            seq[:, 20:23] = 2.5  # object_position
+
+        res_t2 = compute_multihorizon_rmse(
+            t2_pred,
+            t2_true,
+            horizons=HORIZONS,
+            task="multifinger_lift",
+            pred_tangential_forces=t2_pred_tan,
+            true_tangential_forces=t2_true_tan,
+        )
+        self.assertEqual(res_t2["task"], "multifinger_lift")
+        for h in HORIZONS:
+            comps = res_t2["per_horizon"][str(h)]["components"]
+            self.assertAlmostEqual(comps["robot_kinematics"]["rmse"], 0.5, places=4)
+            self.assertAlmostEqual(comps["normal_forces"]["rmse"], 1.5, places=4)
+            self.assertAlmostEqual(comps["slip_velocity"]["rmse"], 0.25, places=4)
+            self.assertAlmostEqual(comps["object_position"]["rmse"], 2.5, places=4)
+            self.assertAlmostEqual(comps["tangential_forces"]["rmse"], 0.75, places=4)
+
+    def test_h3_02_missing_predictions_never_zero_replaced_and_task_isolation(self):
+        """
+        Verifies missing horizons / NaN / absent tangential channels are never replaced with 0.0,
+        exact valid_samples per horizon are recorded, mixed Task 1/2 fails, and JSON is RFC 8259 clean.
+        """
+        t2_true = [
+            np.zeros((20, 23), dtype=np.float32),  # covers H=1,3,5,10,20
+            np.zeros((12, 23), dtype=np.float32),  # covers H=1,3,5,10
+            np.zeros((5, 23), dtype=np.float32),   # covers H=1,3,5
+            np.zeros((20, 23), dtype=np.float32),  # will contain NaN at H=10
+        ]
+        t2_pred = [
+            np.ones((20, 23), dtype=np.float32),
+            np.ones((8, 23), dtype=np.float32),    # shorter prediction stops at 8 -> misses H=10,20
+            None,                                  # completely missing prediction!
+            np.ones((20, 23), dtype=np.float32),
+        ]
+        t2_pred[3][9, 0] = np.nan                  # NaN at H=10 (index 9)
+
+        # Do NOT supply tangential forces -> missing on packed 23-D states!
+        res = compute_multihorizon_rmse(t2_pred, t2_true, horizons=HORIZONS, task="multifinger_lift")
+
+        # Valid sample counts:
+        # H=1  (idx 0): trajs 0, 1, 3 -> 3 valid
+        # H=3  (idx 2): trajs 0, 1, 3 -> 3 valid
+        # H=5  (idx 4): trajs 0, 1, 3 -> 3 valid
+        # H=10 (idx 9): traj 0 valid, traj 1 truncated (len 8), traj 2 None, traj 3 NaN -> 1 valid!
+        # H=20 (idx 19): trajs 0, 3 -> 2 valid
+        self.assertEqual(res["valid_samples_per_horizon"], {"1": 3, "3": 3, "5": 3, "10": 1, "20": 2})
+
+        # Short-only set where H=20 has zero valid trajectories -> None (NEVER 0.0!)
+        res_short = compute_multihorizon_rmse(
+            [np.ones((5, 23), dtype=np.float32)],
+            [np.zeros((5, 23), dtype=np.float32)],
+            horizons=HORIZONS,
+            task="multifinger_lift",
+        )
+        self.assertEqual(res_short["valid_samples_per_horizon"]["10"], 0)
+        self.assertIsNone(res_short["state_rmse"]["10"])
+        self.assertIsNone(res_short["per_horizon"]["20"]["components"]["robot_kinematics"]["rmse"])
+
+        # Packed 23-D state without tangential forces must report None (NOT 0.0!)
+        self.assertIsNone(res["per_horizon"]["1"]["components"]["tangential_forces"]["rmse"])
+        self.assertEqual(res["per_horizon"]["1"]["components"]["tangential_forces"]["valid_samples"], 0)
+        self.assertFalse(res["per_horizon"]["1"]["components"]["tangential_forces"]["applicable"])
+
+        # Task 1 (15-D) and Task 2 (23-D) cannot be mixed
+        with self.assertRaises(ValueError):
+            compute_multihorizon_rmse(
+                [np.zeros((5, 15), dtype=np.float32), np.zeros((5, 23), dtype=np.float32)],
+                [np.zeros((5, 15), dtype=np.float32), np.zeros((5, 23), dtype=np.float32)],
+            )
+
+        # Strict RFC 8259 JSON serialization succeeds (allow_nan=False)
+        dumped = json.dumps(to_json_serializable(res_short), allow_nan=False)
+        self.assertIn('"20": null', dumped)
+
+    def test_h3_03_b1_b2_b3_uncertainty_decomposition_and_5_member_ensemble(self):
+        """
+        Verifies B1 (Deterministic), B2 (Probabilistic aleatoric), and B3 (E=5 Ensemble
+        epistemic + aleatoric) independently instantiate, train, predict, and decompose uncertainty.
+        """
+        runner = ModelTrainingRunner(task="multifinger_lift", hidden_dim=32, epochs=2, seed=42)
+        episodes = self._make_task_episodes(task="multifinger_lift", num_episodes=2, steps=21, seed=100)
+        transitions = runner.extract_transitions(episodes)
+
+        m_b1, st_b1 = runner.train_hybrid_model(transitions, epochs=2, model_type="B1", return_stats=True)
+        m_b2, st_b2 = runner.train_hybrid_model(transitions, epochs=2, model_type="B2", return_stats=True)
+        m_b3, st_b3 = runner.train_hybrid_model(transitions, epochs=2, model_type="B3", return_stats=True)
+
+        self.assertIsInstance(m_b1.continuous_model, DeterministicWorldModel)
+        self.assertIsInstance(m_b2.continuous_model, ProbabilisticWorldModel)
+        self.assertIsInstance(m_b3.continuous_model, EnsembleWorldModel)
+        self.assertEqual(st_b3["ensemble_size"], 5)
+        self.assertEqual(len(m_b3.continuous_model.models), 5)
+
+        # Verify all 5 B3 ensemble members have pairwise distinct linear head weights
+        for i in range(5):
+            for j in range(i + 1, 5):
+                wi = m_b3.continuous_model.models[i].mean_head.weight.detach()
+                wj = m_b3.continuous_model.models[j].mean_head.weight.detach()
+                self.assertFalse(torch.allclose(wi, wj))
+
+        evaluator = MiningEvaluator(task="multifinger_lift", seed=42)
+        off_b1 = evaluator.evaluate_offline_predictions(m_b1, transitions[:10])
+        off_b2 = evaluator.evaluate_offline_predictions(m_b2, transitions[:10])
+        off_b3 = evaluator.evaluate_offline_predictions(m_b3, transitions[:10])
+
+        # B1: deterministic -> 0 epistemic, 0 aleatoric, no NLL
+        self.assertEqual(off_b1["architecture_id"], "B1")
+        self.assertEqual(off_b1["epistemic_uncertainty_mean"], 0.0)
+        self.assertEqual(off_b1["aleatoric_uncertainty_mean"], 0.0)
+        self.assertIsNone(off_b1["gaussian_nll"])
+
+        # B2: heteroscedastic probabilistic -> 0 epistemic, >0 aleatoric, finite NLL
+        self.assertEqual(off_b2["architecture_id"], "B2")
+        self.assertEqual(off_b2["epistemic_uncertainty_mean"], 0.0)
+        self.assertGreater(off_b2["aleatoric_uncertainty_mean"], 0.0)
+        self.assertIsNotNone(off_b2["gaussian_nll"])
+        self.assertTrue(math.isfinite(off_b2["gaussian_nll"]))
+
+        # B3: 5-member ensemble -> >0 epistemic AND >0 aleatoric, finite NLL
+        self.assertEqual(off_b3["architecture_id"], "B3")
+        self.assertGreater(off_b3["epistemic_uncertainty_mean"], 0.0)
+        self.assertGreater(off_b3["aleatoric_uncertainty_mean"], 0.0)
+        self.assertIsNotNone(off_b3["gaussian_nll"])
+        self.assertTrue(math.isfinite(off_b3["gaussian_nll"]))
+
+        # Multi-horizon uncertainty tracking across H in {1,3,5,10,20}
+        mh_b3 = evaluator.evaluate_multihorizon_offline(m_b3, episodes, horizons=HORIZONS)
+        for h in HORIZONS:
+            u_h = mh_b3["uncertainty_by_horizon"][str(h)]
+            self.assertGreater(u_h["valid_samples"], 0)
+            self.assertGreater(u_h["epistemic_mean"], 0.0)
+            self.assertGreater(u_h["aleatoric_mean"], 0.0)
+
+    def test_h3_04_b4_conformal_architecture_isolation_coverage_and_fallbacks(self):
+        """
+        Verifies B4 ContactStratifiedConformalWM remains strictly a conformal prediction
+        architecture (cannot be trained via B1-B3 neural trainer), produces stratified
+        intervals, and exposes empirical coverage + H2 fallback diagnostics separately.
+        """
+        runner = ModelTrainingRunner(task="peg_in_hole", hidden_dim=32, epochs=2, seed=42)
+        train_eps = self._make_task_episodes(task="peg_in_hole", num_episodes=2, steps=15, seed=1100)
+        calib_eps = self._make_task_episodes(task="peg_in_hole", num_episodes=3, steps=15, seed=2100)
+        test_eps = self._make_task_episodes(task="peg_in_hole", num_episodes=2, steps=15, seed=3080)
+
+        train_t = runner.extract_transitions(train_eps)
+        calib_t = runner.extract_transitions(calib_eps)
+        test_t = runner.extract_transitions(test_eps)
+
+        # Refuses direct neural training for B4
+        with self.assertRaises(ValueError):
+            runner.train_hybrid_model(train_t, model_type="B4")
+
+        # train_all_architectures requires explicit calib_transitions for B4
+        with self.assertRaises(ValueError):
+            runner.train_all_architectures(train_t, calib_transitions=None, architectures=("B4",))
+
+        b1_model = runner.train_hybrid_model(train_t, epochs=2, model_type="B1")
+        b4_model = runner.calibrate_conformal_b4(
+            base_model=b1_model, calib_transitions=calib_t, alpha=0.10, num_strata=7
+        )
+        self.assertIsInstance(b4_model, ContactStratifiedConformalWM)
+
+        evaluator = MiningEvaluator(task="peg_in_hole", seed=42)
+        b4_res = evaluator.evaluate_conformal_b4(b4_model, test_t)
+        self.assertEqual(b4_res["architecture_id"], "B4")
+        self.assertTrue(b4_res["is_conformal_architecture"])
+        self.assertAlmostEqual(b4_res["target_coverage"], 0.90, places=5)
+        self.assertIn("empirical_coverage", b4_res)
+        self.assertIn("mean_interval_radius", b4_res)
+        self.assertIn("per_stratum_coverage", b4_res)
+        self.assertIn("calibration_diagnostics", b4_res)
+        self.assertIn("stratum_fallback_log", b4_res["calibration_diagnostics"])
+        self.assertTrue(b4_res["calibration_diagnostics"]["any_fallback_to_global"])
+        # B4 must NOT report B2/B3 Gaussian NLL or epistemic variance fields
+        self.assertNotIn("gaussian_nll", b4_res)
+        self.assertNotIn("epistemic_uncertainty_mean", b4_res)
+
+    def test_h3_05_uncertainty_penalized_cem_and_independent_planner_identities(self):
+        """
+        Verifies UncertaintyPenalizedCEM integrates with B2/B3 models, tracks raw vs penalized
+        returns, and PlannerEvaluator preserves independent B1/B2/B3 planner identities.
+        """
+        runner = ModelTrainingRunner(task="multifinger_lift", hidden_dim=32, epochs=2, seed=42)
+        eps = self._make_task_episodes(task="multifinger_lift", num_episodes=2, steps=15, seed=1000)
+        transitions = runner.extract_transitions(eps)
+
+        m_b1 = runner.train_hybrid_model(transitions, epochs=2, model_type="B1")
+        m_b2 = runner.train_hybrid_model(transitions, epochs=2, model_type="B2")
+        m_b3 = runner.train_hybrid_model(transitions, epochs=2, model_type="B3")
+
+        bounds = (np.array([-1.0] * 5), np.array([1.0] * 5))
+        def reward_fn(s, a):
+            return float(s[22] - 0.1 * np.linalg.norm(a))
+
+        # Direct UncertaintyPenalizedCEM on B3 (epistemic) and B2 (aleatoric)
+        up_cem_b3 = UncertaintyPenalizedCEM(
+            m_b3, action_dim=5, action_bounds=bounds, horizon=3, num_samples=8, num_iterations=2, beta=2.0, seed=42
+        )
+        act_b3, info_b3 = up_cem_b3.plan(np.zeros(23, dtype=np.float32), reward_fn)
+        self.assertEqual(len(act_b3), 5)
+        self.assertEqual(info_b3["planner_type"], "UncertaintyPenalizedCEM")
+        self.assertEqual(info_b3["uncertainty_source"], "epistemic")
+        self.assertGreater(info_b3["best_uncertainty_penalty"], 0.0)
+        self.assertAlmostEqual(
+            info_b3["best_predicted_return"] - info_b3["best_uncertainty_penalty"],
+            info_b3["best_penalized_return"],
+            places=5,
+        )
+
+        up_cem_b2 = UncertaintyPenalizedCEM(
+            m_b2, action_dim=5, action_bounds=bounds, horizon=3, num_samples=8, num_iterations=2, beta=2.0, seed=42
+        )
+        _, info_b2 = up_cem_b2.plan(np.zeros(23, dtype=np.float32), reward_fn)
+        self.assertEqual(info_b2["uncertainty_source"], "aleatoric")
+        self.assertGreater(info_b2["best_uncertainty_penalty"], 0.0)
+
+        # PlannerEvaluator wiring preserves independent planner identities across B1, B2, B3
+        pe = PlannerEvaluator(
+            task="multifinger_lift", eval_horizon=4, plan_horizon=3, num_candidates=6, cem_iterations=1, seed=42
+        )
+        out_b1 = pe.evaluate_policy(m_b1, num_episodes=1, start_seed=6000, use_safety_filter=True)
+        out_b2 = pe.evaluate_policy(m_b2, num_episodes=1, start_seed=6000, use_safety_filter=True)
+        out_b3 = pe.evaluate_policy(m_b3, num_episodes=1, start_seed=6000, use_safety_filter=True)
+
+        self.assertEqual(out_b1["architecture_id"], "B1")
+        self.assertEqual(out_b1["planner_identity"], "B1_CEMPlanner")
+        self.assertEqual(out_b1["planner_type"], "CEMPlanner")
+
+        self.assertEqual(out_b2["architecture_id"], "B2")
+        self.assertEqual(out_b2["planner_identity"], "B2_UncertaintyPenalizedCEM_aleatoric")
+        self.assertEqual(out_b2["planner_type"], "UncertaintyPenalizedCEM")
+        self.assertGreater(out_b2["uncertainty_summary"]["aleatoric_mean"], 0.0)
+
+        self.assertEqual(out_b3["architecture_id"], "B3")
+        self.assertEqual(out_b3["planner_identity"], "B3_UncertaintyPenalizedCEM_epistemic")
+        self.assertEqual(out_b3["planner_type"], "UncertaintyPenalizedCEM")
+        self.assertGreater(out_b3["uncertainty_summary"]["epistemic_mean"], 0.0)
+
+        # Target A multi-horizon RMSE is wired; missing H=10,20 cleanly logged with valid_samples=0
+        self.assertIsNotNone(out_b3["target_a_multihorizon_rmse"])
+        self.assertGreater(out_b3["target_a_multihorizon_rmse"]["valid_samples_per_horizon"]["1"], 0)
+        self.assertEqual(out_b3["target_a_multihorizon_rmse"]["valid_samples_per_horizon"]["20"], 0)
+        self.assertIsNone(out_b3["target_a_multihorizon_rmse"]["state_rmse"]["20"])
+
+    def test_h3_06_orchestrator_wiring_multihorizon_and_b1_b4_separation(self):
+        """
+        End-to-end verification of ExperimentOrchestrator.evaluate_architecture_suite wiring
+        multi-horizon RMSE + B1–B4 architectures separately for Task 1 and Task 2, with strict JSON.
+        """
+        for task, train_seed, cal_seed, test_seed, cl_seed in (
+            ("peg_in_hole", 1100, 2100, 3080, 6200),
+            ("multifinger_lift", 1000, 2000, 3000, 6000),
+        ):
+            orch = ExperimentOrchestrator(
+                task=task, eval_horizon=5, test_episodes_count=2, calib_episodes_count=60, seed=42
+            )
+            orch.planner_evaluator = PlannerEvaluator(
+                task=task, eval_horizon=4, plan_horizon=3, num_candidates=6, cem_iterations=1, seed=42
+            )
+            train_eps = self._make_task_episodes(task=task, num_episodes=2, steps=21, seed=train_seed)
+            calib_eps = self._make_task_episodes(task=task, num_episodes=3, steps=21, seed=cal_seed)
+            test_eps = self._make_task_episodes(task=task, num_episodes=2, steps=21, seed=test_seed)
+
+            suite_a = orch.evaluate_architecture_suite(
+                training_episodes=train_eps,
+                calib_raw_episodes=calib_eps,
+                test_raw_episodes=test_eps,
+                architectures=("B1", "B2", "B3", "B4"),
+                epochs=2,
+                run_closed_loop=True,
+                closed_loop_episodes=1,
+                closed_loop_start_seed=cl_seed,
+            )
+            suite_b = orch.evaluate_architecture_suite(
+                training_episodes=train_eps,
+                calib_raw_episodes=calib_eps,
+                test_raw_episodes=test_eps,
+                architectures=("B1", "B2", "B3", "B4"),
+                epochs=2,
+                run_closed_loop=True,
+                closed_loop_episodes=1,
+                closed_loop_start_seed=cl_seed,
+            )
+
+            self.assertEqual(suite_a["task"], task)
+            self.assertEqual(set(suite_a["architectures"].keys()), {"B1", "B2", "B3", "B4"})
+            # Reproducible across runs
+            self.assertEqual(
+                suite_a["architectures"]["B3"]["offline_multihorizon_rmse"]["state_rmse"],
+                suite_b["architectures"]["B3"]["offline_multihorizon_rmse"]["state_rmse"],
+            )
+            # Check all 5 horizons populated offline
+            for arch in ("B1", "B2", "B3"):
+                mh = suite_a["architectures"][arch]["offline_multihorizon_rmse"]
+                self.assertEqual(mh["valid_samples_per_horizon"], {"1": 2, "3": 2, "5": 2, "10": 2, "20": 2})
+
+            # B4 cleanly isolated as conformal architecture
+            b4_entry = suite_a["architectures"]["B4"]
+            self.assertTrue(b4_entry["is_conformal_architecture"])
+            self.assertEqual(b4_entry["conformal_evaluation"]["task"], task)
+
+            # Strict RFC 8259 JSON serializability
+            json_str = json.dumps(to_json_serializable(suite_a), allow_nan=False)
+            self.assertGreater(len(json_str), 100)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """
 HOROS PROBE-1 — Research-002: Trustworthy Action-Conditioned Contact World Models
 Batched Uncertainty-Penalized CEM Trajectory Optimizer (Li et al., 2025/2026 Style)
-Penalizes epistemic model disagreement: J_pen = J_WM - beta * sum(sigma_ens)
+Penalizes epistemic (or aleatoric/total) model uncertainty: J_pen = J_WM - beta * sum(sigma)
 Evaluates rollouts via batched PyTorch tensor operations.
 """
 
@@ -14,7 +14,8 @@ from typing import Dict, Any, Callable, Tuple, Optional
 class UncertaintyPenalizedCEM:
     """
     Batched Uncertainty-Penalized CEM.
-    Evaluates candidate rollouts in parallel batches and subtracts beta * sigma_ens from returns.
+    Evaluates candidate rollouts in parallel batches and subtracts beta * sigma from returns,
+    while separately tracking raw predicted return for unpenalized PEG diagnostics.
     """
 
     def __init__(
@@ -27,6 +28,8 @@ class UncertaintyPenalizedCEM:
         elite_fraction: float = 0.10,
         num_iterations: int = 4,
         beta: float = 1.5,
+        uncertainty_source: str = "auto",
+        seed: Optional[int] = None,
     ):
         self.ensemble_model = ensemble_model
         self.action_dim = action_dim
@@ -35,7 +38,25 @@ class UncertaintyPenalizedCEM:
         self.num_samples = num_samples
         self.num_elites = max(1, int(num_samples * elite_fraction))
         self.num_iterations = num_iterations
-        self.beta = beta
+        self.beta = float(beta)
+        self.uncertainty_source = uncertainty_source
+        self.rng = np.random.RandomState(seed) if seed is not None else None
+
+    def _select_variance_tensor(
+        self, epi_var: torch.Tensor, alea_var: torch.Tensor
+    ) -> Tuple[torch.Tensor, str]:
+        if self.uncertainty_source == "epistemic":
+            return epi_var, "epistemic"
+        if self.uncertainty_source == "aleatoric":
+            return alea_var, "aleatoric"
+        if self.uncertainty_source == "total":
+            return epi_var + alea_var, "total"
+        # "auto": prioritize epistemic variance when nonzero (B3), else aleatoric (B2)
+        if bool(torch.any(epi_var > 0.0)):
+            return epi_var, "epistemic"
+        if bool(torch.any(alea_var > 0.0)):
+            return alea_var, "aleatoric"
+        return torch.zeros_like(epi_var), "none"
 
     def plan(
         self,
@@ -45,45 +66,65 @@ class UncertaintyPenalizedCEM:
     ) -> Tuple[np.ndarray, Dict[str, Any]]:
         """Optimizes action trajectories under penalized objective using batched tensors."""
         self.ensemble_model.eval()
-        mean = warm_start_mean if warm_start_mean is not None else np.zeros((self.horizon, self.action_dim))
+        mean = warm_start_mean.copy() if warm_start_mean is not None else np.zeros((self.horizon, self.action_dim))
         std = np.ones((self.horizon, self.action_dim)) * 0.5
 
         best_trajectory = None
         best_penalized_return = -float("inf")
+        best_raw_return = -float("inf")
+        best_penalty_total = 0.0
+        source_used = "none"
         s_curr_tensor = torch.tensor(current_state, dtype=torch.float32)
 
-        for iteration in range(self.num_iterations):
-            samples = np.random.normal(mean, std, size=(self.num_samples, self.horizon, self.action_dim))
+        for _ in range(self.num_iterations):
+            if self.rng is not None:
+                samples = self.rng.normal(mean, std, size=(self.num_samples, self.horizon, self.action_dim))
+            else:
+                samples = np.random.normal(mean, std, size=(self.num_samples, self.horizon, self.action_dim))
             samples = np.clip(samples, self.lower_bound, self.upper_bound)
             samples_tensor = torch.tensor(samples, dtype=torch.float32)
 
             curr_states = s_curr_tensor.unsqueeze(0).expand(self.num_samples, -1).clone()
             penalized_returns = np.zeros(self.num_samples, dtype=np.float64)
             raw_returns = np.zeros(self.num_samples, dtype=np.float64)
+            penalty_totals = np.zeros(self.num_samples, dtype=np.float64)
 
             with torch.no_grad():
                 for t in range(self.horizon):
                     a_t = samples_tensor[:, t, :]
-                    bar_mean, epi_var, _ = self.ensemble_model.predict_with_uncertainty(curr_states, a_t)
+                    if hasattr(self.ensemble_model, "predict_with_uncertainty"):
+                        bar_mean, epi_var, alea_var = self.ensemble_model.predict_with_uncertainty(curr_states, a_t)
+                    else:
+                        res = self.ensemble_model(curr_states, a_t)
+                        bar_mean = res[0] if isinstance(res, tuple) else res
+                        epi_var = torch.zeros_like(bar_mean)
+                        alea_var = res[1] if isinstance(res, tuple) and len(res) >= 2 else torch.zeros_like(bar_mean)
+
+                    selected_var, source_used = self._select_variance_tensor(epi_var, alea_var)
+                    selected_var = torch.clamp(selected_var, min=0.0)
 
                     s_np = bar_mean.numpy()
                     a_np = samples[:, t, :]
-                    # Epistemic std norm per sample: [N]
-                    sigma_norms = torch.norm(torch.sqrt(epi_var), dim=-1).numpy()
+                    sigma_norms = torch.norm(torch.sqrt(selected_var), dim=-1).numpy()
 
                     for i in range(self.num_samples):
                         r_i = reward_fn(s_np[i], a_np[i])
+                        p_i = self.beta * float(sigma_norms[i])
                         raw_returns[i] += r_i
-                        penalized_returns[i] += r_i - self.beta * sigma_norms[i]
+                        penalty_totals[i] += p_i
+                        penalized_returns[i] += r_i - p_i
 
                     curr_states = bar_mean
 
             elite_indices = np.argsort(penalized_returns)[-self.num_elites:]
             elite_samples = samples[elite_indices]
+            top_idx = int(elite_indices[-1])
 
-            if penalized_returns[elite_indices[-1]] > best_penalized_return:
-                best_penalized_return = float(penalized_returns[elite_indices[-1]])
-                best_trajectory = elite_samples[-1]
+            if penalized_returns[top_idx] > best_penalized_return:
+                best_penalized_return = float(penalized_returns[top_idx])
+                best_raw_return = float(raw_returns[top_idx])
+                best_penalty_total = float(penalty_totals[top_idx])
+                best_trajectory = elite_samples[-1].copy()
 
             new_mean = np.mean(elite_samples, axis=0)
             new_std = np.std(elite_samples, axis=0) + 1e-4
@@ -94,7 +135,12 @@ class UncertaintyPenalizedCEM:
         best_action = best_trajectory[0] if best_trajectory is not None else np.zeros(self.action_dim)
 
         info = {
+            "planner_type": "UncertaintyPenalizedCEM",
+            "uncertainty_source": source_used,
+            "beta": self.beta,
+            "best_predicted_return": best_raw_return,
             "best_penalized_return": best_penalized_return,
+            "best_uncertainty_penalty": best_penalty_total,
             "best_trajectory": best_trajectory,
         }
 

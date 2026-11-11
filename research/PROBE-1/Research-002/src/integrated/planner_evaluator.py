@@ -18,11 +18,18 @@ import torch
 from src.contact_modes.contact_mode_definitions import ContactMode, classify_contact_mode, NUM_MODES
 from src.contact_modes.hybrid_contact_state_model import HybridContactStateModel
 from src.planners.cem_planner import CEMPlanner
+from src.planners.uncertainty_penalized_cem import UncertaintyPenalizedCEM
+from src.planners.recovery_aware_cem import RecoveryAwareCEMPlanner
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
 from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
 from src.integrated.safety_evaluator import SafetyEvaluator
-from src.integrated.statistical_analysis import format_count_pct, compute_wilson_ci
+from src.integrated.statistical_analysis import (
+    format_count_pct,
+    compute_wilson_ci,
+    compute_multihorizon_rmse,
+    HORIZONS,
+)
 
 
 class PlannerEvaluator:
@@ -83,17 +90,73 @@ class PlannerEvaluator:
             return PegInHoleEnv(seed=seed)
         return MultifingerLiftEnv(seed=seed)
 
-    def evaluate_policy(
+    def _create_planner_for_model(
         self,
         hybrid_wm: HybridContactStateModel,
-        num_episodes: int = 30,
-        start_seed: int = 5000,
-        use_safety_filter: bool = True,
-    ) -> Dict[str, Any]:
+        architecture_id: Optional[str] = None,
+        planner_type: str = "auto",
+        uncertainty_beta: float = 1.5,
+        uncertainty_source: str = "auto",
+    ) -> Tuple[Any, str, str, str, str]:
         """
-        Executes receding-horizon evaluation across held-out episodes.
-        Returns aggregated performance metrics, safety diagnostics, and episode traces for both Target A and B.
+        Instantiates the planner corresponding to the architecture while preserving
+        independent B1/B2/B3 planner identities.
         """
+        resolved_arch = architecture_id or getattr(hybrid_wm, "architecture_id", None)
+        if resolved_arch is None:
+            cls_name = type(getattr(hybrid_wm, "continuous_model", hybrid_wm)).__name__
+            if "Ensemble" in cls_name:
+                resolved_arch = "B3"
+            elif "Probabilistic" in cls_name:
+                resolved_arch = "B2"
+            else:
+                resolved_arch = "B1"
+
+        mode_key = planner_type.strip().lower()
+        if mode_key == "auto":
+            if resolved_arch in ("B2", "B3") or type(getattr(hybrid_wm, "continuous_model", None)).__name__ in (
+                "ProbabilisticWorldModel",
+                "EnsembleWorldModel",
+            ):
+                mode_key = "uncertainty_penalized_cem"
+            else:
+                mode_key = "cem"
+
+        if mode_key == "uncertainty_penalized_cem":
+            src_mode = uncertainty_source
+            if src_mode == "auto":
+                if resolved_arch == "B2":
+                    src_mode = "aleatoric"
+                elif resolved_arch == "B3":
+                    src_mode = "epistemic"
+            planner = UncertaintyPenalizedCEM(
+                ensemble_model=hybrid_wm,
+                action_dim=self.action_dim,
+                action_bounds=self.action_bounds,
+                horizon=self.plan_horizon,
+                num_samples=self.num_candidates,
+                elite_fraction=self.elite_fraction,
+                num_iterations=self.cem_iterations,
+                beta=uncertainty_beta,
+                uncertainty_source=src_mode,
+                seed=self.seed,
+            )
+            planner_class = "UncertaintyPenalizedCEM"
+            planner_identity = f"{resolved_arch}_UncertaintyPenalizedCEM_{src_mode}"
+            return planner, planner_identity, planner_class, resolved_arch, src_mode
+
+        if mode_key == "recovery_aware_cem":
+            planner = RecoveryAwareCEMPlanner(
+                world_model=hybrid_wm,
+                action_dim=self.action_dim,
+                action_bounds=self.action_bounds,
+                horizon=self.plan_horizon,
+                num_samples=self.num_candidates,
+                elite_fraction=self.elite_fraction,
+                num_iterations=self.cem_iterations,
+            )
+            return planner, f"{resolved_arch}_RecoveryAwareCEMPlanner", "RecoveryAwareCEMPlanner", resolved_arch, "none"
+
         planner = CEMPlanner(
             world_model=hybrid_wm,
             action_dim=self.action_dim,
@@ -103,6 +166,34 @@ class PlannerEvaluator:
             elite_fraction=self.elite_fraction,
             num_iterations=self.cem_iterations,
         )
+        return planner, f"{resolved_arch}_CEMPlanner", "CEMPlanner", resolved_arch, "none"
+
+    def evaluate_policy(
+        self,
+        hybrid_wm: HybridContactStateModel,
+        num_episodes: int = 30,
+        start_seed: int = 5000,
+        use_safety_filter: bool = True,
+        architecture_id: Optional[str] = None,
+        planner_type: str = "auto",
+        uncertainty_beta: float = 1.5,
+        uncertainty_source: str = "auto",
+    ) -> Dict[str, Any]:
+        """
+        Executes receding-horizon evaluation across held-out episodes.
+        Preserves independent planner identities across B1 (CEMPlanner), B2 (aleatoric
+        UncertaintyPenalizedCEM), and B3 (epistemic UncertaintyPenalizedCEM), and computes
+        multi-horizon Target A forecast accuracy without zero-filling missing steps.
+        """
+        planner, planner_identity, planner_class, resolved_arch, resolved_unc_source = (
+            self._create_planner_for_model(
+                hybrid_wm=hybrid_wm,
+                architecture_id=architecture_id,
+                planner_type=planner_type,
+                uncertainty_beta=uncertainty_beta,
+                uncertainty_source=uncertainty_source,
+            )
+        )
 
         safety_filter = self.safety_evaluator.create_safety_filter() if use_safety_filter else None
 
@@ -110,6 +201,12 @@ class PlannerEvaluator:
         peg_values = []
         progress_values = []
         action_magnitudes = []
+        epistemic_step_vals = []
+        aleatoric_step_vals = []
+        penalized_return_vals = []
+        penalty_vals = []
+        target_a_pred_trajs: List[np.ndarray] = []
+        target_a_true_trajs: List[np.ndarray] = []
         success_count = 0
         violation_count = 0
         stall_count = 0
@@ -150,12 +247,20 @@ class PlannerEvaluator:
                     candidate_sequence = np.repeat(best_first_action[np.newaxis, :], self.plan_horizon, axis=0)
 
                 pred_reward = float(plan_info.get("best_predicted_return", 0.0))
+                if "best_penalized_return" in plan_info:
+                    penalized_return_vals.append(float(plan_info["best_penalized_return"]))
+                if "best_uncertainty_penalty" in plan_info:
+                    penalty_vals.append(float(plan_info["best_uncertainty_penalty"]))
 
                 # Multi-step autoregressive rollout with learned world model
                 rollout_pred = hybrid_wm.predict_multistep(
                     s_current, candidate_sequence, horizon=len(candidate_sequence), task=self.task
                 )
                 pred_traj_states = rollout_pred["states"]
+                if "epistemic_uncertainties" in rollout_pred and len(rollout_pred["epistemic_uncertainties"]) > 0:
+                    epistemic_step_vals.append(float(rollout_pred["epistemic_uncertainties"][0]))
+                if "aleatoric_uncertainties" in rollout_pred and len(rollout_pred["aleatoric_uncertainties"]) > 0:
+                    aleatoric_step_vals.append(float(rollout_pred["aleatoric_uncertainties"][0]))
                 pred_traj_wrenches = np.zeros((len(candidate_sequence), 6), dtype=np.float32)
                 cf_slice = rollout_pred["contact_forces"]
                 pred_traj_wrenches[:, :min(6, cf_slice.shape[1])] = cf_slice[:, :min(6, cf_slice.shape[1])]
@@ -185,6 +290,9 @@ class PlannerEvaluator:
                 peg_values.append(peg_step)
 
                 L_a = len(target_a_modes)
+                if L_a > 0:
+                    target_a_pred_trajs.append(np.array(pred_traj_states[:L_a], dtype=np.float32))
+                    target_a_true_trajs.append(np.array(target_a_states, dtype=np.float32))
                 ep_decisions_a.append({
                     "step": step,
                     "pred_states": np.array(pred_traj_states[:L_a]),
@@ -336,8 +444,32 @@ class PlannerEvaluator:
         peg_mean = round(float(np.mean(peg_values)), 4) if len(peg_values) > 0 else 0.0
         peg_std = round(float(np.std(peg_values)), 4) if len(peg_values) > 0 else 0.0
 
+        target_a_mh_rmse = (
+            compute_multihorizon_rmse(
+                pred_trajectories=target_a_pred_trajs,
+                true_trajectories=target_a_true_trajs,
+                horizons=HORIZONS,
+                task=self.task,
+                detailed=True,
+            )
+            if len(target_a_pred_trajs) > 0
+            else None
+        )
+
+        uncertainty_summary = {
+            "epistemic_mean": round(float(np.mean(epistemic_step_vals)), 4) if epistemic_step_vals else 0.0,
+            "aleatoric_mean": round(float(np.mean(aleatoric_step_vals)), 4) if aleatoric_step_vals else 0.0,
+            "mean_penalized_return": round(float(np.mean(penalized_return_vals)), 4) if penalized_return_vals else None,
+            "mean_uncertainty_penalty": round(float(np.mean(penalty_vals)), 4) if penalty_vals else 0.0,
+        }
+
         return {
             "task": self.task,
+            "architecture_id": resolved_arch,
+            "planner_identity": planner_identity,
+            "planner_type": planner_class,
+            "uncertainty_source": resolved_unc_source,
+            "uncertainty_beta": float(uncertainty_beta) if planner_class == "UncertaintyPenalizedCEM" else 0.0,
             "eval_horizon_steps": self.eval_horizon,
             "total_episodes": num_episodes,
             "task_success": succ_info,
@@ -354,6 +486,8 @@ class PlannerEvaluator:
                 "mean": peg_mean,
                 "std": peg_std,
             },
+            "uncertainty_summary": uncertainty_summary,
+            "target_a_multihorizon_rmse": target_a_mh_rmse,
             "safety_audit": safety_audit,
             "target_a_episodes": target_a_episodes,
             "target_b_episodes": target_b_episodes,

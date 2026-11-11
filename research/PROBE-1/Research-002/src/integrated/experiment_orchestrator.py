@@ -16,13 +16,13 @@ import sys
 import time
 import copy
 import json
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, List, Tuple, Optional, Sequence
 import numpy as np
 import torch
 
 from src.mining.trajectory_selector import TrajectorySelector
 from src.mining.mining_evaluator import MiningEvaluator
-from src.integrated.model_training_runner import ModelTrainingRunner
+from src.integrated.model_training_runner import ModelTrainingRunner, normalize_architecture_id
 from src.integrated.calibration_runner import (
     CalibrationRunner,
     get_phase3_task_pools,
@@ -31,8 +31,10 @@ from src.integrated.calibration_runner import (
 from src.integrated.planner_evaluator import PlannerEvaluator
 from src.integrated.safety_evaluator import SafetyEvaluator
 from src.integrated.statistical_analysis import (
+    HORIZONS,
     format_count_pct,
     compute_wilson_ci,
+    compute_multihorizon_rmse,
     compute_multihorizon_rmses,
     compute_mode_confusion_and_f1,
     compute_peg_statistics,
@@ -95,7 +97,121 @@ class ExperimentOrchestrator:
         )
         self.safety_evaluator = SafetyEvaluator(task=task)
 
-    def run_benchmark(self, output_dir: Optional[str] = None) -> Dict[str, Any]:
+    def evaluate_architecture_suite(
+        self,
+        training_episodes: List[Dict[str, Any]],
+        calib_raw_episodes: List[Dict[str, Any]],
+        test_raw_episodes: List[Dict[str, Any]],
+        architectures: Sequence[str] = ("B1", "B2", "B3", "B4"),
+        epochs: int = 45,
+        lr: Optional[float] = None,
+        run_closed_loop: bool = True,
+        closed_loop_episodes: int = 10,
+        closed_loop_start_seed: Optional[int] = None,
+        use_safety_filter: bool = True,
+        uncertainty_beta: float = 1.5,
+        ensemble_size: int = 5,
+    ) -> Dict[str, Any]:
+        """
+        Trains and evaluates B1–B4 world-model architectures independently on separated splits:
+        - B1 (DeterministicWorldModel + CEMPlanner)
+        - B2 (ProbabilisticWorldModel + aleatoric UncertaintyPenalizedCEM)
+        - B3 (EnsembleWorldModel E=5 + epistemic UncertaintyPenalizedCEM)
+        - B4 (ContactStratifiedConformalWM calibrated strictly on disjoint calibration transitions)
+        """
+        train_transitions = self.training_runner.extract_transitions(training_episodes)
+        calib_transitions = self.training_runner.extract_transitions(calib_raw_episodes)
+        test_transitions = self.mining_evaluator.extract_transitions_from_episodes(test_raw_episodes)
+
+        requested = [normalize_architecture_id(a) for a in architectures]
+        trained = self.training_runner.train_all_architectures(
+            training_transitions=train_transitions,
+            calib_transitions=calib_transitions if "B4" in requested else None,
+            architectures=requested,
+            epochs=epochs,
+            lr=lr,
+            alpha=self.alpha,
+            ensemble_size=ensemble_size,
+        )
+        models = trained["models"]
+        train_stats = trained["stats"]
+
+        cl_seed = closed_loop_start_seed
+        if cl_seed is None:
+            cl_seed = (
+                self.task_seed_pools["closed_loop_eval"][0]
+                if "closed_loop_eval" in self.task_seed_pools
+                else self.task_seed_pools["closed_loop_id"][0]
+            )
+
+        architecture_results: Dict[str, Any] = {}
+        for arch in ("B1", "B2", "B3"):
+            if arch not in models:
+                continue
+            model = models[arch]
+            offline_1step = self.mining_evaluator.evaluate_offline_predictions(model, test_transitions)
+            offline_mh = self.mining_evaluator.evaluate_multihorizon_offline(
+                model, test_raw_episodes, horizons=HORIZONS
+            )
+
+            entry: Dict[str, Any] = {
+                "architecture_id": arch,
+                "model_class": type(model.continuous_model).__name__,
+                "is_conformal_architecture": False,
+                "training_stats": train_stats[arch],
+                "offline_1step": offline_1step,
+                "offline_multihorizon_rmse": offline_mh,
+            }
+
+            if run_closed_loop:
+                cl_res = self.planner_evaluator.evaluate_policy(
+                    hybrid_wm=model,
+                    num_episodes=closed_loop_episodes,
+                    start_seed=cl_seed,
+                    use_safety_filter=use_safety_filter,
+                    architecture_id=arch,
+                    planner_type="auto",
+                    uncertainty_beta=uncertainty_beta,
+                )
+                entry["closed_loop"] = {
+                    "planner_identity": cl_res["planner_identity"],
+                    "planner_type": cl_res["planner_type"],
+                    "uncertainty_source": cl_res["uncertainty_source"],
+                    "uncertainty_beta": cl_res["uncertainty_beta"],
+                    "uncertainty_summary": cl_res["uncertainty_summary"],
+                    "task_success": cl_res["task_success"],
+                    "safety_violations": cl_res["safety_violations"],
+                    "stall_rate": cl_res["stall_rate"],
+                    "goal_progress": cl_res["goal_progress"],
+                    "planner_exploitation_gap": cl_res["planner_exploitation_gap"],
+                    "target_a_multihorizon_rmse": cl_res["target_a_multihorizon_rmse"],
+                }
+
+            architecture_results[arch] = entry
+
+        if "B4" in models:
+            b4_model = models["B4"]
+            b4_eval = self.mining_evaluator.evaluate_conformal_b4(b4_model, test_transitions)
+            architecture_results["B4"] = {
+                "architecture_id": "B4",
+                "model_class": "ContactStratifiedConformalWM",
+                "is_conformal_architecture": True,
+                "training_stats": train_stats["B4"],
+                "conformal_evaluation": b4_eval,
+            }
+
+        return {
+            "task": self.task,
+            "horizons": list(HORIZONS),
+            "architectures": architecture_results,
+        }
+
+    def run_benchmark(
+        self,
+        output_dir: Optional[str] = None,
+        architectures: Sequence[str] = ("B1", "B2", "B3", "B4"),
+        train_epochs: int = 45,
+    ) -> Dict[str, Any]:
         """
         Executes full Five-Way Integrated Evaluation across conditions M0 through M4.
         """
@@ -203,11 +319,26 @@ class ExperimentOrchestrator:
 
             training_episodes = d0_episodes + active_eps
             train_transitions = self.training_runner.extract_transitions(training_episodes)
-            print(f"    [Train] Training model on {len(training_episodes)} episodes ({len(train_transitions)} transitions)...", flush=True)
-            model = self.training_runner.train_hybrid_model(train_transitions, epochs=45)
+            print(f"    [Train] Training B1-B4 models on {len(training_episodes)} episodes ({len(train_transitions)} transitions)...", flush=True)
 
-            # Offline accuracy
+            arch_suite = self.evaluate_architecture_suite(
+                training_episodes=training_episodes,
+                calib_raw_episodes=calib_raw_episodes,
+                test_raw_episodes=test_raw_episodes,
+                architectures=architectures,
+                epochs=train_epochs,
+                run_closed_loop=True,
+                closed_loop_episodes=self.test_episodes_count,
+                closed_loop_start_seed=closed_loop_start_seed,
+                use_safety_filter=True,
+            )
+
+            # Primary B1 reference model for legacy condition-level summary + CMS-PSACD transfer gap
+            model = self.training_runner.train_hybrid_model(train_transitions, epochs=train_epochs, model_type="B1")
             offline_acc = self.mining_evaluator.evaluate_offline_predictions(model, test_offline_transitions)
+            offline_mh = self.mining_evaluator.evaluate_multihorizon_offline(
+                model, test_raw_episodes, horizons=HORIZONS
+            )
             print(f"    [Offline] State RMSE: {offline_acc['state_rmse']}, Force RMSE: {offline_acc['force_rmse']}, Mode Macro-F1: {offline_acc['mode_macro_f1']}", flush=True)
 
             # Receding-Horizon Evaluation with p-CBF filter enabled (Target A & B)
@@ -221,6 +352,7 @@ class ExperimentOrchestrator:
                 num_episodes=self.test_episodes_count,
                 start_seed=closed_loop_start_seed,
                 use_safety_filter=True,
+                architecture_id="B1",
             )
 
             # Safety filter ablation: evaluate without p-CBF
@@ -233,6 +365,7 @@ class ExperimentOrchestrator:
                 num_episodes=self.test_episodes_count,
                 start_seed=closed_loop_start_seed,
                 use_safety_filter=False,
+                architecture_id="B1",
             )
 
             # Conformal Calibration: CMS-PSACD vs Unstratified Baseline (disjoint task calibration pool)
@@ -246,6 +379,7 @@ class ExperimentOrchestrator:
                 num_episodes=self.calib_episodes_count,
                 start_seed=calib_start_seed,
                 use_safety_filter=True,
+                architecture_id="B1",
             )
             calib_a_episodes = calib_a_res["target_a_episodes"]
 
@@ -270,12 +404,6 @@ class ExperimentOrchestrator:
             cov_b_sim = calib_eval_b["cms_psacd"]["joint_simultaneous"]["rate"]
             transfer_gap = round(cov_a_sim - cov_b_sim, 4)
 
-            # Safety comparison
-            safety_comp = self.safety_evaluator.audit_safety_performance(
-                episodes_with_filter=eval_pcbf_on["safety_audit"]["failure_taxonomy"],
-                episodes_without_filter=eval_pcbf_off["safety_audit"]["failure_taxonomy"] if "failure_taxonomy" in eval_pcbf_off["safety_audit"] else None
-            ) if False else eval_pcbf_on["safety_audit"]
-
             elapsed_cond = round(time.time() - t_cond_start, 2)
             print(f"    [Result] Success: {eval_pcbf_on['task_success']['formatted']}, Transfer Gap: {transfer_gap}, Elapsed: {elapsed_cond}s", flush=True)
 
@@ -286,13 +414,17 @@ class ExperimentOrchestrator:
                 "dataset_size_transitions": len(train_transitions),
                 "mining_metadata": mining_meta,
                 "offline_accuracy": offline_acc,
+                "offline_multihorizon_rmse": offline_mh,
+                "architecture_evaluations": arch_suite["architectures"],
                 "closed_loop_performance": {
+                    "planner_identity": eval_pcbf_on["planner_identity"],
                     "task_success": eval_pcbf_on["task_success"],
                     "safety_violations": eval_pcbf_on["safety_violations"],
                     "stall_rate": eval_pcbf_on["stall_rate"],
                     "goal_progress": eval_pcbf_on["goal_progress"],
                     "mean_action_magnitude": eval_pcbf_on["mean_action_magnitude"],
                     "planner_exploitation_gap": eval_pcbf_on["planner_exploitation_gap"],
+                    "target_a_multihorizon_rmse": eval_pcbf_on["target_a_multihorizon_rmse"],
                 },
                 "calibration_ablation": {
                     "calibration_diagnostics": cms_engine.get_calibration_diagnostics(),
@@ -321,7 +453,7 @@ class ExperimentOrchestrator:
         master_report = {
             "program": "HOROS PROBE-1 — Humanoid Robotics & Physical AI",
             "project": "Research-002: Trustworthy Action-Conditioned Contact World Models",
-            "stage": "P2.5: Five-Way Integrated Evaluation",
+            "stage": "P2.5/P2.8: Integrated Evaluation",
             "task": self.task,
             "eval_horizon_steps": self.eval_horizon,
             "test_episodes_count": self.test_episodes_count,
@@ -335,7 +467,7 @@ class ExperimentOrchestrator:
             os.makedirs(output_dir, exist_ok=True)
             report_path = os.path.join(output_dir, f"p25_{self.task}_master_report.json")
             with open(report_path, "w", encoding="utf-8") as f:
-                json.dump(to_json_serializable(master_report), f, indent=2)
+                json.dump(to_json_serializable(master_report), f, indent=2, allow_nan=False)
             print(f"\n Master benchmark report saved to: {report_path}", flush=True)
 
         return master_report
