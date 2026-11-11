@@ -50,7 +50,7 @@ class ExperimentOrchestrator:
     def __init__(
         self,
         task: str = "peg_in_hole",
-        eval_horizon: int = 25,
+        eval_horizon: int = 50,
         test_episodes_count: int = 30,
         calib_episodes_count: int = 60,
         active_budget: int = 40,

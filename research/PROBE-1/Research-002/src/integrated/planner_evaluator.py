@@ -6,7 +6,7 @@ Executes receding-horizon CEM trajectory optimization across held-out evaluation
 1. Clones simulator at each decision step to isolate Target A (open-loop plan) from Target B (closed-loop future).
 2. Interleaves p-CBF safety filter runtime monitoring.
 3. Records Planner Exploitation Gap (PEG = Predicted Reward - Realized Reward).
-4. Computes downstream manipulation success, goal progress, action magnitude, and stall rate under the corrected 25-step horizon.
+4. Computes downstream manipulation success, goal progress, action magnitude, and stall rate under the 50-step closed-loop horizon.
 """
 
 from __future__ import annotations
@@ -41,7 +41,7 @@ class PlannerEvaluator:
     def __init__(
         self,
         task: str = "peg_in_hole",
-        eval_horizon: int = 25,
+        eval_horizon: int = 50,
         plan_horizon: int = 10,
         num_candidates: int = 60,
         elite_fraction: float = 0.15,
@@ -476,7 +476,7 @@ class PlannerEvaluator:
             "safety_violations": viol_info,
             "stall_rate": stall_info,
             "goal_progress": {
-                "unit": "mm_depth" if self.task == "peg_in_hole" else "meters_height",
+                "unit": "mm_depth" if self.task == "peg_in_hole" else "height_mm",
                 "mean": mean_prog,
                 "max": max_prog,
                 "std": std_prog,

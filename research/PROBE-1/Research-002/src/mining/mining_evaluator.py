@@ -7,7 +7,7 @@ Trains world models on augmented datasets (D0, D1, D2, D3, D4) and evaluates:
 2. Next-step state & contact force prediction RMSE.
 3. Multi-horizon rollout RMSE across H in {1, 3, 5, 10, 20}.
 4. Conformal calibration coverage & prediction interval widths.
-5. Downstream closed-loop manipulation performance under corrected 25-step horizon.
+5. Downstream closed-loop manipulation performance under the 50-step closed-loop horizon.
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ class MiningEvaluator:
     def __init__(
         self,
         task: str = "peg_in_hole",
-        eval_horizon: int = 25,
+        eval_horizon: int = 50,
         test_episodes_count: int = 30,
         seed: int = 42
     ):
@@ -326,7 +326,7 @@ class MiningEvaluator:
         start_seed: int = 3000
     ) -> Dict[str, Any]:
         """
-        Evaluates closed-loop CEM control performance under corrected 25-step horizon.
+        Evaluates closed-loop CEM control performance under the 50-step closed-loop horizon.
         """
         planner = CEMPlanner(
             hybrid_wm, self.action_dim, self.action_bounds,
@@ -378,6 +378,7 @@ class MiningEvaluator:
             "success_ci_95": [round(ci_low * 100, 2), round(ci_high * 100, 2)],
             "mean_goal_progress": round(float(np.mean(progress_vals)), 2),
             "max_goal_progress": round(float(np.max(progress_vals)), 2),
+            "goal_progress_unit": "mm_depth" if self.task == "peg_in_hole" else "height_mm",
             "safety_violations": f"{violation_count}/{num_episodes} ({round(violation_count/num_episodes*100, 2)}%)",
             "stall_rate": f"{stall_count}/{num_episodes} ({round(stall_count/num_episodes*100, 2)}%)",
             "mean_action_magnitude": round(float(np.mean(action_mags)), 3),

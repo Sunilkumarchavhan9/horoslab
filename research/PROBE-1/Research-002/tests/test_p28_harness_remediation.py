@@ -22,6 +22,10 @@ Covers remediation workstreams H1–H5:
   * No silent zero-replacement of missing horizons or missing Task 2 tangential forces; task isolation.
   * Full B1/B2/B3 (E=5 ensemble)/B4 conformal wiring with aleatoric & epistemic uncertainty decomposition.
   * UncertaintyPenalizedCEM planner integration preserving independent B1/B2/B3 planner identities.
+- H4: Physics & Unit Corrections:
+  * PegInHoleEnv velocity calculation prior to persistent peg_pos update across all regimes.
+  * Default closed-loop horizon H=50 across evaluator/orchestrator entry points (with override support).
+  * Task 2 height_mm unit consistency without mutating Task 1 mm_depth metrics.
 
 Author: Sunil Kumar Chavhan (sunil@horoslab.org)
 Organization: HOROS Physical Intelligence Research Group (H.R.)
@@ -80,6 +84,8 @@ from src.mining.mining_evaluator import MiningEvaluator
 from src.planners.cem_planner import CEMPlanner
 from src.planners.uncertainty_penalized_cem import UncertaintyPenalizedCEM
 from src.planners.recovery_aware_cem import RecoveryAwareCEMPlanner
+from src.environment.peg_in_hole_env import PegInHoleEnv
+from src.environment.multifinger_lift_env import MultifingerLiftEnv
 
 
 class MockContinuousDynamics(nn.Module):
@@ -1069,6 +1075,212 @@ class TestHarnessRemediationH3(unittest.TestCase):
             # Strict RFC 8259 JSON serializability
             json_str = json.dumps(to_json_serializable(suite_a), allow_nan=False)
             self.assertGreater(len(json_str), 100)
+
+
+class TestHarnessRemediationH4(unittest.TestCase):
+    """Workstream H4 — PegInHole Velocity Ordering, Closed-Loop H=50, & Height Units."""
+
+    def setUp(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+    def test_h4_01_peg_velocity_nonzero_on_accepted_displacement(self):
+        """H4-01: Peg velocity is nonzero for an accepted nonzero displacement in free and hole regimes."""
+        env = PegInHoleEnv(dt=0.02, seed=42)
+        env.reset(
+            init_pos_offset=np.array([0.0, 0.0], dtype=np.float64),
+            init_rot_offset=np.array([0.0, 0.0, 0.0], dtype=np.float64),
+        )
+
+        # 1. Free space (z > 0): step down by -2.0 mm
+        obs_free, _, _, _ = env.step(np.array([0.5, -0.25, -2.0, 0.0, 0.0, 0.0], dtype=np.float64))
+        self.assertGreater(obs_free["pos"][2], 0.0)
+        self.assertGreater(float(np.linalg.norm(obs_free["vel"])), 0.0)
+
+        # 2. Clear inside hole (z <= 0, r <= clearance): move down inside hole
+        env.peg_pos = np.array([0.0, 0.0, -5.0], dtype=np.float64)
+        obs_hole, _, _, _ = env.step(np.array([0.1, 0.0, -3.0, 0.0, 0.0, 0.0], dtype=np.float64))
+        self.assertLessEqual(obs_hole["pos"][2], 0.0)
+        self.assertGreater(float(np.linalg.norm(obs_hole["vel"])), 0.0)
+
+        # 3. Wall-contact / collision regime (z <= 0, r > clearance)
+        env.peg_pos = np.array([0.4, 0.0, -5.0], dtype=np.float64)
+        obs_coll, _, _, _ = env.step(np.array([1.0, 0.0, -2.0, 0.0, 0.0, 0.0], dtype=np.float64))
+        self.assertGreater(float(np.linalg.norm(obs_coll["vel"])), 0.0)
+
+    def test_h4_02_velocity_equals_accepted_displacement_divided_by_dt(self):
+        """H4-02: Peg velocity equals exact accepted displacement divided by dt across all regimes."""
+        dt = 0.02
+        env = PegInHoleEnv(dt=dt, seed=42)
+        obs = env.reset(
+            init_pos_offset=np.array([0.0, 0.0], dtype=np.float64),
+            init_rot_offset=np.array([0.0, 0.0, 0.0], dtype=np.float64),
+        )
+
+        # 1. Free-space displacement
+        prev_pos = obs["pos"].copy()
+        action = np.array([1.0, -0.5, -2.0, 0.0, 0.0, 0.0], dtype=np.float64)
+        obs_next, _, _, _ = env.step(action)
+        expected_vel = (obs_next["pos"] - prev_pos) / dt
+        np.testing.assert_allclose(obs_next["vel"], expected_vel, atol=1e-6)
+        np.testing.assert_allclose(obs_next["vel"], np.array([50.0, -25.0, -100.0]), atol=1e-6)
+
+        # 2. Clear inside hole (z <= 0, radial_dist <= clearance)
+        env.peg_pos = np.array([0.05, -0.05, -10.0], dtype=np.float64)
+        prev_hole = env.peg_pos.copy()
+        obs_hole, _, _, _ = env.step(np.array([0.05, 0.05, -4.0, 0.0, 0.0, 0.0], dtype=np.float64))
+        expected_hole_vel = (obs_hole["pos"] - prev_hole) / dt
+        np.testing.assert_allclose(obs_hole["vel"], expected_hole_vel, atol=1e-6)
+        np.testing.assert_allclose(obs_hole["vel"], np.array([2.5, 2.5, -200.0]), atol=1e-6)
+
+        # 3. Collision-constrained wall contact (z <= 0, radial_dist > clearance)
+        env.peg_pos = np.array([0.4, 0.0, -8.0], dtype=np.float64)
+        prev_coll = env.peg_pos.copy()
+        cand_action = np.array([2.0, 0.0, -2.0, 0.0, 0.0, 0.0], dtype=np.float64)
+        unconstrained_target = prev_coll + cand_action[:3]
+        obs_coll, _, _, _ = env.step(cand_action)
+        self.assertFalse(np.allclose(obs_coll["pos"], unconstrained_target))  # Collision modified pos
+        expected_coll_vel = (obs_coll["pos"] - prev_coll) / dt
+        np.testing.assert_allclose(obs_coll["vel"], expected_coll_vel, atol=1e-6)
+
+    def test_h4_03_stationary_peg_produces_zero_velocity(self):
+        """H4-03: Zero displacement command keeps peg stationary with exactly zero velocity."""
+        env = PegInHoleEnv(dt=0.02, seed=42)
+        env.reset(
+            init_pos_offset=np.array([0.0, 0.0], dtype=np.float64),
+            init_rot_offset=np.array([0.0, 0.0, 0.0], dtype=np.float64),
+        )
+        zero_act = np.zeros(6, dtype=np.float64)
+
+        # Free space stationary step
+        obs_free, _, _, _ = env.step(zero_act)
+        np.testing.assert_allclose(obs_free["vel"], np.zeros(3), atol=1e-12)
+
+        # Clear hole stationary step
+        env.peg_pos = np.array([0.0, 0.0, -10.0], dtype=np.float64)
+        obs_hole, _, _, _ = env.step(zero_act)
+        np.testing.assert_allclose(obs_hole["vel"], np.zeros(3), atol=1e-12)
+
+    def test_h4_04_closed_loop_default_horizon_is_50(self):
+        """H4-04: Default closed-loop horizon is exactly H=50 while multi-horizon forecast horizons remain untouched."""
+        pe_lift = PlannerEvaluator(task="multifinger_lift", plan_horizon=2, num_candidates=4, cem_iterations=1, seed=42)
+        pe_peg = PlannerEvaluator(task="peg_in_hole", plan_horizon=2, num_candidates=4, cem_iterations=1, seed=42)
+        orch = ExperimentOrchestrator(task="peg_in_hole", calib_episodes_count=60, seed=42)
+        me = MiningEvaluator(task="multifinger_lift", seed=42)
+
+        self.assertEqual(pe_lift.eval_horizon, 50)
+        self.assertEqual(pe_peg.eval_horizon, 50)
+        self.assertEqual(orch.eval_horizon, 50)
+        self.assertEqual(me.eval_horizon, 50)
+        # Multi-horizon forecast steps (1, 3, 5, 10, 20) remain untouched
+        self.assertEqual(tuple(HORIZONS), (1, 3, 5, 10, 20))
+
+        # Execute closed-loop PlannerEvaluator using default eval_horizon=50
+        dummy_wm = HybridContactStateModel(
+            MockContinuousDynamics(23, 5), ContactModeClassifier(23, 5, hidden_dim=16, num_modes=7)
+        )
+        res = pe_lift.evaluate_policy(dummy_wm, num_episodes=1, start_seed=6000, use_safety_filter=True)
+        self.assertEqual(res["eval_horizon_steps"], 50)
+        self.assertEqual(res["target_b_episodes"][0]["steps"], 50)
+        self.assertEqual(len(res["target_b_episodes"][0]["actions"]), 50)
+
+    def test_h4_05_explicit_horizon_overrides_remain_functional(self):
+        """H4-05: Explicit closed-loop eval_horizon overrides remain respected across entry points."""
+        pe = PlannerEvaluator(
+            task="peg_in_hole", eval_horizon=12, plan_horizon=2, num_candidates=4, cem_iterations=1, seed=42
+        )
+        orch = ExperimentOrchestrator(task="multifinger_lift", eval_horizon=35, calib_episodes_count=60, seed=42)
+        me = MiningEvaluator(task="peg_in_hole", eval_horizon=15, seed=42)
+
+        self.assertEqual(pe.eval_horizon, 12)
+        self.assertEqual(orch.eval_horizon, 35)
+        self.assertEqual(me.eval_horizon, 15)
+
+        dummy_wm = HybridContactStateModel(
+            MockContinuousDynamics(15, 6), ContactModeClassifier(15, 6, hidden_dim=16, num_modes=7)
+        )
+        res = pe.evaluate_policy(dummy_wm, num_episodes=1, start_seed=6200, use_safety_filter=True)
+        self.assertEqual(res["eval_horizon_steps"], 12)
+        self.assertEqual(res["target_b_episodes"][0]["steps"], 12)
+
+    def test_h4_06_task2_goal_progress_label_and_numeric_units_agree(self):
+        """
+        H4-06: Task 2 goal_progress uses millimeter label 'height_mm' (never 'meters_height')
+        and its numeric value matches MultifingerLiftEnv obj_pos[2] in millimeters (1:1).
+        """
+        # World model whose predicted next state rewards squeezing & lifting so CEM actually lifts
+        class LiftIncentiveWM(nn.Module):
+            def forward(self, s: torch.Tensor, a: torch.Tensor) -> torch.Tensor:
+                out = s.clone()
+                out[:, 12:16] = torch.clamp(out[:, 12:16] + a[:, :4] * 2.0, min=0.0)
+                out[:, 22] = out[:, 22] + torch.clamp(a[:, 4], min=-2.0, max=5.0)
+                return out
+
+        pe = PlannerEvaluator(
+            task="multifinger_lift", eval_horizon=6, plan_horizon=2, num_candidates=24, cem_iterations=2, seed=42
+        )
+        wm = HybridContactStateModel(LiftIncentiveWM(), ContactModeClassifier(23, 5, hidden_dim=16, num_modes=7))
+        res = pe.evaluate_policy(wm, num_episodes=1, start_seed=6000, use_safety_filter=False)
+
+        self.assertEqual(res["goal_progress"]["unit"], "height_mm")
+        self.assertNotEqual(res["goal_progress"]["unit"], "meters_height")
+
+        # Numeric check: final state obj_pos[2] is at index 22 (in mm), must agree 1:1 with goal_progress
+        final_realized_s = res["target_b_episodes"][0]["realized_states"][-1]
+        expected_height_mm = round(max(0.0, float(final_realized_s[22])), 4)
+        self.assertAlmostEqual(res["target_b_episodes"][0]["goal_progress"], expected_height_mm, places=4)
+        self.assertAlmostEqual(res["goal_progress"]["mean"], expected_height_mm, places=4)
+
+        # MiningEvaluator additive unit field also reports height_mm
+        me = MiningEvaluator(task="multifinger_lift", eval_horizon=4, seed=42)
+        ds = me.evaluate_downstream_manipulation(wm, num_episodes=1, start_seed=6000)
+        self.assertEqual(ds["goal_progress_unit"], "height_mm")
+
+    def test_h4_07_task1_metrics_unchanged_by_task2_unit_correction(self):
+        """H4-07: Task 1 PegInHole goal_progress ('mm_depth', 15.0 - z_final) remains unaltered."""
+        pe = PlannerEvaluator(
+            task="peg_in_hole", eval_horizon=5, plan_horizon=2, num_candidates=8, cem_iterations=1, seed=42
+        )
+        wm = HybridContactStateModel(
+            MockContinuousDynamics(15, 6), ContactModeClassifier(15, 6, hidden_dim=16, num_modes=7)
+        )
+        res = pe.evaluate_policy(wm, num_episodes=1, start_seed=6200, use_safety_filter=True)
+
+        self.assertEqual(res["goal_progress"]["unit"], "mm_depth")
+        final_z = float(res["target_b_episodes"][0]["realized_states"][-1][2])
+        expected_depth_mm = round(max(0.0, 15.0 - final_z), 4)
+        self.assertAlmostEqual(res["target_b_episodes"][0]["goal_progress"], expected_depth_mm, places=4)
+        self.assertAlmostEqual(res["goal_progress"]["mean"], expected_depth_mm, places=4)
+
+    def test_h4_08_collision_constrained_wedging_and_wall_contact_velocity(self):
+        """
+        H4-08: Under two-point wedging (stratum 3) and wall collision (stratum 2), velocity
+        tracks the constrained accepted displacement rather than the unconstrained target command.
+        """
+        dt = 0.02
+        env = PegInHoleEnv(dt=dt, clearance=0.50, seed=42)
+        env.reset(
+            init_pos_offset=np.array([0.0, 0.0], dtype=np.float64),
+            init_rot_offset=np.array([0.0, 0.0, 0.0], dtype=np.float64),
+        )
+
+        # Drive directly into deep insertion with tilt > critical_wedge_angle (~0.716 deg) & r > clearance
+        env.peg_pos = np.array([0.2, 0.0, -10.0], dtype=np.float64)
+        env.peg_rot = np.array([2.5, 0.0, 0.0], dtype=np.float64)
+        prev_pos = env.peg_pos.copy()
+
+        # Command large radial wall penetration + downward insertion (-3.0 mm)
+        action = np.array([1.5, 0.0, -3.0, 0.5, 0.0, 0.0], dtype=np.float64)
+        unconstrained_dz = -3.0
+        obs_wedge, _, _, info_wedge = env.step(action)
+
+        self.assertEqual(info_wedge["stratum"], 3)  # Wedging
+        # Wedging attenuates vertical progress to 0.1 * dz (-0.3 mm instead of -3.0 mm)
+        accepted_disp = obs_wedge["pos"] - prev_pos
+        self.assertLess(abs(accepted_disp[2]), abs(unconstrained_dz))
+        # Velocity matches constrained accepted displacement / dt, NOT unconstrained -3.0 / dt
+        np.testing.assert_allclose(obs_wedge["vel"], accepted_disp / dt, atol=1e-6)
+        self.assertAlmostEqual(obs_wedge["vel"][2], -0.3 / dt, places=4)
 
 
 if __name__ == "__main__":
