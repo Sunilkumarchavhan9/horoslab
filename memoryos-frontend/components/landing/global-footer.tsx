@@ -9,6 +9,7 @@ import {
   ClaudeLogo, GeminiLogo, GrokLogo, PerplexityLogo
 } from "@/components/horos/primitives/brand-icons";
 import { SectionDivider } from "@/components/landing/section-divider";
+import { NvidiaInceptionBadge } from "@/components/landing/nvidia-inception-badge";
 
 export function GlobalFooter() {
   return (
@@ -93,7 +94,7 @@ export function GlobalFooter() {
           <div className="flex flex-col items-end">
 
             {/* Nav Links */}
-            <div className="flex flex-col items-end gap-3 mb-10 w-full">
+            <div className="flex flex-col items-end gap-3 mb-7 w-full">
               <div className="flex items-center gap-x-6">
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Intelligence Agent</a>
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Capability Fabric</a>
@@ -107,6 +108,11 @@ export function GlobalFooter() {
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">News</a>
                 <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Contact</a>
               </div>
+            </div>
+
+            {/* NVIDIA Inception Program */}
+            <div className="mb-6 flex justify-end">
+              <NvidiaInceptionBadge />
             </div>
 
             {/* Ask AI about HOROS */}

@@ -2,6 +2,7 @@
 
 import { GlobalFooter } from "@/components/landing/global-footer";
 import { SectionDivider } from "@/components/landing/section-divider";
+import { NvidiaInceptionBadge } from "@/components/landing/nvidia-inception-badge";
 import React, { useState, useEffect } from "react";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { LandingFooter } from "@/components/landing/landing-footer";
@@ -266,10 +267,10 @@ const getBorderClasses = (index: number, total: number) => {
   if (index % 3 !== 2) classes += " md:border-r";
 
   if (Math.floor(index / 3) < Math.ceil(total / 3) - 1) {
-      classes += " border-b";
-    } else {
-      classes += " border-b md:border-b-0";
-    }
+    classes += " border-b";
+  } else {
+    classes += " border-b md:border-b-0";
+  }
 
   return classes;
 };
@@ -326,7 +327,7 @@ export default function EmbeddingsPage() {
   const [typedMsg2, setTypedMsg2] = useState("");
   const [visibleStep, setVisibleStep] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
-  
+
   const [isTypingCode, setIsTypingCode] = useState(true);
   const [typedCodeText, setTypedCodeText] = useState("");
 
@@ -465,24 +466,24 @@ export default function EmbeddingsPage() {
         .chat-scroll:hover::-webkit-scrollbar-thumb { background-color: #666666; }
       ` }} />
 
-            {/* GLOBAL VERTICAL DASHED LINES */}
-        {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
-            {/* Left margin (14%) with 7% line bisecting it */}
-            <div className="relative border-r border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
-              </div>
-            {/* Center content (72%) */}
-            <div />
-            {/* Right margin (14%) with 93% line bisecting it */}
-            <div className="relative border-l border-dashed border-[#333]">
-                <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
-              </div>
+      {/* GLOBAL VERTICAL DASHED LINES */}
+      {/* These run the entire height of the page. The 72% middle column perfectly aligns with the navbar. The 7% columns subdivide the outer margins. */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
+          {/* Left margin (14%) with 7% line bisecting it */}
+          <div className="relative border-r border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 right-[120px] border-l border-dashed border-[#333]" />
+          </div>
+          {/* Center content (72%) */}
+          <div />
+          {/* Right margin (14%) with 93% line bisecting it */}
+          <div className="relative border-l border-dashed border-[#333]">
+            <div className="absolute top-0 bottom-0 left-[120px] border-l border-dashed border-[#333]" />
           </div>
         </div>
+      </div>
 
-        <div className="relative z-[100]">
+      <div className="relative z-[100]">
         <LandingNavbar
           onOpenSignIn={() => {
             setAuthModalMode("sign-in");
@@ -499,7 +500,7 @@ export default function EmbeddingsPage() {
         {/* Hero Section Container */}
         <div className="w-full relative mt-20 mb-20">
           {/* Infinite Horizontal Lines bounding the hero section */}
-            <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
+          <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
           {/* Crosshairs at exact intersections with the global vertical lines */}
           <div className="absolute inset-0 pointer-events-none z-20">
@@ -576,7 +577,7 @@ export default function EmbeddingsPage() {
           {/* Grid with End-to-End Horizontal Lines */}
           <div className="w-full relative z-10 pb-24">
             {/* Constrained Horizontal Borders */}
-            
+
             <SectionDivider position="bottom" className="absolute bottom-0 left-0 w-full z-20" />
 
             {/* Double Vertical Borders & Crosshairs */}
@@ -655,133 +656,133 @@ export default function EmbeddingsPage() {
 
         {/* Full-width dashed line separator */}
         {/* Comparison Table Section */}
-          <div className="w-full relative z-10 py-24">
-            <div className="flex flex-col items-center mb-16 px-4">
-              <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">Three ways to ship embeddings
-              </h2>
-              <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
-                Most teams pick between speed and control. Horos keeps both in one workflow.
-                <br /><br />
-                Deployment comparison for embeddings across Horos, closed APIs, and DIY self-hosting.
-              </p>
-            </div>
-
-            {/* Table with End-to-End Horizontal Lines */}
-            <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
-              {/* Double Horizontal Border Top */}
-              
-              {/* Double Horizontal Border Bottom */}
-              
-
-              {/* Double Vertical Borders & Crosshairs */}
-              <div className="absolute inset-0 pointer-events-none z-20">
-                <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative">
-                  {/* Left Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
-                  </div>
-
-                  <div />
-
-                  {/* Right Margin relative wrapper */}
-                  <div className="relative h-full">
-                    {/* Masking strip to hide single global background line under the border */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
-                    {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
-                    <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
-
-                    {/* Top Crosshairs */}
-                    <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
-                    {/* Bottom Crosshairs */}
-                    <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                    <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Table Content */}
-              <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-30">
-                <div />
-                <div className="min-w-0 bg-[#151515]">
-                  {/* Table Header */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
-                    <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
-                      <div className="absolute top-2.5 right-3 flex items-center">
-                        <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
-                      </div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
-                          <HorosLogo size={16} />
-                        </div>
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Key size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed embedding APIs</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
-                    </div>
-                    <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Cpu size={16} className="text-[#C8C7BA]" />
-                        <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
-                      </div>
-                      <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
-                    </div>
-                  </div>
-
-                  {/* Table Rows */}
-                  <div className="border-l border-r border-b border-dashed border-[#333]">
-                    {COMPARISON_ROWS.map((row, idx) => (
-                      <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
-                        <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
-                          <div className="flex items-center gap-3">
-                            <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
-                            <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">{row.label}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
-                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
-                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
-                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.closed.title}</h4>
-                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.closed.desc}</p>
-                        </div>
-
-                        <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
-                          <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.diy.title}</h4>
-                          <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.diy.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div />
-              </div>
-            </div>
+        <div className="w-full relative z-10 py-24">
+          <div className="flex flex-col items-center mb-16 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-medium tracking-tight text-[#f2efe8] mb-2.5 text-center mt-6 md:mt-8">Three ways to ship embeddings
+            </h2>
+            <p className="text-[#C8C7BA] text-[13.5px] sm:text-[14.5px] font-sans leading-relaxed text-center max-w-2xl mx-auto">
+              Most teams pick between speed and control. Horos keeps both in one workflow.
+              <br /><br />
+              Deployment comparison for embeddings across Horos, closed APIs, and DIY self-hosting.
+            </p>
           </div>
 
-{/* Sandbox Showcase Section */}
+          {/* Table with End-to-End Horizontal Lines */}
+          <div className="w-full relative z-10 bg-[#151515]/20 pt-[25px] pb-[10px]">
+            {/* Double Horizontal Border Top */}
+
+            {/* Double Horizontal Border Bottom */}
+
+
+            {/* Double Vertical Borders & Crosshairs */}
+            <div className="absolute inset-0 pointer-events-none z-20">
+              <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative">
+                {/* Left Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Left (outer line on 14% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] right-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 right-0 w-[3px] h-[3px] bg-[#888] translate-x-[1px] translate-y-[1px]" />
+                </div>
+
+                <div />
+
+                {/* Right Margin relative wrapper */}
+                <div className="relative h-full">
+                  {/* Masking strip to hide single global background line under the border */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-1px] w-[2px] bg-[#151515] z-10" />
+                  {/* Double Vertical Border Right (outer line on 86% borderline, inner line pushed inside 10px) */}
+                  <div className="absolute top-[10px] bottom-[10px] left-[-10px] w-[10px] border-l border-r border-dashed border-[#333] z-20" />
+
+                  {/* Top Crosshairs */}
+                  <div className="absolute top-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  <div className="absolute top-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] -translate-y-[1px]" />
+                  {/* Bottom Crosshairs */}
+                  <div className="absolute bottom-0 left-0 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                  <div className="absolute bottom-0 left-1/2 w-[3px] h-[3px] bg-[#888] -translate-x-[1px] translate-y-[1px]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Table Content */}
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%] relative z-30">
+              <div />
+              <div className="min-w-0 bg-[#151515]">
+                {/* Table Header */}
+                <div className="grid grid-cols-1 md:grid-cols-4 border-t border-l border-r border-dashed border-[#333]">
+                  <div className="hidden md:flex items-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#C8C7BA] uppercase">What Matters</span>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333] relative">
+                    <div className="absolute top-2.5 right-3 flex items-center">
+                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#75bf00] uppercase">Recommended</span>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-7 h-7 bg-[#111] border border-[#333] flex items-center justify-center rounded-sm shrink-0">
+                        <HorosLogo size={16} />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Horos</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Fast path with model control and export.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b md:border-r border-dashed border-[#333]">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Key size={16} className="text-[#C8C7BA]" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">Closed embedding APIs</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Per-call, hosted.</p>
+                  </div>
+                  <div className="flex flex-col justify-center px-4 py-4 lg:px-5 border-b border-dashed border-[#333]">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Cpu size={16} className="text-[#C8C7BA]" />
+                      <span className="text-[15px] sm:text-[16px] font-semibold text-[#F0EFE2]">DIY self-hosting</span>
+                    </div>
+                    <p className="text-[#C8C7BA] text-[12px] sm:text-[13px] leading-snug">Full control, heavy operations.</p>
+                  </div>
+                </div>
+
+                {/* Table Rows */}
+                <div className="border-l border-r border-b border-dashed border-[#333]">
+                  {COMPARISON_ROWS.map((row, idx) => (
+                    <div key={idx} className="group grid grid-cols-1 md:grid-cols-4 border-b border-dashed border-[#333] last:border-b-0 hover:bg-[#171915] transition-colors duration-200">
+                      <div className="flex items-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] min-h-[72px]">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[#75bf00] font-mono text-[12px] font-bold">{row.num}</span>
+                          <span className="text-[13px] sm:text-[13.5px] font-medium text-[#F0EFE2]">{row.label}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333] bg-[#75bf00]/[0.02]">
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#75bf00] mb-1 leading-tight">{row.horos.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.horos.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4 md:border-r border-dashed border-[#333]">
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.closed.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.closed.desc}</p>
+                      </div>
+
+                      <div className="flex flex-col justify-center px-4 py-3.5 lg:px-5 lg:py-4">
+                        <h4 className="text-[12.5px] sm:text-[13px] font-medium text-[#F0EFE2] mb-1 leading-tight">{row.diy.title}</h4>
+                        <p className="text-[#A0A098] text-[11.5px] sm:text-[12px] leading-relaxed font-sans">{row.diy.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div />
+            </div>
+          </div>
+        </div>
+
+        {/* Sandbox Showcase Section */}
         <div className="w-full relative z-10 py-24">
           {/* Top Divider for Sandbox Section */}
           <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
@@ -879,9 +880,9 @@ export default function EmbeddingsPage() {
                       <p className="text-[#C8C7BA] text-[13px] leading-[26px] mt-2">
                         <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mr-1"><BAAILogo size={11} /> BGE-M3</span>
                         with the cross-encoder reranker. <span className="whitespace-nowrap">Serve with
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><VLLMLogo size={11} /> vLLM</span>
-                        on a single
-                        <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><NvidiaLogo size={11} /> L4</span>.</span>
+                          <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><VLLMLogo size={11} /> vLLM</span>
+                          on a single
+                          <span className="inline-flex items-center gap-1 bg-[#151515] border border-[#333] px-1.5 py-0.5 rounded text-[#C8C7BA] align-middle mx-1"><NvidiaLogo size={11} /> L4</span>.</span>
                       </p>
                     </div>
 
@@ -1032,7 +1033,7 @@ export default function EmbeddingsPage() {
                         <div className="flex gap-1.5">
                           <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Capabilities</span>
                           <span className="bg-[#222] border border-[#333] text-[9px] text-[#C8C7BA] font-bold px-2 py-0.5 rounded-sm">@Outcomes</span>
-                          
+
                         </div>
                         <button className="w-6 h-6 bg-[#75bf00] hover:bg-[#85cf00] transition-colors flex items-center justify-center text-black font-bold rounded-sm">
                           <ArrowUp size={14} strokeWidth={2.5} />
@@ -1061,7 +1062,7 @@ export default function EmbeddingsPage() {
                     >
                       <ChevronRight size={14} className={activeFile === "capability.ts" ? "text-[#75bf00]" : "text-[#555]"} /> capability.ts
                     </button>
-                    <button 
+                    <button
                       onClick={() => selectFileManually("mission.json")}
                       className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "mission.json" ? "text-[#75bf00] font-semibold" : "text-[#C8C7BA] hover:text-[#F0EFE2]"}`}
                     >
@@ -1080,7 +1081,7 @@ export default function EmbeddingsPage() {
                         >
                           <ChevronRight size={14} className={activeFile === "capability.ts" ? "text-[#75bf00]" : "text-[#444]"} /> capability.ts
                         </button>
-                        <button 
+                        <button
                           onClick={() => selectFileManually("mission.json")}
                           className={`flex items-center gap-2 px-2 py-1.5 transition-colors w-full text-left rounded-[4px] ${activeFile === "mission.json" ? "text-[#75bf00] font-semibold" : "text-[#666] hover:text-[#C8C7BA]"}`}
                         >
@@ -1261,7 +1262,7 @@ export default function EmbeddingsPage() {
                 </div>
 
                 {/* Models Grid */}
-              <div className="w-full border-y border-dashed border-[#333]">
+                <div className="w-full border-y border-dashed border-[#333]">
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     {isLoading ? (
                       <div className="col-span-3 flex justify-center items-center py-24 text-[#C8C7BA] font-mono text-[14px]">
@@ -1296,7 +1297,7 @@ export default function EmbeddingsPage() {
                       ))
                     )}
                   </div>
-                  
+
                 </div>
               </div>
               <div />
@@ -1309,95 +1310,95 @@ export default function EmbeddingsPage() {
           </div>
 
           {/* Tuning Section */}
-        <div className="w-full relative z-10 pt-4 sm:pt-6 pb-20">
-          {/* Heading */}
-          <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
-            <div />
-            <div className="min-w-0">
-              <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
-                What horosInfra tunes
-              </h2>
-              <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
-                Every stage of the pipeline, retuned for optimal embedding throughput and vector search.
-              </p>
+          <div className="w-full relative z-10 pt-4 sm:pt-6 pb-20">
+            {/* Heading */}
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
+              <div />
+              <div className="min-w-0">
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-medium tracking-tight text-[#F0EFE2] mb-2.5 sm:mb-3 text-center max-w-2xl mx-auto leading-tight">
+                  What horosInfra tunes
+                </h2>
+                <p className="text-[#A0A098] text-[13px] sm:text-[13.5px] font-mono leading-relaxed text-center max-w-lg mx-auto mb-8 sm:mb-10">
+                  Every stage of the pipeline, retuned for optimal embedding throughput and vector search.
+                </p>
 
-              {/* Tunes Grid */}
-              <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
-                <div className="grid grid-cols-1 md:grid-cols-3 w-full">
-                  
-                  {/* Row 1 */}
-                  <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
-                    <div className="text-[#75bf00]">
-                      <ScanSearch size={32} strokeWidth={1.5} />
+                {/* Tunes Grid */}
+                <div className="flex flex-col w-full border-t border-b border-dashed border-[#333]">
+                  <div className="grid grid-cols-1 md:grid-cols-3 w-full">
+
+                    {/* Row 1 */}
+                    <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
+                      <div className="text-[#75bf00]">
+                        <ScanSearch size={32} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">Batch indexing</h3>
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                        Zero-padding sequence packing for offline indexing. Optimal context chunking on L4.
+                      </p>
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Batch indexing</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Zero-padding sequence packing for offline indexing. Optimal context chunking on L4.
-                    </p>
-                  </div>
 
-                  <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
-                    <div className="text-[#75bf00]">
-                      <Zap size={32} strokeWidth={1.5} />
+                    <div className="px-10 py-10 border-b md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Zap size={32} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">Streaming embed</h3>
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                        Zero-cold-start embedding via CapabilityFabric. Sub-10ms memory retrieval.
+                      </p>
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Streaming embed</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Zero-cold-start embedding via CapabilityFabric. Sub-10ms memory retrieval.
-                    </p>
-                  </div>
 
-                  <div className="px-10 py-10 border-b border-dashed border-[#333] flex flex-col gap-5 items-start">
-                    <div className="text-[#75bf00]">
-                      <Sliders size={32} strokeWidth={1.5} />
+                    <div className="px-10 py-10 border-b border-dashed border-[#333] flex flex-col gap-5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Sliders size={32} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">Reranker fusion</h3>
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                        BGE and E5 cross-encoders fused natively on-GPU. Single execution graph for top-k.
+                      </p>
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Reranker fusion</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      BGE and E5 cross-encoders fused natively on-GPU. Single execution graph for top-k.
-                    </p>
-                  </div>
 
-                  {/* Row 2 */}
-                  <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
-                    <div className="text-[#75bf00]">
-                      <Layers size={32} strokeWidth={1.5} />
+                    {/* Row 2 */}
+                    <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Layers size={32} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">Embedding serving sweep</h3>
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                        Auto-tune INT8/FP8 quantization and token limits. Maximum recall on MTEB benchmarks.
+                      </p>
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Embedding serving sweep</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Auto-tune INT8/FP8 quantization and token limits. Maximum recall on MTEB benchmarks.
-                    </p>
-                  </div>
 
-                  <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
-                    <div className="text-[#75bf00]">
-                      <Database size={32} strokeWidth={1.5} />
+                    <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-dashed border-[#333] flex flex-col gap-5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Database size={32} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">Vector DB sync</h3>
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                        Zero-copy network transfer directly to pgvector. Fully managed vector sink.
+                      </p>
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Vector DB sync</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Zero-copy network transfer directly to pgvector. Fully managed vector sink.
-                    </p>
-                  </div>
 
-                  <div className="px-10 py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-5 items-start">
-                    <div className="text-[#75bf00]">
-                      <Workflow size={32} strokeWidth={1.5} />
+                    <div className="px-10 py-10 border-b md:border-b-0 border-dashed border-[#333] flex flex-col gap-5 items-start">
+                      <div className="text-[#75bf00]">
+                        <Workflow size={32} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-[20px] font-medium text-[#F0EFE2]">Per-stage scheduling</h3>
+                      <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
+                        Dynamic GPU allocation via IntentEngine. 100% compute saturation during retrieval.
+                      </p>
                     </div>
-                    <h3 className="text-[20px] font-medium text-[#F0EFE2]">Per-stage scheduling</h3>
-                    <p className="text-[#C8C7BA] text-[16px] leading-relaxed">
-                      Dynamic GPU allocation via IntentEngine. 100% compute saturation during retrieval.
-                    </p>
-                  </div>
 
+                  </div>
                 </div>
+
               </div>
-
+              <div />
             </div>
-            <div />
           </div>
-        </div>
 
-        {/* Try this pipeline Section */}
-            <div className="w-full relative z-10 py-24">
-              <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
+          {/* Try this pipeline Section */}
+          <div className="w-full relative z-10 py-24">
+            <SectionDivider position="top" className="absolute top-0 left-0 w-full z-20" />
             <div className="w-full grid grid-cols-1 lg:grid-cols-[10%_80%_10%] xl:grid-cols-[14%_72%_14%] 2xl:grid-cols-[18%_64%_18%]">
               <div className="border-r border-dashed border-[#333]" />
               <div className="flex flex-col items-center">
@@ -1464,8 +1465,8 @@ export default function EmbeddingsPage() {
                   key={idx}
                   onClick={() => setActiveFaq(idx)}
                   className={`px-4 py-2.5 text-sm md:text-base font-medium transition-colors ${activeFaq === idx
-                      ? "bg-[#75bf00] text-black"
-                      : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
+                    ? "bg-[#75bf00] text-black"
+                    : "bg-[#1f1f1f] text-[#C8C7BA] hover:bg-[#2a2a2a] hover:text-[#f2efe8]"
                     }`}
                 >
                   {faq.question}
@@ -1574,7 +1575,7 @@ export default function EmbeddingsPage() {
             <div className="absolute inset-0 pointer-events-none z-0">
               <div className="hidden md:block absolute hidden md:block left-[14%] lg:left-[18%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
               <div className="hidden md:block absolute hidden md:block left-[86%] lg:left-[82%] top-0 bottom-0 w-[1px] border-l border-dashed border-[#333]" />
-               
+
             </div>
 
             {/* --- DIVIDER --- */}
@@ -1624,40 +1625,40 @@ export default function EmbeddingsPage() {
                   </div>
                   <p className="text-[#63625C] text-[15px] mb-6 font-medium">© 2026 horosInfra. All rights reserved.</p>
 
-            {/* Social Icons */}
-            <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
-              <a
-                href="https://github.com/Sunilkumarchavhan9/horoslab"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#F0EFE2] transition-colors"
-                aria-label="GitHub"
-              >
-                <GithubLogo size={18} />
-              </a>
-              <a
-                href="https://x.com/Horoslabs"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#F0EFE2] transition-colors"
-                aria-label="X (Twitter)"
-              >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-                </svg>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/horoslab"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#F0EFE2] transition-colors"
-                aria-label="LinkedIn"
-              >
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-              </a>
-            </div>
+                  {/* Social Icons */}
+                  <div className="flex items-center gap-4 mb-8 text-[#C8C7BA]">
+                    <a
+                      href="https://github.com/Sunilkumarchavhan9/horoslab"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-[#F0EFE2] transition-colors"
+                      aria-label="GitHub"
+                    >
+                      <GithubLogo size={18} />
+                    </a>
+                    <a
+                      href="https://x.com/Horoslabs"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-[#F0EFE2] transition-colors"
+                      aria-label="X (Twitter)"
+                    >
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                      </svg>
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/company/horoslab"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-[#F0EFE2] transition-colors"
+                      aria-label="LinkedIn"
+                    >
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                      </svg>
+                    </a>
+                  </div>
 
                   {/* Buttons */}
                   <div className="flex items-center gap-3">
@@ -1675,7 +1676,7 @@ export default function EmbeddingsPage() {
                 {/* Right Column */}
                 <div className="flex flex-col items-end">
                   {/* Nav Links */}
-                  <div className="flex flex-col items-end gap-3 mb-10 w-full">
+                  <div className="flex flex-col items-end gap-3 mb-7 w-full">
                     <div className="flex items-center gap-x-6">
                       <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Intelligence Agent</a>
                       <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Capability Fabric</a>
@@ -1689,6 +1690,11 @@ export default function EmbeddingsPage() {
                       <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">News</a>
                       <a href="#" className="text-[#C8C7BA] hover:text-[#F0EFE2] text-[13px] font-medium transition-colors">Contact</a>
                     </div>
+                  </div>
+
+                  {/* NVIDIA Inception Program */}
+                  <div className="mb-6 flex justify-end">
+                    <NvidiaInceptionBadge />
                   </div>
 
                   {/* Ask AI about Horos */}
