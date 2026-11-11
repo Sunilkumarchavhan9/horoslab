@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import time
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 r002_root = os.path.abspath(os.path.join(current_dir, ".."))
@@ -63,6 +64,7 @@ def run_phase34_training_and_calibration(
     checkpoint_root = checkpoint_root or os.path.join(r002_root, "checkpoints", "phase3_4")
     report_path = report_path or os.path.join(checkpoint_root, "phase34_training_report.json")
 
+    t_start = time.time()
     verify_disjoint_seed_pools()
     with open(manifest_path, "r", encoding="utf-8") as f:
         manifest = json.load(f)
@@ -79,6 +81,7 @@ def run_phase34_training_and_calibration(
         seed=42,
     )
 
+    dataset_splits_summary = {}
     tasks_report = {}
     for task in PHASE34_TASKS:
         m0_info = manifest["splits"][f"{task}__M0_passive"]
@@ -89,9 +92,24 @@ def run_phase34_training_and_calibration(
         m4_path = os.path.join(dataset_dir, m4_info["npz_filename"])
         cal_path = os.path.join(dataset_dir, cal_info["npz_filename"])
 
-        for p, info in ((m0_path, m0_info), (m4_path, m4_info), (cal_path, cal_info)):
-            if _sha256_file(p) != info["sha256"]:
+        for split_k, p, info in (
+            (f"{task}__M0_passive", m0_path, m0_info),
+            (f"{task}__M4_acmm", m4_path, m4_info),
+            (f"{task}__calibration", cal_path, cal_info),
+        ):
+            actual_sha = _sha256_file(p)
+            if actual_sha != info["sha256"]:
                 raise RuntimeError(f"Checksum mismatch for dataset bundle {p}.")
+            dataset_splits_summary[split_k] = {
+                "npz_filename": info["npz_filename"],
+                "sha256": actual_sha,
+                "num_episodes": int(info["num_episodes"]),
+                "num_transitions": int(info["num_transitions"]),
+                "seed_range": list(info["seed_range"]),
+                "state_dim": int(info["state_dim"]),
+                "action_dim": int(info["action_dim"]),
+                "mode_histogram": dict(info["mode_histogram"]),
+            }
 
         m0_bundle = load_phase34_dataset_bundle(m0_path)
         m4_bundle = load_phase34_dataset_bundle(m4_path)
@@ -107,9 +125,32 @@ def run_phase34_training_and_calibration(
         )
 
     master = {
-        "stage": "Phase 3.4 Training & Conformal Calibration",
+        "stage": "Phase 3.4.2-3.4.5 Training & Conformal Calibration",
+        "execution_boundary": (
+            "Phase 3.4.2-3.4.5 ONLY (B1, B2, B3 E=5 training + B4 calibration). "
+            "Offline test (120 ep) and closed-loop (450 ep) Phase 3.5 pools not executed."
+        ),
+        "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "total_runtime_seconds": round(time.time() - t_start, 2),
         "manifest_path": manifest_path,
         "manifest_sha256": manifest_sha,
+        "seed_pool_disjoint_audit": manifest.get("seed_pool_disjoint_audit"),
+        "cross_split_intersections": manifest.get("cross_split_intersections"),
+        "dataset_splits_summary": dataset_splits_summary,
+        "training_hyperparameters": {
+            "hidden_dim": pipeline.hidden_dim,
+            "epochs": pipeline.epochs,
+            "lr": pipeline.lr,
+            "optimizer": "Adam",
+            "max_grad_norm": pipeline.max_grad_norm,
+            "alpha": pipeline.alpha,
+            "target_coverage": round(1.0 - pipeline.alpha, 6),
+            "min_stratum_samples_operational": pipeline.min_stratum_samples,
+            "n_min_marginal_scalar_l2": 9,
+            "ensemble_size": 5,
+            "rng_seed": pipeline.seed,
+            "b3_member_bootstrap_seeds": [pipeline.seed + 101 * (i + 1) for i in range(5)],
+        },
         "expected_checkpoint_layout": expected_checkpoint_layout(checkpoint_root),
         "tasks": tasks_report,
     }
@@ -122,3 +163,4 @@ def run_phase34_training_and_calibration(
 if __name__ == "__main__":
     out = run_phase34_training_and_calibration()
     print("Phase 3.4 training & calibration completed:", list(out["tasks"].keys()))
+

@@ -30,7 +30,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import numpy as np
 import torch
 
-from src.contact_modes.contact_mode_definitions import MODE_NAMES, NUM_MODES, classify_contact_mode
+from src.contact_modes.contact_mode_definitions import ContactMode, MODE_NAMES, NUM_MODES, classify_contact_mode
 from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.step_adapter import get_env_dt, is_compliant_prelift_task, step_env_compatible
@@ -539,6 +539,388 @@ def _evaluate_model_multistep_on_episodes(
     return conformal_eps, mh_trajs
 
 
+def _mode_counts_dict(modes: Sequence[int]) -> Dict[str, Any]:
+    """Counts occurrences for every canonical contact mode 0..6 and lists absent modes."""
+    arr = np.asarray(modes, dtype=np.int64)
+    counts: Dict[str, Dict[str, Any]] = {}
+    absent: List[Dict[str, Any]] = []
+    for k in range(NUM_MODES):
+        cnt = int(np.sum(arr == k))
+        name = MODE_NAMES[ContactMode(k)]
+        counts[str(k)] = {"mode_id": k, "mode_name": name, "count": cnt}
+        if cnt == 0:
+            absent.append({"mode_id": k, "mode_name": name})
+    return {"per_class": counts, "absent_classes": absent, "total": int(len(arr))}
+
+
+def _assert_all_finite(arr: np.ndarray, context: str) -> None:
+    if not bool(np.all(np.isfinite(arr))):
+        raise RuntimeError(f"Non-finite (NaN or Inf) value detected in {context}.")
+
+
+def _evaluate_mode_classifier_split(
+    hybrid_model,
+    transitions: Sequence[Tuple[np.ndarray, np.ndarray, np.ndarray, int]],
+    train_mode_counts: Dict[str, Dict[str, Any]],
+) -> Dict[str, Any]:
+    """
+    Read-only ContactModeClassifier evaluation (torch.no_grad(), never updates weights).
+    Returns 7x7 confusion matrix, accuracy, macro-F1 over present classes, and per-class P/R/F1.
+    """
+    s_np = np.asarray([x[0] for x in transitions], dtype=np.float32)
+    a_np = np.asarray([x[1] for x in transitions], dtype=np.float32)
+    y_true = np.asarray([int(x[3]) for x in transitions], dtype=np.int64)
+
+    hybrid_model.eval()
+    with torch.no_grad():
+        s_t = torch.tensor(s_np, dtype=torch.float32)
+        a_t = torch.tensor(a_np, dtype=torch.float32)
+        logits = hybrid_model.predict_mode_logits(s_t, a_t)
+        probs = torch.softmax(logits, dim=-1).numpy()
+        logits_np = logits.numpy()
+
+    _assert_all_finite(logits_np, "mode_classifier_logits")
+    _assert_all_finite(probs, "mode_classifier_probs")
+    y_pred = np.argmax(probs, axis=-1).astype(np.int64)
+
+    cm = np.zeros((NUM_MODES, NUM_MODES), dtype=np.int64)
+    for t_val, p_val in zip(y_true, y_pred):
+        if 0 <= int(t_val) < NUM_MODES and 0 <= int(p_val) < NUM_MODES:
+            cm[int(t_val), int(p_val)] += 1
+
+    per_class: Dict[str, Dict[str, Any]] = {}
+    present_f1s: List[float] = []
+    for k in range(NUM_MODES):
+        tp = int(cm[k, k])
+        support = int(np.sum(cm[k, :]))
+        pred_cnt = int(np.sum(cm[:, k]))
+        fp = pred_cnt - tp
+        fn = support - tp
+        prec = round(tp / pred_cnt, 4) if pred_cnt > 0 else None
+        rec = round(tp / support, 4) if support > 0 else None
+        if prec is not None and rec is not None and (prec + rec) > 0.0:
+            f1 = round((2.0 * tp) / (2.0 * tp + fp + fn), 4)
+        elif support > 0:
+            f1 = 0.0
+        else:
+            f1 = None
+        if support > 0 and f1 is not None:
+            present_f1s.append(f1)
+
+        train_cnt = int(train_mode_counts[str(k)]["count"])
+        per_class[str(k)] = {
+            "mode_id": k,
+            "mode_name": MODE_NAMES[ContactMode(k)],
+            "train_support": train_cnt,
+            "absent_in_training": bool(train_cnt == 0),
+            "support": support,
+            "predicted_count": pred_cnt,
+            "tp": tp,
+            "fp": fp,
+            "fn": fn,
+            "precision": prec,
+            "recall": rec,
+            "f1": f1,
+        }
+
+    overall_acc = round(float(np.mean(y_true == y_pred)), 4) if len(y_true) > 0 else 0.0
+    macro_f1 = round(float(np.mean(present_f1s)), 4) if present_f1s else None
+    return {
+        "num_transitions": int(len(y_true)),
+        "overall_accuracy": overall_acc,
+        "macro_f1_present_classes": macro_f1,
+        "logits_and_probs_finite": True,
+        "confusion_matrix_rows_true_cols_pred": cm.tolist(),
+        "per_class": per_class,
+    }
+
+
+def _evaluate_continuous_uncertainty_split(
+    hybrid_model,
+    arch_id: str,
+    transitions: Sequence[Tuple[np.ndarray, np.ndarray, np.ndarray, int]],
+    split_label: str,
+) -> Dict[str, Any]:
+    """
+    Read-only physical-unit evaluation of continuous mean prediction, NLL (for B2/B3),
+    epistemic vs aleatoric variance decomposition, and strict NaN/Inf verification.
+    """
+    s_t = torch.tensor(np.asarray([x[0] for x in transitions], dtype=np.float32), dtype=torch.float32)
+    a_t = torch.tensor(np.asarray([x[1] for x in transitions], dtype=np.float32), dtype=torch.float32)
+    ns_t = torch.tensor(np.asarray([x[2] for x in transitions], dtype=np.float32), dtype=torch.float32)
+
+    hybrid_model.eval()
+    with torch.no_grad():
+        mean_phys, epi_phys, alea_phys = hybrid_model.predict_with_uncertainty(s_t, a_t)
+        mean_np = mean_phys.numpy()
+        epi_np = epi_phys.numpy()
+        alea_np = alea_phys.numpy()
+        ns_np = ns_t.numpy()
+
+        _assert_all_finite(mean_np, f"{arch_id}_{split_label}_mean_phys")
+        _assert_all_finite(epi_np, f"{arch_id}_{split_label}_epi_var_phys")
+        _assert_all_finite(alea_np, f"{arch_id}_{split_label}_alea_var_phys")
+
+        # Verify physical-unit inverse-transform identity explicitly
+        s_in, a_in = hybrid_model._prepare_inputs(s_t, a_t)
+        if hasattr(hybrid_model.continuous_model, "predict_with_uncertainty"):
+            mean_norm, epi_norm, alea_norm = hybrid_model.continuous_model.predict_with_uncertainty(s_in, a_in)
+        else:
+            mean_norm = hybrid_model.continuous_model(s_in, a_in)
+            epi_norm = torch.zeros_like(mean_norm)
+            alea_norm = torch.zeros_like(mean_norm)
+
+        scaler = hybrid_model.feature_scaler
+        if scaler is not None:
+            exp_mean = scaler.inverse_transform_next_state_tensor(s_t, mean_norm).numpy()
+            exp_epi = scaler.inverse_transform_variance_tensor(epi_norm).numpy()
+            exp_alea = scaler.inverse_transform_variance_tensor(alea_norm).numpy()
+            mean_inv_err = float(np.max(np.abs(mean_np - exp_mean)))
+            epi_inv_err = float(np.max(np.abs(epi_np - exp_epi)))
+            alea_inv_err = float(np.max(np.abs(alea_np - exp_alea)))
+        else:
+            mean_inv_err = epi_inv_err = alea_inv_err = 0.0
+
+        phys_nll: Optional[float] = None
+        if arch_id in ("B2", "B3"):
+            nll_val = float(hybrid_model.compute_nll(s_t, a_t, ns_t).item())
+            if not math.isfinite(nll_val):
+                raise RuntimeError(f"Non-finite physical NLL detected for {arch_id} on {split_label}.")
+            phys_nll = round(nll_val, 6)
+
+    sq_err = (mean_np - ns_np) ** 2
+    mse_phys = float(np.mean(sq_err))
+    rmse_phys = float(np.sqrt(mse_phys))
+    l2_err = float(np.mean(np.linalg.norm(mean_np - ns_np, axis=-1)))
+
+    epi_trace = np.sum(epi_np, axis=-1)
+    alea_trace = np.sum(alea_np, axis=-1)
+    total_trace = epi_trace + alea_trace
+    mean_epi_trace = float(np.mean(epi_trace))
+    mean_alea_trace = float(np.mean(alea_trace))
+    mean_total_trace = float(np.mean(total_trace))
+    epi_ratio = (mean_epi_trace / mean_total_trace) if mean_total_trace > 0.0 else 0.0
+
+    return {
+        "split": split_label,
+        "num_transitions": int(len(transitions)),
+        "units": "original_physical_units",
+        "finite_predictions_and_variances": True,
+        "mse_phys": round(mse_phys, 6),
+        "rmse_phys": round(rmse_phys, 6),
+        "l2_error_mean_phys": round(l2_err, 6),
+        "gaussian_nll_phys": phys_nll,
+        "epistemic_var_phys": {
+            "mean_per_dim": round(float(np.mean(epi_np)), 6),
+            "min_per_dim": round(float(np.min(epi_np)), 6),
+            "max_per_dim": round(float(np.max(epi_np)), 6),
+            "mean_trace": round(mean_epi_trace, 6),
+            "mean_std_l2_norm": round(float(np.mean(np.sqrt(np.maximum(epi_trace, 0.0)))), 6),
+        },
+        "aleatoric_var_phys": {
+            "mean_per_dim": round(float(np.mean(alea_np)), 6),
+            "min_per_dim": round(float(np.min(alea_np)), 6),
+            "max_per_dim": round(float(np.max(alea_np)), 6),
+            "mean_trace": round(mean_alea_trace, 6),
+            "mean_std_l2_norm": round(float(np.mean(np.sqrt(np.maximum(alea_trace, 0.0)))), 6),
+        },
+        "total_var_trace_mean": round(mean_total_trace, 6),
+        "epistemic_fraction_of_total": round(epi_ratio, 6),
+        "physical_inverse_transform_max_err": {
+            "mean": round(mean_inv_err, 9),
+            "epistemic_var": round(epi_inv_err, 9),
+            "aleatoric_var": round(alea_inv_err, 9),
+        },
+    }
+
+
+def _summarize_b4_fallback(
+    b4_diag: Dict[str, Any],
+    b4_calib_cov: Dict[str, Any],
+    calib_counts: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Computes B4 global-fallback stratum/transition frequency & insufficient-class lists."""
+    stratum_log = b4_diag.get("stratum_fallback_log", {})
+    n_min_marginal = int(b4_diag.get("n_min_marginal", 9))
+    op_floor = int(b4_diag.get("min_stratum_samples", PHASE34_B4_MIN_STRATUM_SAMPLES))
+    total_trans = int(calib_counts["total"])
+
+    fallback_strata = [int(k) for k, meta in stratum_log.items() if meta.get("fallback_to_global", False)]
+    empirical_strata = [int(k) for k, meta in stratum_log.items() if not meta.get("fallback_to_global", True)]
+    fallback_trans_cnt = sum(int(stratum_log[str(k)]["sample_count"]) for k in fallback_strata if str(k) in stratum_log)
+
+    below_marginal_9 = []
+    insufficient_op_29 = []
+    for k in range(NUM_MODES):
+        cnt = int(calib_counts["per_class"][str(k)]["count"])
+        name = MODE_NAMES[ContactMode(k)]
+        if cnt < n_min_marginal:
+            below_marginal_9.append({"mode_id": k, "mode_name": name, "calib_count": cnt})
+        if cnt < op_floor:
+            insufficient_op_29.append({"mode_id": k, "mode_name": name, "calib_count": cnt})
+
+    return {
+        "n_min_marginal_scalar_l2": n_min_marginal,
+        "operational_min_stratum_samples": op_floor,
+        "num_strata_total": NUM_MODES,
+        "num_strata_empirical": len(empirical_strata),
+        "num_strata_fallback_to_global": len(fallback_strata),
+        "empirical_strata": sorted(empirical_strata),
+        "fallback_strata": sorted(fallback_strata),
+        "stratum_fallback_fraction": round(len(fallback_strata) / max(1, NUM_MODES), 4),
+        "calib_transitions_total": total_trans,
+        "calib_transitions_in_fallback_strata": int(fallback_trans_cnt),
+        "calib_global_fallback_transition_frequency": round(fallback_trans_cnt / max(1, total_trans), 4),
+        "classes_below_n_min_marginal_9": below_marginal_9,
+        "classes_insufficient_operational_29": insufficient_op_29,
+        "empirical_coverage_on_calib": b4_calib_cov["empirical_coverage"],
+        "per_stratum_calibration_fit": b4_calib_cov["per_stratum_coverage"],
+    }
+
+
+def _audit_phase34_condition(
+    task: str,
+    condition: str,
+    shared_scaler: FeatureStandardizer,
+    train_bundle: Dict[str, Any],
+    calib_bundle: Dict[str, Any],
+    trained: Dict[str, Any],
+    b4_artifact: Dict[str, Any],
+    checkpoint_paths: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    Executes post-training scientific checks for Section 3 & Section 4 verification:
+    1. Contact-mode training/calibration counts, absent classes, 7x7 confusion matrices, P/R/F1.
+    2. B4 global-fallback frequency and insufficient calibration class breakdown (<9 vs <29).
+    3. B1/B2/B3 finite loss/prediction/variance checks, physical-unit inverse transform check,
+       B2 aleatoric vs B3 epistemic/aleatoric decomposition distinction, grad clip=1.0 check.
+    4. Checkpoint SHA-256 hashes & round-trip reload parity (B1, B2, B3 members, B4).
+    """
+    train_transitions = train_bundle["transitions"]
+    calib_transitions = calib_bundle["transitions"]
+    train_counts = _mode_counts_dict([int(x[3]) for x in train_transitions])
+    calib_counts = _mode_counts_dict([int(x[3]) for x in calib_transitions])
+
+    models = trained["models"]
+    stats = trained["stats"]
+
+    # Loss & gradient-clip finiteness / uniformity verification
+    grad_clip_audit: Dict[str, Any] = {}
+    for arch in ("B1", "B2", "B3"):
+        st = stats[arch]
+        for key in ("loss_history", "clf_loss_history"):
+            vals = st.get(key, [])
+            if any(not math.isfinite(float(v)) for v in vals):
+                raise RuntimeError(f"Non-finite loss in {task}/{condition}/{arch}/{key}.")
+        wm_gc = st["grad_clip_stats"]
+        clf_gc = st["clf_grad_clip_stats"]
+        if float(wm_gc["max_grad_norm"]) != 1.0 or float(clf_gc["max_grad_norm"]) != 1.0:
+            raise RuntimeError(
+                f"Expected max_grad_norm == 1.0 for {arch}, got wm={wm_gc['max_grad_norm']} clf={clf_gc['max_grad_norm']}"
+            )
+        grad_clip_audit[arch] = {
+            "wm_max_grad_norm": wm_gc["max_grad_norm"],
+            "wm_clip_frequency": wm_gc["clip_frequency"],
+            "wm_max_pre_clip_grad_norm": wm_gc["max_pre_clip_grad_norm"],
+            "clf_max_grad_norm": clf_gc["max_grad_norm"],
+            "clf_clip_frequency": clf_gc["clip_frequency"],
+            "clf_max_pre_clip_grad_norm": clf_gc["max_pre_clip_grad_norm"],
+        }
+
+    # Read-only classifier audit on B1's trained classifier (all B1/B2/B3 share identical classifier seed/fit)
+    clf_train_eval = _evaluate_mode_classifier_split(models["B1"], train_transitions, train_counts["per_class"])
+    clf_calib_eval = _evaluate_mode_classifier_split(models["B1"], calib_transitions, train_counts["per_class"])
+
+    # Continuous uncertainty evaluation on train & disjoint calibration splits
+    unc_eval: Dict[str, Dict[str, Any]] = {}
+    for arch in ("B1", "B2", "B3"):
+        unc_eval[arch] = {
+            "train": _evaluate_continuous_uncertainty_split(models[arch], arch, train_transitions, "train"),
+            "calibration": _evaluate_continuous_uncertainty_split(models[arch], arch, calib_transitions, "calibration"),
+        }
+
+    # Verify B2 models aleatoric only (epi==0) and B3 decomposes epistemic + aleatoric (>0)
+    b2_cal = unc_eval["B2"]["calibration"]
+    b3_cal = unc_eval["B3"]["calibration"]
+    uncertainty_distinction = {
+        "b2_epistemic_var_strictly_zero": bool(b2_cal["epistemic_var_phys"]["max_per_dim"] == 0.0),
+        "b2_aleatoric_var_positive": bool(b2_cal["aleatoric_var_phys"]["mean_trace"] > 0.0),
+        "b3_epistemic_var_positive": bool(b3_cal["epistemic_var_phys"]["mean_trace"] > 0.0),
+        "b3_aleatoric_var_positive": bool(b3_cal["aleatoric_var_phys"]["mean_trace"] > 0.0),
+        "b3_epistemic_fraction_on_calib": b3_cal["epistemic_fraction_of_total"],
+    }
+
+    # Artifact hashes & round-trip checkpoint reload parity
+    s_probe = torch.tensor(np.asarray([x[0] for x in calib_transitions[:16]], dtype=np.float32), dtype=torch.float32)
+    a_probe = torch.tensor(np.asarray([x[1] for x in calib_transitions[:16]], dtype=np.float32), dtype=torch.float32)
+
+    artifact_hashes: Dict[str, str] = {}
+    reload_parity: Dict[str, float] = {}
+    for key in ("B1", "B2", "B3", "B4"):
+        p = checkpoint_paths[key]
+        artifact_hashes[key] = _sha256_file(p)
+    artifact_hashes["B3_members"] = [_sha256_file(mp) for mp in checkpoint_paths["B3_members"]]
+
+    with torch.no_grad():
+        for arch in ("B1", "B2", "B3"):
+            reloaded, payload = load_hybrid_checkpoint(checkpoint_paths[arch])
+            if payload.get("normalization") != shared_scaler.to_dict():
+                raise RuntimeError(f"Scaler mismatch in {arch} checkpoint for {task}/{condition}.")
+            m_mem, epi_mem, alea_mem = models[arch].predict_with_uncertainty(s_probe, a_probe)
+            m_rel, epi_rel, alea_rel = reloaded.predict_with_uncertainty(s_probe, a_probe)
+            reload_parity[arch] = round(
+                float(max(torch.max(torch.abs(m_mem - m_rel)), torch.max(torch.abs(epi_mem - epi_rel)), torch.max(torch.abs(alea_mem - alea_rel))).item()),
+                9,
+            )
+
+        b3_from_members, member_payloads = load_b3_ensemble_from_members(
+            checkpoint_paths["B3_members"], ensemble_checkpoint_path=checkpoint_paths["B3"]
+        )
+        m_mem, epi_mem, alea_mem = models["B3"].predict_with_uncertainty(s_probe, a_probe)
+        m_sub, epi_sub, alea_sub = b3_from_members.predict_with_uncertainty(s_probe, a_probe)
+        reload_parity["B3_from_members"] = round(
+            float(max(torch.max(torch.abs(m_mem - m_sub)), torch.max(torch.abs(epi_mem - epi_sub)), torch.max(torch.abs(alea_mem - alea_sub))).item()),
+            9,
+        )
+        b4_reloaded, _ = Phase34TrainingPipeline.reconstruct_b4_from_artifacts(
+            checkpoint_paths["B4"], checkpoint_paths["B1"]
+        )
+        mu_b4, rad_b4 = b4_reloaded.predict_region(
+            calib_transitions[0][0], calib_transitions[0][1], stratum=int(calib_transitions[0][3])
+        )
+        reload_parity["B4_region_finite"] = bool(np.all(np.isfinite(mu_b4)) and math.isfinite(rad_b4))
+
+    return {
+        "task": task,
+        "condition": condition,
+        "scaler_provenance_verified": bool(
+            shared_scaler.fit_source == "combined_M0_plus_M4_training_only" and shared_scaler.task == task
+        ),
+        "all_losses_finite": True,
+        "all_predictions_and_variances_finite": True,
+        "grad_clip_uniform_1_0_verified": True,
+        "grad_clip_audit": grad_clip_audit,
+        "contact_mode_classification_audit": {
+            "note": (
+                "7-class classifier trained strictly on training transitions without rebalancing or calibration-set leakage; "
+                "calibration validation below is strictly read-only inference."
+            ),
+            "train_class_counts": train_counts["per_class"],
+            "classes_absent_from_training": train_counts["absent_classes"],
+            "calib_class_counts": calib_counts["per_class"],
+            "classes_absent_from_calibration": calib_counts["absent_classes"],
+            "train_fit": clf_train_eval,
+            "calib_validation": clf_calib_eval,
+        },
+        "b4_fallback_audit": b4_artifact["b4_calibration_fit_summary"],
+        "uncertainty_and_prediction_audit": unc_eval,
+        "uncertainty_distinction_verified": uncertainty_distinction,
+        "b3_member_bootstrap_seeds": [int(mp["bootstrap_seed"]) for mp in member_payloads],
+        "artifact_sha256": artifact_hashes,
+        "checkpoint_reload_parity_max_diff": reload_parity,
+    }
+
+
 class Phase34TrainingPipeline:
     """
     Auditable Phase 3.4 training & conformal calibration pipeline supporting:
@@ -657,6 +1039,14 @@ class Phase34TrainingPipeline:
         mh_engine.calibrate(mh_trajs)
         mh_diag = mh_engine.get_calibration_diagnostics()
 
+        b4_dict = b4_model.to_dict()
+        calib_counts = _mode_counts_dict(m_cal)
+        b4_fallback_summary = _summarize_b4_fallback(
+            b4_diag=b4_dict["calibration_diagnostics"],
+            b4_calib_cov=b4_calib_cov,
+            calib_counts=calib_counts,
+        )
+
         b4_artifact = {
             "architecture_id": "B4",
             "model_class": "ContactStratifiedConformalWM",
@@ -674,12 +1064,27 @@ class Phase34TrainingPipeline:
             "calibration_manifest_sha256": calib_manifest_sha256,
             "base_model_checkpoint": os.path.basename(b1_checkpoint_path),
             "base_model_sha256": _sha256_file(b1_checkpoint_path) if os.path.exists(b1_checkpoint_path) else None,
-            "b4_contact_stratified": b4_model.to_dict(),
+            "b4_contact_stratified": b4_dict,
             "b4_calibration_fit_summary": {
                 "empirical_coverage_on_calib": b4_calib_cov["empirical_coverage"],
                 "mean_interval_radius": b4_calib_cov["mean_interval_radius"],
                 "mean_l2_error": b4_calib_cov["mean_l2_error"],
                 "per_stratum_calibration_fit": b4_calib_cov["per_stratum_coverage"],
+                "n_min_marginal_scalar_l2": b4_fallback_summary["n_min_marginal_scalar_l2"],
+                "operational_min_stratum_samples": b4_fallback_summary["operational_min_stratum_samples"],
+                "num_strata_total": b4_fallback_summary["num_strata_total"],
+                "num_strata_empirical": b4_fallback_summary["num_strata_empirical"],
+                "num_strata_fallback_to_global": b4_fallback_summary["num_strata_fallback_to_global"],
+                "empirical_strata": b4_fallback_summary["empirical_strata"],
+                "fallback_strata": b4_fallback_summary["fallback_strata"],
+                "stratum_fallback_fraction": b4_fallback_summary["stratum_fallback_fraction"],
+                "calib_transitions_total": b4_fallback_summary["calib_transitions_total"],
+                "calib_transitions_in_fallback_strata": b4_fallback_summary["calib_transitions_in_fallback_strata"],
+                "calib_global_fallback_transition_frequency": b4_fallback_summary[
+                    "calib_global_fallback_transition_frequency"
+                ],
+                "classes_below_n_min_marginal_9": b4_fallback_summary["classes_below_n_min_marginal_9"],
+                "classes_insufficient_operational_29": b4_fallback_summary["classes_insufficient_operational_29"],
             },
             "aps_calibration": aps_summary,
             "episode_conformal_calibration": {
@@ -802,18 +1207,31 @@ class Phase34TrainingPipeline:
                 output_dir=cond_dir,
             )
 
+            ckpt_paths = {
+                "B1": b1_ckpt,
+                "B2": os.path.join(cond_dir, "b2_probabilistic.pt"),
+                "B3": os.path.join(cond_dir, "b3_ensemble.pt"),
+                "B3_members": [os.path.join(cond_dir, f"b3_member_{i}.pt") for i in range(5)],
+                "B4": b4_artifact["artifact_path"],
+            }
+            scientific_audit = _audit_phase34_condition(
+                task=t_key,
+                condition=cond_name,
+                shared_scaler=shared_scaler,
+                train_bundle=train_bundle,
+                calib_bundle=calib_bundle,
+                trained=trained,
+                b4_artifact=b4_artifact,
+                checkpoint_paths=ckpt_paths,
+            )
+
             task_results["conditions"][cond_name] = {
                 "checkpoint_dir": cond_dir,
-                "checkpoints": {
-                    "B1": b1_ckpt,
-                    "B2": os.path.join(cond_dir, "b2_probabilistic.pt"),
-                    "B3": os.path.join(cond_dir, "b3_ensemble.pt"),
-                    "B3_members": [os.path.join(cond_dir, f"b3_member_{i}.pt") for i in range(5)],
-                    "B4": b4_artifact["artifact_path"],
-                },
+                "checkpoints": ckpt_paths,
                 "training_stats": trained["stats"],
                 "b4_calibration_summary": b4_artifact["b4_calibration_fit_summary"],
                 "aps_calibration": b4_artifact["aps_calibration"],
+                "scientific_audit": scientific_audit,
             }
 
         return task_results

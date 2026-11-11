@@ -440,7 +440,7 @@ class TestPhase34ReadinessRemediation(unittest.TestCase):
             self.assertEqual(pred_mu.shape, (15,))
             self.assertTrue(math.isfinite(radius) and radius > 0.0)
 
-            # Cross-run exact reproducibility between dir_a and dir_b
+            # Cross-run exact reproducibility & Section 3 scientific audit verification
             self.assertEqual(
                 res_a["conditions"]["M4_acmm"]["b4_calibration_summary"],
                 res_b["conditions"]["M4_acmm"]["b4_calibration_summary"],
@@ -448,6 +448,29 @@ class TestPhase34ReadinessRemediation(unittest.TestCase):
             self.assertEqual(
                 res_a["conditions"]["M4_acmm"]["training_stats"]["B3"]["member_provenance"],
                 res_b["conditions"]["M4_acmm"]["training_stats"]["B3"]["member_provenance"],
+            )
+            audit_a = res_a["conditions"]["M4_acmm"]["scientific_audit"]
+            audit_b = res_b["conditions"]["M4_acmm"]["scientific_audit"]
+            self.assertTrue(audit_a["scaler_provenance_verified"])
+            self.assertTrue(audit_a["all_losses_finite"])
+            self.assertTrue(audit_a["all_predictions_and_variances_finite"])
+            self.assertTrue(audit_a["grad_clip_uniform_1_0_verified"])
+            clf_val = audit_a["contact_mode_classification_audit"]["calib_validation"]
+            self.assertEqual(len(clf_val["confusion_matrix_rows_true_cols_pred"]), 7)
+            self.assertEqual(sum(sum(r) for r in clf_val["confusion_matrix_rows_true_cols_pred"]), len(cal_b["transitions"]))
+            self.assertEqual(
+                audit_a["contact_mode_classification_audit"]["calib_validation"],
+                audit_b["contact_mode_classification_audit"]["calib_validation"],
+            )
+            ud = audit_a["uncertainty_distinction_verified"]
+            self.assertTrue(ud["b2_epistemic_var_strictly_zero"])
+            self.assertTrue(ud["b2_aleatoric_var_positive"])
+            self.assertTrue(ud["b3_epistemic_var_positive"])
+            self.assertTrue(ud["b3_aleatoric_var_positive"])
+            self.assertLessEqual(audit_a["checkpoint_reload_parity_max_diff"]["B3_from_members"], 1e-6)
+            self.assertEqual(
+                res_a["conditions"]["M4_acmm"]["b4_calibration_summary"],
+                b4_art["b4_calibration_fit_summary"],
             )
 
     def test_14_repeated_dataset_generation_bit_identical(self):
