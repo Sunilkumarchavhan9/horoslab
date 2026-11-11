@@ -26,6 +26,11 @@ Covers remediation workstreams H1–H5:
   * PegInHoleEnv velocity calculation prior to persistent peg_pos update across all regimes.
   * Default closed-loop horizon H=50 across evaluator/orchestrator entry points (with override support).
   * Task 2 height_mm unit consistency without mutating Task 1 mm_depth metrics.
+- H5: OOD Infrastructure & Promoted Compliant Pre-Lift Environment:
+  * Promoted CompliantPreLiftContactEnv in src/environment/compliant_prelift_env.py with clean re-exports.
+  * Regime A nonstationary friction step (0.60 -> 0.24 at step 15) without controller obs leakage.
+  * Regime B uncapped simulation-time mass influx (+0.25 kg/s from t=0.0s) affecting physical equilibrium.
+  * Reproducible OOD episode manifests (manifests/ood_regime_manifests.json) & reset boundary isolation.
 
 Author: Sunil Kumar Chavhan (sunil@horoslab.org)
 Organization: HOROS Physical Intelligence Research Group (H.R.)
@@ -36,6 +41,7 @@ import json
 import math
 import os
 import sys
+import time
 import unittest
 import numpy as np
 import torch
@@ -86,6 +92,15 @@ from src.planners.uncertainty_penalized_cem import UncertaintyPenalizedCEM
 from src.planners.recovery_aware_cem import RecoveryAwareCEMPlanner
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
+from src.environment import (
+    CompliantPreLiftContactEnv,
+    COMPLIANT_PRELIFT_REGIME_SPECS,
+    build_ood_regime_manifests,
+    create_env_from_manifest,
+    get_ood_episode_manifest,
+    normalize_regime_name,
+)
+from src.coordination.plcea_substitutor import PLCEAActionSubstitutor, PLCEAState
 
 
 class MockContinuousDynamics(nn.Module):
@@ -1281,6 +1296,346 @@ class TestHarnessRemediationH4(unittest.TestCase):
         # Velocity matches constrained accepted displacement / dt, NOT unconstrained -3.0 / dt
         np.testing.assert_allclose(obs_wedge["vel"], accepted_disp / dt, atol=1e-6)
         self.assertAlmostEqual(obs_wedge["vel"][2], -0.3 / dt, places=4)
+
+
+class TestHarnessRemediationH5(unittest.TestCase):
+    """Regression and physical invariant tests for Phase 3.3 Workstream H5 (OOD Infrastructure)."""
+
+    def test_h5_01_production_environment_exports_and_p27_import_consistency(self):
+        """
+        H5-01: Promoted CompliantPreLiftContactEnv & OOD manifest helpers are cleanly re-exported
+        from src.environment, and P2.7 test suite uses the production import without duplicate defs.
+        """
+        import src.environment.compliant_prelift_env as direct_mod
+
+        self.assertIs(CompliantPreLiftContactEnv, direct_mod.CompliantPreLiftContactEnv)
+        self.assertIs(COMPLIANT_PRELIFT_REGIME_SPECS, direct_mod.COMPLIANT_PRELIFT_REGIME_SPECS)
+        self.assertIs(build_ood_regime_manifests, direct_mod.build_ood_regime_manifests)
+        self.assertIs(get_ood_episode_manifest, direct_mod.get_ood_episode_manifest)
+        self.assertIs(create_env_from_manifest, direct_mod.create_env_from_manifest)
+        self.assertIs(normalize_regime_name, direct_mod.normalize_regime_name)
+
+        p27_path = os.path.join(r002_root, "tests", "test_p27_plcea_controller_integration.py")
+        with open(p27_path, "r", encoding="utf-8") as f:
+            p27_src = f.read()
+        self.assertNotIn("class CompliantPreLiftContactEnv", p27_src)
+        self.assertIn("from src.environment import CompliantPreLiftContactEnv", p27_src)
+
+    def test_h5_02_promoted_env_nominal_parity_and_plcea_compatibility(self):
+        """
+        H5-02: Promoted CompliantPreLiftContactEnv preserves exact P2.7 observation keys,
+        2-tuple step return (obs, done), deterministic sensor noise, hidden mu_true, and PLCEA lift.
+        """
+        e1 = CompliantPreLiftContactEnv(mu_true=0.50, seed=2026)
+        e2 = CompliantPreLiftContactEnv(mu_true=0.50, seed=2026)
+        obs1 = e1.reset()
+        obs2 = e2.reset()
+
+        expected_keys = {
+            "finger_pos", "finger_fn", "finger_ft", "obj_pos",
+            "obj_vel", "a_z", "delta_dot_t", "dt_ms", "gamma",
+        }
+        self.assertEqual(set(obs1.keys()), expected_keys)
+        self.assertNotIn("mu_true", obs1)
+        self.assertNotIn("slip_ratio", obs1)
+        self.assertNotIn("object_mass", obs1)
+
+        prop = np.array([0.08, 0.08, 0.08, 0.08, 0.90], dtype=float)
+        sub1 = PLCEAActionSubstitutor()
+        sub2 = PLCEAActionSubstitutor()
+
+        for _ in range(10):
+            a1, _, _ = sub1.substitute_action(obs1, prop)
+            a2, _, _ = sub2.substitute_action(obs2, prop)
+            np.testing.assert_allclose(a1, a2, atol=1e-12)
+            out1 = e1.step(a1)
+            out2 = e2.step(a2)
+            self.assertEqual(len(out1), 2)
+            obs1, done1 = out1
+            obs2, done2 = out2
+            self.assertIsInstance(done1, (bool, np.bool_))
+            self.assertEqual(done1, done2)
+            for k in ("finger_pos", "finger_fn", "finger_ft", "obj_pos", "obj_vel", "delta_dot_t"):
+                np.testing.assert_allclose(obs1[k], obs2[k], atol=1e-12)
+
+    def test_h5_03_regime_a_initial_friction_and_controller_blindness(self):
+        """
+        H5-03: Regime A begins at initial_friction = 0.60 across steps 0..14 and never exposes
+        true friction or transition schedule inside controller _get_obs().
+        """
+        env = CompliantPreLiftContactEnv(regime="Regime_A", seed=6117)
+        obs0 = env.reset()
+        self.assertAlmostEqual(env.get_environment_state()["mu_true"], 0.60, places=9)
+        self.assertEqual(env.friction_history, [0.60])
+        self.assertNotIn("mu_true", obs0)
+        self.assertNotIn("regime", obs0)
+
+        squeeze = np.array([0.6, 0.6, 0.6, 0.6, 0.0], dtype=float)
+        for s in range(1, 15):
+            obs, _ = env.step(squeeze)
+            st = env.get_environment_state()
+            self.assertEqual(st["step"], s)
+            self.assertAlmostEqual(st["mu_true"], 0.60, places=9)
+            self.assertNotIn("mu_true", obs)
+            self.assertNotIn("slip_ratio", obs)
+        self.assertEqual(len(env.friction_history), 15)
+        self.assertTrue(all(abs(m - 0.60) < 1e-12 for m in env.friction_history))
+        self.assertEqual(env.regime_events, [])
+
+    def test_h5_04_regime_a_deterministic_friction_drop_at_step_15_without_state_reset(self):
+        """
+        H5-04: At step 15, Regime A deterministically drops mu_true from 0.60 to 0.24 while
+        preserving continuous finger positions, normal forces, and object coordinates.
+        """
+        env = CompliantPreLiftContactEnv(regime="A", seed=6117)
+        env.reset()
+
+        squeeze = np.array([0.25, 0.25, 0.25, 0.25, 0.0], dtype=float)
+        for _ in range(14):
+            env.step(squeeze)
+
+        pre_state = env.get_environment_state()
+        self.assertEqual(pre_state["step"], 14)
+        self.assertAlmostEqual(pre_state["mu_true"], 0.60, places=9)
+        # Fingers are in radial indentation: r = 36.5 - 14*0.25 = 33.0 mm -> indent=2.0 -> Fn=8.0 N
+        np.testing.assert_allclose(pre_state["fn"], np.full(4, 8.0), atol=1e-6)
+
+        # Step 15 triggers 0.60 -> 0.24 without resetting physical indentation or positions
+        hold = np.array([0.0, 0.0, 0.0, 0.0, 0.50], dtype=float)
+        env.step(hold)
+        post_state = env.get_environment_state()
+        self.assertEqual(post_state["step"], 15)
+        self.assertAlmostEqual(post_state["mu_true"], 0.24, places=9)
+        np.testing.assert_allclose(post_state["fn"], np.full(4, 8.0), atol=1e-6)
+        self.assertEqual(len(post_state["regime_events"]), 1)
+        ev = post_state["regime_events"][0]
+        self.assertEqual(ev["event"], "regime_a_friction_step")
+        self.assertEqual(ev["step"], 15)
+        self.assertAlmostEqual(ev["from_mu"], 0.60, places=9)
+        self.assertAlmostEqual(ev["to_mu"], 0.24, places=9)
+
+        # After step 15, tangential slip triggers near 0.24 * Fn = 1.92 N rather than 0.60 * Fn = 4.80 N
+        for _ in range(10):
+            env.step(np.array([0.0, 0.0, 0.0, 0.0, 0.40], dtype=float))
+        self.assertAlmostEqual(env.mu_true, 0.24, places=9)
+        self.assertTrue(np.all(env.ft[:, 1] <= 0.24 * env.fn + 1e-9))
+
+    def test_h5_05_regime_a_seed_determinism_and_manifest_history(self):
+        """
+        H5-05: Identical seeds under Regime A reproduce identical per-step friction_history,
+        regime_events, observations, and JSON-strict episode manifests.
+        """
+        acts = [
+            np.array([0.5, 0.5, 0.5, 0.5, 0.0 if t < 5 else 0.1], dtype=float)
+            for t in range(25)
+        ]
+
+        def run_episode():
+            e = CompliantPreLiftContactEnv(regime="A", seed=6118)
+            obs_seq = [e.reset()]
+            for a in acts:
+                obs, _ = e.step(a)
+                obs_seq.append(obs)
+            return obs_seq, e.get_episode_manifest()
+
+        obs_a, man_a = run_episode()
+        obs_b, man_b = run_episode()
+        self.assertEqual(man_a, man_b)
+        self.assertEqual(len(man_a["friction_history"]), 26)
+        self.assertEqual(man_a["friction_history"][14], 0.6)
+        self.assertEqual(man_a["friction_history"][15], 0.24)
+        self.assertEqual(len(man_a["step_records"]), 25)
+        for o1, o2 in zip(obs_a, obs_b):
+            np.testing.assert_allclose(o1["finger_fn"], o2["finger_fn"], atol=1e-12)
+            np.testing.assert_allclose(o1["finger_ft"], o2["finger_ft"], atol=1e-12)
+        dumped = json.dumps(man_a, allow_nan=False)
+        self.assertIn("Regime_A", dumped)
+
+    def test_h5_06_regime_b_uncapped_mass_influx_rate_and_step_recording(self):
+        """
+        H5-06: Regime B follows m(t) = 0.350 + 0.25 * t (t = step * dt) from t=0 with NO cap,
+        recording exact mass at every step (0.475 kg at 0.50 s, 0.600 kg at 1.00 s, 0.650 kg at 1.20 s).
+        """
+        spec_b = COMPLIANT_PRELIFT_REGIME_SPECS["B"]
+        self.assertIsNone(spec_b["mass_cap_kg"])
+        self.assertAlmostEqual(spec_b["mass_change_rate_kg_s"], 0.25, places=9)
+        self.assertEqual(spec_b["trigger"], "episode_simulation_time")
+
+        env = CompliantPreLiftContactEnv(regime="Regime_B", dt=0.01, seed=6121)
+        env.reset()
+        self.assertAlmostEqual(env.object_mass, 0.350, places=9)
+
+        noop = np.zeros(5, dtype=float)
+        for step_idx in range(1, 121):
+            env.step(noop)
+            expected_mass = 0.350 + 0.25 * (step_idx * 0.01)
+            self.assertAlmostEqual(env.object_mass, expected_mass, places=9)
+
+        self.assertAlmostEqual(env.mass_history[0], 0.350, places=9)
+        self.assertAlmostEqual(env.mass_history[50], 0.475, places=9)
+        self.assertAlmostEqual(env.mass_history[100], 0.600, places=9)
+        self.assertAlmostEqual(env.mass_history[120], 0.650, places=9)
+        self.assertEqual(len(env.mass_history), 121)
+        self.assertEqual(len(env.step_history), 120)
+        self.assertAlmostEqual(env.step_history[49]["object_mass_kg"], 0.475, places=9)
+        self.assertAlmostEqual(env.step_history[99]["object_mass_kg"], 0.600, places=9)
+
+    def test_h5_07_regime_b_driven_by_simulation_time_not_wall_clock(self):
+        """
+        H5-07: Regime B mass evolution depends solely on simulated episode time (step_count * dt)
+        and is completely invariant to wall-clock delays.
+        """
+        env_fast = CompliantPreLiftContactEnv(regime="B", dt=0.01, seed=6122)
+        env_slow = CompliantPreLiftContactEnv(regime="B", dt=0.01, seed=6122)
+        noop = np.zeros(5, dtype=float)
+        for _ in range(15):
+            env_fast.step(noop)
+            time.sleep(0.005)
+            env_slow.step(noop)
+
+        np.testing.assert_allclose(env_fast.mass_history, env_slow.mass_history, atol=1e-12)
+        self.assertAlmostEqual(env_fast.sim_time_s, 0.15, places=9)
+        self.assertAlmostEqual(env_slow.sim_time_s, 0.15, places=9)
+
+        # Scaling dt=0.02 reaches t=0.50 s in 25 steps -> same mass 0.475 kg as 50 steps at dt=0.01
+        env_coarse = CompliantPreLiftContactEnv(regime="B", dt=0.02, seed=6122)
+        for _ in range(25):
+            env_coarse.step(noop)
+        self.assertAlmostEqual(env_coarse.sim_time_s, 0.50, places=9)
+        self.assertAlmostEqual(env_coarse.object_mass, 0.475, places=9)
+
+    def test_h5_08_regime_b_mass_increase_affects_gravity_and_lift_slip_physics(self):
+        """
+        H5-08: Increasing payload mass in Regime B increases gravitational weight W = m(t)*g,
+        raising equilibrium shear load and inducing payload slip/drop relative to fixed 0.350 kg.
+        """
+        def run_fixed_grasp_lift(regime_name: str):
+            env = CompliantPreLiftContactEnv(regime=regime_name, mu_true=0.60, object_mass=0.350, dt=0.01, seed=6121)
+            env.reset(mu_true=0.60, object_mass=0.350, regime=regime_name)
+            # Squeeze into 0.47 mm indentation -> Fn = 1.88 N/finger -> max static ft = 1.128 N/finger (4.512 N total)
+            # Holds initial m=0.350 kg (3.432 N), fails as mass rises past ~0.460 kg (4.512 N).
+            env.step(np.array([1.0, 1.0, 1.0, 1.0, 0.0], dtype=float))
+            env.step(np.array([0.97, 0.97, 0.97, 0.97, 0.0], dtype=float))
+            lift_cmd = np.array([0.0, 0.0, 0.0, 0.0, 0.25], dtype=float)
+            for _ in range(118):
+                env.step(lift_cmd)
+            return env
+
+        env_nom = run_fixed_grasp_lift("nominal")
+        env_reg_b = run_fixed_grasp_lift("B")
+
+        self.assertAlmostEqual(env_nom.object_mass, 0.350, places=9)
+        self.assertAlmostEqual(env_reg_b.object_mass, 0.650, places=9)
+        self.assertTrue(env_nom.lifted)
+        self.assertFalse(env_nom.dropped)
+        self.assertTrue(env_reg_b.dropped)
+        self.assertGreater(env_nom.obj_pos[2], env_reg_b.obj_pos[2] + 10.0)
+
+    def test_h5_09_reproducible_manifests_and_json_file_validation(self):
+        """
+        H5-09: Static manifests/ood_regime_manifests.json matches build_ood_regime_manifests(),
+        maps seeds 6100..6124 reproducibly, and constructs valid envs via create_env_from_manifest().
+        """
+        manifest_path = os.path.join(r002_root, "manifests", "ood_regime_manifests.json")
+        self.assertTrue(os.path.exists(manifest_path), f"Missing {manifest_path}")
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            disk_manifest = json.load(f)
+
+        self.assertEqual(disk_manifest, build_ood_regime_manifests())
+        json.dumps(disk_manifest, allow_nan=False)
+
+        m_a = get_ood_episode_manifest(6117)
+        self.assertEqual(m_a["regime"], "A")
+        self.assertAlmostEqual(m_a["mu_true"], 0.60, places=9)
+        env_a = create_env_from_manifest(m_a)
+        self.assertEqual(env_a.regime, "A")
+        self.assertEqual(env_a.seed, 6117)
+        for _ in range(16):
+            env_a.step(np.zeros(5, dtype=float))
+        ep_a = env_a.get_episode_manifest()
+        self.assertAlmostEqual(ep_a["current_state"]["mu_true"], 0.24, places=9)
+        json.dumps(ep_a, allow_nan=False)
+
+        m_b = get_ood_episode_manifest(6121)
+        self.assertEqual(m_b["regime"], "B")
+        self.assertAlmostEqual(m_b["object_mass"], 0.350, places=9)
+        env_b = create_env_from_manifest(m_b)
+        for _ in range(50):
+            env_b.step(np.zeros(5, dtype=float))
+        ep_b = env_b.get_episode_manifest()
+        self.assertAlmostEqual(ep_b["current_state"]["object_mass_kg"], 0.475, places=9)
+        json.dumps(ep_b, allow_nan=False)
+
+    def test_h5_10_task1_and_task2_schema_isolation_with_compliant_prelift(self):
+        """
+        H5-10: CompliantPreLiftContactEnv extracts a strict 23-D Task 2 state vector while
+        PegInHoleEnv extracts a 15-D Task 1 vector, and multi-horizon metrics keep tasks separate.
+        """
+        env_t1 = PegInHoleEnv(seed=42)
+        obs_t1 = env_t1.reset()
+        s1, w1 = extract_env_state_and_wrench(obs_t1, task="peg_in_hole")
+        self.assertEqual(s1.shape, (15,))
+        self.assertEqual(w1.shape, (6,))
+
+        env_t2 = CompliantPreLiftContactEnv(regime="A", seed=6117)
+        obs_t2 = env_t2.reset()
+        s2, w2 = extract_env_state_and_wrench(obs_t2, task="compliant_prelift")
+        self.assertEqual(s2.shape, (23,))
+        self.assertEqual(w2.shape, (6,))
+
+        # Compare multihorizon evaluation shapes for T=21 rollouts across Task 1 and Task 2
+        pred1 = np.zeros((2, 21, 15), dtype=np.float32)
+        true1 = np.ones((2, 21, 15), dtype=np.float32)
+        m1 = compute_multihorizon_rmse(pred1, true1, task="peg_in_hole", horizons=(1, 3, 5, 10, 20))
+        self.assertEqual(m1["task"], "peg_in_hole")
+        self.assertIsNone(m1["per_horizon"]["1"]["components"]["object_position"]["rmse"])
+
+        pred2 = np.zeros((2, 21, 23), dtype=np.float32)
+        true2 = np.ones((2, 21, 23), dtype=np.float32)
+        m2 = compute_multihorizon_rmse(pred2, true2, task="multifinger_lift", horizons=(1, 3, 5, 10, 20))
+        self.assertEqual(m2["task"], "multifinger_lift")
+        self.assertIsNone(m2["per_horizon"]["1"]["components"]["tangential_forces"]["rmse"])
+        self.assertAlmostEqual(m2["per_horizon"]["1"]["components"]["normal_forces"]["rmse"], 1.0, places=5)
+
+    def test_h5_11_reset_and_episode_boundary_isolation(self):
+        """
+        H5-11: Resetting after Regime A or Regime B nonstationary episodes restores initial physical
+        state and clears step histories, ensuring zero OOD leakage across episode boundaries.
+        """
+        # Regime A reset boundary
+        env_a = CompliantPreLiftContactEnv(regime="A", seed=6117)
+        for _ in range(25):
+            env_a.step(np.array([0.4, 0.4, 0.4, 0.4, 0.2], dtype=float))
+        self.assertAlmostEqual(env_a.mu_true, 0.24, places=9)
+        self.assertEqual(len(env_a.regime_events), 1)
+
+        env_a.reset()
+        self.assertEqual(env_a.step_count, 0)
+        self.assertAlmostEqual(env_a.sim_time_s, 0.0, places=9)
+        self.assertAlmostEqual(env_a.mu_true, 0.60, places=9)
+        self.assertEqual(env_a.regime_events, [])
+        self.assertEqual(env_a.friction_history, [0.60])
+        self.assertEqual(env_a.step_history, [])
+        self.assertFalse(env_a.lifted)
+        self.assertFalse(env_a.dropped)
+
+        # Regime B reset and regime switch to stationary nominal boundary
+        env_b = CompliantPreLiftContactEnv(regime="B", seed=6121)
+        for _ in range(100):
+            env_b.step(np.zeros(5, dtype=float))
+        self.assertAlmostEqual(env_b.object_mass, 0.600, places=9)
+
+        env_b.reset()
+        self.assertAlmostEqual(env_b.object_mass, 0.350, places=9)
+        self.assertEqual(env_b.mass_history, [0.350])
+        self.assertEqual(env_b.step_count, 0)
+
+        # Switching regime via reset(regime="nominal", mu_true=0.50, object_mass=0.350) prevents OOD drift
+        env_b.reset(regime="nominal", mu_true=0.50, object_mass=0.350)
+        for _ in range(30):
+            env_b.step(np.zeros(5, dtype=float))
+        self.assertAlmostEqual(env_b.mu_true, 0.50, places=9)
+        self.assertAlmostEqual(env_b.object_mass, 0.350, places=9)
 
 
 if __name__ == "__main__":

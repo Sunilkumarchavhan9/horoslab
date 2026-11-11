@@ -26,10 +26,15 @@ def extract_env_state_and_wrench(obs: Dict[str, Any], task: str = "peg_in_hole")
         ]).astype(np.float32)
         wrench = obs["wrench"].astype(np.float32)
     else:
+        slip_or_vel = (
+            obs["slip_ratio"]
+            if "slip_ratio" in obs
+            else np.abs(np.asarray(obs["delta_dot_t"], dtype=np.float32))
+        )
         s_vec = np.concatenate([
             obs["finger_pos"].flatten(),
             obs["finger_fn"],
-            obs["slip_ratio"],
+            slip_or_vel,
             obs["obj_pos"]
         ]).astype(np.float32)
         wrench = np.pad(obs["finger_fn"][:4], (0, 2)).astype(np.float32)

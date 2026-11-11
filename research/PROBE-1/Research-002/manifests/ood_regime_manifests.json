@@ -1,0 +1,130 @@
+{
+  "manifest_id": "HOROS-PROBE1-R002-OOD-MANIFEST-v1.0",
+  "environment": "CompliantPreLiftContactEnv",
+  "task": "compliant_prelift",
+  "observation_schema": {
+    "state_vector_dim": 23,
+    "layout": {
+      "0:12": "finger_pos (4x3 mm)",
+      "12:16": "finger_fn (4 normal forces N)",
+      "16:20": "slip_velocity (4 delta_dot_t m/s)",
+      "20:23": "obj_pos (3 mm)"
+    }
+  },
+  "regimes": {
+    "nominal": {
+      "regime_id": "nominal",
+      "name": "Nominal Stationary Compliant Pre-Lift",
+      "description": "Stationary physical parameters across full episode.",
+      "dt_s": 0.01,
+      "gravity_mps2": 9.80665,
+      "nonstationary": false,
+      "initial_friction": 0.5,
+      "initial_mass_kg": 0.35
+    },
+    "A": {
+      "regime_id": "Regime_A",
+      "name": "Friction Step",
+      "description": "Deterministic step drop in contact friction 0.60 -> 0.24 at simulation step 15.",
+      "dt_s": 0.01,
+      "gravity_mps2": 9.80665,
+      "nonstationary": true,
+      "initial_friction": 0.6,
+      "changed_friction": 0.24,
+      "transition_step": 15,
+      "initial_mass_kg": 0.35,
+      "episode_seeds": [
+        6117,
+        6118,
+        6119,
+        6120
+      ]
+    },
+    "B": {
+      "regime_id": "Regime_B",
+      "name": "Dynamic Mass Influx",
+      "description": "Deterministic continuous payload mass ramp (+0.25 kg/s) from episode simulation time t=0.0 s.",
+      "dt_s": 0.01,
+      "gravity_mps2": 9.80665,
+      "nonstationary": true,
+      "initial_friction": 0.6,
+      "initial_mass_kg": 0.35,
+      "mass_change_rate_kg_s": 0.25,
+      "trigger": "episode_simulation_time",
+      "trigger_time_s": 0.0,
+      "mass_cap_kg": null,
+      "ramp_formula": "object_mass(t) = initial_mass_kg + mass_change_rate_kg_s * max(0.0, sim_time_s - trigger_time_s)",
+      "episode_seeds": [
+        6121,
+        6122,
+        6123,
+        6124
+      ]
+    }
+  },
+  "protocol_ood_strata_seeds_6100_6124": {
+    "ood_low_mu": {
+      "seeds": [
+        6100,
+        6101,
+        6102,
+        6103,
+        6104,
+        6105,
+        6106,
+        6107,
+        6108
+      ],
+      "mu_values": [
+        0.12,
+        0.18,
+        0.22
+      ],
+      "object_mass_kg": 0.35
+    },
+    "ood_high_mass": {
+      "seeds": [
+        6109,
+        6110,
+        6111,
+        6112,
+        6113,
+        6114,
+        6115,
+        6116
+      ],
+      "object_mass_values_kg": [
+        0.55,
+        0.7
+      ],
+      "mu_true": 0.4
+    },
+    "ood_regime_a_friction_step": {
+      "seeds": [
+        6117,
+        6118,
+        6119,
+        6120
+      ],
+      "regime": "A",
+      "initial_friction": 0.6,
+      "changed_friction": 0.24,
+      "transition_step": 15,
+      "object_mass_kg": 0.35
+    },
+    "ood_regime_b_mass_influx": {
+      "seeds": [
+        6121,
+        6122,
+        6123,
+        6124
+      ],
+      "regime": "B",
+      "initial_mass_kg": 0.35,
+      "mass_change_rate_kg_s": 0.25,
+      "trigger": "episode_simulation_time",
+      "mass_cap_kg": null,
+      "mu_true": 0.6
+    }
+  }
+}
