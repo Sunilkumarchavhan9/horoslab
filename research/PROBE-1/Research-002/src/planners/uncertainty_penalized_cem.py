@@ -79,6 +79,8 @@ class UncertaintyPenalizedCEM:
         best_raw_return = -float("inf")
         best_penalty_total = 0.0
         source_used = "none"
+        last_samples_first = None
+        last_elites_first = None
         s_curr_tensor = torch.tensor(current_state, dtype=torch.float32)
 
         for _ in range(self.num_iterations):
@@ -123,6 +125,8 @@ class UncertaintyPenalizedCEM:
 
             elite_indices = np.argsort(penalized_returns)[-self.num_elites:]
             elite_samples = samples[elite_indices]
+            last_samples_first = samples[:, 0, :]
+            last_elites_first = elite_samples[:, 0, :]
             top_idx = int(elite_indices[-1])
 
             if penalized_returns[top_idx] > best_penalized_return:
@@ -147,6 +151,26 @@ class UncertaintyPenalizedCEM:
             "best_penalized_return": best_penalized_return,
             "best_uncertainty_penalty": best_penalty_total,
             "best_trajectory": best_trajectory,
+            "cand_first_action_mean": (
+                np.mean(last_samples_first, axis=0).tolist()
+                if last_samples_first is not None
+                else [0.0] * self.action_dim
+            ),
+            "cand_first_action_std": (
+                np.std(last_samples_first, axis=0).tolist()
+                if last_samples_first is not None
+                else [0.0] * self.action_dim
+            ),
+            "elite_first_action_mean": (
+                np.mean(last_elites_first, axis=0).tolist()
+                if last_elites_first is not None
+                else [0.0] * self.action_dim
+            ),
+            "elite_first_action_std": (
+                np.std(last_elites_first, axis=0).tolist()
+                if last_elites_first is not None
+                else [0.0] * self.action_dim
+            ),
         }
 
         return best_action, info

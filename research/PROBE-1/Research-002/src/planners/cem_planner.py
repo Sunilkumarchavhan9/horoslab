@@ -98,6 +98,8 @@ class CEMPlanner:
 
         best_trajectory = None
         best_predicted_return = -float("inf")
+        last_samples_first = None
+        last_elites_first = None
         s_curr_tensor = torch.tensor(current_state, dtype=torch.float32)
 
         for iteration in range(self.num_iterations):
@@ -132,6 +134,8 @@ class CEMPlanner:
             # Select elite trajectories
             elite_indices = np.argsort(returns)[-self.num_elites:]
             elite_samples = samples[elite_indices]
+            last_samples_first = samples[:, 0, :]
+            last_elites_first = elite_samples[:, 0, :]
 
             if returns[elite_indices[-1]] > best_predicted_return:
                 best_predicted_return = float(returns[elite_indices[-1]])
@@ -148,6 +152,26 @@ class CEMPlanner:
         info = {
             "best_predicted_return": best_predicted_return,
             "best_trajectory": best_trajectory,
+            "cand_first_action_mean": (
+                np.mean(last_samples_first, axis=0).tolist()
+                if last_samples_first is not None
+                else [0.0] * self.action_dim
+            ),
+            "cand_first_action_std": (
+                np.std(last_samples_first, axis=0).tolist()
+                if last_samples_first is not None
+                else [0.0] * self.action_dim
+            ),
+            "elite_first_action_mean": (
+                np.mean(last_elites_first, axis=0).tolist()
+                if last_elites_first is not None
+                else [0.0] * self.action_dim
+            ),
+            "elite_first_action_std": (
+                np.std(last_elites_first, axis=0).tolist()
+                if last_elites_first is not None
+                else [0.0] * self.action_dim
+            ),
         }
 
         return best_action, info
