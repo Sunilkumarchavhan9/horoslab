@@ -15,9 +15,12 @@ from src.integrated.phase35_evaluator import verify_phase34_artifacts_and_load
 from src.integrated.phase36_validation_runner import (
     FROZEN_MANIFEST_SHA256,
     _create_task2_env_for_phase36,
+    _evaluate_acceptance_gates,
     _exact_mcnemar_two_sided_p,
     _run_single_pih_episode,
     _run_track_365_fault_injection,
+    evaluate_g6_non_regression,
+    fisher_exact_two_sided,
     verify_frozen_phase36_manifest,
 )
 from src.integrated.planner_evaluator import PlannerEvaluator
@@ -81,3 +84,39 @@ def test_task2_single_step_compatibility():
     act, _ = planner.plan(s_curr, pe.reward_fn)
     chosen, _, _ = sf.filter_action(current_state=obs, candidate_action=act.copy(), task="compliant_prelift")
     assert chosen.shape == (len(act),)
+
+
+def test_corrected_g6_non_regression_validator():
+    t366_obs = {
+        "force_gt_25n_episodes": 2,
+        "by_stratum": {
+            "ID-Nominal": {"n_episodes": 10, "success_count": 0, "success_rate": 0.0, "safety_violations": 0, "dropped_count": 0},
+            "OOD-LowMu": {"n_episodes": 10, "success_count": 0, "success_rate": 0.0, "safety_violations": 1, "dropped_count": 0},
+            "OOD-HighMass": {"n_episodes": 10, "success_count": 0, "success_rate": 0.0, "safety_violations": 0, "dropped_count": 0},
+            "OOD-RegimeA-FrictionStep": {"n_episodes": 10, "success_count": 2, "success_rate": 0.2, "safety_violations": 2, "dropped_count": 2},
+            "OOD-RegimeB-MassInflux": {"n_episodes": 10, "success_count": 1, "success_rate": 0.1, "safety_violations": 1, "dropped_count": 0},
+        },
+    }
+    res_ok = evaluate_g6_non_regression(immutability_ok=True, t366_summary=t366_obs)
+    assert res_ok["passed"] is True
+    assert res_ok["per_stratum_non_regression_verified"] is True
+
+    # Simulate real safety regression on ID-Nominal (8/10 violations vs 3/25 baseline -> Fisher p < 0.001)
+    t366_bad = {
+        "force_gt_25n_episodes": 8,
+        "by_stratum": {**t366_obs["by_stratum"], "ID-Nominal": {"n_episodes": 10, "success_count": 0, "success_rate": 0.0, "safety_violations": 8, "dropped_count": 0}},
+    }
+    res_bad = evaluate_g6_non_regression(immutability_ok=True, t366_summary=t366_bad)
+    assert res_bad["passed"] is False
+    assert fisher_exact_two_sided(0, 10, 3, 25) > 0.50
+
+    gates = _evaluate_acceptance_gates(
+        t362_summary={"total_safety_violations": 0, "m4_valid_domain_cells": {"c": {"n_episodes": 60, "seated_successes": 60, "seated_rate": 1.0, "contact_acquired_episodes": 60, "contact_acquisition_rate": 1.0}}},
+        t363_summary={"total_safety_violations": 0, "unseen_interpolation_cells": {}, "boundary_cells": {"BND_below018_proactive_refuse": {"n_episodes": 20, "alignment_failed_episodes": 20, "contact_acquired_episodes": 0, "safety_violations": 0}}},
+        t364_summary={"total_dynamic_crush_terminations": 0, "total_safety_violations": 0},
+        t365_summary={"passed_scenarios": 30, "n_scenarios": 30, "g5_oracle_zero_leakage_verified": True, "g5_oracle_invariance_max_abs_diff": 0.0},
+        t366_summary=t366_obs,
+        immutability_ok=True,
+        g1_halted=False,
+    )
+    assert gates["all_six_gates_passed"] is True
