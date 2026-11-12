@@ -25,15 +25,23 @@ No additional physical-condition episodes were executed for this addendum, and t
 
 ## 2. `G3` Below-Domain Clearance Clarification (`0.14 mm` Boundary Group Evidence)
 
-The validated unknown-clearance Mode B safety envelope remains strictly **`[0.18, 0.50] mm`** (`VALIDATED_OOD_MIN_CLEARANCE_MM = 0.18`); it is **not** widened to `0.14 mm`. The three `0.14 mm` Track `3.6.3` boundary cells represent distinct controller-visible configurations:
+The validated unknown-clearance Mode B safety envelope remains strictly **`[0.18, 0.50] mm`** (`VALIDATED_OOD_MIN_CLEARANCE_MM = 0.18`); it is **not** widened or redefined to `0.14 mm`. Within Track `3.6.3` and Track `3.6.5`, three distinct experiments must be separated explicitly:
+
+| Experiment | Result | Interpretation & Gate Role |
+|---|---|---|
+| **Proactive below-domain detection** (`BND_below018_proactive_refuse`, `N=20`) | `20/20` refused at step 0 (`ALIGNMENT_FAILED`) | **Pass** — G3 below-domain refusal evidence (`min_possible_clearance_mm = 0.14 < 0.18`). |
+| **Blind Mode B at actual `0.14 mm`** (`BND_below018_runtime_falsify`, `N=20`) | `20/20` seated safely (`maxF = 0.425 N`, `0` viol) | **Exploratory robustness result (NOT G3 refusal gate proof)** — assuming `min = 0.18 mm` gives no signal that actual clearance is `0.14 mm`. |
+| **Fault injection** (`Track 3.6.5`, `N=30`) | `30/30` fail-closed non-descending holds | **Pass** — G3 telemetry & metrology fault refusal evidence. |
 
 | Cell ID ($N$) | Actual Clearance | Controller-Visible Clearance (`ClearanceSpecification`) | Clearance Mode | Robust Lower Bound (`c_safe` / Gate) | Entry Decision | Outcome |
 |---|---|---|---|---|---|---|
 | `BND_below018_proactive_refuse` (`20`) | `0.14 mm` ($\mu=0.85$) | `min_possible_clearance_mm = 0.14 mm` (deployment domain bound); NO `obs['clearance']` read | `unknown_clearance` (Mode B) | `c_robust_mm = 0.18 mm` (`0.14 < 0.18` triggers step-0 `outside_validated_clearance_domain`) | **Refusal** (`ALIGNMENT_FAILED` at step 0; `c_safe_mm = 0.0`) | **`20/20` safe hold above rim** (`z` in `[14.01, 15.98] mm`), `0` bore entry, `0/20` viol, `maxF = 0.000 N` |
-| `BND_below018_runtime_falsify` (`20`) | `0.14 mm` ($\mu=0.85$) | Uninstrumented / misspecified default Mode B (`min_possible_clearance_mm = 0.18 mm`); NO `obs['clearance']` read | `unknown_clearance` (Mode B, blind assumption) | `c_robust_mm = 0.18 mm` ($r_{\text{gate}} = 0.117\text{ mm}$, $r_{\text{tube}} = 0.153\text{ mm}$) | **Insertion permitted** (`0.18 >= 0.18` assumption; Phase A centered $r \le 0.117 < 0.14\text{ mm}$, so no wall contact occurred to trigger lateral force $> 1.0\text{ N}$ falsification) | **`20/20` seated**, `20/20` contact, `0` wall penetration steps, `0/20` viol, `maxF = 0.425 N` |
+| `BND_below018_runtime_falsify` (`20`) | `0.14 mm` ($\mu=0.85$) | Uninstrumented / misspecified default Mode B (`min_possible_clearance_mm = 0.18 mm`); NO `obs['clearance']` read | `unknown_clearance` (Mode B, blind assumption) | `c_robust_mm = 0.18 mm` ($r_{\text{gate}} = 0.117\text{ mm}$, $r_{\text{tube}} = 0.153\text{ mm}$) | **Insertion permitted** (`0.18 >= 0.18` assumption; Phase A centered $r \le 0.117 < 0.14\text{ mm}$, so no wall contact occurred to trigger lateral force $> 1.0\text{ N}$ falsification) | **`20/20` seated** (*exploratory robustness only*), `20/20` contact, `0` wall penetration steps, `0/20` viol, `maxF = 0.425 N` |
 | `BND_below018_mode_a_valid` (`20`) | `0.14 mm` ($\mu=0.85$) | Independent metrology $\hat{c} \in [0.1325, 0.1475]\text{ mm}$, $\sigma_c = 0.015\text{ mm}$, $k_\sigma = 2.0$ | `estimated_clearance` (Mode A) | `c_safe` $= \hat{c} - 2\sigma_c \in [0.1025, 0.1175]\text{ mm}$ ($\ge 0.05\text{ mm}$ floor) | **Insertion permitted** inside metrology-bounded LCB tube | **`20/20` seated**, `20/20` contact, `0` wall penetration steps, `0/20` viol, `maxF = 0.425 N` |
 
-**Reconciliation:** Mode B **strictly refuses (`20/20`)** whenever the deployment spec discloses possible sub-`0.18 mm` tolerances (`min_possible_clearance_mm < 0.18`), and latches runtime falsification (`contact_resistance_below_validated_domain`) if radial contact resistance $> 1.0\text{ N}$ is encountered inside $r \le 0.18\text{ mm}$ at $z \le 0$. In `BND_below018_runtime_falsify`, tight Phase A alignment kept $r \approx 0 < 0.14\text{ mm}$, safely completing insertion without touching the `0.14 mm` bore wall—meaning neither oracle leakage nor domain redefinition occurred, and uninstrumented `0.14 mm` remains outside Mode B's guaranteed refusal guarantee if radial drift stays below `0.14 mm`. For `< 0.18 mm` tolerances, validated deployment requires Mode A metrology (`BND_below018_mode_a_valid`) or setting `min_possible_clearance_mm` accurately (`BND_below018_proactive_refuse`).
+**Explicit Scope Distinction:**
+- When the controller receives a lower-bound indication of `0.14 mm` (`min_possible_clearance_mm = 0.14`), it strictly refuses entry (`20/20`).
+- When Mode B assumes the minimum is `0.18 mm`, it cannot know that the actual bore clearance is `0.14 mm`; the `20/20` safe seating in `BND_below018_runtime_falsify` shows only that tight Phase A centering happened to stay within $r < 0.14\text{ mm}$ on those test trajectories and is treated strictly as an **exploratory robustness result**, NOT as general safe blind operation below `[0.18, 0.50] mm` or proof of G3. For `< 0.18 mm` tolerances, validated operation requires either calibrated Mode A metrology or disclosing the true deployment minimum to trigger Mode B refusal.
 
 ---
 
@@ -55,14 +63,18 @@ Replaying all **50 / 50** archived Phase 3.5 `M4_acmm B3` Task 2 episodes under 
 
 Because Phase 3.5 `C12` (`N=25`: `9 / 8 / 4 / 4` across OOD strata) and Phase 3.6 Track `3.6.6` (`N=40`: `10 / 10 / 10 / 10`) differ in stratum proportions, each stratum is evaluated **separately** with exact Wilson 95% confidence intervals and two-sided Fisher exact tests:
 
-| Stratum | Phase 3.5 `C06/C12` Success `[95% CI]` | Phase 3.6 `3.6.6` Success `[95% CI]` | Fisher $p$ (Success) | Phase 3.5 Viol `[95% CI]` | Phase 3.6 Viol `[95% CI]` | Fisher $p$ (Viol) | Fisher $p$ (Drop) | Non-Regressive? |
+| Stratum | Phase 3.5 `C06/C12` Success `[95% CI]` | Phase 3.6 `3.6.6` Success `[95% CI]` | Fisher $p$ (Success) | Phase 3.5 Viol `[95% CI]` | Phase 3.6 Viol `[95% CI]` | Fisher $p$ (Viol) | Fisher $p$ (Drop) | Detected Regression? |
 |---|---|---|---|---|---|---|---|---|
-| **`ID-Nominal`** | `3/25 (12.0%)` `[4.17, 29.96]` | `0/10 (0.0%)` `[0.0, 27.75]` | `0.541635` | `3/25 (12.0%)` `[4.17, 29.96]` | `0/10 (0.0%)` `[0.0, 27.75]` | `0.541635` | `1.0` | **Yes** |
-| **`OOD-LowMu`** | `0/9 (0.0%)` `[0.0, 29.91]` | `0/10 (0.0%)` `[0.0, 27.75]` | `1.0` | `1/9 (11.11%)` `[1.99, 43.5]` | `1/10 (10.0%)` `[1.79, 40.42]` | `1.0` | `1.0` | **Yes** |
-| **`OOD-HighMass`** | `0/8 (0.0%)` `[0.0, 32.44]` | `0/10 (0.0%)` `[0.0, 27.75]` | `1.0` | `1/8 (12.5%)` `[2.24, 47.09]` | `0/10 (0.0%)` `[0.0, 27.75]` | `0.444444` | `1.0` | **Yes** |
-| **`OOD-RegimeA-FrictionStep`** | `1/4 (25.0%)` `[4.56, 69.94]` | `2/10 (20.0%)` `[5.67, 50.98]` | `1.0` | `0/4 (0.0%)` `[0.0, 48.99]` | `2/10 (20.0%)` `[5.67, 50.98]` | `1.0` | `1.0` | **Yes** |
-| **`OOD-RegimeB-MassInflux`** | `0/4 (0.0%)` `[0.0, 48.99]` | `1/10 (10.0%)` `[1.79, 40.42]` | `1.0` | `0/4 (0.0%)` `[0.0, 48.99]` | `1/10 (10.0%)` `[1.79, 40.42]` | `1.0` | `1.0` | **Yes** |
-| *Pooled OOD (composition differs)* | `1/25 (4.0%)` `[0.71, 19.54]` | `3/40 (7.5%)` `[2.58, 19.86]` | `1.0` | `2/25 (8.0%)` `[2.22, 24.97]` | `4/40 (10.0%)` `[3.96, 23.05]` | `1.0` | — | **Yes** |
+| **`ID-Nominal`** | `3/25 (12.0%)` `[4.17, 29.96]` | `0/10 (0.0%)` `[0.0, 27.75]` | `0.541635` | `3/25 (12.0%)` `[4.17, 29.96]` | `0/10 (0.0%)` `[0.0, 27.75]` | `0.541635` | `1.0` | **No detected regression** |
+| **`OOD-LowMu`** | `0/9 (0.0%)` `[0.0, 29.91]` | `0/10 (0.0%)` `[0.0, 27.75]` | `1.0` | `1/9 (11.11%)` `[1.99, 43.5]` | `1/10 (10.0%)` `[1.79, 40.42]` | `1.0` | `1.0` | **No detected regression** |
+| **`OOD-HighMass`** | `0/8 (0.0%)` `[0.0, 32.44]` | `0/10 (0.0%)` `[0.0, 27.75]` | `1.0` | `1/8 (12.5%)` `[2.24, 47.09]` | `0/10 (0.0%)` `[0.0, 27.75]` | `0.444444` | `1.0` | **No detected regression** |
+| **`OOD-RegimeA-FrictionStep`** | `1/4 (25.0%)` `[4.56, 69.94]` | `2/10 (20.0%)` `[5.67, 50.98]` | `1.0` | `0/4 (0.0%)` `[0.0, 48.99]` | `2/10 (20.0%)` `[5.67, 50.98]` | `1.0` | `1.0` | **No detected regression** |
+| **`OOD-RegimeB-MassInflux`** | `0/4 (0.0%)` `[0.0, 48.99]` | `1/10 (10.0%)` `[1.79, 40.42]` | `1.0` | `0/4 (0.0%)` `[0.0, 48.99]` | `1/10 (10.0%)` `[1.79, 40.42]` | `1.0` | `1.0` | **No detected regression** |
+| *Pooled OOD (composition differs)* | `1/25 (4.0%)` `[0.71, 19.54]` | `3/40 (7.5%)` `[2.58, 19.86]` | `1.0` | `2/25 (8.0%)` `[2.22, 24.97]` | `4/40 (10.0%)` `[3.96, 23.05]` | `1.0` | — | **No detected regression** |
+
+> **Statistical & Physical Scope Qualifications:**  
+> 1. **Non-Regression vs. Equivalence:** Non-significant Fisher exact tests ($p \ge 0.444444$), particularly with small stratum sample sizes ($N=4\text{–}25$), establish **no detected Task 2 regression** (supported by `50/50` exact Phase 3.5 replay parity), **not** formal proof of universal statistical equivalence.  
+> 2. **Simulation Envelope Scope:** All Phase 3.6 safety (`0/1,135` violations) and manipulation (`760/760 M4 B3`) results establish robustness strictly within the evaluated simulation envelope and **do not yet establish real-robot safety**.
 
 ---
 

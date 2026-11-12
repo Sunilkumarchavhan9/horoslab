@@ -1,6 +1,6 @@
 {
   "schema_version": "phase3_6_closure_adjudication_v1",
-  "generated_at_utc": "2026-11-12T10:10:29.733389+00:00",
+  "generated_at_utc": "2026-11-12T10:21:47.102495+00:00",
   "frozen_manifest_sha256": "620f8a7875a00b3e70818d905eda2e971e96044022782cfdc559e94edcebb5e1",
   "preserved_phase36_results_sha256": "0f6415347918d289f30989ab31859f217438378f2210bfbfdff5b06d832909cd",
   "preserved_original_automated_g6_flag": {
@@ -10,9 +10,19 @@
     "task2_force_gt_25n_episodes": 2
   },
   "preserved_original_all_six_gates_passed": 0,
+  "validated_mode_b_clearance_domain_mm": [
+    0.18,
+    0.5
+  ],
+  "g3_scope_distinction_summary": {
+    "proactive_below_domain_detection_20ep": "Pass (20/20 refused when controller receives min_possible_clearance_mm=0.14 < 0.18)",
+    "blind_mode_b_actual_014_20ep": "Exploratory robustness result ONLY (20/20 seated safely; NOT G3 refusal gate proof because assuming min=0.18 mm gives no knowledge that actual=0.14 mm)",
+    "fault_injection_track_365_30ep": "Pass (30/30 fail-closed safe holds)"
+  },
   "g3_below_domain_clarification": [
     {
       "cell_id": "BND_below018_proactive_refuse",
+      "g3_classification": "Pass (G3 below-domain refusal gate proof)",
       "n_episodes": 20,
       "actual_clearance": "0.14 mm (mu=0.85)",
       "controller_visible_clearance": "min_possible_clearance_mm = 0.14 mm (deployment lower bound); NO obs['clearance'] oracle key read",
@@ -26,6 +36,7 @@
     },
     {
       "cell_id": "BND_below018_runtime_falsify",
+      "g3_classification": "Exploratory robustness result (NOT G3 refusal gate proof)",
       "n_episodes": 20,
       "actual_clearance": "0.14 mm (mu=0.85)",
       "controller_visible_clearance": "Default uninstrumented Mode B spec (min_possible_clearance_mm = 0.18 mm); NO obs['clearance'] oracle key read",
@@ -34,11 +45,12 @@
       "observed_c_safe_mm_values": [
         0.18
       ],
-      "entry_decision": "Insertion permitted (r_curr <= 0.117 < 0.14 mm; Phase A centering avoided bore wall -> lateral_force < 1.0 N)",
+      "entry_decision": "Insertion permitted (controller assumes min=0.18 mm and cannot know actual=0.14 mm; Phase A centering avoided bore wall -> lateral_force < 1.0 N)",
       "outcome_summary": "20/20 seated, 20/20 bore contact, 0 wall penetration steps, 0/20 viol, maxF=0.425 N"
     },
     {
       "cell_id": "BND_below018_mode_a_valid",
+      "g3_classification": "Mode A metrology-bounded baseline (not Mode B gate proof)",
       "n_episodes": 20,
       "actual_clearance": "0.14 mm (mu=0.85)",
       "controller_visible_clearance": "Independent metrology c_hat in [0.1325, 0.1475] mm, sigma_c = 0.015 mm, k_sigma = 2.0",
@@ -699,6 +711,7 @@
       }
     ]
   },
+  "g6_statistical_qualification_note": "No detected Task 2 regression, supported by 50/50 exact Phase 3.5 replay parity and non-significant per-stratum Fisher tests (p >= 0.444444). Because small stratum sample sizes limit power, non-significant Fisher tests do not establish universal statistical equivalence.",
   "g6_corrected_adjudication": {
     "passed": 1,
     "sha256_immutability_verified": 1,

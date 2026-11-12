@@ -226,6 +226,7 @@ def extract_g3_boundary_evidence(p36_doc: Dict[str, Any]) -> List[Dict[str, Any]
     bnd_defs = [
         (
             "BND_below018_proactive_refuse",
+            "Pass (G3 below-domain refusal gate proof)",
             "0.14 mm (mu=0.85)",
             "min_possible_clearance_mm = 0.14 mm (deployment lower bound); NO obs['clearance'] oracle key read",
             "unknown_clearance (Mode B)",
@@ -234,14 +235,16 @@ def extract_g3_boundary_evidence(p36_doc: Dict[str, Any]) -> List[Dict[str, Any]
         ),
         (
             "BND_below018_runtime_falsify",
+            "Exploratory robustness result (NOT G3 refusal gate proof)",
             "0.14 mm (mu=0.85)",
             "Default uninstrumented Mode B spec (min_possible_clearance_mm = 0.18 mm); NO obs['clearance'] oracle key read",
             "unknown_clearance (Mode B, blind/misspecified)",
             "c_robust_mm = 0.18 mm (r_gate=0.117 mm, r_tube=0.153 mm)",
-            "Insertion permitted (r_curr <= 0.117 < 0.14 mm; Phase A centering avoided bore wall -> lateral_force < 1.0 N)",
+            "Insertion permitted (controller assumes min=0.18 mm and cannot know actual=0.14 mm; Phase A centering avoided bore wall -> lateral_force < 1.0 N)",
         ),
         (
             "BND_below018_mode_a_valid",
+            "Mode A metrology-bounded baseline (not Mode B gate proof)",
             "0.14 mm (mu=0.85)",
             "Independent metrology c_hat in [0.1325, 0.1475] mm, sigma_c = 0.015 mm, k_sigma = 2.0",
             "estimated_clearance (Mode A)",
@@ -251,7 +254,7 @@ def extract_g3_boundary_evidence(p36_doc: Dict[str, Any]) -> List[Dict[str, Any]
     ]
     rows: List[Dict[str, Any]] = []
     eps = [e for e in p36_doc["episodes_peg_in_hole"] if e["track"] == "3.6.3_unseen_and_boundary"]
-    for cid, actual_c, vis_c, mode_str, robust_lb, entry_dec in bnd_defs:
+    for cid, g3_role, actual_c, vis_c, mode_str, robust_lb, entry_dec in bnd_defs:
         sub = [e for e in eps if e["cell_id"] == cid]
         n = len(sub)
         seated = sum(1 for e in sub if e["seated_success"])
@@ -264,6 +267,7 @@ def extract_g3_boundary_evidence(p36_doc: Dict[str, Any]) -> List[Dict[str, Any]
         max_f = max(float(e["max_force_n"]) for e in sub) if sub else 0.0
         rows.append({
             "cell_id": cid,
+            "g3_classification": g3_role,
             "n_episodes": n,
             "actual_clearance": actual_c,
             "controller_visible_clearance": vis_c,
@@ -335,9 +339,20 @@ def run_phase36_closure_audit(r002_root: str) -> Dict[str, Any]:
         "preserved_phase36_results_sha256": res_sha_after,
         "preserved_original_automated_g6_flag": p36_doc["acceptance_gates"]["G6_immutable_checkpoints_and_task2_non_regression"],
         "preserved_original_all_six_gates_passed": p36_doc["acceptance_gates"]["all_six_gates_passed"],
+        "validated_mode_b_clearance_domain_mm": [0.18, 0.50],
+        "g3_scope_distinction_summary": {
+            "proactive_below_domain_detection_20ep": "Pass (20/20 refused when controller receives min_possible_clearance_mm=0.14 < 0.18)",
+            "blind_mode_b_actual_014_20ep": "Exploratory robustness result ONLY (20/20 seated safely; NOT G3 refusal gate proof because assuming min=0.18 mm gives no knowledge that actual=0.14 mm)",
+            "fault_injection_track_365_30ep": "Pass (30/30 fail-closed safe holds)",
+        },
         "g3_below_domain_clarification": g3_evidence,
         "g6_task2_config_parity": config_parity,
         "g6_phase35_50seed_replay_parity": replay_parity,
+        "g6_statistical_qualification_note": (
+            "No detected Task 2 regression, supported by 50/50 exact Phase 3.5 replay parity and non-significant "
+            "per-stratum Fisher tests (p >= 0.444444). Because small stratum sample sizes limit power, "
+            "non-significant Fisher tests do not establish universal statistical equivalence."
+        ),
         "g6_corrected_adjudication": g6_adjudication,
         "final_six_gate_adjudicated_matrix": {
             "G1": True,
