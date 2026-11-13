@@ -168,3 +168,4 @@ class TeacherModelRegistry:
             self.register(desc)
             imported_count += 1
         return imported_count
+

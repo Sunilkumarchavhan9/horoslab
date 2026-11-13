@@ -14,6 +14,7 @@ from teaching.inference import (
     AdversarialMockTeacher,
     BaseTeacherAdapter,
     DeterministicMockTeacher,
+    ExternalRestApiTeacher,
     TeacherInferenceEngine,
     TeacherInferenceResult,
     TeacherQueryPayload,
@@ -47,6 +48,7 @@ __all__ = [
     "BaseTeacherAdapter",
     "DeterministicMockTeacher",
     "AdversarialMockTeacher",
+    "ExternalRestApiTeacher",
     "TeacherInferenceEngine",
     "ValidationVerdict",
     "ValidationReport",
@@ -60,3 +62,4 @@ __all__ = [
     "BenchmarkResults",
     "StudentEvaluationEngine",
 ]
+

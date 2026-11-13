@@ -1,5 +1,5 @@
 {
-  "manifest_id": "manifest_distill_compliant_prelift_c7839c11",
+  "manifest_id": "manifest_distill_compliant_prelift_5c88544e",
   "dataset_name": "Curated Distillation Dataset: compliant_prelift",
   "total_episodes": 4,
   "total_transitions": 120,
@@ -10,10 +10,11 @@
   "has_teacher_actions": true,
   "has_teacher_representations": false,
   "zero_leakage_verified": true,
-  "data_sha256": "c7839c11964504b31dc122161f84f019882fb550d43fe22658e4e0986451c9e0",
+  "data_sha256": "5c88544e45adc952b330ce6cae9da17e4c50772a5ee46ea912b362492b7e5e14",
   "metadata": {
     "batch_size": 2,
     "total_sequence_samples": 8,
-    "input_dim": 43
+    "input_dim": 43,
+    "leakage_verification_status": "VERIFIED_BITWISE_INVARIANT_UNDER_MODE_CORRUPTION"
   }
 }

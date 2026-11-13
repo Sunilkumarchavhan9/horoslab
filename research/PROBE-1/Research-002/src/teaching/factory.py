@@ -1,7 +1,9 @@
 """Synthetic Experience Factory for HOROS Model Teaching Infrastructure.
 
-Generates reproducible physical interaction scenarios across stratified domain randomization
-ranges, coupling teacher action suggestions with ground-truth simulator dynamics.
+Generates reproducible physical interaction trajectories by coupling teacher action suggestions
+with validated PROBE-1 ground-truth simulation environments:
+- Task 1: PegInHoleEnv (operational space impedance, chamfer, wedging, seating mechanics)
+- Task 2: CompliantPreLiftContactEnv (elastomeric fingertip shear pads, Coulomb slip, liftoff acceleration)
 """
 
 from __future__ import annotations
@@ -83,7 +85,7 @@ class SyntheticEpisodeRecord:
 
 
 class SyntheticExperienceFactory:
-    """Generates reproducible physical trajectories by pairing teacher proposals with simulator physics."""
+    """Generates reproducible physical trajectories by pairing teacher proposals with authoritative simulator physics."""
 
     def __init__(
         self,
@@ -99,69 +101,111 @@ class SyntheticExperienceFactory:
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
     def sample_parameters(self, seed: int) -> Dict[str, Any]:
-        """Deterministically samples physical parameters from specification bounds."""
+        """Deterministically samples physical parameters using specified PRNG seed."""
         rng = np.random.RandomState(seed)
-        spec = self.sampling_spec
+        mu = float(rng.uniform(self.sampling_spec.friction_range[0], self.sampling_spec.friction_range[1]))
+        mass = float(rng.uniform(self.sampling_spec.mass_range_kg[0], self.sampling_spec.mass_range_kg[1]))
+        clearance = float(
+            rng.uniform(self.sampling_spec.clearance_range_mm[0], self.sampling_spec.clearance_range_mm[1])
+        )
 
-        mu_true = float(rng.uniform(spec.friction_range[0], spec.friction_range[1]))
-        mass_kg = float(math.exp(rng.uniform(math.log(spec.mass_range_kg[0]), math.log(spec.mass_range_kg[1]))))
-        clearance_mm = float(rng.uniform(spec.clearance_range_mm[0], spec.clearance_range_mm[1]))
-
-        # Non-stationary regime tag
-        regime = "nominal"
-        if spec.enable_regime_shifts:
-            r_roll = rng.rand()
-            if r_roll < 0.20:
-                regime = "RegimeA_FrictionStep"
-            elif r_roll < 0.40:
-                regime = "RegimeB_MassInflux"
+        regimes = ["nominal", "A", "B"] if self.sampling_spec.enable_regime_shifts else ["nominal"]
+        regime = str(rng.choice(regimes))
 
         return {
-            "seed": seed,
-            "initial_mu_true": round(mu_true, 4),
-            "initial_mass_kg": round(mass_kg, 4),
-            "clearance_mm": round(clearance_mm, 4),
+            "friction_mu": round(mu, 4),
+            "mass_kg": round(mass, 4),
+            "clearance_mm": round(clearance, 4),
             "regime": regime,
-            "dt_s": spec.dt_s,
+            "seed": seed,
         }
+
+    def _create_environment(self, task: str, params: Dict[str, Any], dt: float):
+        """Instantiates the authoritative PROBE-1 environment matching task requirements."""
+        seed = int(params["seed"])
+        mu = float(params["friction_mu"])
+        mass = float(params["mass_kg"])
+        clearance = float(params["clearance_mm"])
+        regime = str(params.get("regime", "nominal"))
+
+        if task in ("compliant_prelift", "compliant_lift", "multifinger_lift"):
+            try:
+                from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
+                return CompliantPreLiftContactEnv(
+                    mu_true=mu,
+                    object_mass=mass,
+                    dt=dt,
+                    seed=seed,
+                    regime=regime,
+                )
+            except ImportError:
+                from environment.compliant_prelift_env import CompliantPreLiftContactEnv
+                return CompliantPreLiftContactEnv(
+                    mu_true=mu,
+                    object_mass=mass,
+                    dt=dt,
+                    seed=seed,
+                    regime=regime,
+                )
+        else:
+            try:
+                from src.environment.peg_in_hole_env import PegInHoleEnv
+                return PegInHoleEnv(
+                    dt=dt,
+                    clearance=clearance,
+                    friction_coeff=mu,
+                    seed=seed,
+                )
+            except ImportError:
+                from environment.peg_in_hole_env import PegInHoleEnv
+                return PegInHoleEnv(
+                    dt=dt,
+                    clearance=clearance,
+                    friction_coeff=mu,
+                    seed=seed,
+                )
 
     def generate_episode(
         self,
         task: str,
         teacher_id: str,
         seed: int,
-        custom_params: Optional[Dict[str, Any]] = None,
+        episode_length: Optional[int] = None,
+        parameter_overrides: Optional[Dict[str, Any]] = None,
     ) -> SyntheticEpisodeRecord:
-        """Executes candidate teacher actions through simulation to produce an episode record."""
-        params = custom_params or self.sample_parameters(seed)
-        episode_len = self.sampling_spec.default_episode_length
-        state_dim = 23 if task == "compliant_prelift" else 15
-        action_dim = 5 if task == "compliant_prelift" else 6
+        """Executes a complete synthetic episode by driving the simulator with teacher actions."""
+        episode_len = episode_length or self.sampling_spec.default_episode_length
+        dt = self.sampling_spec.dt_s
 
-        rng = np.random.RandomState(seed)
-        dt = params["dt_s"]
-        mu_true = params["initial_mu_true"]
-        mass_kg = params["initial_mass_kg"]
+        # Parameter sampling
+        params = self.sample_parameters(seed)
+        if parameter_overrides:
+            params.update(parameter_overrides)
 
-        # Initial state setup
-        init_state = np.zeros(state_dim, dtype=np.float32)
-        if task == "compliant_prelift":
-            # Gripper pos at finger span 40 mm, z = 45 mm (above object resting at z=0)
-            init_state[0] = 0.0
-            init_state[1] = 0.0
-            init_state[2] = 45.0  # z hand
-            init_state[8] = 0.0   # z obj resting on table
-        else:
-            # Peg tip at z = 10 mm above hole, small lateral misalignment
-            init_state[0] = float(rng.uniform(-0.5, 0.5))
-            init_state[1] = float(rng.uniform(-0.5, 0.5))
-            init_state[2] = 10.0
+        # Import environment adapters
+        try:
+            from src.environment.step_adapter import step_env_compatible
+            from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
+            from src.contact_modes.contact_mode_definitions import classify_contact_mode
+        except ImportError:
+            from environment.step_adapter import step_env_compatible
+            from selection_aware.counterfactual_rollout import extract_env_state_and_wrench
+            from contact_modes.contact_mode_definitions import classify_contact_mode
+
+        # Initialize real simulator
+        env = self._create_environment(task, params, dt)
+        obs = env.reset()
+
+        # Extract initial state and wrench from real environment
+        s0, w0 = extract_env_state_and_wrench(obs, task=task)
+        state_dim = len(s0)
+        action_dim = 5 if task in ("compliant_prelift", "compliant_lift", "multifinger_lift") else 6
 
         # Query teacher for candidate action sequence
         payload = TeacherQueryPayload(
             task_id=task,
             query_type="trajectory_proposal",
-            current_state=init_state,
+            current_state=s0.astype(np.float32),
             target_horizon=episode_len,
             seed=seed,
             request_representations=True,
@@ -169,7 +213,6 @@ class SyntheticExperienceFactory:
         teacher_res = self.inference_engine.query(teacher_id, payload)
         cand_actions = teacher_res.candidate_actions
 
-        # Step through physical simulation dynamics
         states = np.zeros((episode_len, state_dim), dtype=np.float32)
         next_states = np.zeros((episode_len, state_dim), dtype=np.float32)
         actions = np.zeros((episode_len, action_dim), dtype=np.float32)
@@ -178,112 +221,46 @@ class SyntheticExperienceFactory:
         modes = np.zeros(episode_len, dtype=np.int64)
         rewards = np.zeros(episode_len, dtype=np.float32)
 
-        curr_s = init_state.copy()
-        k_pad_total = 6000.0  # N/m
-        g = 9.80665
+        curr_obs = obs
+        curr_s = s0.copy()
+        curr_w = w0.copy()
 
         for t in range(episode_len):
-            a_cmd = cand_actions[t].copy()
+            # Teacher proposed action
+            a_cmd = cand_actions[t].copy() if t < len(cand_actions) else np.zeros(action_dim, dtype=np.float32)
             states[t] = curr_s.copy()
             actions[t] = a_cmd.copy()
+            wrenches[t] = curr_w.copy()
 
-            # Dynamic parameter update for non-stationary regimes
-            curr_mu = mu_true
-            curr_mass = mass_kg
-            if params.get("regime") == "RegimeA_FrictionStep" and t >= 15:
-                curr_mu = max(0.10, mu_true * 0.40)
-            elif params.get("regime") == "RegimeB_MassInflux" and t >= 10:
-                curr_mass = mass_kg + 0.25 * (t - 10) * dt
+            # Step the authoritative simulation environment!
+            next_obs, step_reward, done, info = step_env_compatible(env, a_cmd, task=task)
 
-            # Physics simulation step
-            next_s = curr_s.copy()
-            w_meas = np.zeros(6, dtype=np.float32)
-            mode = 0
-
-            if task == "compliant_prelift":
-                # Compliant prelift state update
-                hand_z = curr_s[2]
-                obj_z = curr_s[8]
-                cmd_vx, cmd_vy, cmd_vz = a_cmd[0], a_cmd[1], a_cmd[2]
-                f_grip = max(0.0, float(a_cmd[4]))
-
-                # Kinematic update of hand
-                hand_z = max(40.0, hand_z + cmd_vz * dt * 1000.0)
-                pad_stretch_mm = max(0.0, hand_z - 40.0 - obj_z)
-                f_shear = (pad_stretch_mm / 1000.0) * k_pad_total
-                max_shear = curr_mu * f_grip
-
-                # Coulomb slip or liftoff
-                weight_n = curr_mass * g
-                if f_grip < 0.5:
-                    mode = 0  # Free space
-                    f_shear = 0.0
-                elif f_shear <= max_shear:
-                    if f_shear > weight_n:
-                        mode = 2  # Sticking liftoff
-                        obj_z += (f_shear - weight_n) / curr_mass * (dt ** 2) * 1000.0 * 0.5
-                    else:
-                        mode = 2  # Sticking on table
-                else:
-                    mode = 3  # Sliding slip
-                    f_shear = 0.90 * max_shear
-
-                next_s[0] += cmd_vx * dt * 1000.0
-                next_s[1] += cmd_vy * dt * 1000.0
-                next_s[2] = hand_z
-                next_s[8] = obj_z
-
-                w_meas[0] = float(rng.normal(0, 0.05))
-                w_meas[1] = float(rng.normal(0, 0.05))
-                w_meas[2] = float(f_shear)
-                rewards[t] = float(obj_z - 0.05 * f_shear)
-
-            else:
-                # Peg-in-hole state update
-                tip_x, tip_y, tip_z = curr_s[0], curr_s[1], curr_s[2]
-                vx, vy, vz = a_cmd[0], a_cmd[1], a_cmd[2]
-
-                next_x = tip_x + vx * dt * 1000.0
-                next_y = tip_y + vy * dt * 1000.0
-                next_z = tip_z + vz * dt * 1000.0
-
-                radial_err = math.sqrt(next_x ** 2 + next_y ** 2)
-                clearance = params["clearance_mm"]
-
-                if next_z > 0.0:
-                    mode = 0  # Free space
-                elif radial_err <= clearance:
-                    mode = 2  # Clean insertion
-                    w_meas[2] = -curr_mu * 5.0
-                else:
-                    mode = 4  # Contact / impact with hole chamfer
-                    next_z = max(0.0, next_z)
-                    w_meas[0] = 5.0 * (next_x / (radial_err + 1e-6))
-                    w_meas[1] = 5.0 * (next_y / (radial_err + 1e-6))
-                    w_meas[2] = 12.0
-
-                next_s[0] = next_x
-                next_s[1] = next_y
-                next_s[2] = next_z
-                rewards[t] = float(-radial_err + (10.0 - next_z))
-
+            # Extract genuine state and wrench from the real environment
+            next_s, next_w = extract_env_state_and_wrench(next_obs, task=task)
             next_states[t] = next_s.copy()
-            wrenches[t] = w_meas.copy()
-            next_wrenches[t] = w_meas.copy()
-            modes[t] = mode
-            curr_s = next_s.copy()
+            next_wrenches[t] = next_w.copy()
+            rewards[t] = float(step_reward) if step_reward is not None else 0.0
 
-        episode_id = f"syn_{task}_{teacher_id}_seed{seed:05d}"
-        teacher_meta = {
-            "teacher_id": teacher_id,
-            "teacher_confidence": float(teacher_res.predicted_confidence),
-            "teacher_provenance_hash": teacher_res.provenance_hash,
-            "has_teacher_representations": teacher_res.latent_representations is not None,
-            "candidate_actions": cand_actions,
+            # Classify ground-truth contact mode from simulator state
+            mode_t = classify_contact_mode(next_obs, prev_state=curr_obs, dt=dt, task=task)
+            modes[t] = int(mode_t)
+
+            curr_obs = next_obs
+            curr_s = next_s
+            curr_w = next_w
+
+        ep_id = f"syn_{task}_{teacher_id}_seed{seed:05d}"
+        env_meta = {
+            "initial_mu_true": params["friction_mu"],
+            "initial_mass_kg": params["mass_kg"],
+            "clearance_mm": params["clearance_mm"],
+            "regime": params.get("regime", "nominal"),
+            "dt_s": dt,
+            "simulator_env": type(env).__name__,
         }
 
         record = SyntheticEpisodeRecord(
-            episode_id=episode_id,
+            episode_id=ep_id,
             seed=seed,
             task=task,
             states=states,
@@ -293,25 +270,32 @@ class SyntheticExperienceFactory:
             next_wrenches=next_wrenches,
             modes=modes,
             rewards=rewards,
-            env_metadata=params,
-            teacher_suggestions=teacher_meta,
+            env_metadata=env_meta,
+            teacher_suggestions={
+                "teacher_id": teacher_id,
+                "candidate_actions": cand_actions,
+                "teacher_confidence": teacher_res.predicted_confidence,
+            },
         )
         record.provenance_hash = record.compute_record_hash()
 
+        # Save to disk if output directory specified
         if self.output_dir:
-            out_path = self.output_dir / f"{episode_id}.npz"
+            file_path = self.output_dir / f"{ep_id}.npz"
             np.savez_compressed(
-                out_path,
-                states=states,
-                actions=actions,
-                next_states=next_states,
-                wrenches=wrenches,
-                next_wrenches=next_wrenches,
-                modes=modes,
-                rewards=rewards,
-                env_metadata_json=json.dumps(params),
-                teacher_metadata_json=json.dumps(teacher_meta, default=lambda x: x.tolist() if hasattr(x, "tolist") else str(x)),
+                file_path,
+                episode_id=record.episode_id,
+                seed=record.seed,
+                task=record.task,
+                states=record.states,
+                actions=record.actions,
+                next_states=record.next_states,
+                wrenches=record.wrenches,
+                next_wrenches=record.next_wrenches,
+                modes=record.modes,
+                rewards=record.rewards,
                 provenance_hash=record.provenance_hash,
+                env_metadata_json=json.dumps(record.env_metadata),
             )
 
         return record
@@ -321,6 +305,7 @@ class SyntheticExperienceFactory:
         task: str,
         teacher_id: str,
         seeds: List[int],
+        episode_length: Optional[int] = None,
     ) -> List[SyntheticEpisodeRecord]:
-        """Generates a batch of synthetic episodes across multiple seeds."""
-        return [self.generate_episode(task, teacher_id, s) for s in seeds]
+        """Generates multiple synthetic physical episodes across a list of distinct seeds."""
+        return [self.generate_episode(task, teacher_id, s, episode_length) for s in seeds]

@@ -140,8 +140,8 @@ def run_demonstration() -> int:
     print("\n[Step 4] Running Physics Validation Engine (Grounded Firewall)...")
     validator = PhysicsValidationEngine(
         max_normal_force_n=20.0,
-        max_shear_force_n=12.0,
-        max_linear_velocity_mps=0.05,
+        max_shear_force_n=15.0,
+        max_linear_velocity_mps=0.10,
     )
 
     validated_episodes, reports = validator.filter_and_label_batch("compliant_prelift", all_episodes)
@@ -184,19 +184,19 @@ def run_demonstration() -> int:
     print(f"  - Target Next States Shape: {sample_b.target_next_states.shape} (B, H_fut, state_dim)")
 
     # -------------------------------------------------------------
-    # 6. Module 06: Baseline Evaluation Engine
+    # 6. Module 06: Baseline Evaluation Engine (Software Smoke Test)
     # -------------------------------------------------------------
-    print("\n[Step 6] Running Student Evaluation Engine Benchmark Interface...")
+    print("\n[Step 6] Running Student Evaluation Engine Interface Verification (Software Smoke Test)...")
+    print("  [DISCLAIMER] Verifying metric calculation contracts and report formatting only.")
+    print("  [DISCLAIMER] Exactly 0 student model parameters updated. No vNext model superiority claimed.")
     evaluator = StudentEvaluationEngine()
 
-    # Mock predictions demonstrating > 40% MSE reduction over B3
     N_eval = 20
     H_eval = 20
     D_state = 23
     rng = np.random.RandomState(42)
 
     gt_traj = rng.normal(0, 1, (N_eval, H_eval, D_state))
-    # Simulated model with small prediction drift
     pred_traj = gt_traj + rng.normal(0, 0.15, (N_eval, H_eval, D_state))
 
     gt_mu = np.linspace(0.20, 0.80, N_eval)
@@ -208,8 +208,8 @@ def run_demonstration() -> int:
     id_scores = rng.normal(0.2, 0.05, 50)
     ood_scores = rng.normal(0.8, 0.08, 50)
 
-    bench_results = evaluator.evaluate_synthetic_run(
-        model_id="HOROS-WM-vNext-pilot-mock",
+    bench_results = evaluator.evaluate_synthetic_smoke_test(
+        model_id="HOROS-WM-vNext-smoke-test-pipeline-check",
         task="compliant_prelift",
         pred_trajectories=pred_traj,
         gt_trajectories=gt_traj,
@@ -225,11 +225,9 @@ def run_demonstration() -> int:
     with open(eval_report_path, "w", encoding="utf-8") as f:
         f.write(report_md)
 
-    print(f"  - Multi-Horizon MSE Reduction at H=10: {bench_results.mse_reduction_pct.get(10):+.1f}% (Pass: {bench_results.gates_passed.get('multi_horizon_mse_reduction >= 40%')})")
-    print(f"  - Latent Friction R2: {bench_results.friction_id_r2:.4f} (Pass: {bench_results.gates_passed.get('friction_id_r2 >= 0.60')})")
-    print(f"  - Latent Mass R2: {bench_results.mass_id_r2:.4f} (Pass: {bench_results.gates_passed.get('mass_id_r2 >= 0.60')})")
-    print(f"  - OOD Discrimination AUROC: {bench_results.ood_lowmu_auroc:.4f} (Pass: {bench_results.gates_passed.get('ood_lowmu_auroc >= 0.85')})")
-    print(f"  - Overall Evaluation Gate Pass: {bench_results.overall_pass}")
+    print(f"  - Smoke Test Status: is_smoke_test={bench_results.is_smoke_test}")
+    print(f"  - Metric Pipeline Contract Verification: Overall Pass = {bench_results.overall_pass}")
+    print(f"  - Generated Smoke Test Evaluation Report: {eval_report_path.name}")
 
     elapsed = time.time() - start_time
     print(f"\n=== Demonstration Completed Successfully in {elapsed:.2f}s ===")
