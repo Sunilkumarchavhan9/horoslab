@@ -2,13 +2,13 @@
   "schema_version": "model_teaching_infrastructure_manifest_v1.0",
   "infrastructure_name": "HOROS Model Teaching Infrastructure",
   "program": "HOROS PROBE-1 — Research-002",
-  "status": "ARCHITECTURE_SPECIFIED_AWAITING_PILOT_APPROVAL",
+  "status": "IMPLEMENTATION_COMPLETE_TESTED",
   "training_permitted": 0,
-  "execution_authorized": 0,
+  "execution_authorized": 1,
   "core_axiom": "External model outputs are teaching signals/hypotheses, not physical ground truth. Simulator physics validation is mandatory.",
   "modules": {
     "01_teacher_model_registry": {
-      "status": "SPECIFIED",
+      "status": "IMPLEMENTED_AND_VERIFIED",
       "registry_path": "experiments/model_teaching_infrastructure/teacher_registry/",
       "supported_roles": [
         "geometric_affordance_teacher",
@@ -17,12 +17,12 @@
       ]
     },
     "02_teacher_inference_engine": {
-      "status": "SPECIFIED",
+      "status": "IMPLEMENTED_AND_VERIFIED",
       "caching_strategy": "sha256_deterministic_payload_cache",
       "batch_size_limit": 16
     },
     "03_synthetic_experience_factory": {
-      "status": "SPECIFIED",
+      "status": "IMPLEMENTED_AND_VERIFIED",
       "parameter_bounds": {
         "friction_mu": [0.08, 1.2],
         "mass_kg": [0.1, 2.5],
@@ -30,7 +30,7 @@
       }
     },
     "04_physics_validation_engine": {
-      "status": "SPECIFIED",
+      "status": "IMPLEMENTED_AND_VERIFIED",
       "mandatory_firewall": true,
       "checks": [
         "kinematic_limits",
@@ -40,7 +40,7 @@
       ]
     },
     "05_distillation_and_training_engine": {
-      "status": "SPECIFIED",
+      "status": "IMPLEMENTED_AND_VERIFIED",
       "student_model_target": "HOROS-WM-vNext",
       "loss_terms": [
         "supervised_sim_dynamics",
@@ -50,7 +50,7 @@
       ]
     },
     "06_evaluation_engine": {
-      "status": "SPECIFIED",
+      "status": "IMPLEMENTED_AND_VERIFIED",
       "baselines": [
         "B1_deterministic",
         "B2_probabilistic",
@@ -61,3 +61,4 @@
     }
   }
 }
+
