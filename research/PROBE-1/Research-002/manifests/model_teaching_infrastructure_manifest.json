@@ -1,0 +1,63 @@
+{
+  "schema_version": "model_teaching_infrastructure_manifest_v1.0",
+  "infrastructure_name": "HOROS Model Teaching Infrastructure",
+  "program": "HOROS PROBE-1 — Research-002",
+  "status": "ARCHITECTURE_SPECIFIED_AWAITING_PILOT_APPROVAL",
+  "training_permitted": 0,
+  "execution_authorized": 0,
+  "core_axiom": "External model outputs are teaching signals/hypotheses, not physical ground truth. Simulator physics validation is mandatory.",
+  "modules": {
+    "01_teacher_model_registry": {
+      "status": "SPECIFIED",
+      "registry_path": "experiments/model_teaching_infrastructure/teacher_registry/",
+      "supported_roles": [
+        "geometric_affordance_teacher",
+        "macro_trajectory_teacher",
+        "internal_expert_teacher"
+      ]
+    },
+    "02_teacher_inference_engine": {
+      "status": "SPECIFIED",
+      "caching_strategy": "sha256_deterministic_payload_cache",
+      "batch_size_limit": 16
+    },
+    "03_synthetic_experience_factory": {
+      "status": "SPECIFIED",
+      "parameter_bounds": {
+        "friction_mu": [0.08, 1.2],
+        "mass_kg": [0.1, 2.5],
+        "clearance_mm": [0.1, 4.0]
+      }
+    },
+    "04_physics_validation_engine": {
+      "status": "SPECIFIED",
+      "mandatory_firewall": true,
+      "checks": [
+        "kinematic_limits",
+        "coulomb_friction_cone",
+        "mesh_non_penetration",
+        "wrench_magnitude_safety"
+      ]
+    },
+    "05_distillation_and_training_engine": {
+      "status": "SPECIFIED",
+      "student_model_target": "HOROS-WM-vNext",
+      "loss_terms": [
+        "supervised_sim_dynamics",
+        "contact_mode_cross_entropy",
+        "latent_physics_probing",
+        "teacher_feature_distillation"
+      ]
+    },
+    "06_evaluation_engine": {
+      "status": "SPECIFIED",
+      "baselines": [
+        "B1_deterministic",
+        "B2_probabilistic",
+        "B3_ensemble"
+      ],
+      "horizons": [1, 3, 5, 10, 20],
+      "target_conformal_coverage": 0.9
+    }
+  }
+}
