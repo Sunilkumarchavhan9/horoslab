@@ -152,6 +152,16 @@ class StudentDistillationEngine:
         - continuous_signals: total normal clamping force, vertical shear, pad strain, slip indicator
         - causal_mode_probs: causally estimated mode distribution (derived from observables or causal model)
         """
+        # Strict validation: reject malformed or legacy-padded wrenches in modern pipeline
+        if len(wrench) != 6:
+            raise ValueError(f"Malformed wrench vector: expected 6 elements [Fx, Fy, Fz, Tx, Ty, Tz], got {len(wrench)}")
+        if len(state) >= 16 and np.sum(state[12:16]) > 0.5:
+            if np.allclose(wrench[:4], state[12:16], atol=1e-4) and abs(wrench[4]) < 1e-6 and abs(wrench[5]) < 1e-6:
+                raise ValueError(
+                    "Legacy padded wrench [fn_0, fn_1, fn_2, fn_3, 0, 0] detected in modern distillation pipeline. "
+                    "Modern distillation requires 6-axis Cartesian resultant wrench [Fx, Fy, Fz, Tx, Ty, Tz]."
+                )
+
         if len(state) >= 16:
             fn_mag = float(np.sum(state[12:16]))
         else:

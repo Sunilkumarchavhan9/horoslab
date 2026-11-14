@@ -61,7 +61,10 @@ from src.models.deterministic_wm import DeterministicWorldModel
 from src.models.probabilistic_wm import ProbabilisticWorldModel
 from src.models.ensemble_wm import EnsembleWorldModel
 from src.models.stratified_conformal_wm import ContactStratifiedConformalWM
-from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
+from src.selection_aware.counterfactual_rollout import (
+    extract_env_state_and_wrench,
+    extract_legacy_checkpoint_state_and_wrench,
+)
 from src.selection_aware.episode_conformal_engine import (
     EpisodeConformalEngine,
     PRIMARY_ALPHA,
@@ -259,7 +262,7 @@ class TestHarnessRemediationH1(unittest.TestCase):
             "slip_ratio": np.array([0.1, 0.15, 0.08, 0.12], dtype=np.float32),
             "obj_pos": np.array([0.0, 0.0, 10.0], dtype=np.float32),
         }
-        s_lift, w_lift = extract_env_state_and_wrench(lift_obs, task="multifinger_lift")
+        s_lift, w_lift = extract_legacy_checkpoint_state_and_wrench(lift_obs, task="multifinger_lift")
         self.assertEqual(len(s_lift), 23)
         self.assertEqual(len(w_lift), 6)
 

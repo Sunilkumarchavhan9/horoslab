@@ -78,24 +78,28 @@ def compute_prelift_resultant_wrench(
 def extract_env_state_and_wrench(
     obs: Dict[str, Any],
     task: str = "peg_in_hole",
+    legacy_compatibility_mode: bool = False,
     legacy_padding: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Helper to extract consistent state vector (state_dim) and 6-axis wrench (6).
 
     Coordinate Transformation & Force Contract:
     - Task 1 (peg_in_hole): 15-D state, 6-axis ATI sensor wrench [Fx, Fy, Fz, Tx, Ty, Tz].
-    - Task 2 (compliant_prelift): 23-D state:
+    - Task 2 (compliant_prelift, compliant_lift, multifinger_lift): 23-D state:
         [0:12]   Fingertip positions (4 x 3) in mm
         [12:16]  Fingertip normal forces (4) in N
         [16:20]  Fingertip slip velocities (4) in m/s
         [20:23]  Workpiece center of mass (3) in mm
       Wrench representation:
-        - When legacy_padding=True or task=='multifinger_lift' or finger_ft is absent:
-          4 normal forces padded with 2 zeros (preserved strictly for backward compatibility
-          with frozen Phase 3.4/3.5 B1-B4 checkpoints and test harnesses).
-        - Modern contract: 6-axis Cartesian resultant wrench on the rigid workpiece computed via
-          compute_prelift_resultant_wrench(finger_pos, obj_pos, finger_fn, finger_ft), combining
-          normal contact forces, circumferential shear, and vertical pad shear with physical lever-arm torques.
+        - Modern physical contract (default): 6-axis Cartesian resultant wrench on the rigid workpiece
+          computed via compute_prelift_resultant_wrench(finger_pos, obj_pos, finger_fn, finger_ft),
+          combining normal contact forces, circumferential shear, and vertical pad shear with physical
+          lever-arm torques. Requires 'finger_ft' in obs; raises ValueError if missing. Applies across
+          all Task 2 identifiers ('compliant_prelift', 'compliant_lift', 'multifinger_lift').
+        - Legacy checkpoint compatibility mode: enabled strictly when legacy_compatibility_mode=True
+          (or legacy_padding=True) or via extract_legacy_checkpoint_state_and_wrench(). Formats wrench as
+          4 normal forces padded with 2 zeros [fn_0, fn_1, fn_2, fn_3, 0, 0] strictly for backward
+          compatibility with frozen Phase 3.4/3.5 B1-B4 checkpoints and test harnesses.
     """
     if task == "peg_in_hole":
         s_vec = np.concatenate([
@@ -103,7 +107,7 @@ def extract_env_state_and_wrench(
             obs["rot"], obs["wrench"]
         ]).astype(np.float32)
         wrench = obs["wrench"].astype(np.float32)
-    elif legacy_padding or task == "multifinger_lift" or "finger_ft" not in obs:
+    elif task in ("compliant_prelift", "compliant_lift", "multifinger_lift"):
         slip_or_vel = (
             obs["slip_ratio"]
             if "slip_ratio" in obs
@@ -115,24 +119,41 @@ def extract_env_state_and_wrench(
             slip_or_vel,
             obs["obj_pos"]
         ]).astype(np.float32)
-        wrench = np.pad(obs["finger_fn"][:4], (0, 2)).astype(np.float32)
+
+        is_legacy = bool(legacy_compatibility_mode or legacy_padding)
+        if is_legacy:
+            wrench = np.pad(obs["finger_fn"][:4], (0, 2)).astype(np.float32)
+        else:
+            if "finger_ft" not in obs or obs["finger_ft"] is None:
+                raise ValueError(
+                    f"Task 2 modern physical force contract requires 'finger_ft' tangential force observations for task '{task}'. "
+                    f"Missing 'finger_ft' channel in observation dictionary. To evaluate legacy checkpoints requiring padded "
+                    f"representation, explicitly call extract_legacy_checkpoint_state_and_wrench() or pass legacy_compatibility_mode=True."
+                )
+            wrench = compute_prelift_resultant_wrench(
+                obs["finger_pos"],
+                obs["obj_pos"],
+                obs["finger_fn"],
+                obs["finger_ft"],
+            )
     else:
-        slip_or_vel = (
-            obs["slip_ratio"]
-            if "slip_ratio" in obs
-            else np.abs(np.asarray(obs["delta_dot_t"], dtype=np.float32))
-        )
-        s_vec = np.concatenate([
-            obs["finger_pos"].flatten(),
-            obs["finger_fn"],
-            slip_or_vel,
-            obs["obj_pos"]
-        ]).astype(np.float32)
-        finger_ft = obs["finger_ft"]
-        wrench = compute_prelift_resultant_wrench(
-            obs["finger_pos"], obs["obj_pos"], obs["finger_fn"], finger_ft
+        raise ValueError(
+            f"Unknown task identifier: '{task}'. Expected 'peg_in_hole', 'compliant_prelift', "
+            f"'compliant_lift', or 'multifinger_lift'."
         )
     return s_vec, wrench
+
+
+def extract_legacy_checkpoint_state_and_wrench(
+    obs: Dict[str, Any],
+    task: str = "multifinger_lift",
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Explicit legacy adapter strictly for evaluating frozen Phase 3.4/3.5 B1-B4 checkpoints.
+
+    Formats Task 2 contact wrench as [fn_0, fn_1, fn_2, fn_3, 0.0, 0.0].
+    DO NOT use in the modern teaching, distillation, or validation pipeline.
+    """
+    return extract_env_state_and_wrench(obs, task=task, legacy_compatibility_mode=True)
 
 
 class CounterfactualRolloutEngine:

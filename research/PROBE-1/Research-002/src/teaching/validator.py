@@ -157,11 +157,23 @@ class PhysicsValidationEngine:
 
             # Actuator normal & shear force and torque checks
             if task_id in ("compliant_prelift", "compliant_lift", "multifinger_lift"):
-                # Normal clamping force from fingertip sensor channels s_t[12:16]
+                # Reject legacy padded representation [fn_0, fn_1, fn_2, fn_3, 0, 0] in modern pipeline
+                if len(s_t) >= 16 and np.sum(s_t[12:16]) > 0.5:
+                    if len(w_t) >= 6 and np.allclose(w_t[:4], s_t[12:16], atol=1e-4) and abs(w_t[4]) < 1e-6 and abs(w_t[5]) < 1e-6:
+                        return ValidationReport(
+                            verdict=ValidationVerdict.REJECTED_FORCE_LIMIT,
+                            is_valid=False,
+                            failure_step=t,
+                            violation_details=(
+                                f"Step {t}: Legacy padded wrench representation [fn_0, fn_1, fn_2, fn_3, 0, 0] "
+                                f"detected in modern teaching pipeline. Task 2 requires 6-axis resultant wrench [Fx, Fy, Fz, Tx, Ty, Tz]."
+                            ),
+                        )
+                # Normal clamping force from fingertip sensor channels s_t[12:16] in Newtons (N)
                 fn_total = float(np.sum(s_t[12:16])) if len(s_t) >= 16 else float(np.linalg.norm(w_t[:2]))
-                # True vertical pad shear force from 6-axis net wrench F_z^net = sum(F_t,z,i)
+                # True vertical pad shear force from 6-axis net wrench F_z^net = sum(F_t,z,i) in Newtons (N)
                 fz_shear = float(abs(w_t[2]))
-                # Resultant torque derived from cross products r_i x F_i in compute_prelift_resultant_wrench
+                # Resultant torque derived from cross products r_i x F_i in compute_prelift_resultant_wrench in Newton-meters (N*m)
                 torque_mag = float(np.linalg.norm(w_t[3:])) if len(w_t) >= 6 else 0.0
             else:
                 # Peg in hole: w_t is 6-axis ATI/Franka wrench [Fx, Fy, Fz, Tx, Ty, Tz]

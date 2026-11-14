@@ -405,14 +405,14 @@ class ExternalRestApiTeacher(BaseTeacherAdapter):
         except urllib.error.URLError as url_err:
             raise RuntimeError(f"External teacher connection failure: {url_err.reason}") from url_err
 
-        actions, token_usage = self.validate_and_parse_response(resp_json, payload)
+        actions, usage_dict = self.validate_and_parse_response(resp_json, payload)
         latency = (time.perf_counter() - start_t) * 1000.0
 
         # Update telemetry thread-safely
         with self._telemetry_lock:
             self.total_requests += 1
-            self.total_prompt_tokens += token_usage["prompt_tokens"]
-            self.total_completion_tokens += token_usage["completion_tokens"]
+            self.total_prompt_tokens += usage_dict["prompt_tokens"]
+            self.total_completion_tokens += usage_dict["completion_tokens"]
             self.cumulative_latency_ms += latency
 
         prov_hash = hashlib.sha256(
@@ -426,7 +426,7 @@ class ExternalRestApiTeacher(BaseTeacherAdapter):
             provenance_hash=prov_hash,
             cached=False,
             latency_ms=latency,
-            token_usage=token_usage,
+            token_usage=usage_dict,
         )
 
 
@@ -518,7 +518,7 @@ class TeacherInferenceEngine:
             rep = data["latent_representations"] if "latent_representations" in data.files else None
             if rep is not None and (not hasattr(rep, "shape") or rep.shape == ()):
                 rep = None
-            token_usage = json.loads(str(data["token_usage_json"])) if "token_usage_json" in data.files else {}
+            usage_dict = json.loads(str(data["token_usage_json"])) if "token_usage_json" in data.files else {}
             return TeacherInferenceResult(
                 model_id=str(data["model_id"]),
                 candidate_actions=data["candidate_actions"],
@@ -529,7 +529,7 @@ class TeacherInferenceEngine:
                 provenance_hash=str(data["provenance_hash"]),
                 cached=True,
                 latency_ms=0.1,
-                token_usage=token_usage,
+                token_usage=usage_dict,
             )
         except Exception:
             return None

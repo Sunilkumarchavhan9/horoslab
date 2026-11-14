@@ -221,7 +221,7 @@ def test_external_teacher_adapter_and_async_batch(clean_registry: TeacherModelRe
     adapter = ExternalRestApiTeacher(
         descriptor=desc,
         endpoint_url="mock://api.openai.com/v1/chat/completions",
-        api_key_env_var="MOCK_PROVIDER_TOKEN_ENV_NAME",
+        api_key_env_var="replace_with_mock_provider_token_env",
         provider_format="openai",
         rate_limit_rpm=600,
     )
@@ -623,7 +623,7 @@ def test_peginhole_wrench_invariance() -> None:
 # -----------------------------------------------------------------------------
 
 def test_external_teacher_provider_headers() -> None:
-    MOCK_PROVIDER_TOKEN_PLACEHOLDER = "mock-provider-credential-value"
+    MOCK_PROVIDER_TOKEN_PLACEHOLDER = "replace_with_mock_credential_token"
 
     desc = TeacherModelDescriptor(
         model_id="test_ext_provider_headers",
@@ -640,7 +640,7 @@ def test_external_teacher_provider_headers() -> None:
     teacher_openai = ExternalRestApiTeacher(
         descriptor=desc,
         endpoint_url="http://127.0.0.1:8080/v1/chat",
-        api_key_env_var="MOCK_OPENAI_KEY_VAR",
+        api_key_env_var="replace_with_mock_openai_key",
         provider_format="openai",
     )
     headers_openai = teacher_openai.get_request_headers(MOCK_PROVIDER_TOKEN_PLACEHOLDER)
@@ -650,7 +650,7 @@ def test_external_teacher_provider_headers() -> None:
     teacher_anthropic = ExternalRestApiTeacher(
         descriptor=desc,
         endpoint_url="http://127.0.0.1:8080/v1/messages",
-        api_key_env_var="MOCK_ANTHROPIC_KEY_VAR",
+        api_key_env_var="replace_with_mock_anthropic_key",
         provider_format="anthropic",
     )
     headers_anthropic = teacher_anthropic.get_request_headers(MOCK_PROVIDER_TOKEN_PLACEHOLDER)
@@ -684,7 +684,7 @@ def test_external_teacher_anthropic_content_blocks_parsing() -> None:
     teacher = ExternalRestApiTeacher(
         descriptor=desc,
         endpoint_url="http://127.0.0.1:8080/v1/messages",
-        api_key_env_var="MOCK_ANTHROPIC_PARSER_KEY",
+        api_key_env_var="replace_with_mock_anthropic_parser_key",
         provider_format="anthropic",
     )
 
@@ -783,7 +783,7 @@ def test_external_teacher_http_server_mock_real_network_call() -> None:
     teacher = ExternalRestApiTeacher(
         descriptor=desc,
         endpoint_url=f"http://127.0.0.1:{port}/v1/chat/completions",
-        api_key_env_var="MOCK_TEST_AUTH_KEY_VAR",
+        api_key_env_var="replace_with_mock_test_auth_key",
         provider_format="openai",
         rate_limit_rpm=1000,
     )
@@ -806,3 +806,261 @@ def test_external_teacher_http_server_mock_real_network_call() -> None:
     np.testing.assert_allclose(result.candidate_actions[0], [0.05, 0.05, 0.05, 0.05, 1.0], atol=1e-5)
     assert teacher.total_prompt_tokens == 10
     assert teacher.total_completion_tokens == 20
+
+
+# -----------------------------------------------------------------------------
+# Module 09: Unified Task 2 Physical Force Contract & End-to-End Integration
+# -----------------------------------------------------------------------------
+
+def test_task2_all_identifiers_unified_physical_contract() -> None:
+    """Verifies that all three Task 2 identifiers (compliant_prelift, compliant_lift, multifinger_lift)
+
+    strictly adhere to the modern 6-axis resultant wrench contract, reject missing channels,
+    and preserve legacy checkpoint compatibility exclusively through the explicit adapter.
+    """
+    from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
+    from src.selection_aware.counterfactual_rollout import (
+        extract_env_state_and_wrench,
+        extract_legacy_checkpoint_state_and_wrench,
+        compute_prelift_resultant_wrench,
+    )
+
+    env = CompliantPreLiftContactEnv(seed=42)
+    obs = env.reset()
+
+    for task_id in ["compliant_prelift", "compliant_lift", "multifinger_lift"]:
+        # 1. Modern contract extraction
+        s, w = extract_env_state_and_wrench(obs, task=task_id)
+        assert s.shape == (23,), f"State shape mismatch for {task_id}"
+        assert w.shape == (6,), f"Wrench shape mismatch for {task_id}"
+
+        # Must match genuine compute_prelift_resultant_wrench
+        expected_w = compute_prelift_resultant_wrench(
+            obs["finger_pos"], obs["obj_pos"], obs["finger_fn"], obs["finger_ft"]
+        )
+        np.testing.assert_allclose(w, expected_w, atol=1e-5)
+
+        # 2. Legacy adapter produces padded format [fn0, fn1, fn2, fn3, 0, 0]
+        s_leg, w_leg = extract_legacy_checkpoint_state_and_wrench(obs, task=task_id)
+        assert s_leg.shape == (23,)
+        assert w_leg.shape == (6,)
+        np.testing.assert_allclose(w_leg[:4], obs["finger_fn"][:4], atol=1e-5)
+        np.testing.assert_allclose(w_leg[4:], [0.0, 0.0], atol=1e-5)
+
+        # 3. Missing force channels ('finger_ft') must be rejected with ValueError
+        malformed_obs = {k: v for k, v in obs.items() if k != "finger_ft"}
+        with pytest.raises(ValueError, match="Task 2 modern physical force contract requires 'finger_ft'"):
+            extract_env_state_and_wrench(malformed_obs, task=task_id)
+
+
+def test_task2_zero_shear_no_false_sliding() -> None:
+    """Verifies that 4 equal normal forces and zero shear strictly classify as Sticking (Mode 2)
+
+    and never produce false sliding across all three Task 2 identifiers.
+    """
+    from src.teaching.distiller import estimate_observable_mode_probabilities
+
+    state = np.zeros(23, dtype=np.float32)
+    state[12:16] = np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32)  # 16 N total normal force
+    state[16:20] = 0.0  # zero slip velocity
+
+    # Zero shear, zero net force, zero torque
+    wrench = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
+
+    probs = estimate_observable_mode_probabilities(wrench, state)
+    # Mode 2 is Sticking (index 2), Mode 3 is Sliding (index 3)
+    assert probs[2] > 0.75, f"Expected dominant sticking probability, got {probs[2]}"
+    assert probs[3] < 0.15, f"Sliding probability must be low under zero shear, got {probs[3]}"
+    assert int(np.argmax(probs)) == 2, "Dominant mode must be Sticking (Mode 2)"
+
+
+def test_task2_vertical_shear_and_coulomb_violation() -> None:
+    """Verifies that measured vertical shear reaches validator and Coulomb-cone rejection
+
+    changes when actual shear changes.
+    """
+    from src.teaching.validator import PhysicsValidationEngine, ValidationVerdict
+
+    validator = PhysicsValidationEngine(friction_margin=0.10, dt_s=0.01)
+    mu_true = 0.50
+
+    state = np.zeros(23, dtype=np.float32)
+    state[12:16] = np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32)  # Fn = 16 N
+    action = np.zeros(5, dtype=np.float32)
+
+    states = np.array([state, state], dtype=np.float32)
+    actions = np.array([action, action], dtype=np.float32)
+
+    for task_id in ["compliant_prelift", "compliant_lift", "multifinger_lift"]:
+        # Case A: Sub-critical vertical shear (4.0 N -> ratio = 4.0/16.0 = 0.25 <= 0.50 + 0.10)
+        wrench_valid = np.array([0.0, 0.0, 4.0, 0.0, 0.0, 0.0], dtype=np.float32)
+        wrenches_valid = np.array([wrench_valid, wrench_valid], dtype=np.float32)
+
+        rep_valid = validator.validate_trajectory(
+            task_id=task_id,
+            states=states,
+            actions=actions,
+            wrenches=wrenches_valid,
+            env_metadata={"mu_true": mu_true},
+        )
+        assert rep_valid.is_valid is True, f"Sub-critical shear should be valid for {task_id}"
+        assert rep_valid.max_shear_force_n == pytest.approx(4.0, abs=1e-4)
+
+        # Case B: Super-critical vertical shear (12.0 N -> ratio = 12.0/16.0 = 0.75 > 0.60)
+        wrench_invalid = np.array([0.0, 0.0, 12.0, 0.0, 0.0, 0.0], dtype=np.float32)
+        wrenches_invalid = np.array([wrench_invalid, wrench_invalid], dtype=np.float32)
+
+        rep_invalid = validator.validate_trajectory(
+            task_id=task_id,
+            states=states,
+            actions=actions,
+            wrenches=wrenches_invalid,
+            env_metadata={"mu_true": mu_true},
+        )
+        assert rep_invalid.is_valid is False, f"Super-critical shear must be rejected for {task_id}"
+        assert rep_invalid.verdict == ValidationVerdict.REJECTED_FRICTION_CONE
+        assert rep_invalid.max_shear_force_n == pytest.approx(12.0, abs=1e-4)
+
+
+def test_task2_resultant_torque_geometry_and_permutation_invariance() -> None:
+    """Verifies resultant torque agrees with fingertip lever-arm geometry (r x F)
+
+    and finger-order permutation invariance.
+    """
+    from src.selection_aware.counterfactual_rollout import compute_prelift_resultant_wrench
+
+    # Standard fingertip positions in mm: radius R = 35mm, height 40mm
+    finger_pos = np.array([
+        [-35.0, 0.0, 40.0],
+        [35.0, 0.0, 40.0],
+        [0.0, 35.0, 40.0],
+        [0.0, -35.0, 40.0],
+    ], dtype=np.float32)
+    obj_pos = np.array([0.0, 0.0, 0.0], dtype=np.float32)
+    finger_fn = np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32)
+
+    # 1. Circumferential shear F_theta = 1.0 N on each finger
+    # Each finger produces torque tau_z = r * F_theta = 0.035m * 1.0N = 0.035 N*m
+    # Total Tz = 4 * 0.035 = 0.140 N*m
+    finger_ft_torsion = np.array([
+        [1.0, 0.0],
+        [1.0, 0.0],
+        [1.0, 0.0],
+        [1.0, 0.0],
+    ], dtype=np.float32)
+
+    wrench_torsion = compute_prelift_resultant_wrench(finger_pos, obj_pos, finger_fn, finger_ft_torsion)
+    # Net force should be zero
+    np.testing.assert_allclose(wrench_torsion[:3], [0.0, 0.0, 0.0], atol=1e-5)
+    # Tx and Ty should be zero, Tz should be 0.140 N*m
+    assert wrench_torsion[5] == pytest.approx(0.140, abs=1e-4)
+    assert wrench_torsion[3] == pytest.approx(0.0, abs=1e-4)
+    assert wrench_torsion[4] == pytest.approx(0.0, abs=1e-4)
+
+    # 2. Vertical shear producing tilting torque about Y axis
+    # Fingers 0 and 1 are along X (-35mm and +35mm)
+    # Set F_z on finger 0 = +2.0 N, on finger 1 = -2.0 N
+    finger_ft_tilt = np.array([
+        [0.0, 2.0],
+        [0.0, -2.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+    ], dtype=np.float32)
+    wrench_tilt = compute_prelift_resultant_wrench(finger_pos, obj_pos, finger_fn, finger_ft_tilt)
+    # tau_y = -r_x0 * F_z0 - r_x1 * F_z1 = -(-0.035)*2.0 - (0.035)*(-2.0) = 0.070 + 0.070 = 0.140 N*m
+    assert wrench_tilt[4] == pytest.approx(0.140, abs=1e-4)
+
+    # 3. Permutation invariance: reordering fingers must not change resultant wrench
+    perm = [2, 0, 3, 1]
+    wrench_perm = compute_prelift_resultant_wrench(
+        finger_pos[perm], obj_pos, finger_fn[perm], finger_ft_torsion[perm]
+    )
+    np.testing.assert_allclose(wrench_torsion, wrench_perm, atol=1e-5)
+
+
+def test_task2_legacy_padded_data_rejected_in_modern_pipeline() -> None:
+    """Verifies that no teaching path (extractor, distiller, validator) silently accepts
+
+    legacy padded representation [fn_0, fn_1, fn_2, fn_3, 0, 0].
+    """
+    from src.teaching.validator import PhysicsValidationEngine, ValidationVerdict
+    from src.teaching.distiller import StudentDistillationEngine
+
+    validator = PhysicsValidationEngine()
+    distiller = StudentDistillationEngine()
+
+    state = np.zeros(23, dtype=np.float32)
+    state[12:16] = np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32)
+    action = np.zeros(5, dtype=np.float32)
+
+    # Legacy padded wrench: 4 normal forces padded with 2 zeros
+    legacy_wrench = np.array([4.0, 4.0, 4.0, 4.0, 0.0, 0.0], dtype=np.float32)
+
+    # 1. Distiller must reject legacy padded wrench
+    with pytest.raises(ValueError, match="Legacy padded wrench .* detected in modern distillation pipeline"):
+        distiller.extract_nonprivileged_step(state, action, legacy_wrench)
+
+    # 2. Validator must reject trajectory containing legacy padded wrench
+    states = np.array([state, state], dtype=np.float32)
+    actions = np.array([action, action], dtype=np.float32)
+    wrenches = np.array([legacy_wrench, legacy_wrench], dtype=np.float32)
+
+    for task_id in ["compliant_prelift", "compliant_lift", "multifinger_lift"]:
+        rep = validator.validate_trajectory(
+            task_id=task_id,
+            states=states,
+            actions=actions,
+            wrenches=wrenches,
+            env_metadata={"mu_true": 0.60},
+        )
+        assert rep.is_valid is False
+        assert rep.verdict == ValidationVerdict.REJECTED_FORCE_LIMIT
+        assert "Legacy padded wrench representation" in rep.violation_details
+
+
+def test_task2_zero_information_leakage_end_to_end() -> None:
+    """End-to-end integration test verifying that teacher history inputs contain NO ground-truth
+
+    contact mode labels across all three Task 2 identifiers.
+    """
+    from src.teaching.factory import SyntheticExperienceFactory, EnvironmentSamplingSpec
+    from src.teaching.distiller import StudentDistillationEngine
+    from src.teaching.inference import TeacherInferenceEngine, DeterministicMockTeacher
+    from src.teaching.registry import TeacherModelRegistry, TeacherModelDescriptor, TeacherProvider
+
+    registry = TeacherModelRegistry()
+    desc = TeacherModelDescriptor(
+        model_id="det_t2_test",
+        display_name="Det T2 Teacher",
+        version="1.0.0",
+        provider=TeacherProvider.LOCAL_CHECKPOINT,
+        endpoint_url="local://det_t2",
+        supported_modalities=["state_vector"],
+        capabilities=["trajectory_proposal"],
+        license="internal",
+    )
+    registry.register(desc)
+    inf_engine = TeacherInferenceEngine(registry)
+    inf_engine.register_adapter("det_t2_test", DeterministicMockTeacher(desc))
+
+    factory = SyntheticExperienceFactory(
+        inference_engine=inf_engine,
+        sampling_spec=EnvironmentSamplingSpec(default_episode_length=5, enable_regime_shifts=False),
+    )
+    distiller = StudentDistillationEngine(history_horizon=2, future_horizon=2, batch_size=2)
+
+    for task_id in ["compliant_prelift", "compliant_lift", "multifinger_lift"]:
+        ep = factory.generate_episode(task_id, "det_t2_test", seed=777)
+        # Verify genuine 6-axis wrenches
+        assert ep.wrenches.shape == (5, 6)
+        # Verify zero leakage
+        assert distiller.verify_zero_leakage([ep]) is True
+
+        # Perturb modes and verify input history invariance
+        corrupted_ep = copy.deepcopy(ep)
+        corrupted_ep.modes = (corrupted_ep.modes + 1) % 5
+
+        orig_step = distiller.extract_nonprivileged_step(ep.states[0], ep.actions[0], ep.wrenches[0])
+        pert_step = distiller.extract_nonprivileged_step(corrupted_ep.states[0], corrupted_ep.actions[0], corrupted_ep.wrenches[0])
+        np.testing.assert_array_equal(orig_step, pert_step)
+
