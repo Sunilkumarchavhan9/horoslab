@@ -71,7 +71,7 @@ Two complementary measures ensure identical raw-byte hashes on all platforms:
    # Ensure deterministic raw-byte SHA-256 hashes across Linux and Windows
    *.json text eol=crlf
    *.csv text eol=crlf
-   *.md text eol=crlf
+   Research-002/experiments/phase3_7_uncertainty_intelligence/phase37_1_epistemic_ood_diagnostic_report.md text eol=crlf
    ```
 2. **Explicit Normalization in `.github/workflows/ci.yml`:**
    ```yaml
@@ -84,7 +84,7 @@ Two complementary measures ensure identical raw-byte hashes on all platforms:
              import os
              for root, _, files in os.walk('Research-002'):
                  for f in files:
-                     if f.endswith(('.json', '.csv', '.md')):
+                     if f.endswith(('.json', '.csv')) or f == 'phase37_1_epistemic_ood_diagnostic_report.md':
                          p = os.path.join(root, f)
                          with open(p, 'rb') as fp:
                              data = fp.read()
@@ -94,6 +94,7 @@ Two complementary measures ensure identical raw-byte hashes on all platforms:
                                  fp.write(crlf)
              "
    ```
+
 
 
 ### 3.4 Runtime Artifact Generation & Platform Immutability (`test_p31`)
