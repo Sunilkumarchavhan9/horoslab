@@ -1,0 +1,1256 @@
+{
+  "schema_version": "phase3_6_closure_adjudication_v1",
+  "generated_at_utc": "2026-11-12T10:21:47.102495+00:00",
+  "frozen_manifest_sha256": "620f8a7875a00b3e70818d905eda2e971e96044022782cfdc559e94edcebb5e1",
+  "preserved_phase36_results_sha256": "0f6415347918d289f30989ab31859f217438378f2210bfbfdff5b06d832909cd",
+  "preserved_original_automated_g6_flag": {
+    "passed": 0,
+    "sha256_immutability_verified": 1,
+    "task2_id_success_rate": 0.0,
+    "task2_force_gt_25n_episodes": 2
+  },
+  "preserved_original_all_six_gates_passed": 0,
+  "validated_mode_b_clearance_domain_mm": [
+    0.18,
+    0.5
+  ],
+  "g3_scope_distinction_summary": {
+    "proactive_below_domain_detection_20ep": "Pass (20/20 refused when controller receives min_possible_clearance_mm=0.14 < 0.18)",
+    "blind_mode_b_actual_014_20ep": "Exploratory robustness result ONLY (20/20 seated safely; NOT G3 refusal gate proof because assuming min=0.18 mm gives no knowledge that actual=0.14 mm)",
+    "fault_injection_track_365_30ep": "Pass (30/30 fail-closed safe holds)"
+  },
+  "g3_below_domain_clarification": [
+    {
+      "cell_id": "BND_below018_proactive_refuse",
+      "g3_classification": "Pass (G3 below-domain refusal gate proof)",
+      "n_episodes": 20,
+      "actual_clearance": "0.14 mm (mu=0.85)",
+      "controller_visible_clearance": "min_possible_clearance_mm = 0.14 mm (deployment lower bound); NO obs['clearance'] oracle key read",
+      "clearance_mode": "unknown_clearance (Mode B)",
+      "robust_lower_bound": "c_robust_mm = 0.18 mm",
+      "observed_c_safe_mm_values": [
+        0.0
+      ],
+      "entry_decision": "Refusal (immediate step-0 outside_validated_clearance_domain -> ALIGNMENT_FAILED)",
+      "outcome_summary": "20/20 safe hold above rim (z in [14.01, 15.98] mm), 0 bore entry, 0 viol, maxF=0.000 N"
+    },
+    {
+      "cell_id": "BND_below018_runtime_falsify",
+      "g3_classification": "Exploratory robustness result (NOT G3 refusal gate proof)",
+      "n_episodes": 20,
+      "actual_clearance": "0.14 mm (mu=0.85)",
+      "controller_visible_clearance": "Default uninstrumented Mode B spec (min_possible_clearance_mm = 0.18 mm); NO obs['clearance'] oracle key read",
+      "clearance_mode": "unknown_clearance (Mode B, blind/misspecified)",
+      "robust_lower_bound": "c_robust_mm = 0.18 mm (r_gate=0.117 mm, r_tube=0.153 mm)",
+      "observed_c_safe_mm_values": [
+        0.18
+      ],
+      "entry_decision": "Insertion permitted (controller assumes min=0.18 mm and cannot know actual=0.14 mm; Phase A centering avoided bore wall -> lateral_force < 1.0 N)",
+      "outcome_summary": "20/20 seated, 20/20 bore contact, 0 wall penetration steps, 0/20 viol, maxF=0.425 N"
+    },
+    {
+      "cell_id": "BND_below018_mode_a_valid",
+      "g3_classification": "Mode A metrology-bounded baseline (not Mode B gate proof)",
+      "n_episodes": 20,
+      "actual_clearance": "0.14 mm (mu=0.85)",
+      "controller_visible_clearance": "Independent metrology c_hat in [0.1325, 0.1475] mm, sigma_c = 0.015 mm, k_sigma = 2.0",
+      "clearance_mode": "estimated_clearance (Mode A)",
+      "robust_lower_bound": "c_safe = c_hat - 2*sigma_c in [0.1025, 0.1175] mm (>= 0.05 floor)",
+      "observed_c_safe_mm_values": [
+        0.103839,
+        0.103973,
+        0.104245,
+        0.104335,
+        0.104524,
+        0.104832,
+        0.106507,
+        0.106966,
+        0.106979,
+        0.107955,
+        0.110289,
+        0.110764,
+        0.110851,
+        0.111017,
+        0.111063,
+        0.111157,
+        0.113207,
+        0.115907,
+        0.116393,
+        0.117346
+      ],
+      "entry_decision": "Insertion permitted within metrology-bounded LCB tube",
+      "outcome_summary": "20/20 seated, 20/20 bore contact, 0 wall penetration steps, 0/20 viol, maxF=0.425 N"
+    }
+  ],
+  "g6_task2_config_parity": {
+    "architecture_match": 1,
+    "planner_match": 1,
+    "eval_horizon_match": 1,
+    "safety_controller_match": 1,
+    "planner_hyperparameters": {
+      "plan_horizon": 10,
+      "num_candidates": 60,
+      "elite_fraction": 0.15,
+      "cem_iterations": 2,
+      "uncertainty_beta": 1.5,
+      "seed_offset": 42
+    },
+    "environment": {
+      "class": "CompliantPreLiftContactEnv",
+      "dt_s": 0.01
+    },
+    "all_config_identical": 1
+  },
+  "g6_phase35_50seed_replay_parity": {
+    "n_replayed": 50,
+    "exact_parity_count": 50,
+    "mismatch_count": 0,
+    "full_50_seed_parity_verified": 1,
+    "planner_class": "UncertaintyPenalizedCEM",
+    "mismatches": [],
+    "episodes": [
+      {
+        "seed": 6000,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6001,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6002,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6003,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6004,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6005,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 1,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6006,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6007,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6008,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6009,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6010,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6011,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6012,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6013,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6014,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 1,
+        "dropped": 1,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "dropped_by_horizon"
+      },
+      {
+        "seed": 6015,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6016,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6017,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 1.842,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6018,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 1,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 9.9492,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6019,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6020,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6021,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 1,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 7.3228,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6022,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 1,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 6.7736,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6023,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 1,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6024,
+        "cell_id": "C06",
+        "sub_stratum": "ID-Nominal",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6100,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6101,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6102,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6103,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6104,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 1,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6105,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6106,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6107,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6108,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-LowMu",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6109,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6110,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6111,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 1,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6112,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6113,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6114,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6115,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6116,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-HighMass",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6117,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeA-FrictionStep",
+        "parity_exact": 1,
+        "is_success": 1,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 2.6696,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6118,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeA-FrictionStep",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6119,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeA-FrictionStep",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6120,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeA-FrictionStep",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6121,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeB-MassInflux",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6122,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeB-MassInflux",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6123,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeB-MassInflux",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      },
+      {
+        "seed": 6124,
+        "cell_id": "C12",
+        "sub_stratum": "OOD-RegimeB-MassInflux",
+        "parity_exact": 1,
+        "is_success": 0,
+        "has_safety_violation": 0,
+        "dropped": 0,
+        "steps_executed": 50,
+        "goal_progress": 0.0,
+        "termination_reason": "horizon_reached"
+      }
+    ]
+  },
+  "g6_statistical_qualification_note": "No detected Task 2 regression, supported by 50/50 exact Phase 3.5 replay parity and non-significant per-stratum Fisher tests (p >= 0.444444). Because small stratum sample sizes limit power, non-significant Fisher tests do not establish universal statistical equivalence.",
+  "g6_corrected_adjudication": {
+    "passed": 1,
+    "sha256_immutability_verified": 1,
+    "per_stratum_non_regression_verified": 1,
+    "phase35_50seed_replay_parity_verified": 1,
+    "id_comparison": {
+      "phase35_baseline": {
+        "success": {
+          "count": 3,
+          "n": 25,
+          "rate": 0.12,
+          "pct": 12.0,
+          "ci_95_pct": [
+            4.17,
+            29.96
+          ],
+          "formatted": "3/25 (12.0%)"
+        },
+        "safety_violation": {
+          "count": 3,
+          "n": 25,
+          "rate": 0.12,
+          "pct": 12.0,
+          "ci_95_pct": [
+            4.17,
+            29.96
+          ],
+          "formatted": "3/25 (12.0%)"
+        },
+        "dropped": {
+          "count": 1,
+          "n": 25,
+          "rate": 0.04,
+          "pct": 4.0,
+          "ci_95_pct": [
+            0.71,
+            19.54
+          ],
+          "formatted": "1/25 (4.0%)"
+        }
+      },
+      "phase36_observed": {
+        "success": {
+          "count": 0,
+          "n": 10,
+          "rate": 0.0,
+          "pct": 0.0,
+          "ci_95_pct": [
+            0.0,
+            27.75
+          ],
+          "formatted": "0/10 (0.0%)"
+        },
+        "safety_violation": {
+          "count": 0,
+          "n": 10,
+          "rate": 0.0,
+          "pct": 0.0,
+          "ci_95_pct": [
+            0.0,
+            27.75
+          ],
+          "formatted": "0/10 (0.0%)"
+        },
+        "dropped": {
+          "count": 0,
+          "n": 10,
+          "rate": 0.0,
+          "pct": 0.0,
+          "ci_95_pct": [
+            0.0,
+            27.75
+          ],
+          "formatted": "0/10 (0.0%)"
+        }
+      },
+      "fisher_two_sided_p": {
+        "success": 0.541635,
+        "safety_violation": 0.541635,
+        "dropped": 1.0
+      },
+      "statistically_non_regressive": 1
+    },
+    "ood_pooled_comparison_explicit": {
+      "note": "Composition differs across OOD sub-strata (Phase 3.5 C12: 9/8/4/4 vs Phase 3.6: 10/10/10/10); see per_stratum checks above.",
+      "phase35_ood_c12": {
+        "success": {
+          "count": 1,
+          "n": 25,
+          "rate": 0.04,
+          "pct": 4.0,
+          "ci_95_pct": [
+            0.71,
+            19.54
+          ],
+          "formatted": "1/25 (4.0%)"
+        },
+        "safety_violation": {
+          "count": 2,
+          "n": 25,
+          "rate": 0.08,
+          "pct": 8.0,
+          "ci_95_pct": [
+            2.22,
+            24.97
+          ],
+          "formatted": "2/25 (8.0%)"
+        }
+      },
+      "phase36_ood_t366": {
+        "success": {
+          "count": 3,
+          "n": 40,
+          "rate": 0.075,
+          "pct": 7.5,
+          "ci_95_pct": [
+            2.58,
+            19.86
+          ],
+          "formatted": "3/40 (7.5%)"
+        },
+        "safety_violation": {
+          "count": 4,
+          "n": 40,
+          "rate": 0.1,
+          "pct": 10.0,
+          "ci_95_pct": [
+            3.96,
+            23.05
+          ],
+          "formatted": "4/40 (10.0%)"
+        }
+      },
+      "fisher_two_sided_p": {
+        "success": 1.0,
+        "safety_violation": 1.0
+      }
+    },
+    "by_stratum": {
+      "ID-Nominal": {
+        "phase35_baseline": {
+          "success": {
+            "count": 3,
+            "n": 25,
+            "rate": 0.12,
+            "pct": 12.0,
+            "ci_95_pct": [
+              4.17,
+              29.96
+            ],
+            "formatted": "3/25 (12.0%)"
+          },
+          "safety_violation": {
+            "count": 3,
+            "n": 25,
+            "rate": 0.12,
+            "pct": 12.0,
+            "ci_95_pct": [
+              4.17,
+              29.96
+            ],
+            "formatted": "3/25 (12.0%)"
+          },
+          "dropped": {
+            "count": 1,
+            "n": 25,
+            "rate": 0.04,
+            "pct": 4.0,
+            "ci_95_pct": [
+              0.71,
+              19.54
+            ],
+            "formatted": "1/25 (4.0%)"
+          }
+        },
+        "phase36_observed": {
+          "success": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          },
+          "safety_violation": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          }
+        },
+        "fisher_two_sided_p": {
+          "success": 0.541635,
+          "safety_violation": 0.541635,
+          "dropped": 1.0
+        },
+        "statistically_non_regressive": 1
+      },
+      "OOD-LowMu": {
+        "phase35_baseline": {
+          "success": {
+            "count": 0,
+            "n": 9,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              29.91
+            ],
+            "formatted": "0/9 (0.0%)"
+          },
+          "safety_violation": {
+            "count": 1,
+            "n": 9,
+            "rate": 0.1111,
+            "pct": 11.11,
+            "ci_95_pct": [
+              1.99,
+              43.5
+            ],
+            "formatted": "1/9 (11.11%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 9,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              29.91
+            ],
+            "formatted": "0/9 (0.0%)"
+          }
+        },
+        "phase36_observed": {
+          "success": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          },
+          "safety_violation": {
+            "count": 1,
+            "n": 10,
+            "rate": 0.1,
+            "pct": 10.0,
+            "ci_95_pct": [
+              1.79,
+              40.42
+            ],
+            "formatted": "1/10 (10.0%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          }
+        },
+        "fisher_two_sided_p": {
+          "success": 1.0,
+          "safety_violation": 1.0,
+          "dropped": 1.0
+        },
+        "statistically_non_regressive": 1
+      },
+      "OOD-HighMass": {
+        "phase35_baseline": {
+          "success": {
+            "count": 0,
+            "n": 8,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              32.44
+            ],
+            "formatted": "0/8 (0.0%)"
+          },
+          "safety_violation": {
+            "count": 1,
+            "n": 8,
+            "rate": 0.125,
+            "pct": 12.5,
+            "ci_95_pct": [
+              2.24,
+              47.09
+            ],
+            "formatted": "1/8 (12.5%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 8,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              32.44
+            ],
+            "formatted": "0/8 (0.0%)"
+          }
+        },
+        "phase36_observed": {
+          "success": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          },
+          "safety_violation": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          }
+        },
+        "fisher_two_sided_p": {
+          "success": 1.0,
+          "safety_violation": 0.444444,
+          "dropped": 1.0
+        },
+        "statistically_non_regressive": 1
+      },
+      "OOD-RegimeA-FrictionStep": {
+        "phase35_baseline": {
+          "success": {
+            "count": 1,
+            "n": 4,
+            "rate": 0.25,
+            "pct": 25.0,
+            "ci_95_pct": [
+              4.56,
+              69.94
+            ],
+            "formatted": "1/4 (25.0%)"
+          },
+          "safety_violation": {
+            "count": 0,
+            "n": 4,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              48.99
+            ],
+            "formatted": "0/4 (0.0%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 4,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              48.99
+            ],
+            "formatted": "0/4 (0.0%)"
+          }
+        },
+        "phase36_observed": {
+          "success": {
+            "count": 2,
+            "n": 10,
+            "rate": 0.2,
+            "pct": 20.0,
+            "ci_95_pct": [
+              5.67,
+              50.98
+            ],
+            "formatted": "2/10 (20.0%)"
+          },
+          "safety_violation": {
+            "count": 2,
+            "n": 10,
+            "rate": 0.2,
+            "pct": 20.0,
+            "ci_95_pct": [
+              5.67,
+              50.98
+            ],
+            "formatted": "2/10 (20.0%)"
+          },
+          "dropped": {
+            "count": 2,
+            "n": 10,
+            "rate": 0.2,
+            "pct": 20.0,
+            "ci_95_pct": [
+              5.67,
+              50.98
+            ],
+            "formatted": "2/10 (20.0%)"
+          }
+        },
+        "fisher_two_sided_p": {
+          "success": 1.0,
+          "safety_violation": 1.0,
+          "dropped": 1.0
+        },
+        "statistically_non_regressive": 1
+      },
+      "OOD-RegimeB-MassInflux": {
+        "phase35_baseline": {
+          "success": {
+            "count": 0,
+            "n": 4,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              48.99
+            ],
+            "formatted": "0/4 (0.0%)"
+          },
+          "safety_violation": {
+            "count": 0,
+            "n": 4,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              48.99
+            ],
+            "formatted": "0/4 (0.0%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 4,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              48.99
+            ],
+            "formatted": "0/4 (0.0%)"
+          }
+        },
+        "phase36_observed": {
+          "success": {
+            "count": 1,
+            "n": 10,
+            "rate": 0.1,
+            "pct": 10.0,
+            "ci_95_pct": [
+              1.79,
+              40.42
+            ],
+            "formatted": "1/10 (10.0%)"
+          },
+          "safety_violation": {
+            "count": 1,
+            "n": 10,
+            "rate": 0.1,
+            "pct": 10.0,
+            "ci_95_pct": [
+              1.79,
+              40.42
+            ],
+            "formatted": "1/10 (10.0%)"
+          },
+          "dropped": {
+            "count": 0,
+            "n": 10,
+            "rate": 0.0,
+            "pct": 0.0,
+            "ci_95_pct": [
+              0.0,
+              27.75
+            ],
+            "formatted": "0/10 (0.0%)"
+          }
+        },
+        "fisher_two_sided_p": {
+          "success": 1.0,
+          "safety_violation": 1.0,
+          "dropped": 1.0
+        },
+        "statistically_non_regressive": 1
+      }
+    }
+  },
+  "final_six_gate_adjudicated_matrix": {
+    "G1": 1,
+    "G2": 1,
+    "G3": 1,
+    "G4": 1,
+    "G5": 1,
+    "G6": 1,
+    "all_six_gates_passed_adjudicated": 1
+  },
+  "immutability_verified": 1
+}

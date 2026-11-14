@@ -120,12 +120,21 @@ class AcquisitionScorer:
             else:
                 # multifinger_lift: w has finger normal forces in [:4] or [:3]
                 fn = max(0.01, float(np.sum(w[:4]))) if len(w) >= 4 else max(0.01, float(np.sum(w[:3])))
-                # If states provide slip ratio (indices 16:20)
+                # Task 2: indices 16:20 hold slip_ratio (legacy) or |delta_dot_t| in m/s (CompliantPreLift)
                 if realized_states is not None and len(realized_states) > t and len(realized_states[t]) >= 20:
-                    slip_ratios = realized_states[t][16:20]
-                    # Proximity to slip ratio 1.0 (Coulomb boundary)
-                    max_slip = float(np.max(slip_ratios))
-                    phi_f = math.exp(-abs(max_slip - 1.0) / 0.20)
+                    slip_chan = np.asarray(realized_states[t][16:20], dtype=float)
+                    max_val = float(np.max(slip_chan))
+                    if task in ("compliant_prelift", "compliant_lift") or max_val < 0.05:
+                        # CompliantPreLift physical slip onset (>= 0.10 mm/s = 1e-4 m/s while in contact)
+                        fn_vec = np.asarray(realized_states[t][12:16], dtype=float) if len(realized_states[t]) >= 16 else w[:4]
+                        in_contact = fn_vec > 0.05
+                        if np.any(in_contact):
+                            slip_c = float(np.max(np.abs(slip_chan[in_contact])))
+                            phi_f = math.exp(-abs(slip_c - 5e-4) / 5e-4)
+                        else:
+                            phi_f = 0.0
+                    else:
+                        phi_f = math.exp(-abs(max_val - 1.0) / 0.20)
                 else:
                     phi_f = 0.5
                 scores.append(phi_f)

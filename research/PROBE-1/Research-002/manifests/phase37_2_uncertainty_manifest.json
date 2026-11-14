@@ -1,0 +1,345 @@
+{
+  "schema_version": "phase3_7_2_uncertainty_protocol_v1",
+  "execution_status": "DESIGN_FROZEN_AWAITING_EXECUTION_AUTHORIZATION",
+  "program_version": "v1.0-phase3.7.2-spec-frozen",
+  "training_permitted": 0,
+  "candidate_evaluation_executed": 0,
+  "checkpoint_freeze_policy": "All Phase 3.4 B1-B4 checkpoints, calibration artifacts, Phase 3.5-3.7.1 archives, and GeometryAwareCBFSafetyFilter (Safety Architecture v1.0) remain 100% frozen. Zero new model training or candidate evaluation occurs until explicit Phase 3.7.2 execution authorization.",
+  "phase37_1_precondition": {
+    "phase37_manifest_sha256": "391a652c93e9d0a844f2a1f5f2f07cc0c3d5239a46eb64ffb0f68b4560085795",
+    "locked_phase37_1_artifacts_sha256": {
+      "experiments/phase3_7_uncertainty_intelligence/phase37_1_epistemic_ood_diagnostics.json": "ad1e66f5ba39b96d696c0fd413c5a340e3666f71833aabbca3a7e0b7dd2da175",
+      "experiments/phase3_7_uncertainty_intelligence/phase37_1_epistemic_ood_diagnostic_report.md": "d240d6b388cdfc595f791be003271b454796b1188cf47cf3c18969cf27877995",
+      "src/integrated/phase37_1_ood_diagnostics.py": "6432c45439d084e519f97eb38ae2d01d324371370fe082fe30db76b9feeb56d2"
+    }
+  },
+  "locked_phase34_context": {
+    "dataset_manifest_sha256": "29281d1d8b6b003961ca5457690bebb3cc8282040bb480fa555ac9ed8fd93256",
+    "ood_manifest_sha256": "96125f1588c2e517be170fb9fde727cc424ce8a3d472ea59d4bd2f5f768f2d66",
+    "phase34_training_report_sha256": "eda6781cdd075f02922ab00e89807b50530dd928a2eece5bb9dfbc058e3fa644",
+    "verified_dataset_sha256s": {
+      "peg_in_hole__M0_passive": "f22e2a497918317047a105b7447f365b94b346050523ba3392b24df91977f431",
+      "peg_in_hole__M4_acmm": "4176dde2b86a1d623192b8740eb35069d6f75ce8d903a1006a8b30d0c461a12d",
+      "compliant_prelift__M0_passive": "46e916a551a00ed4f7ad655ff80ef3bc268381c770b03b8462bcfd7add1c11e8",
+      "compliant_prelift__M4_acmm": "e86e54cd5b841b24d48e7ef08e9364ddcb528b6993c0ae02588191334fa2486d",
+      "peg_in_hole__calibration": "b8692278b581e3cbbe87ac0b47d4d0f72b25cfeadf44298e78e00ee0dd822bfa",
+      "compliant_prelift__calibration": "8cdd6a5cabf4e847d78f49d4aa7daec3a70a1e1f729ff18414896194fd2df214"
+    },
+    "checkpoint_sha256s": {
+      "peg_in_hole": {
+        "M0_passive": {
+          "B1": "11b2c034b83ab5929442a2ff0a05332106f570793a2afeb89b80b3b02a0777c1",
+          "B2": "f736656308961c62ea8f78e37c5d091a4f9138edfd1641f78b12f7b953aa22d6",
+          "B3": "09d13edb5771671270c431eb690f972c279e5d549a62248195a9915b43dd9cf3",
+          "B4": "12da2470770854424894f477422f27c330e75f2fff399c7f2afb8c834cccd1b5",
+          "B3_members": [
+            "59128041ded872333e33a0ab2cbd8ea27c0de6c86cb1fcf1d97dc432ad91a888",
+            "99b28e40a3900c560c3c7c4af124671fa4a81d0cc4f6f8ffde91fc974fd0b0b1",
+            "0170db2788b5bc6634022729158bbdb19f7eaf940405102408fd3d83a994f67b",
+            "126b8a107cd00f10a442d16269291a304bd71acc12a3c89713c03f549df8a3ba",
+            "b9f1401f85b870ab3e8be12c3798b0e56350098f15e6ccabd88c84707a0a5824"
+          ]
+        },
+        "M4_acmm": {
+          "B1": "e6d1d6f6ec23d4a22327382675fc2700cea3661decc7283f84f396436eb78381",
+          "B2": "6fc083410a8fe4fb191d06b530d9b5c79f63376b6170ac09132874bd556f8e86",
+          "B3": "292fbc5a2c27acb007a7fc2fd5fcf2cd517682c2b6d8ba0b748eca7755a1c72e",
+          "B4": "ec65e7e482656acc2ce910c0661dafea9baa2a5b5f879128be4c9cc01f85677b",
+          "B3_members": [
+            "4c9bd75f707d0ae9b66ddcee0e3077c01837df03f68cc0cdd08753bf66f6460e",
+            "969391f33abeb74aa261977acb42c5e094c9b8f5530b3cbc5058ee1442f305bf",
+            "4fe6be44deb2f57d3623319d0dd16f38bde5181567432f05f81e458a4da343ad",
+            "0a2d5a2f4d882482af33bb98d332b8b5db3aa63eb46fddd5ad78a562f168b76a",
+            "6b36b810c6a95fe4df7ba4bedbaf11260d4bb4f50f63dcb4af89d953e7ecd220"
+          ]
+        }
+      },
+      "compliant_prelift": {
+        "M0_passive": {
+          "B1": "2cdb6b8e3a26d05f5d6df404f659ac057beb8079788ff9ececed07de1eeae5d3",
+          "B2": "8410b817a99d3d9a6c11a92c2ed89a7d3da1eaabf9ec4405f22e2dc7814648ea",
+          "B3": "f0704480d25ab6a29aadb3424f6eaee890b8854a067ab6f0cdd3c0d0a9b14e18",
+          "B4": "47867fc2bf97027186abcbde80ccb218aa77509e58310b39af09b4f34297e5df",
+          "B3_members": [
+            "b964626ee773b8ffffa48fb92bd91da51f1605434fcff3c8f32ab91499cee392",
+            "6959a074e326490437c0479dd3936fbf9c89ecfc44b6a34d119d7ad8a56f76dd",
+            "92f342229dea253cb101b1f0791a188f53484a04b7db2bafea89bbe2b28fd3bc",
+            "8b91684e320000998582a870a90b72a48265efa47afcdce16f620796b3f31abc",
+            "a7701c32b0a5fcb1dbfbb9939fee600bf8a4785532e96d2766d6c45de5c247be"
+          ]
+        },
+        "M4_acmm": {
+          "B1": "90e63e3581457d5bd8f3ed66a6aae1c8184bb7382ce3d5968e3f8c89e0873a85",
+          "B2": "be71a3619ee523f02e9c83d2594fd813142b04f6c58dd11e92f530312c95af66",
+          "B3": "3a9b935fd370cd221b64e7fb5b9581bc1433ba3f86dee7a979dd63b9b9d2a6dc",
+          "B4": "b727cb5c6165ef648e54e26a5bf4e3a90ce642d5a218022491f1c762563b0daa",
+          "B3_members": [
+            "ed38db58f6dd030c84937e4de6e71a1f60cdd1491402f9cb5f57cafcddd1c395",
+            "c62fdc4255b6aa691e400186711cd08152e8d6d4b9a20393b7eef31889b136b4",
+            "425be323d602ac3e83e1b5bbdf78560959cf33ab8d265075367d44468611b565",
+            "d5b47cbb7bedaf77145b57e8474b8603769e6bea9c9a0315d88c35716f5988ec",
+            "cafa4142529c2cb5bd1bc09c6b1b8f9ef3e7f0ae5015776f778b1bb7b684e16e"
+          ]
+        }
+      }
+    }
+  },
+  "locked_phase35_archive_sha256": {
+    "phase35_offline_120ep_results.json": "0d700fdec06324ce76c687c3557358c4e4232c1f1d8e9923000883fe201812f1",
+    "phase35_closed_loop_450ep_results.json": "8bb42e1a852c9dc61446d9f4fd689c596b1763e675b81a5754aa0ae0bc859653",
+    "phase35_statistical_comparison.json": "b4f90493b84c2414ce5f97f3143be69e562edb0e5559c9d292318430fc409fec",
+    "phase35_master_report.json": "3945a8cc988c990933470dfec31efd651f808819ae4933325b5eb772ba7ec745"
+  },
+  "locked_phase35_to_37_archives": {
+    "manifests/phase36_validation_manifest.json": "e3209e0d631f8496386a5e3792ec233532e9dc767944dacf8a3cb25a4adffd6f",
+    "experiments/phase3_6_robustness_validation/phase36_validation_results.json": "0f6415347918d289f30989ab31859f217438378f2210bfbfdff5b06d832909cd",
+    "experiments/phase3_6_robustness_validation/phase36_closure_adjudication.json": "b25cb1f09e447228543bb8b0e3b712ac970af4e0ddf1759247351648c082492c",
+    "manifests/phase37_uncertainty_manifest.json": "fea84e4fe85d43e084671e5a0a4a56f74adfdc80cfa949b88c08a25a22d60792",
+    "experiments/phase3_5_evaluation/phase35_closure_addendum.json": "87bae105f7d78eb92faec7f33a158d733af252a863aaf1005d6d0c8a772fab47",
+    "experiments/phase3_5_evaluation/phase35_1_peginhole_correction.json": "c3ffb50362e21cff7f889c2c5784addaf4886b8ec0afccff864a6954e5817b93"
+  },
+  "locked_safety_v1_sha256": {
+    "src/safety/pcbf_safety_filter.py": "458ce865e34b27c9b1233bb477a994e1caa09e66b48a9da1b4b02a5b0b366277",
+    "src/coordination/plcea_substitutor.py": "0f4980e37e1b2776f20769582f5f3492b6aa7c3aa18a85243bf5d9faac5ea924",
+    "experiments/phase3_5_evaluation/phase35_closure_addendum.json": "87bae105f7d78eb92faec7f33a158d733af252a863aaf1005d6d0c8a772fab47",
+    "experiments/phase3_5_evaluation/phase35_1_peginhole_correction.json": "c3ffb50362e21cff7f889c2c5784addaf4886b8ec0afccff864a6954e5817b93",
+    "manifests/phase34_dataset_manifest.json": "29281d1d8b6b003961ca5457690bebb3cc8282040bb480fa555ac9ed8fd93256",
+    "manifests/ood_regime_manifests.json": "96125f1588c2e517be170fb9fde727cc424ce8a3d472ea59d4bd2f5f768f2d66",
+    "src/safety/geometry_cbf_safety_filter.py": "77e26c13ddc5b3cd5824604f11ccf08c61379b5f3a9965365de0be654e34d58e",
+    "src/integrated/peginhole_phase352_controller.py": "cb68e66727a892f2f96f819fb1d134e264136ccb5c227b7de37f95dc163545a0",
+    "experiments/phase3_5_2_safety_investigation/phase35_2_pilot_manifest.json": "a95aaf1de06b631bbd04791374446edeec0a5ca71dc4d19ab524759fcfd212b4",
+    "experiments/phase3_5_2_safety_investigation/phase35_2_investigation.json": "39d45530dbf24b7a875a8003f5b15a29c3488ab2fada69d4175cb8f3f1e2efd5",
+    "experiments/phase3_5_2_safety_investigation/phase35_2_telemetry_audit.json": "25b47afa9b77d3a141290b9163fcd71f86afb8cacc8af0c453abc31b750754c0"
+  },
+  "seed_pool_registry": {
+    "disjoint_verified": 1,
+    "historical_max_seed": 8849,
+    "phase37_2_seed_floor": 9000,
+    "phase36_seed_disjoint_verified": 1,
+    "total_calib_episodes": 180,
+    "total_val_episodes": 160,
+    "total_phase37_2_episodes": 340,
+    "historical_overlap_count": 0,
+    "calib_val_overlap_count": 0,
+    "below_floor_count": 0,
+    "pool_counts": {
+      "p37_2_calib_task2_id": 60,
+      "p37_2_calib_task2_ood": 60,
+      "p37_2_calib_pih": 60,
+      "p37_2_val_task2_id": 60,
+      "p37_2_val_task2_ood": 60,
+      "p37_2_val_pih": 40
+    },
+    "pool_ranges": {
+      "p37_2_calib_task2_id": [
+        9000,
+        9059
+      ],
+      "p37_2_calib_task2_ood": [
+        9060,
+        9119
+      ],
+      "p37_2_calib_pih": [
+        9120,
+        9179
+      ],
+      "p37_2_val_task2_id": [
+        9200,
+        9259
+      ],
+      "p37_2_val_task2_ood": [
+        9260,
+        9319
+      ],
+      "p37_2_val_pih": [
+        9320,
+        9359
+      ]
+    }
+  },
+  "fresh_phase37_2_datasets": {
+    "dataset_manifest_path": "datasets/phase3_7_2/phase37_2_dataset_manifest.json",
+    "dataset_manifest_sha256": "c6fd3f60f982fc6ab08bb0e232b503a404dd47bd4ca6e78b89f0f635a80ba337",
+    "splits": {
+      "p37_2_calib_task2_id": {
+        "relative_path": "datasets/phase3_7_2/p37_2_calib_task2_id.npz",
+        "sha256": "ebbbf97c9276e87daea92ba94882f8bdb699f82930a19f843fe869a2b990f25b",
+        "split_role": "calibration",
+        "num_episodes": 60,
+        "num_transitions": 1887,
+        "seed_range": [
+          9000,
+          9059
+        ]
+      },
+      "p37_2_calib_task2_ood": {
+        "relative_path": "datasets/phase3_7_2/p37_2_calib_task2_ood.npz",
+        "sha256": "14ac53c05d614f7a240ab54f8cea6da7ff7b7d0485a9abd0a559c6200c392e30",
+        "split_role": "calibration",
+        "num_episodes": 60,
+        "num_transitions": 2369,
+        "seed_range": [
+          9060,
+          9119
+        ]
+      },
+      "p37_2_calib_pih": {
+        "relative_path": "datasets/phase3_7_2/p37_2_calib_pih.npz",
+        "sha256": "ebd00c347fea1231a15da48c9d3969038f24b1f68699a304101fee9483e51afa",
+        "split_role": "calibration",
+        "num_episodes": 60,
+        "num_transitions": 1802,
+        "seed_range": [
+          9120,
+          9179
+        ]
+      },
+      "p37_2_val_task2_id": {
+        "relative_path": "datasets/phase3_7_2/p37_2_val_task2_id.npz",
+        "sha256": "eb3b7c6ab0fb902d14b9ca598e1cfc5c0d068ef7e4dbd5a8415c085aa7af9c3a",
+        "split_role": "validation",
+        "num_episodes": 60,
+        "num_transitions": 1846,
+        "seed_range": [
+          9200,
+          9259
+        ]
+      },
+      "p37_2_val_task2_ood": {
+        "relative_path": "datasets/phase3_7_2/p37_2_val_task2_ood.npz",
+        "sha256": "ef1ec9bd73e59d99fa35fb34b3d0b29ecc228e6200389dbd6483ffc44c58bc53",
+        "split_role": "validation",
+        "num_episodes": 60,
+        "num_transitions": 2219,
+        "seed_range": [
+          9260,
+          9319
+        ]
+      },
+      "p37_2_val_pih": {
+        "relative_path": "datasets/phase3_7_2/p37_2_val_pih.npz",
+        "sha256": "ba3781798376f0da38cb2ee773a3aa71ff983f4166f1eba4efdd57ab258a9598",
+        "split_role": "validation",
+        "num_episodes": 40,
+        "num_transitions": 1133,
+        "seed_range": [
+          9320,
+          9359
+        ]
+      }
+    }
+  },
+  "workstreams": [
+    {
+      "track_id": "3.7.2-A",
+      "title": "Contact-Mode-Aware Uncertainty",
+      "objective": "Decouple uncertainty estimation and normalization across physical contact modes (ContactMode 0..6) so high-density free-space/sticking modes do not mask sliding/low-mu/impact divergence.",
+      "status": "SPEC_FROZEN_READY",
+      "training_permitted": 0,
+      "candidate_mechanisms": [
+        "Per-mode reference score normalization (mean/IQR or empirical CDF quantile per ContactMode 0..6 fitted strictly on calibration ID transitions).",
+        "Contact-mode-conditioned feature-space distance (diag-Mahalanobis / kNN distance inside frozen world-model hidden embeddings stratified by ContactMode)."
+      ]
+    },
+    {
+      "track_id": "3.7.2-B",
+      "title": "History-Conditioned Physical Inference",
+      "objective": "Use short causal state-action-wrench-slip windows (L in {5, 10} steps) and frozen 1-step innovation residuals to detect hidden physical parameter shifts (OOD-LowMu, OOD-HighMass) and non-stationary transitions (RegimeA friction step, RegimeB mass influx).",
+      "status": "SPEC_FROZEN_READY",
+      "training_permitted": 0,
+      "candidate_mechanisms": [
+        "Windowed friction-cone and mass-balance residual tracker over (fn, tangential force proxy, slip_vel, z_obj) at L in {5, 10}.",
+        "CUSUM / EWMA innovation statistic over frozen M4_acmm / M0_passive 1-step prediction residuals within-episode.",
+        "Frozen-feature causal probe (lightweight ridge/linear physical parameter & regime-shift estimator trained strictly on Phase 3.7.2 calibration rollouts when execution is authorized)."
+      ]
+    },
+    {
+      "track_id": "3.7.2-C",
+      "title": "Contact-Mode-Aware Conformal Calibration",
+      "objective": "Recover ID->OOD conformal coverage continuity (addressing matched EpisodeConformalEngine ID 95.0% -> OOD 80.0% M4 / 87.5% M0 drop, and OOD-LowMu 50.0% collapse) using mode-normalized nonconformity fitted strictly on fresh calibration seeds (>=9000).",
+      "status": "SPEC_FROZEN_READY",
+      "training_permitted": 0,
+      "candidate_mechanisms": [
+        "Contact-mode-normalized multi-horizon nonconformity scores fitted on p37_2_calib_task2_id and p37_2_calib_pih ID slices.",
+        "Uncertainty-adaptive / difficulty-weighted conformal scaling preserving valid-domain nominal coverage (target >= 90% at alpha=0.10) without peeking at validation or Phase 3.5/3.6 eval seeds."
+      ]
+    },
+    {
+      "track_id": "3.7.2-D",
+      "title": "B3 Ensemble Diversity and Correlated Errors",
+      "objective": "Characterize pairwise residual correlation and effective ensemble size across B3's E=5 identically initialized MLP-LayerNorm members, evaluating post-hoc decorrelation and diversity-aware uncertainty aggregation before deciding if any future architectural retraining is needed.",
+      "status": "SPEC_FROZEN_READY",
+      "training_permitted": 0,
+      "candidate_mechanisms": [
+        "Per-mode pairwise member residual correlation matrix R_m, variance inflation factor (VIF), and Epi/Bias^2 ratio decomposition.",
+        "Mahalanobis precision-weighted ensemble disagreement and hybrid epistemic + frozen-encoder feature-distance scoring."
+      ]
+    },
+    {
+      "track_id": "3.7.2-E",
+      "title": "OOD Detection Evaluation",
+      "objective": "Rigorous, stratified evaluation on strictly held-out fresh validation pools (9200..9359) plus secondary frozen holdout audit (3000..3119) reporting transition and episode AUROC, AUPRC, FPR@95TPR, Spearman error-uncertainty correlation, and Risk-Coverage AURC.",
+      "status": "SPEC_FROZEN_READY",
+      "training_permitted": 0,
+      "candidate_mechanisms": [
+        "Unified detector benchmark suite across Task 2 strata (ID vs OOD overall, LowMu, HighMass, RegimeA, RegimeB) and Task 1 (Peg-ID vs Peg-OOD).",
+        "Bootstrap 95% confidence intervals (B=2000) and Holm-Bonferroni paired significance tests against frozen B3 total_std and epistemic_std baselines."
+      ]
+    }
+  ],
+  "acceptance_gates": {
+    "U1_frozen_baseline_parity": {
+      "description": "Reproduce exact frozen M4_acmm B3 Phase 3.7.1 baseline OOD AUROC values (0.4169 total_std, 0.4627 epistemic_std; LowMu 0.3347 total_std, 0.4450 epistemic_std) within 1e-4 and record fresh validation pool baselines prior to any candidate scoring.",
+      "metric": "abs_diff_vs_phase37_1_baseline",
+      "threshold": 0.0001,
+      "frozen_reference": {
+        "M4_acmm_B3_transition_auroc_total_std": 0.4169,
+        "M4_acmm_B3_transition_auroc_epistemic_std": 0.4627,
+        "M4_acmm_B3_ood_lowmu_auroc_total_std": 0.3347,
+        "M4_acmm_B3_ood_lowmu_auroc_epistemic_std": 0.445,
+        "M4_acmm_B4_matched_id_coverage": 0.95,
+        "M4_acmm_B4_matched_ood_coverage": 0.8,
+        "M4_acmm_B4_matched_lowmu_coverage": 0.5
+      }
+    },
+    "U2_ood_discrimination_improvement": {
+      "description": "Calibrated contact-mode-aware / history-conditioned / hybrid detector evaluated on strictly held-out validation pools (9200..9319) improves OOD vs ID discrimination significantly over frozen B3 baselines without training on eval pools.",
+      "thresholds": {
+        "task2_overall_transition_auroc_min": 0.75,
+        "task2_lowmu_transition_auroc_min": 0.75,
+        "task2_overall_episode_auroc_min": 0.8,
+        "task2_fpr_at_95tpr_max": 0.65,
+        "bootstrap_ci95_lower_min": 0.7,
+        "holm_bonferroni_alpha_max": 0.05
+      }
+    },
+    "U3_conformal_coverage_and_risk_coverage": {
+      "description": "Mode-conditioned conformal calibration fitted strictly on fresh calibration ID splits recovers OOD episode coverage continuity while preserving nominal ID coverage (alpha=0.10) and improving Risk-Coverage AURC.",
+      "thresholds": {
+        "id_episode_coverage_min": 0.88,
+        "ood_episode_coverage_min": 0.85,
+        "id_ood_coverage_gap_max": 0.05,
+        "aurc_relative_reduction_min": 0.25,
+        "per_mode_coverage_deviation_max": 0.08
+      }
+    },
+    "U4_temporal_inference_and_diversity": {
+      "description": "Temporal sliding-window residual/physical inference detects non-stationary regimes (RegimeA friction step, RegimeB mass influx) after onset, and B3 ensemble error-correlation diagnostics quantify member redundancy and decorrelation gain.",
+      "thresholds": {
+        "nonstationary_post_onset_auroc_min": 0.8,
+        "spearman_error_uncertainty_min": 0.25,
+        "b3_diversity_diagnostics_reported": 1
+      }
+    },
+    "U5_seed_disjointness_and_artifact_immutability": {
+      "description": "Zero seed overlap with all historical pools (0..8849), strict calibration-vs-validation disjointness, 100% SHA-256 immutability of Phase 3.4-3.7.1 checkpoints/archives and Safety Architecture v1.0, and zero unauthorized training.",
+      "thresholds": {
+        "historical_seed_overlap": 0,
+        "calib_val_seed_overlap": 0,
+        "immutable_sha256_mismatches": 0,
+        "training_permitted_in_spec_phase": 0
+      }
+    }
+  },
+  "manifest_sha256": "3fbd26f9c428649b1a8485fa43bab6476b3a603f6e5477b8992e65461b94e700"
+}

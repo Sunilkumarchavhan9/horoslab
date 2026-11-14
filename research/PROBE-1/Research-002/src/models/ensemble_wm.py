@@ -56,6 +56,19 @@ class EnsembleWorldModel(nn.Module):
         aleatoric_var = torch.mean(all_vars, dim=0)
         return bar_mean, epistemic_var, aleatoric_var
 
+    def forward(self, state: torch.Tensor, action: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Returns ensemble mean and total predictive variance (epistemic + aleatoric)."""
+        bar_mean, epistemic_var, aleatoric_var = self.predict_with_uncertainty(state, action)
+        return bar_mean, epistemic_var + aleatoric_var
+
+    def compute_nll(self, state: torch.Tensor, action: torch.Tensor, target_next_state: torch.Tensor) -> torch.Tensor:
+        """Computes Gaussian NLL under moment-matched ensemble mean and total variance."""
+        bar_mean, epi_var, alea_var = self.predict_with_uncertainty(state, action)
+        total_var = epi_var + alea_var + 1e-6
+        mse_weighted = ((target_next_state - bar_mean) ** 2) / total_var
+        log_det = torch.log(total_var)
+        return 0.5 * torch.mean(torch.sum(mse_weighted + log_det, dim=-1))
+
     def predict_multistep(
         self,
         init_state: np.ndarray,

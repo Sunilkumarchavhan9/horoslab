@@ -1,0 +1,228 @@
+{
+  "program": "HOROS PROBE-1 \u2014 Research-002",
+  "stage": "Phase 3.7.2 \u2014 Contact-Mode-Aware Uncertainty and Calibration (Design Freeze & Readiness)",
+  "elapsed_s": 3.507,
+  "specification_path": "experiments/phase3_7_uncertainty_intelligence/phase37_2_experimental_specification.md",
+  "specification_sha256": "5de54aabf3f6c10b0f6641de55745d75d34d4aa06791a42ad6b298e08930d26c",
+  "readiness_checks": {
+    "status": "PHASE_3_7_2_READY_DESIGN_FROZEN",
+    "training_permitted": 0,
+    "candidate_evaluation_executed": 0,
+    "specification_present": 1,
+    "manifest_sha256": "3fbd26f9c428649b1a8485fa43bab6476b3a603f6e5477b8992e65461b94e700",
+    "manifest_file_sha256": "e32a4ca4901b435a5cc973ac1abfe753bd265fc09dc1ec06ec4352d8a652f50b",
+    "dataset_manifest_sha256": "c6fd3f60f982fc6ab08bb0e232b503a404dd47bd4ca6e78b89f0f635a80ba337",
+    "verified_split_sha256s": {
+      "p37_2_calib_task2_id": "ebbbf97c9276e87daea92ba94882f8bdb699f82930a19f843fe869a2b990f25b",
+      "p37_2_calib_task2_ood": "14ac53c05d614f7a240ab54f8cea6da7ff7b7d0485a9abd0a559c6200c392e30",
+      "p37_2_calib_pih": "ebd00c347fea1231a15da48c9d3969038f24b1f68699a304101fee9483e51afa",
+      "p37_2_val_task2_id": "eb3b7c6ab0fb902d14b9ca598e1cfc5c0d068ef7e4dbd5a8415c085aa7af9c3a",
+      "p37_2_val_task2_ood": "ef1ec9bd73e59d99fa35fb34b3d0b29ecc228e6200389dbd6483ffc44c58bc53",
+      "p37_2_val_pih": "ba3781798376f0da38cb2ee773a3aa71ff983f4166f1eba4efdd57ab258a9598"
+    },
+    "seed_audit": {
+      "disjoint_verified": 1,
+      "historical_max_seed": 8849,
+      "phase37_2_seed_floor": 9000,
+      "phase36_seed_disjoint_verified": 1,
+      "total_calib_episodes": 180,
+      "total_val_episodes": 160,
+      "total_phase37_2_episodes": 340,
+      "historical_overlap_count": 0,
+      "calib_val_overlap_count": 0,
+      "below_floor_count": 0,
+      "pool_counts": {
+        "p37_2_calib_task2_id": 60,
+        "p37_2_calib_task2_ood": 60,
+        "p37_2_calib_pih": 60,
+        "p37_2_val_task2_id": 60,
+        "p37_2_val_task2_ood": 60,
+        "p37_2_val_pih": 40
+      },
+      "pool_ranges": {
+        "p37_2_calib_task2_id": [
+          9000,
+          9059
+        ],
+        "p37_2_calib_task2_ood": [
+          9060,
+          9119
+        ],
+        "p37_2_calib_pih": [
+          9120,
+          9179
+        ],
+        "p37_2_val_task2_id": [
+          9200,
+          9259
+        ],
+        "p37_2_val_task2_ood": [
+          9260,
+          9319
+        ],
+        "p37_2_val_pih": [
+          9320,
+          9359
+        ]
+      }
+    },
+    "immutable_sha256_mismatches": 0,
+    "workstream_count": 5,
+    "acceptance_gate_count": 5
+  },
+  "dataset_splits_summary": {
+    "p37_2_calib_task2_id": {
+      "split_role": "calibration",
+      "task": "compliant_prelift",
+      "regime": "ID",
+      "seed_range": [
+        9000,
+        9059
+      ],
+      "num_episodes": 60,
+      "num_transitions": 1887,
+      "sub_stratum_counts": {
+        "ID-Nominal": 60
+      },
+      "mode_histogram_named": {
+        "Free": 323,
+        "FirstContact": 8,
+        "Sticking": 981,
+        "Sliding": 275,
+        "Impact": 300,
+        "Jamming": 0,
+        "Release": 0
+      },
+      "sha256": "ebbbf97c9276e87daea92ba94882f8bdb699f82930a19f843fe869a2b990f25b"
+    },
+    "p37_2_calib_task2_ood": {
+      "split_role": "calibration",
+      "task": "compliant_prelift",
+      "regime": "OOD",
+      "seed_range": [
+        9060,
+        9119
+      ],
+      "num_episodes": 60,
+      "num_transitions": 2369,
+      "sub_stratum_counts": {
+        "OOD-LowMu": 21,
+        "OOD-HighMass": 18,
+        "OOD-RegimeA-FrictionStep": 11,
+        "OOD-RegimeB-MassInflux": 10
+      },
+      "mode_histogram_named": {
+        "Free": 261,
+        "FirstContact": 12,
+        "Sticking": 889,
+        "Sliding": 812,
+        "Impact": 395,
+        "Jamming": 0,
+        "Release": 0
+      },
+      "sha256": "14ac53c05d614f7a240ab54f8cea6da7ff7b7d0485a9abd0a559c6200c392e30"
+    },
+    "p37_2_calib_pih": {
+      "split_role": "calibration",
+      "task": "peg_in_hole",
+      "regime": "PegInHole",
+      "seed_range": [
+        9120,
+        9179
+      ],
+      "num_episodes": 60,
+      "num_transitions": 1802,
+      "sub_stratum_counts": {
+        "Peg-ID": 24,
+        "Peg-OOD": 36
+      },
+      "mode_histogram_named": {
+        "Free": 985,
+        "FirstContact": 64,
+        "Sticking": 333,
+        "Sliding": 410,
+        "Impact": 8,
+        "Jamming": 2,
+        "Release": 0
+      },
+      "sha256": "ebd00c347fea1231a15da48c9d3969038f24b1f68699a304101fee9483e51afa"
+    },
+    "p37_2_val_task2_id": {
+      "split_role": "validation",
+      "task": "compliant_prelift",
+      "regime": "ID",
+      "seed_range": [
+        9200,
+        9259
+      ],
+      "num_episodes": 60,
+      "num_transitions": 1846,
+      "sub_stratum_counts": {
+        "ID-Nominal": 60
+      },
+      "mode_histogram_named": {
+        "Free": 428,
+        "FirstContact": 12,
+        "Sticking": 926,
+        "Sliding": 233,
+        "Impact": 247,
+        "Jamming": 0,
+        "Release": 0
+      },
+      "sha256": "eb3b7c6ab0fb902d14b9ca598e1cfc5c0d068ef7e4dbd5a8415c085aa7af9c3a"
+    },
+    "p37_2_val_task2_ood": {
+      "split_role": "validation",
+      "task": "compliant_prelift",
+      "regime": "OOD",
+      "seed_range": [
+        9260,
+        9319
+      ],
+      "num_episodes": 60,
+      "num_transitions": 2219,
+      "sub_stratum_counts": {
+        "OOD-LowMu": 21,
+        "OOD-HighMass": 18,
+        "OOD-RegimeA-FrictionStep": 11,
+        "OOD-RegimeB-MassInflux": 10
+      },
+      "mode_histogram_named": {
+        "Free": 333,
+        "FirstContact": 9,
+        "Sticking": 855,
+        "Sliding": 693,
+        "Impact": 329,
+        "Jamming": 0,
+        "Release": 0
+      },
+      "sha256": "ef1ec9bd73e59d99fa35fb34b3d0b29ecc228e6200389dbd6483ffc44c58bc53"
+    },
+    "p37_2_val_pih": {
+      "split_role": "validation",
+      "task": "peg_in_hole",
+      "regime": "PegInHole",
+      "seed_range": [
+        9320,
+        9359
+      ],
+      "num_episodes": 40,
+      "num_transitions": 1133,
+      "sub_stratum_counts": {
+        "Peg-ID": 16,
+        "Peg-OOD": 24
+      },
+      "mode_histogram_named": {
+        "Free": 591,
+        "FirstContact": 48,
+        "Sticking": 219,
+        "Sliding": 263,
+        "Impact": 5,
+        "Jamming": 6,
+        "Release": 1
+      },
+      "sha256": "ba3781798376f0da38cb2ee773a3aa71ff983f4166f1eba4efdd57ab258a9598"
+    }
+  },
+  "manifest_sha256": "3fbd26f9c428649b1a8485fa43bab6476b3a603f6e5477b8992e65461b94e700"
+}
