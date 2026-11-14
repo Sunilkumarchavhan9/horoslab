@@ -1,9 +1,14 @@
 """
 HOROS PROBE-1 — Research-002: Trustworthy Action-Conditioned Contact World Models
-Task 1: Precision Peg-in-Hole Insertion Simulation Environment
-Implements 7-DoF Franka Panda operational space impedance control,
-5 contact strata (Free, Impact, Chamfer Sliding, Wedging, Seating),
-realistic friction cones, clearance tolerances, and contact wrench dynamics.
+Task 1: Precision Peg-in-Hole Contact Simulation Environment
+
+Simulation Fidelity Specification:
+Implements a task-level contact mechanics simulation with analytical contact dynamics:
+- Operational space impedance control setpoint kinematics (position and orientation increments).
+- Five discrete contact strata (Free, Impact, Chamfer Sliding, Wedging, Seated).
+- Coulomb friction mechanics, clearance tolerances (0.1–4.0 mm), and contact wrench reactions.
+Note on Scope: This environment models task-level contact and wedging dynamics analytically;
+it does not simulate full 7-DoF Franka Panda rigid multi-body dynamics or joint-level motor torque equations.
 """
 
 from __future__ import annotations
@@ -13,8 +18,8 @@ from typing import Dict, Any, Tuple, Optional
 
 class PegInHoleEnv:
     """
-    Precision Peg-in-Hole manipulation environment.
-    Simulates high-fidelity contact mechanics, wedging, jamming, and force telemetry.
+    Precision Peg-in-Hole task-level contact mechanics simulation environment.
+    Simulates analytical contact dynamics, chamfer sliding, wedging, jamming, and force telemetry.
     """
 
     def __init__(

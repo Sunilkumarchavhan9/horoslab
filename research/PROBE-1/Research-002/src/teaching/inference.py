@@ -13,6 +13,7 @@ import concurrent.futures
 import hashlib
 import json
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -206,35 +207,52 @@ class ExternalRestApiTeacher(BaseTeacherAdapter):
         self.rate_limit_rpm = rate_limit_rpm
         self.custom_headers = custom_headers or {}
 
-        # Usage & telemetry tracking
+        # Usage & telemetry tracking (thread-safe)
         self.total_requests = 0
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0
         self.cumulative_latency_ms = 0.0
         self._last_request_time = 0.0
+        self._rate_limit_lock = threading.Lock()
+        self._telemetry_lock = threading.Lock()
 
     def _get_api_key(self) -> str:
         """Securely retrieves API key from environment variable; never logged or saved to disk."""
         key = os.environ.get(self.api_key_env_var, "").strip()
         if not key:
             # If mock endpoint is targeted in tests, allow dummy key
-            if self.endpoint_url.startswith(("mock://", "test://")):
-                return "mock_test_key"
+            if self.endpoint_url.startswith(("mock://", "test://", "http://127.0.0.1", "http://localhost")):
+                return "mock_test_token"
             raise ValueError(
                 f"Missing API credential: Environment variable '{self.api_key_env_var}' is not set. "
                 "Set the required environment variable before invoking external teacher models."
             )
         return key
 
+    def get_request_headers(self, api_key: str) -> Dict[str, str]:
+        """Builds provider-specific authentication and content headers."""
+        headers = {"Content-Type": "application/json"}
+        if self.provider_format == "anthropic":
+            headers["x-api-key"] = api_key
+            headers["anthropic-version"] = "2023-06-01"
+        elif self.provider_format == "gemini":
+            headers["x-goog-api-key"] = api_key
+        else:  # openai, generic
+            headers["Authorization"] = f"Bearer {api_key}"
+        headers.update(self.custom_headers)
+        return headers
+
     def _enforce_rate_limit(self) -> None:
-        """Enforces rate limit pacing between consecutive outbound HTTP queries."""
+        """Thread-safely enforces rate limit pacing between consecutive outbound HTTP queries."""
         if self.rate_limit_rpm <= 0:
             return
         min_interval = 60.0 / self.rate_limit_rpm
-        elapsed = time.time() - self._last_request_time
-        if elapsed < min_interval:
-            time.sleep(min_interval - elapsed)
-        self._last_request_time = time.time()
+        with self._rate_limit_lock:
+            now = time.time()
+            elapsed = now - self._last_request_time
+            if elapsed < min_interval:
+                time.sleep(min_interval - elapsed)
+            self._last_request_time = time.time()
 
     def format_request_payload(self, payload: TeacherQueryPayload) -> Dict[str, Any]:
         """Converts standardized TeacherQueryPayload into provider-compliant JSON body."""
@@ -268,6 +286,7 @@ class ExternalRestApiTeacher(BaseTeacherAdapter):
             return {
                 "model": self.descriptor.model_id,
                 "max_tokens": 1024,
+                "system": "You are a precision robotics world model teacher.",
                 "messages": [{"role": "user", "content": prompt_text}],
             }
         else:
@@ -282,18 +301,39 @@ class ExternalRestApiTeacher(BaseTeacherAdapter):
         usage = {"prompt_tokens": 0, "completion_tokens": 0}
 
         actions_list = None
-        # Extract actions based on provider format
-        if "choices" in response_data:
+
+        # 1. Anthropic Messages API format: content blocks [{"type": "text", "text": "..."}]
+        if "content" in response_data and isinstance(response_data["content"], list):
+            text_blocks = []
+            for block in response_data["content"]:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    text_blocks.append(block.get("text", ""))
+            combined_text = "\n".join(text_blocks).strip()
+            parsed_content = json.loads(combined_text)
+            actions_list = parsed_content.get("actions", parsed_content)
+            if "usage" in response_data:
+                usage["prompt_tokens"] = response_data["usage"].get("input_tokens", 0)
+                usage["completion_tokens"] = response_data["usage"].get("output_tokens", 0)
+
+        # 2. OpenAI Chat Completions API format: choices[0].message.content
+        elif "choices" in response_data:
             content_str = response_data["choices"][0]["message"]["content"]
             parsed_content = json.loads(content_str)
             actions_list = parsed_content.get("actions", parsed_content)
             if "usage" in response_data:
                 usage["prompt_tokens"] = response_data["usage"].get("prompt_tokens", 0)
                 usage["completion_tokens"] = response_data["usage"].get("completion_tokens", 0)
+
+        # 3. Gemini API format: candidates[0].content.parts[0].text
         elif "candidates" in response_data:
             part_text = response_data["candidates"][0]["content"]["parts"][0]["text"]
             parsed_content = json.loads(part_text)
             actions_list = parsed_content.get("actions", parsed_content)
+            if "usageMetadata" in response_data:
+                usage["prompt_tokens"] = response_data["usageMetadata"].get("promptTokenCount", 0)
+                usage["completion_tokens"] = response_data["usageMetadata"].get("candidatesTokenCount", 0)
+
+        # 4. Generic dictionary or list payload
         elif "actions" in response_data:
             actions_list = response_data["actions"]
         elif isinstance(response_data, list):
@@ -346,15 +386,16 @@ class ExternalRestApiTeacher(BaseTeacherAdapter):
 
         # Real outbound HTTP query execution
         body = json.dumps(self.format_request_payload(payload)).encode("utf-8")
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_key}",
-            **self.custom_headers,
-        }
+        headers = self.get_request_headers(api_key)
 
         req = urllib.request.Request(self.endpoint_url, data=body, headers=headers, method="POST")
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout_seconds) as resp:
+            if "127.0.0.1" in self.endpoint_url or "localhost" in self.endpoint_url:
+                opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+                resp_ctx = opener.open(req, timeout=self.timeout_seconds)
+            else:
+                resp_ctx = urllib.request.urlopen(req, timeout=self.timeout_seconds)
+            with resp_ctx as resp:
                 resp_bytes = resp.read()
                 resp_json = json.loads(resp_bytes.decode("utf-8"))
         except urllib.error.HTTPError as http_err:
@@ -367,11 +408,12 @@ class ExternalRestApiTeacher(BaseTeacherAdapter):
         actions, token_usage = self.validate_and_parse_response(resp_json, payload)
         latency = (time.perf_counter() - start_t) * 1000.0
 
-        # Update telemetry
-        self.total_requests += 1
-        self.total_prompt_tokens += token_usage["prompt_tokens"]
-        self.total_completion_tokens += token_usage["completion_tokens"]
-        self.cumulative_latency_ms += latency
+        # Update telemetry thread-safely
+        with self._telemetry_lock:
+            self.total_requests += 1
+            self.total_prompt_tokens += token_usage["prompt_tokens"]
+            self.total_completion_tokens += token_usage["completion_tokens"]
+            self.cumulative_latency_ms += latency
 
         prov_hash = hashlib.sha256(
             f"{self.descriptor.model_id}:{payload.compute_payload_hash()}:{actions.tobytes()}".encode("utf-8")

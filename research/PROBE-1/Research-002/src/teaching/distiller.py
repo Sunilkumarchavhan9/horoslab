@@ -57,36 +57,50 @@ def estimate_observable_mode_probabilities(
     state: Optional[np.ndarray] = None,
     num_modes: int = 5,
 ) -> np.ndarray:
-    """Estimates contact mode probabilities solely from observable sensor signals.
+    """Estimates contact mode probabilities solely from observable physical sensor signals.
 
-    Strict Non-Leakage Contract:
+    Strict Physical & Non-Leakage Contract:
     - Simulator ground truth (ep.modes) is NEVER accessed.
-    - Uses only observable 6-axis FT sensor readings and kinematics.
+    - Uses true aggregate normal force (sum of fingertip normal forces state[12:16] or wrench norm),
+      true vertical pad shear force (wrench[2]), and observed slip velocity (state[16:20]).
+    - 4 equal normal forces with zero tangential shear strictly classify as Sticking (Mode 2), NEVER Sliding.
     - Default modes: [0: Free, 1: Impact, 2: Sticking, 3: Sliding, 4: Seated/Wedged]
     """
     probs = np.zeros(num_modes, dtype=np.float32)
-    fn = float(np.linalg.norm(wrench[:2])) if len(wrench) >= 2 else 0.0
-    fz = float(abs(wrench[2])) if len(wrench) >= 3 else 0.0
-    total_f = float(np.linalg.norm(wrench[:3])) if len(wrench) >= 3 else 0.0
 
-    if total_f < 0.20:
-        # Free-space: no contact forces detected
+    # Extract aggregate normal clamping force
+    if state is not None and len(state) >= 16:
+        fn_total = float(np.sum(state[12:16]))
+    else:
+        fn_total = float(np.linalg.norm(wrench[:2])) if len(wrench) >= 2 else 0.0
+
+    # Extract true vertical pad shear force from 6-axis net wrench
+    fz_shear = float(abs(wrench[2])) if len(wrench) >= 3 else 0.0
+
+    # Extract maximum observed physical slip velocity
+    slip_vel = 0.0
+    if state is not None and len(state) >= 20:
+        slip_vel = float(np.max(np.abs(state[16:20])))
+
+    # Mode classification based on verified physical mechanics
+    if fn_total < 0.20 and fz_shear < 0.20:
+        # Free-space: no normal clamp or shear force detected
         probs[0] = 0.92
         probs[1] = 0.02
         probs[2] = 0.02
         probs[3] = 0.02
         probs[4] = 0.02
-    elif total_f > 18.0:
-        # High impact / shock load
+    elif fn_total > 22.0 or (fz_shear > 16.0 and slip_vel < 1e-4):
+        # High impact or crush overload
         probs[0] = 0.01
         probs[1] = 0.88
         probs[2] = 0.04
         probs[3] = 0.04
         probs[4] = 0.03
-    elif fn > 0.50:
-        # Contact engaged: evaluate shear vs normal ratio
-        friction_ratio = fz / max(1e-4, fn)
-        if friction_ratio > 0.70:
+    elif fn_total >= 0.50:
+        # Contact engaged: check if slip occurs (slip velocity >= 0.1 mm/s or shear exceeds friction limit)
+        is_sliding = (slip_vel >= 1e-4) or (fz_shear > 0.85 * fn_total)
+        if is_sliding:
             # Sliding slip
             probs[0] = 0.01
             probs[1] = 0.03
@@ -94,14 +108,14 @@ def estimate_observable_mode_probabilities(
             probs[3] = 0.76
             probs[4] = 0.04
         else:
-            # Sticking contact
+            # Sticking contact (including stable 4-finger zero-shear clamp)
             probs[0] = 0.01
             probs[1] = 0.03
             probs[2] = 0.82
             probs[3] = 0.10
             probs[4] = 0.04
     else:
-        # Uninformative uniform prior
+        # Low-force transition / ambiguous region
         probs[:] = 1.0 / num_modes
 
     return probs / float(np.sum(probs))
@@ -134,15 +148,22 @@ class StudentDistillationEngine:
         Features:
         - state: observable kinematic pose & velocity (no hidden sim state)
         - action: applied control command
-        - wrench: measured 6-axis FT sensor reading
-        - continuous_signals: normal force norm, shear force, pad strain, observable slip indicator
+        - wrench: measured 6-axis FT sensor reading (true Cartesian net force and torque)
+        - continuous_signals: total normal clamping force, vertical shear, pad strain, slip indicator
         - causal_mode_probs: causally estimated mode distribution (derived from observables or causal model)
         """
-        fn_mag = float(np.linalg.norm(wrench[:2]))
-        fz_shear = float(abs(wrench[2]))
-        k_pad = 1500.0
-        pad_strain = fz_shear / k_pad
-        slip_indicator = 1.0 if (fn_mag > 0.5 and fz_shear > 0.60 * fn_mag) else 0.0
+        if len(state) >= 16:
+            fn_mag = float(np.sum(state[12:16]))
+        else:
+            fn_mag = float(np.linalg.norm(wrench[:2])) if len(wrench) >= 2 else 0.0
+
+        fz_shear = float(abs(wrench[2])) if len(wrench) >= 3 else 0.0
+        k_pad_total = 6000.0  # 4 * 1500 N/m
+        pad_strain = fz_shear / k_pad_total
+
+        # Detect observable slip from state slip velocity or shear-to-normal ratio
+        slip_vel = float(np.max(np.abs(state[16:20]))) if len(state) >= 20 else 0.0
+        slip_indicator = 1.0 if (slip_vel >= 1e-4 or (fn_mag > 0.5 and fz_shear > 0.85 * fn_mag)) else 0.0
 
         if causal_mode_probs is not None:
             mode_probs = causal_mode_probs.astype(np.float32)

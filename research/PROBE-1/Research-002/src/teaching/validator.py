@@ -155,14 +155,14 @@ class PhysicsValidationEngine:
                     ),
                 )
 
-            # Actuator normal & shear force checks
+            # Actuator normal & shear force and torque checks
             if task_id in ("compliant_prelift", "compliant_lift", "multifinger_lift"):
-                # Normal forces from fingertip sensors s_t[12:16] or w_t[:4]
-                fn_total = float(np.sum(s_t[12:16])) if len(s_t) >= 16 else float(np.sum(w_t[:4]))
-                # Shear force from vertical pad reactions
-                fz_shear = float(abs(w_t[2])) if abs(w_t[2]) > 0.01 else (float(np.sum(s_t[16:20])) if len(s_t) >= 20 else 0.0)
-                # Symmetrical 4-finger grasp on rigid cylinder produces near-zero net yaw/pitch torque
-                torque_mag = 0.0
+                # Normal clamping force from fingertip sensor channels s_t[12:16]
+                fn_total = float(np.sum(s_t[12:16])) if len(s_t) >= 16 else float(np.linalg.norm(w_t[:2]))
+                # True vertical pad shear force from 6-axis net wrench F_z^net = sum(F_t,z,i)
+                fz_shear = float(abs(w_t[2]))
+                # Resultant torque derived from cross products r_i x F_i in compute_prelift_resultant_wrench
+                torque_mag = float(np.linalg.norm(w_t[3:])) if len(w_t) >= 6 else 0.0
             else:
                 # Peg in hole: w_t is 6-axis ATI/Franka wrench [Fx, Fy, Fz, Tx, Ty, Tz]
                 fn_total = float(np.linalg.norm(w_t[:2]))

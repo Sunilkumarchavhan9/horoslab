@@ -18,15 +18,92 @@ from src.selection_aware.planner_fingerprint import PlannerFingerprint
 from src.environment.step_adapter import get_env_dt, step_env_compatible
 
 
-def extract_env_state_and_wrench(obs: Dict[str, Any], task: str = "peg_in_hole") -> Tuple[np.ndarray, np.ndarray]:
-    """Helper to extract consistent state vector (state_dim) and wrench (6)."""
+def compute_prelift_resultant_wrench(
+    finger_pos: np.ndarray,
+    obj_pos: np.ndarray,
+    finger_fn: np.ndarray,
+    finger_ft: np.ndarray,
+) -> np.ndarray:
+    """Computes the net 6-axis Cartesian contact wrench [Fx, Fy, Fz, Tx, Ty, Tz]
+
+    acting on the grasped rigid workpiece from multi-finger contact observations.
+
+    Coordinate Transformation Contract:
+    - Object frame: centered at obj_pos with Cartesian axes X, Y, Z.
+    - For each finger i:
+        * Lever arm r_i = (finger_pos[i] - obj_pos) * 1e-3 (in meters).
+        * In-plane radial distance r_xy = norm(r_i[:2]).
+        * Inward normal unit vector: n_i = -[r_i[0]/r_xy, r_i[1]/r_xy, 0].
+        * Circumferential tangential unit vector: u_theta_i = [-r_i[1]/r_xy, r_i[0]/r_xy, 0].
+        * Vertical pad shear unit vector: u_z = [0, 0, 1].
+        * 3D contact force exerted on workpiece by finger i:
+            F_i = finger_fn[i] * n_i + finger_ft[i, 0] * u_theta_i + finger_ft[i, 1] * u_z
+        * Torque contribution about object center:
+            tau_i = r_i x F_i (cross product in N*m).
+    - Net resultant wrench:
+        W = [sum(F_i_x), sum(F_i_y), sum(F_i_z), sum(tau_i_x), sum(tau_i_y), sum(tau_i_z)]
+    """
+    pos_arr = np.asarray(finger_pos, dtype=np.float32)
+    obj_arr = np.asarray(obj_pos, dtype=np.float32)
+    fn_arr = np.asarray(finger_fn, dtype=np.float32)
+    ft_arr = np.asarray(finger_ft, dtype=np.float32)
+
+    r_m = (pos_arr - obj_arr) * 1e-3  # (4, 3) in meters
+    net_force = np.zeros(3, dtype=np.float32)
+    net_torque = np.zeros(3, dtype=np.float32)
+
+    for i in range(min(4, len(pos_arr))):
+        r_xy = float(np.linalg.norm(r_m[i, :2]))
+        if r_xy > 1e-6:
+            u_r = r_m[i, :2] / r_xy
+            n_i = np.array([-u_r[0], -u_r[1], 0.0], dtype=np.float32)
+            u_theta = np.array([-u_r[1], u_r[0], 0.0], dtype=np.float32)
+        else:
+            n_i = np.zeros(3, dtype=np.float32)
+            u_theta = np.zeros(3, dtype=np.float32)
+        u_z = np.array([0.0, 0.0, 1.0], dtype=np.float32)
+
+        fn = float(fn_arr[i])
+        ft_theta = float(ft_arr[i, 0]) if ft_arr.ndim == 2 else 0.0
+        ft_z = float(ft_arr[i, 1]) if ft_arr.ndim == 2 else float(ft_arr[i])
+
+        F_i = fn * n_i + ft_theta * u_theta + ft_z * u_z
+        tau_i = np.cross(r_m[i], F_i)
+        net_force += F_i
+        net_torque += tau_i
+
+    return np.concatenate([net_force, net_torque]).astype(np.float32)
+
+
+def extract_env_state_and_wrench(
+    obs: Dict[str, Any],
+    task: str = "peg_in_hole",
+    legacy_padding: bool = False,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Helper to extract consistent state vector (state_dim) and 6-axis wrench (6).
+
+    Coordinate Transformation & Force Contract:
+    - Task 1 (peg_in_hole): 15-D state, 6-axis ATI sensor wrench [Fx, Fy, Fz, Tx, Ty, Tz].
+    - Task 2 (compliant_prelift): 23-D state:
+        [0:12]   Fingertip positions (4 x 3) in mm
+        [12:16]  Fingertip normal forces (4) in N
+        [16:20]  Fingertip slip velocities (4) in m/s
+        [20:23]  Workpiece center of mass (3) in mm
+      Wrench representation:
+        - When legacy_padding=True or task=='multifinger_lift' or finger_ft is absent:
+          4 normal forces padded with 2 zeros (preserved strictly for backward compatibility
+          with frozen Phase 3.4/3.5 B1-B4 checkpoints and test harnesses).
+        - Modern contract: 6-axis Cartesian resultant wrench on the rigid workpiece computed via
+          compute_prelift_resultant_wrench(finger_pos, obj_pos, finger_fn, finger_ft), combining
+          normal contact forces, circumferential shear, and vertical pad shear with physical lever-arm torques.
+    """
     if task == "peg_in_hole":
         s_vec = np.concatenate([
             obs["pos"], obs["vel"],
             obs["rot"], obs["wrench"]
         ]).astype(np.float32)
         wrench = obs["wrench"].astype(np.float32)
-    else:
+    elif legacy_padding or task == "multifinger_lift" or "finger_ft" not in obs:
         slip_or_vel = (
             obs["slip_ratio"]
             if "slip_ratio" in obs
@@ -39,6 +116,22 @@ def extract_env_state_and_wrench(obs: Dict[str, Any], task: str = "peg_in_hole")
             obs["obj_pos"]
         ]).astype(np.float32)
         wrench = np.pad(obs["finger_fn"][:4], (0, 2)).astype(np.float32)
+    else:
+        slip_or_vel = (
+            obs["slip_ratio"]
+            if "slip_ratio" in obs
+            else np.abs(np.asarray(obs["delta_dot_t"], dtype=np.float32))
+        )
+        s_vec = np.concatenate([
+            obs["finger_pos"].flatten(),
+            obs["finger_fn"],
+            slip_or_vel,
+            obs["obj_pos"]
+        ]).astype(np.float32)
+        finger_ft = obs["finger_ft"]
+        wrench = compute_prelift_resultant_wrench(
+            obs["finger_pos"], obs["obj_pos"], obs["finger_fn"], finger_ft
+        )
     return s_vec, wrench
 
 

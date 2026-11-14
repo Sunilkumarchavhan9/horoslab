@@ -221,7 +221,7 @@ def test_external_teacher_adapter_and_async_batch(clean_registry: TeacherModelRe
     adapter = ExternalRestApiTeacher(
         descriptor=desc,
         endpoint_url="mock://api.openai.com/v1/chat/completions",
-        api_key_env_var="TEST_TEACHER_API_KEY",
+        api_key_env_var="MOCK_PROVIDER_TOKEN_ENV_NAME",
         provider_format="openai",
         rate_limit_rpm=600,
     )
@@ -476,3 +476,333 @@ def test_evaluation_engine_checkpoint_loader_interface() -> None:
         model, payload = evaluator.load_frozen_baseline_checkpoint(checkpoint_path)
         assert model is not None
         assert payload["architecture_id"] == "B1"
+
+
+# -----------------------------------------------------------------------------
+# Module 07: Physical Data Contract and Invariance Tests
+# -----------------------------------------------------------------------------
+
+def test_prelift_resultant_wrench_analytical_cases() -> None:
+    from src.selection_aware.counterfactual_rollout import compute_prelift_resultant_wrench
+
+    # 4 finger symmetric arrangement around cylinder at r = 35 mm, z = 40 mm, workpiece at z = 10 mm
+    finger_pos = np.array([
+        [-35.0, 0.0, 40.0],
+        [35.0, 0.0, 40.0],
+        [0.0, 35.0, 40.0],
+        [0.0, -35.0, 40.0],
+    ], dtype=np.float32)
+    obj_pos = np.array([0.0, 0.0, 10.0], dtype=np.float32)
+
+    # Case 1: 4 equal normal forces (4.0 N each), 0 shear -> Net wrench is exactly zero
+    fn_equal = np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32)
+    ft_zero = np.zeros((4, 2), dtype=np.float32)
+    w_case1 = compute_prelift_resultant_wrench(finger_pos, obj_pos, fn_equal, ft_zero)
+    np.testing.assert_allclose(w_case1, np.zeros(6), atol=1e-5)
+
+    # Case 2: 4 equal normal forces (4.0 N), uniform 1.0 N vertical pad shear -> Fz = 4.0 N, zero net torque
+    ft_uniform_lift = np.zeros((4, 2), dtype=np.float32)
+    ft_uniform_lift[:, 1] = 1.0
+    w_case2 = compute_prelift_resultant_wrench(finger_pos, obj_pos, fn_equal, ft_uniform_lift)
+    np.testing.assert_allclose(w_case2[:3], [0.0, 0.0, 4.0], atol=1e-5)
+    np.testing.assert_allclose(w_case2[3:], [0.0, 0.0, 0.0], atol=1e-5)
+
+    # Case 3: Uneven vertical shear: Finger 0 has 2.0 N vertical shear, Finger 1 has 0.0 N
+    # Lever arm r_0_x = -0.035 m, F_z = 2.0 N -> Torque tau_y = -0.035 * 2.0 = -0.070 Nm (or +0.070 depending on coordinate sign)
+    ft_uneven = np.zeros((4, 2), dtype=np.float32)
+    ft_uneven[0, 1] = 2.0
+    w_case3 = compute_prelift_resultant_wrench(finger_pos, obj_pos, fn_equal, ft_uneven)
+    assert abs(w_case3[2] - 2.0) < 1e-5
+    # Torque about Y axis must be non-zero from unbalanced shear at lever arm 35 mm
+    assert abs(abs(w_case3[4]) - 0.070) < 1e-4
+
+    # Case 4: Permutation invariance: cyclic shift of fingers preserves resultant force and torque magnitude
+    shift_pos = np.roll(finger_pos, 1, axis=0)
+    shift_fn = np.roll(fn_equal, 1)
+    shift_ft = np.roll(ft_uneven, 1, axis=0)
+    w_shifted = compute_prelift_resultant_wrench(shift_pos, obj_pos, shift_fn, shift_ft)
+    assert abs(w_shifted[2] - w_case3[2]) < 1e-5
+    assert abs(np.linalg.norm(w_shifted[3:]) - np.linalg.norm(w_case3[3:])) < 1e-4
+
+
+def test_contact_mode_estimator_physical_invariance() -> None:
+    from src.teaching.distiller import estimate_observable_mode_probabilities
+
+    # State: 12 kinematics, 4 normal forces [12:16], 4 slip vels [16:20], 3 obj pos [20:23]
+    state = np.zeros(23, dtype=np.float32)
+    state[12:16] = [2.5, 2.5, 2.5, 2.5]  # 4 equal normal forces = 10 N total
+    state[16:20] = [0.0, 0.0, 0.0, 0.0]  # Zero slip velocity
+    wrench_zero_shear = np.zeros(6, dtype=np.float32)  # Zero resultant shear Fz=0
+
+    # 4 equal normal forces with zero shear MUST be Mode 2 (Sticking), NEVER Sliding (Mode 3)
+    probs_sticking = estimate_observable_mode_probabilities(wrench_zero_shear, state)
+    assert np.argmax(probs_sticking) == 2  # Mode 2 is Sticking
+    assert probs_sticking[2] > 0.70
+    assert probs_sticking[3] <= 0.10  # Mode 3 (Sliding) is suppressed
+
+    # Genuine vertical shear Fz = 8.8 N (88% of 10 N, exceeds 85% sliding threshold)
+    wrench_high_shear = np.array([0.0, 0.0, 8.8, 0.0, 0.0, 0.0], dtype=np.float32)
+    probs_sliding = estimate_observable_mode_probabilities(wrench_high_shear, state)
+    assert np.argmax(probs_sliding) == 3  # Mode 3 is Sliding
+    assert probs_sliding[3] > 0.50
+
+    # Physical slip velocity v_slip = 0.005 m/s (5 mm/s > 0.1 mm/s threshold)
+    state_slipping = state.copy()
+    state_slipping[16] = 0.005
+    probs_slip_vel = estimate_observable_mode_probabilities(wrench_zero_shear, state_slipping)
+    assert np.argmax(probs_slip_vel) == 3
+    assert probs_slip_vel[3] > 0.50
+
+
+def test_physics_validator_coulomb_cone_and_torque() -> None:
+    validator = PhysicsValidationEngine()
+
+    T = 10
+    states = np.zeros((T, 23), dtype=np.float32)
+    states[:, 12:16] = 2.5  # 10 N normal force total
+    actions = np.zeros((T, 5), dtype=np.float32)
+
+    # Case 1: Valid shear: Fz = 1.0 N, FN = 10.0 N, mu_true = 0.50 -> Fz / FN = 0.10 <= 0.50
+    wrenches_valid = np.zeros((T, 6), dtype=np.float32)
+    wrenches_valid[:, 2] = 1.0  # Fz = 1.0 N
+    v_valid = validator.validate_trajectory(
+        task_id="compliant_prelift",
+        states=states,
+        actions=actions,
+        wrenches=wrenches_valid,
+        env_metadata={"initial_mu_true": 0.50, "initial_mass_kg": 0.35},
+    )
+    assert v_valid.verdict == ValidationVerdict.PHYSICALLY_VALID
+    assert v_valid.is_valid is True
+
+    # Case 2: Friction cone violation: Fz = 8.0 N > mu * FN = 0.50 * 10.0 N = 5.0 N
+    wrenches_invalid = np.zeros((T, 6), dtype=np.float32)
+    wrenches_invalid[:, 2] = 8.0  # Fz = 8.0 N
+    v_invalid = validator.validate_trajectory(
+        task_id="compliant_prelift",
+        states=states,
+        actions=actions,
+        wrenches=wrenches_invalid,
+        env_metadata={"initial_mu_true": 0.50, "initial_mass_kg": 0.35},
+    )
+    assert v_invalid.verdict == ValidationVerdict.REJECTED_FRICTION_CONE
+    assert v_invalid.is_valid is False
+
+    # Case 3: Excessive tilting torque violation: tau = 3.5 Nm > 2.0 Nm
+    wrenches_torque = np.zeros((T, 6), dtype=np.float32)
+    wrenches_torque[:, 2] = 1.0
+    wrenches_torque[:, 4] = 3.5  # Tau_y = 3.5 Nm
+    v_torque = validator.validate_trajectory(
+        task_id="compliant_prelift",
+        states=states,
+        actions=actions,
+        wrenches=wrenches_torque,
+        env_metadata={"initial_mu_true": 0.50, "initial_mass_kg": 0.35},
+    )
+    assert v_torque.verdict == ValidationVerdict.REJECTED_FORCE_LIMIT
+    assert v_torque.is_valid is False
+
+
+def test_peginhole_wrench_invariance() -> None:
+    from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
+
+    obs_pih = {
+        "pos": np.array([0.1, -0.2, 5.0], dtype=np.float32),
+        "vel": np.array([0.0, 0.0, -1.0], dtype=np.float32),
+        "rot": np.array([0.02, -0.01, 0.0], dtype=np.float32),
+        "wrench": np.array([1.5, -2.0, 12.0, 0.05, -0.04, 0.02], dtype=np.float32),
+    }
+    s, w = extract_env_state_and_wrench(obs_pih, task="peg_in_hole")
+    assert len(s) == 15
+    assert len(w) == 6
+    np.testing.assert_array_equal(w, obs_pih["wrench"])
+
+
+# -----------------------------------------------------------------------------
+# Module 08: External Teacher Provider Adapter & HTTP Mock Tests
+# -----------------------------------------------------------------------------
+
+def test_external_teacher_provider_headers() -> None:
+    MOCK_PROVIDER_TOKEN_PLACEHOLDER = "mock-provider-credential-value"
+
+    desc = TeacherModelDescriptor(
+        model_id="test_ext_provider_headers",
+        display_name="Test External Headers",
+        version="1.0.0",
+        provider=TeacherProvider.EXTERNAL_REST_API,
+        endpoint_url="http://127.0.0.1:8080/v1",
+        supported_modalities=["state_vector"],
+        capabilities=["trajectory_proposal"],
+        license="commercial",
+    )
+
+    # OpenAI / Generic
+    teacher_openai = ExternalRestApiTeacher(
+        descriptor=desc,
+        endpoint_url="http://127.0.0.1:8080/v1/chat",
+        api_key_env_var="MOCK_OPENAI_KEY_VAR",
+        provider_format="openai",
+    )
+    headers_openai = teacher_openai.get_request_headers(MOCK_PROVIDER_TOKEN_PLACEHOLDER)
+    assert headers_openai["Authorization"] == f"Bearer {MOCK_PROVIDER_TOKEN_PLACEHOLDER}"
+
+    # Anthropic
+    teacher_anthropic = ExternalRestApiTeacher(
+        descriptor=desc,
+        endpoint_url="http://127.0.0.1:8080/v1/messages",
+        api_key_env_var="MOCK_ANTHROPIC_KEY_VAR",
+        provider_format="anthropic",
+    )
+    headers_anthropic = teacher_anthropic.get_request_headers(MOCK_PROVIDER_TOKEN_PLACEHOLDER)
+    assert headers_anthropic["x-api-key"] == MOCK_PROVIDER_TOKEN_PLACEHOLDER
+    assert headers_anthropic["anthropic-version"] == "2023-06-01"
+    assert "Authorization" not in headers_anthropic
+
+    # Gemini
+    teacher_gemini = ExternalRestApiTeacher(
+        descriptor=desc,
+        endpoint_url="http://127.0.0.1:8080/v1/models/gemini",
+        api_key_env_var="MOCK_GEMINI_KEY_VAR",
+        provider_format="gemini",
+    )
+    headers_gemini = teacher_gemini.get_request_headers(MOCK_PROVIDER_TOKEN_PLACEHOLDER)
+    assert headers_gemini["x-goog-api-key"] == MOCK_PROVIDER_TOKEN_PLACEHOLDER
+    assert "Authorization" not in headers_gemini
+
+
+def test_external_teacher_anthropic_content_blocks_parsing() -> None:
+    desc = TeacherModelDescriptor(
+        model_id="test_ext_anthropic_parser",
+        display_name="Test Anthropic Parser",
+        version="1.0.0",
+        provider=TeacherProvider.EXTERNAL_REST_API,
+        endpoint_url="http://127.0.0.1:8080/v1",
+        supported_modalities=["state_vector"],
+        capabilities=["trajectory_proposal"],
+        license="commercial",
+    )
+    teacher = ExternalRestApiTeacher(
+        descriptor=desc,
+        endpoint_url="http://127.0.0.1:8080/v1/messages",
+        api_key_env_var="MOCK_ANTHROPIC_PARSER_KEY",
+        provider_format="anthropic",
+    )
+
+    anthropic_raw_resp = {
+        "id": "msg_01XyZ",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+            {
+                "type": "text",
+                "text": json.dumps({
+                    "actions": [[0.1, 0.2, 0.3, 0.4, 0.5], [0.6, 0.7, 0.8, 0.9, 1.0]],
+                    "reasoning": "Prelift squeeze grasp stabilization.",
+                }),
+            }
+        ],
+        "usage": {"input_tokens": 42, "output_tokens": 28},
+    }
+
+    payload = TeacherQueryPayload(
+        task_id="compliant_prelift",
+        query_type="trajectory_proposal",
+        current_state=np.zeros(23, dtype=np.float32),
+        target_horizon=2,
+        seed=42,
+    )
+
+    actions, usage = teacher.validate_and_parse_response(anthropic_raw_resp, payload)
+    assert actions.shape == (2, 5)
+    np.testing.assert_allclose(actions[0], [0.1, 0.2, 0.3, 0.4, 0.5], atol=1e-5)
+    np.testing.assert_allclose(actions[1], [0.6, 0.7, 0.8, 0.9, 1.0], atol=1e-5)
+    assert usage["prompt_tokens"] == 42
+    assert usage["completion_tokens"] == 28
+
+
+def test_external_teacher_http_server_mock_real_network_call() -> None:
+    import http.server
+    import threading
+
+    received_headers = {}
+    received_body = {}
+
+    class MockHandler(http.server.BaseHTTPRequestHandler):
+        def do_POST(self):
+            nonlocal received_headers, received_body
+            try:
+                for h in self.headers:
+                    received_headers[h.lower()] = self.headers[h]
+                length = int(self.headers.get("content-length", 0))
+                body_bytes = self.rfile.read(length)
+                received_body = json.loads(body_bytes.decode("utf-8"))
+
+                resp_payload = {
+                    "id": "chatcmpl_mock_123",
+                    "choices": [{
+                        "message": {
+                            "content": json.dumps({
+                                "actions": [[0.05, 0.05, 0.05, 0.05, 1.0]],
+                                "reasoning": "Stable upward lift action.",
+                            })
+                        }
+                    }],
+                    "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30},
+                }
+                resp_bytes = json.dumps(resp_payload).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.end_headers()
+                self.wfile.write(resp_bytes)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                self.send_error(500, str(e))
+
+        def log_message(self, format, *args):
+            pass  # Silence stderr logs
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), MockHandler)
+    port = server.server_port
+    server_thread = threading.Thread(target=server.handle_request)
+    server_thread.daemon = True
+    server_thread.start()
+
+    desc = TeacherModelDescriptor(
+        model_id="test_ext_real_http_call",
+        display_name="Test Real HTTP Call",
+        version="1.0.0",
+        provider=TeacherProvider.EXTERNAL_REST_API,
+        endpoint_url="http://127.0.0.1:8080/v1",
+        supported_modalities=["state_vector"],
+        capabilities=["trajectory_proposal"],
+        license="commercial",
+    )
+
+    teacher = ExternalRestApiTeacher(
+        descriptor=desc,
+        endpoint_url=f"http://127.0.0.1:{port}/v1/chat/completions",
+        api_key_env_var="MOCK_TEST_AUTH_KEY_VAR",
+        provider_format="openai",
+        rate_limit_rpm=1000,
+    )
+
+    payload = TeacherQueryPayload(
+        task_id="compliant_prelift",
+        query_type="trajectory_proposal",
+        current_state=np.zeros(23, dtype=np.float32),
+        target_horizon=1,
+        seed=42,
+    )
+
+    result = teacher.infer(payload)
+    server_thread.join(timeout=2.0)
+    server.server_close()
+
+    assert received_headers.get("authorization") == "Bearer mock_test_token"
+    assert "compliant_prelift" in received_body["messages"][1]["content"]
+    assert len(result.candidate_actions) == 1
+    np.testing.assert_allclose(result.candidate_actions[0], [0.05, 0.05, 0.05, 0.05, 1.0], atol=1e-5)
+    assert teacher.total_prompt_tokens == 10
+    assert teacher.total_completion_tokens == 20
