@@ -94,22 +94,30 @@ Two complementary measures ensure identical raw-byte hashes on all platforms:
              "
    ```
 
-### 3.4 Runtime Artifact Generation Normalization (`test_p31`)
+### 3.4 Runtime Artifact Generation & Platform Immutability (`test_p31`)
 
-In addition to static checked-out files, `tests/test_p31_phase37_1_ood_diagnostics.py` dynamically runs `run_phase37_1_epistemic_diagnostics()`, which serializes `phase37_1_epistemic_ood_diagnostics.json` and its markdown report. On Linux runners, Python's default `open()` writes standard LF (`\n`), altering the raw-byte hash from `ad1e66f5...` to `ab502341...`.
+In addition to static checked-out files, `tests/test_p31_phase37_1_ood_diagnostics.py` dynamically exercises `run_phase37_1_epistemic_diagnostics()`, which serializes `phase37_1_epistemic_ood_diagnostics.json` and its markdown report. Because `get_runtime_reproducibility_metadata()` injects the local test runner's OS platform (e.g. `Linux-6.8...` vs `Windows-...`) and Python version into the output document, running the diagnostic during CI on Linux would overwrite the locked artifact content, altering its SHA-256 hash from `ad1e66f5...` to `6bcde1e2...`.
 
-To ensure complete cross-platform deterministic immutability before subsequent verification in `test_p32_phase37_2_readiness.py`, `test_p31` explicitly normalizes dynamically written JSON and Markdown deliverables to CRLF bytes immediately upon completion:
+To guarantee complete cross-platform deterministic immutability before subsequent verification in `test_p32_phase37_2_readiness.py`, `test_p31` captures the exact raw bytes of the frozen Phase 3.7.1 artifacts before running diagnostics and restores them in a `finally` block upon test completion:
 ```python
-    # Ensure deterministic CRLF byte serialization for locked Phase 3.7.1 artifact hashes
-    for p in (json_path, md_path):
-        with open(p, "rb") as fp:
-            data = fp.read()
-        crlf = data.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
-        if crlf != data:
-            with open(p, "wb") as fp:
-                fp.write(crlf)
+    # Preserve exact locked Phase 3.7.1 artifact bytes before test execution
+    orig_json = open(json_path, "rb").read() if os.path.exists(json_path) else None
+    orig_md = open(md_path, "rb").read() if os.path.exists(md_path) else None
+
+    try:
+        doc = run_phase37_1_epistemic_diagnostics(R002_ROOT)
+        # ... assertions on diagnostic outputs ...
+    finally:
+        # Guarantee complete immutability of locked Phase 3.7.1 artifacts across all platforms
+        if orig_json is not None:
+            with open(json_path, "wb") as f:
+                f.write(orig_json)
+        if orig_md is not None:
+            with open(md_path, "wb") as f:
+                f.write(orig_md)
 ```
 This guarantees 100% pass rate (202 / 202 tests) across both Windows and Ubuntu CI environments.
+
 
 
 ---
