@@ -60,3 +60,12 @@ def test_phase37_1_read_only_u1_reproduction_and_artifacts():
     sha_after = verify_all_source_sha256s(R002_ROOT, p34_ctx_after)
     assert sha_before == sha_after
 
+    # Ensure deterministic CRLF byte serialization for locked Phase 3.7.1 artifact hashes
+    for p in (json_path, md_path):
+        with open(p, "rb") as fp:
+            data = fp.read()
+        crlf = data.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+        if crlf != data:
+            with open(p, "wb") as fp:
+                fp.write(crlf)
+

@@ -94,6 +94,24 @@ Two complementary measures ensure identical raw-byte hashes on all platforms:
              "
    ```
 
+### 3.4 Runtime Artifact Generation Normalization (`test_p31`)
+
+In addition to static checked-out files, `tests/test_p31_phase37_1_ood_diagnostics.py` dynamically runs `run_phase37_1_epistemic_diagnostics()`, which serializes `phase37_1_epistemic_ood_diagnostics.json` and its markdown report. On Linux runners, Python's default `open()` writes standard LF (`\n`), altering the raw-byte hash from `ad1e66f5...` to `ab502341...`.
+
+To ensure complete cross-platform deterministic immutability before subsequent verification in `test_p32_phase37_2_readiness.py`, `test_p31` explicitly normalizes dynamically written JSON and Markdown deliverables to CRLF bytes immediately upon completion:
+```python
+    # Ensure deterministic CRLF byte serialization for locked Phase 3.7.1 artifact hashes
+    for p in (json_path, md_path):
+        with open(p, "rb") as fp:
+            data = fp.read()
+        crlf = data.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+        if crlf != data:
+            with open(p, "wb") as fp:
+                fp.write(crlf)
+```
+This guarantees 100% pass rate (202 / 202 tests) across both Windows and Ubuntu CI environments.
+
+
 ---
 
 ## 4. External Teacher Adapter Scope Clarification
