@@ -12,11 +12,11 @@ Whenever you complete ANY task or work requested by the user:
    - Create a clear, concise commit message following conventional commits (e.g., `fix(robotics): adjust text sizing and padding for sandbox UI`).
 
 2. **Push immediately to the repository**:
-   - Push to `origin main` / `epoch main` (`https://github.com/Sunilkumarchavhan9/epoch.git`):
+   - Push to `origin main` / `epoch main` (`https://github.com/Sunilkumarchavhan9/horoslab`):
      ```bash
      git push origin main
      ```
    - If user asks for a PR or specific branch, push to the branch and provide the PR URL.
 
 3. **Mandatory Rule**:
-   - Never end the response or complete a request without committing and pushing the changes to `https://github.com/Sunilkumarchavhan9/epoch.git`.
+   - Never end the response or complete a request without committing and pushing the changes to `https://github.com/Sunilkumarchavhan9/horoslab`.
