@@ -16,7 +16,7 @@ from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 
 from src.contact_modes.contact_mode_definitions import classify_contact_mode
-from src.selection_aware.counterfactual_rollout import extract_env_state_and_wrench
+from src.selection_aware.counterfactual_rollout import (\n    extract_env_state_and_wrench,\n    extract_legacy_checkpoint_state_and_wrench,\n)
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
 from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
@@ -146,12 +146,16 @@ class ContactBoundarySampler:
         self,
         env,
         horizon: int = 25,
-        exploration_mode: str = "coordinated"
+        exploration_mode: str = "coordinated",
+        legacy_checkpoint_compatibility: bool = False,
     ) -> Dict[str, Any]:
         """
-        Samples an informative Task 2 trajectory supporting CompliantPreLiftContactEnv
-        (canonical dt=0.01s, delta_dot_t) as well as legacy MultifingerLiftEnv without
-        padding artificial steps on early termination or exposing hidden mu_true.
+        Samples an informative Task 2 trajectory.
+
+        Modern collection uses the Cartesian resultant wrench contract by default.
+        Set legacy_checkpoint_compatibility=True only when reproducing frozen Phase 3.4/3.5
+        B1-B4 datasets; that explicit adapter emits the historical padded normal-force vector
+        and must not feed the modern distillation or validation pipeline.
         Modes:
             - 'coordinated': Multi-phase squeeze -> preload -> lift -> slip recovery.
             - 'friction_boundary': Oscillates shear force across ||Ft|| = mu * Fn.
@@ -179,7 +183,10 @@ class ContactBoundarySampler:
         termination_reason = "horizon_reached"
 
         for t in range(horizon):
-            s_vec, wrench = extract_env_state_and_wrench(obs, task_label)
+            if legacy_checkpoint_compatibility:
+                s_vec, wrench = extract_legacy_checkpoint_state_and_wrench(obs, task=task_label)
+            else:
+                s_vec, wrench = extract_env_state_and_wrench(obs, task_label)
             fn_arr = np.asarray(obs.get("finger_fn", np.zeros(4)), dtype=float)
             fn_total = float(np.sum(fn_arr))
 
@@ -221,7 +228,12 @@ class ContactBoundarySampler:
 
             act = np.clip(act, [-2.0, -2.0, -2.0, -2.0, -2.0], [2.0, 2.0, 2.0, 2.0, 5.0])
             next_obs, r, done, info = step_env_compatible(env, act, task=task_label, require_reward=True)
-            next_s_vec, next_wrench = extract_env_state_and_wrench(next_obs, task_label)
+            if legacy_checkpoint_compatibility:
+                next_s_vec, next_wrench = extract_legacy_checkpoint_state_and_wrench(
+                    next_obs, task=task_label
+                )
+            else:
+                next_s_vec, next_wrench = extract_env_state_and_wrench(next_obs, task_label)
             mode = classify_contact_mode(next_obs, prev_state=prev_obs, dt=env_dt, task=task_label)
 
             actions.append(act)
@@ -249,7 +261,11 @@ class ContactBoundarySampler:
         max_fn_obs = float(np.max(obs.get("finger_fn", np.zeros(4))))
         return {
             "task": task_label,
-            "wrench_contract": "task2_cartesian_resultant_wrench_v1",
+            "wrench_contract": (
+                "legacy_task2_normal_force_padding_v0"
+                if legacy_checkpoint_compatibility
+                else "task2_cartesian_resultant_wrench_v1"
+            ),
             "state_contract": (
                 "task2_slip_ratio_state_v0"
                 if legacy_state_contract
