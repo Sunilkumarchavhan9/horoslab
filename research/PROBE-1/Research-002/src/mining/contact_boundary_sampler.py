@@ -16,7 +16,10 @@ from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 
 from src.contact_modes.contact_mode_definitions import classify_contact_mode
-from src.selection_aware.counterfactual_rollout import (\n    extract_env_state_and_wrench,\n    extract_legacy_checkpoint_state_and_wrench,\n)
+from src.selection_aware.counterfactual_rollout import (
+    extract_env_state_and_wrench,
+    extract_legacy_checkpoint_state_and_wrench,
+)
 from src.environment.peg_in_hole_env import PegInHoleEnv
 from src.environment.multifinger_lift_env import MultifingerLiftEnv
 from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
