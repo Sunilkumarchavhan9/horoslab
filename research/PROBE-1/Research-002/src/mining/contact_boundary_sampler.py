@@ -179,7 +179,7 @@ class ContactBoundarySampler:
         termination_reason = "horizon_reached"
 
         for t in range(horizon):
-            s_vec, wrench = extract_env_state_and_wrench(obs, task_label, legacy_padding=True)
+            s_vec, wrench = extract_env_state_and_wrench(obs, task_label)
             fn_arr = np.asarray(obs.get("finger_fn", np.zeros(4)), dtype=float)
             fn_total = float(np.sum(fn_arr))
 
@@ -221,7 +221,7 @@ class ContactBoundarySampler:
 
             act = np.clip(act, [-2.0, -2.0, -2.0, -2.0, -2.0], [2.0, 2.0, 2.0, 2.0, 5.0])
             next_obs, r, done, info = step_env_compatible(env, act, task=task_label, require_reward=True)
-            next_s_vec, next_wrench = extract_env_state_and_wrench(next_obs, task_label, legacy_padding=True)
+            next_s_vec, next_wrench = extract_env_state_and_wrench(next_obs, task_label)
             mode = classify_contact_mode(next_obs, prev_state=prev_obs, dt=env_dt, task=task_label)
 
             actions.append(act)
