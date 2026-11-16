@@ -157,7 +157,14 @@ class ContactBoundarySampler:
             - 'friction_boundary': Oscillates shear force across ||Ft|| = mu * Fn.
             - 'random': Uncorrelated uniform random actions in [-1, 1].
         """
-        task_label = "compliant_prelift" if isinstance(env, CompliantPreLiftContactEnv) else self.task
+        task_label = (
+            "compliant_prelift"
+            if isinstance(env, CompliantPreLiftContactEnv)
+            else "multifinger_lift"
+            if isinstance(env, MultifingerLiftEnv)
+            else self.task
+        )
+        legacy_state_contract = isinstance(env, MultifingerLiftEnv)
         env_dt = get_env_dt(env, task_label)
         obs = env.reset()
         prev_obs = obs
@@ -242,6 +249,12 @@ class ContactBoundarySampler:
         max_fn_obs = float(np.max(obs.get("finger_fn", np.zeros(4))))
         return {
             "task": task_label,
+            "wrench_contract": "task2_cartesian_resultant_wrench_v1",
+            "state_contract": (
+                "task2_slip_ratio_state_v0"
+                if legacy_state_contract
+                else "task2_slip_velocity_state_v1"
+            ),
             "dt_s": env_dt,
             "episode_length": len(actions),
             "termination_reason": termination_reason,
