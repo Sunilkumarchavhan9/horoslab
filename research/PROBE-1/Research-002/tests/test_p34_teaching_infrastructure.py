@@ -1064,3 +1064,46 @@ def test_task2_zero_information_leakage_end_to_end() -> None:
         pert_step = distiller.extract_nonprivileged_step(corrupted_ep.states[0], corrupted_ep.actions[0], corrupted_ep.wrenches[0])
         np.testing.assert_array_equal(orig_step, pert_step)
 
+
+
+def test_task2_boundary_sampler_uses_cartesian_wrench_contract(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Current and legacy simulators must both emit Cartesian wrenches from measured finger_ft.
+
+    The historical simulator's slip-ratio state is explicitly tagged as a distinct state
+    contract; it must never be confused with the modern slip-velocity state.
+    """
+    import src.mining.contact_boundary_sampler as sampler_module
+    from src.environment.compliant_prelift_env import CompliantPreLiftContactEnv
+    from src.environment.multifinger_lift_env import MultifingerLiftEnv
+    from src.mining.contact_boundary_sampler import ContactBoundarySampler
+
+    real_extract = sampler_module.extract_env_state_and_wrench
+    calls = []
+
+    def traced_extract(obs, task="peg_in_hole", **kwargs):
+        calls.append((task, dict(kwargs)))
+        return real_extract(obs, task=task, **kwargs)
+
+    monkeypatch.setattr(sampler_module, "extract_env_state_and_wrench", traced_extract)
+
+    current_env = CompliantPreLiftContactEnv(seed=2026)
+    current_result = ContactBoundarySampler(task="multifinger_lift", seed=2026).sample_task2_boundary_trajectory(
+        current_env, horizon=2, exploration_mode="random"
+    )
+    assert current_result["wrench_contract"] == "task2_cartesian_resultant_wrench_v1"
+    assert current_result["state_contract"] == "task2_slip_velocity_state_v1"
+    assert current_result["realized_wrenches"].shape == (2, 6)
+
+    legacy_env = MultifingerLiftEnv(seed=2027)
+    legacy_result = ContactBoundarySampler(task="legacy_multifinger_lift", seed=2027).sample_task2_boundary_trajectory(
+        legacy_env, horizon=2, exploration_mode="random"
+    )
+    assert legacy_result["wrench_contract"] == "task2_cartesian_resultant_wrench_v1"
+    assert legacy_result["state_contract"] == "task2_slip_ratio_state_v0"
+    assert legacy_result["realized_wrenches"].shape == (2, 6)
+
+    assert calls
+    assert {task for task, _ in calls} == {"compliant_prelift", "multifinger_lift"}
+    assert all(not kwargs.get("legacy_compatibility_mode", False) for _, kwargs in calls)
+    assert all(not kwargs.get("legacy_padding", False) for _, kwargs in calls)
+\n
