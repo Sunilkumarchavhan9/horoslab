@@ -2,7 +2,7 @@
 ## Phase 3.7.3 Execution Report: Trust-Aware World Model Architecture
 
 **Author:** Antigravity AI Assistant & HOROS Research-002 Team  
-**Date:** 2026-11-16 14:28:17  
+**Date:** 2026-11-16 15:32:30  
 **Program:** HOROS PROBE-1 — Research-002  
 **Phase:** Phase 3.7.3 — Trust-Aware World Model Architecture  
 **Manifest Version:** phase37_3_trust_manifest_v2.0  
@@ -10,7 +10,7 @@
 **Overall Decision:** **PASSED**  
 **World Model Training Performed:** False  
 **Parameters Trained:** 0  
-**Elapsed Execution Time:** 1.124 seconds  
+**Elapsed Execution Time:** 1.586 seconds  
 
 ---
 
@@ -24,8 +24,8 @@ All five pre-registered acceptance gates (**T1–T5**) have been empirically eva
 | :--- | :--- | :--- | :--- | :---: |
 | **T1 — Safety Under Abstention** | Safety filter violations during upstream safe-hold multiplexing | 0 violations (0.0%) | **0 / 100 violations (0.0%)**<br>(PiH: 0/40, Prelift: 0/60) | **PASS** |
 | **T2 — Active Mass Identifiability** | Latent mass identification under force-gated micro-lift | R^2 >= 0.60, rho >= 0.70 | **All 60 eps: R^2 = 0.6537, rho = 0.8065**<br>(HighMass/RegimeB: R^2 = 0.8337, rho = 0.9430) | **PASS** |
-| **T3 — Decision Quality** | Precision of TRUST decisions under joint 3-condition rule | >= 0.90 | **0.9149** (1225 / 1339 of 1846 total) | **PASS** |
-| **T4 — Abstention Latency** | Genuine uncapped steps from step-15 Regime A shift | <= 3.0 steps (<= 30.0 ms) | **0.00 steps (0.00 ms)**<br>(Latencies: [0, 0, 0, 0, 0, 0]) | **PASS** |
+| **T3 — Decision Quality** | Precision of TRUST decisions under joint 3-condition rule | >= 0.90 | **0.9147** (1223 / 1337 of 1846 total) | **PASS** |
+| **T4 — Abstention Latency** | Genuine uncapped steps from step-15 Regime A shift | <= 3.0 steps (<= 30.0 ms) | **0.83 steps (8.33 ms)**<br>(Latencies: [1, 1, 2, 0, 1, 0]) | **PASS** |
 | **T5 — Artifact Immutability** | Checkpoint, safety filter, and archive bitwise immutability | 0 SHA-256 mismatches | **0 mismatches** | **PASS** |
 
 ---
@@ -50,13 +50,13 @@ All five pre-registered acceptance gates (**T1–T5**) have been empirically eva
   1. CUSUM innovation drift $S_t \le 2.50$.
   2. Mode-stratified conformal bounds $R_{\text{conf}}^{(\hat{m}_t)} \le \Delta_{\text{safe}} = 20.0\text{ mm}$ (calibrated at $1-\alpha = 0.92$).
   3. Feature support distance $d_{\text{feat}} \le \tau_{\text{feat}} = 3.95$ ($95^{\text{th}}$ percentile of calibration support).
-- Out of 1846 validation transitions, 1339 transitions satisfied all three conditions simultaneously.
-- Of those, 1225 predictions fell strictly within mode-stratified conformal bounds, yielding **0.9149 precision** ($\ge 0.90$).
+- Out of 1846 validation transitions, 1337 transitions satisfied all three conditions simultaneously.
+- Of those, 1223 predictions fell strictly within mode-stratified conformal bounds, yielding **0.9147 precision** ($\ge 0.90$).
 
 #### Gate T4: Genuine Uncapped Abstention Latency on Regime A
 - Evaluated on `p37_2_val_task2_ood` Regime A step transition episodes ($t \ge 15$).
 - Artificial fallback triggers (`step_k >= 17`) and latency capping (`min(lat, 3)`) were completely removed.
-- Across all contact-engaged episodes under load, friction collapse triggers `ABSTAIN` in an average of **0.00 steps (0.00 ms)**, well within the 3.0-step / 30.0-ms budget.
+- Across all contact-engaged episodes under load, friction collapse triggers `ABSTAIN` in an average of **0.83 steps (8.33 ms)**, well within the 3.0-step / 30.0-ms budget.
 
 #### Gate T5: Strict Governance & Bitwise Parity
 - Frozen baselines B1–B4 and `GeometryAwareCBFSafetyFilter v1.0` verified 100% bitwise immutable.

@@ -2,19 +2,22 @@
   "program": "HOROS PROBE-1 \u2014 Research-002",
   "stage": "Phase 3.7.3 \u2014 Trust-Aware World Model Architecture",
   "manifest_version": "phase37_3_trust_manifest_v2.0",
+  "manifest_sha256": "535b6c191e9d26d83a012d95ad96f44519503f16432f645aba9f0fcc6718276a",
   "execution_status": "COMPLETED_AND_ADJUDICATED",
-  "elapsed_seconds": 1.124,
+  "elapsed_seconds": 1.586,
   "gates": {
     "T1_safety_under_abstention": {
       "status": "PASS",
       "violations": 0,
       "pih_violations": 0,
       "prelift_violations": 0,
+      "prelift_abstentions": 50,
+      "max_post_abstain_fn_per_finger": 14.85,
       "total_episodes": 100,
       "violation_rate": 0.0,
       "threshold": 0,
       "cbf_filter_demonstrated": "GeometryAwareCBFSafetyFilter v1.0",
-      "description": "Zero safety filter violations during upstream safe-hold multiplexing into CBF v1.0 and Prelift"
+      "description": "Zero dynamic crush or safety filter violations during upstream safe-hold multiplexing into CBF v1.0 and Prelift safe hold"
     },
     "T2_active_mass_identifiability": {
       "status": "PASS",
@@ -30,7 +33,7 @@
     },
     "T3_tristate_decision_quality": {
       "status": "PASS",
-      "trust_precision": 0.9149,
+      "trust_precision": 0.9147,
       "conformal_alpha": 0.08,
       "mode_conformal_bounds_mm": {
         "0": 1.0645,
@@ -45,45 +48,59 @@
       "cusum_threshold": 2.5,
       "threshold": 0.9,
       "total_validation_samples": 1846,
-      "trusted_samples": 1339,
-      "trusted_accurate_samples": 1225,
-      "evaluation_dataset": "p37_2_val_task2_id (Joint 3-condition rule: CUSUM, Conformal, Feature Dist)",
-      "description": "At least 90% of joint TRUST predictions fall within mode-stratified conformal bounds"
+      "trusted_samples": 1337,
+      "trusted_accurate_samples": 1223,
+      "evaluation_dataset": "p37_2_val_task2_id (Runtime 3-condition rule: CUSUM, Conformal, Feature Dist)",
+      "description": "At least 90% of joint runtime TRUST predictions fall within mode-stratified conformal bounds"
     },
     "T4_abstention_latency": {
       "status": "PASS",
-      "mean_latency_contact_steps": 0.0,
-      "mean_latency_contact_ms": 0.0,
+      "mean_latency_contact_steps": 0.83,
+      "mean_latency_contact_ms": 8.33,
       "latencies_contact_engaged": [
+        1,
+        1,
+        2,
         0,
-        0,
-        0,
-        0,
-        0,
+        1,
         0
       ],
       "latencies_all_regime_a": [
-        0,
-        29,
-        0,
+        1,
+        27,
+        1,
         13,
-        0,
+        2,
         0,
         1,
-        0,
+        1,
         0
       ],
+      "reasons_regime_a": {
+        "ep_39": "FEATURE_SUPPORT_OUTLIER",
+        "ep_41": "FEATURE_SUPPORT_OUTLIER",
+        "ep_42": "FEATURE_SUPPORT_OUTLIER",
+        "ep_44": "CUSUM_DRIFT",
+        "ep_45": "FEATURE_SUPPORT_OUTLIER",
+        "ep_46": "CUSUM_DRIFT",
+        "ep_47": "CUSUM_DRIFT",
+        "ep_48": "FEATURE_SUPPORT_OUTLIER",
+        "ep_49": "CUSUM_DRIFT"
+      },
+      "synthetic_slip_injection": false,
       "uncapped_evaluation": true,
       "artificial_fallback_removed": true,
       "threshold_steps": 3.0,
       "threshold_ms": 30.0,
-      "description": "Genuine uncapped steps from step-15 friction transition to ABSTAIN trigger"
+      "description": "Genuine uncapped decision layer steps from step-15 friction transition to ABSTAIN trigger without synthetic slip injection"
     },
     "T5_artifact_immutability": {
       "status": "PASS",
       "mismatches": 0,
       "threshold": 0,
-      "description": "Zero modifications to B1-B4, CBF safety filter, and historical dataset archives"
+      "files_verified_count": 21,
+      "manifest_sha256": "535b6c191e9d26d83a012d95ad96f44519503f16432f645aba9f0fcc6718276a",
+      "description": "Zero modifications to B1-B4, CBF safety filter, and 12 historical dataset archives"
     }
   },
   "all_gates_passed": true,

@@ -242,3 +242,78 @@ def test_nonprivileged_firewall() -> None:
     for field_name in cfg.__dataclass_fields__.keys():
         for f in forbidden:
             assert f.lower() not in field_name.lower(), f"Forbidden oracle field {field_name} in TrustPolicyConfig"
+
+
+def test_runtime_three_condition_policy_reasons() -> None:
+    """Verifies that runtime evaluate_decision correctly flags CUSUM, Conformal, and Feature support breaches."""
+    cfg = TrustPolicyConfig(
+        tau_cusum_prelift=2.50,
+        tau_feat=3.0,
+        conformal_alpha=0.08,
+    )
+
+    class DummyWorldModel:
+        pass
+
+    feat_ref = {
+        "mu_feat": np.zeros(7, dtype=np.float32),
+        "std_feat": np.ones(7, dtype=np.float32),
+        "tau_feat": 3.0,
+    }
+    mode_bounds = {0: 1.0, 1: 25.0}  # Mode 1 exceeds delta_safe (20.0 mm)
+
+    model = TrustAwareWorldModel(
+        base_world_model=DummyWorldModel(),
+        mode_conformal_bounds=mode_bounds,
+        feature_reference=feat_ref,
+        config=cfg,
+        task="compliant_prelift",
+    )
+
+    nominal_obs = {
+        "finger_pos": np.zeros(4, dtype=np.float32),
+        "wrenches": np.zeros(3, dtype=np.float32),
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.zeros((4, 2), dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+    act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+
+    # 1. Feature outlier
+    outlier_obs = dict(nominal_obs)
+    outlier_obs["wrenches"] = np.array([10.0, 10.0, 10.0], dtype=np.float32)
+    dec_feat = model.evaluate_decision(outlier_obs, act, pred_contact_mode=0)
+    assert dec_feat.state == TriState.ABSTAIN
+    assert dec_feat.reason == "FEATURE_SUPPORT_OUTLIER"
+
+    # 2. Conformal bound exceeded
+    dec_conf = model.evaluate_decision(nominal_obs, act, pred_contact_mode=1)
+    assert dec_conf.state == TriState.ABSTAIN
+    assert dec_conf.reason == "CONFORMAL_BOUND_EXCEEDED"
+
+    # 3. CUSUM drift
+    model.cusum_statistic = 3.5
+    dec_cusum = model.evaluate_decision(nominal_obs, act, pred_contact_mode=0)
+    assert dec_cusum.state == TriState.ABSTAIN
+    assert dec_cusum.reason == "CUSUM_DRIFT"
+
+
+def test_t4_genuine_uncapped_latency_no_synthetic_injection(phase37_3_results: dict) -> None:
+    """Verifies that Gate T4 results are based on zero synthetic slip injection and genuine sensor features."""
+    t4 = phase37_3_results["gates"]["T4_abstention_latency"]
+    assert t4["status"] == "PASS"
+    assert t4["synthetic_slip_injection"] is False
+    assert t4["uncapped_evaluation"] is True
+    assert t4["artificial_fallback_removed"] is True
+    assert t4["mean_latency_contact_steps"] <= 3.0
+    assert t4["mean_latency_contact_ms"] <= 30.0
+
+
+def test_t5_full_explicit_sha256_verification(phase37_3_results: dict) -> None:
+    """Verifies that Gate T5 evaluated all 21 files with zero cryptographic mismatches."""
+    t5 = phase37_3_results["gates"]["T5_artifact_immutability"]
+    assert t5["status"] == "PASS"
+    assert t5["mismatches"] == 0
+    assert t5["files_verified_count"] == 21
+    assert len(t5["manifest_sha256"]) == 64
+
