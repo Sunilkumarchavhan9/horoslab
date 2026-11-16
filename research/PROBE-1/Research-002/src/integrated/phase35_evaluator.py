@@ -627,7 +627,7 @@ def generate_offline_test_bundles(horizon: int = 50) -> Dict[str, List[Dict[str,
                 traj = sampler.sample_task1_boundary_trajectory(env, horizon=horizon, exploration_mode=mode)
             else:
                 mode = ("coordinated", "friction_boundary", "random")[idx % 3]
-                traj = sampler.sample_task2_boundary_trajectory(env, horizon=horizon, exploration_mode=mode)
+                traj = sampler.sample_task2_boundary_trajectory(\n                    env, horizon=horizon, exploration_mode=mode, legacy_checkpoint_compatibility=True\n                )
 
             traj["pool"] = pool_name
             traj["seed"] = int(seed)
