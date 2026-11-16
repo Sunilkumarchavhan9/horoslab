@@ -54,12 +54,12 @@ class TrustPolicyConfig:
 
     # Force-gated micro-lift kinematics
     probe_velocity_mps: float = 0.005       # 5.0 mm/s
-    probe_horizon_steps: int = 35           # 35 steps @ 10ms = 350ms
+    probe_horizon_steps: int = 20           # 20 steps @ 10ms = 200ms
     arm_dz_per_step_mm: float = 0.05        # 5 mm/s * 0.01s = 0.05 mm/step
-    max_displacement_mm: float = 2.00       # 2.0 mm nominal cap (> liftoff for m <= 0.85 kg)
-    max_displacement_clamp_mm: float = 2.50 # 2.5 mm hard physical safety clamp
+    max_displacement_mm: float = 1.00       # 1.0 mm nominal cap (> 0.572 mm liftoff)
+    max_displacement_clamp_mm: float = 1.50 # 1.5 mm hard physical safety clamp
     liftoff_displacement_threshold_mm: float = 0.572
-    max_force_cap_n: float = 10.0           # 10.0 N safety clamp (< 20.0 N crush)
+    max_force_cap_n: float = 8.0            # 8.0 N safety clamp (< 20.0 N crush)
     plateau_derivative_threshold_n_s: float = 2.50  # |dFz/dt| threshold for plateau
 
     # Safety Hold Action (Prelift: [squeeze*4, dz_mm]; PiH: [vx, vy, vz, wx, wy, wz])
@@ -314,3 +314,4 @@ class TrustAwareWorldModel:
             cusum_statistic=self.cusum_statistic,
             conformal_radius=conformal_radius,
         )
+

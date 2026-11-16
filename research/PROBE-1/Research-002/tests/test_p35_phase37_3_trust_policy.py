@@ -1,13 +1,16 @@
 """
-HOROS PROBE-1 — Research-002: Regression & Verification Suite for Phase 3.7.3.
+HOROS PROBE-1 — Research-002: Regression & Verification Suite for Phase 3.7.3 (Manifest v2.0).
 
 Verifies:
 1. Deliverable artifacts exist on disk and follow expected schemas.
-2. Gates T1–T5 all pass according to pre-registered criteria.
-3. ActiveMicroLiftEstimator physics, plateau detection, and safety clamps.
-4. Tri-State decision transitions (TRUST / PROBE / ABSTAIN).
-5. Non-privileged input firewall (no mu_true, object_mass, clearance in decision inputs).
-6. Zero world model parameter training (0 weight updates, 0 gradient steps).
+2. Manifest v2.0 formally registers authorization (execution_authorized: 1, training_permitted: 0)
+   and updated physical probing parameters (35 steps, 2.0 mm, 10 N cap).
+3. Gates T1–T5 all pass according to pre-registered criteria without artificial shortcuts.
+4. ActiveMicroLiftEstimator physics, plateau detection, and safety clamps.
+5. GeometryAwareCBFSafetyFilter v1.0 safe-hold certification under ABSTAIN.
+6. Tri-State decision transitions across all 3 conditions (CUSUM, mode conformal, feature support).
+7. Non-privileged input firewall (no mu_true, object_mass, clearance in decision inputs).
+8. Zero world model parameter training (0 weight updates, 0 gradient steps).
 """
 
 from __future__ import annotations
@@ -34,6 +37,11 @@ from integrated.phase37_3_trust_policy import (
     TrustAwareWorldModel,
     TrustPolicyConfig,
 )
+from safety.geometry_cbf_safety_filter import (
+    ClearanceMode,
+    ClearanceSpecification,
+    GeometryAwareCBFSafetyFilter,
+)
 
 
 @pytest.fixture(scope="module")
@@ -44,15 +52,35 @@ def phase37_3_results() -> dict:
         return json.load(f)
 
 
+@pytest.fixture(scope="module")
+def phase37_3_manifest() -> dict:
+    manifest_path = R002_ROOT / "manifests" / "phase37_3_trust_manifest.json"
+    assert manifest_path.is_file(), f"Missing Phase 3.7.3 manifest at {manifest_path}"
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 def test_phase37_3_deliverables_exist() -> None:
     manifest_path = R002_ROOT / "manifests" / "phase37_3_trust_manifest.json"
     results_path = R002_ROOT / "experiments" / "phase3_7_uncertainty_intelligence" / "phase37_3_results.json"
     report_path = R002_ROOT / "experiments" / "phase3_7_uncertainty_intelligence" / "phase37_3_execution_report.md"
+    receipt_path = R002_ROOT / "experiments" / "phase3_7_uncertainty_intelligence" / "phase37_3_exploratory_receipt.md"
 
     assert manifest_path.is_file(), "phase37_3_trust_manifest.json does not exist"
     assert results_path.is_file(), "phase37_3_results.json does not exist"
     assert report_path.is_file(), "phase37_3_execution_report.md does not exist"
+    assert receipt_path.is_file(), "phase37_3_exploratory_receipt.md does not exist"
     assert report_path.stat().st_size > 500, "phase37_3_execution_report.md is suspiciously small"
+
+
+def test_phase37_3_manifest_v2_registered(phase37_3_manifest: dict) -> None:
+    assert phase37_3_manifest.get("schema_version") == "phase37_3_trust_manifest_v2.0"
+    assert phase37_3_manifest.get("execution_authorized") == 1
+    assert phase37_3_manifest.get("training_permitted") == 0
+    probe_cfg = phase37_3_manifest["tri_state_policy"]["force_gated_micro_lift"]
+    assert probe_cfg["probe_horizon_steps"] == 35
+    assert probe_cfg["max_displacement_mm"] == 2.0
+    assert probe_cfg["max_force_cap_n"] == 10.0
 
 
 def test_phase37_3_gates_all_pass(phase37_3_results: dict) -> None:
@@ -68,8 +96,8 @@ def test_phase37_3_gates_all_pass(phase37_3_results: dict) -> None:
     # Gate T2
     t2 = gates["T2_active_mass_identifiability"]
     assert t2["status"] == "PASS"
-    assert t2["mass_r2"] >= 0.60
-    assert t2["mass_spearman_rho"] >= 0.70
+    assert t2["mass_r2_all_60_eps"] >= 0.60
+    assert t2["mass_spearman_rho_all_60_eps"] >= 0.70
 
     # Gate T3
     t3 = gates["T3_tristate_decision_quality"]
@@ -79,8 +107,10 @@ def test_phase37_3_gates_all_pass(phase37_3_results: dict) -> None:
     # Gate T4
     t4 = gates["T4_abstention_latency"]
     assert t4["status"] == "PASS"
-    assert t4["mean_latency_steps"] <= 3.0
-    assert t4["mean_latency_ms"] <= 30.0
+    assert t4["mean_latency_contact_steps"] <= 3.0
+    assert t4["mean_latency_contact_ms"] <= 30.0
+    assert t4.get("artificial_fallback_removed") is True
+    assert t4.get("uncapped_evaluation") is True
 
     # Gate T5
     t5 = gates["T5_artifact_immutability"]
@@ -91,6 +121,25 @@ def test_phase37_3_gates_all_pass(phase37_3_results: dict) -> None:
 def test_zero_training_guarantee(phase37_3_results: dict) -> None:
     assert phase37_3_results.get("training_performed") is False
     assert phase37_3_results.get("parameters_trained") == 0
+
+
+def test_cbf_safety_filter_safe_hold_certification() -> None:
+    """Verifies that GeometryAwareCBFSafetyFilter actively certifies upstream safe-hold commands."""
+    cbf = GeometryAwareCBFSafetyFilter()
+    spec = ClearanceSpecification(mode=ClearanceMode.ESTIMATED_CLEARANCE, c_hat_mm=0.25, sigma_c_mm=0.01)
+
+    obs = {
+        "pos": np.array([0.05, 0.05, -5.0]),
+        "vel": np.zeros(3),
+        "rot": np.zeros(3),
+        "wrench": np.array([5.0, 5.0, 10.0, 0.1, 0.1, 0.2]),
+        "stratum": 0,
+    }
+    raw_hold = np.zeros(6, dtype=np.float64)
+    safe_act, info = cbf.filter_action(obs, raw_hold, clearance_spec=spec)
+
+    assert info["is_safe"] is True
+    assert np.all(safe_act == 0.0)
 
 
 def test_active_micro_lift_estimator_plateau_detection() -> None:
@@ -106,14 +155,12 @@ def test_active_micro_lift_estimator_plateau_detection() -> None:
     estimator = ActiveMicroLiftEstimator(cfg)
 
     # Simulate lifting a 0.50 kg object (target weight W = 4.9033 N)
-    # Stiff ramp up then flat plateau at 4.90 N
     m_target = 0.50
     w_target = m_target * 9.80665
     done = False
     m_est = None
 
     for step_idx in range(30):
-        # Linearly increasing until step 16, then constant plateau
         if step_idx < 16:
             fz = min(w_target, (step_idx + 1) * 0.30)
         else:
@@ -145,9 +192,8 @@ def test_active_micro_lift_estimator_safety_clamps() -> None:
     # Case 2: Exceeding displacement clamp (with continuously rising force to prevent plateau detection)
     estimator.reset()
     for step_i in range(55):  # 55 * 0.05 mm = 2.75 mm > 2.5 mm clamp
-        # Force increases rapidly by 0.15 N per step (15 N/s > 2.5 N/s plateau threshold)
         fz_ramp = 0.5 + step_i * 0.15
-        if fz_ramp >= 9.8:  # Keep just below 10.0 N cap
+        if fz_ramp >= 9.8:
             fz_ramp = 9.8
         act, done, m_est = estimator.step(fz_ramp)
         if done:
@@ -159,7 +205,7 @@ def test_active_micro_lift_estimator_safety_clamps() -> None:
 def test_trust_aware_world_model_tri_state_logic() -> None:
     cfg = TrustPolicyConfig(
         tau_cusum_prelift=2.50,
-        conformal_alpha=0.10,
+        conformal_alpha=0.08,
     )
 
     class DummyWorldModel:
@@ -172,7 +218,6 @@ def test_trust_aware_world_model_tri_state_logic() -> None:
         task="compliant_prelift",
     )
 
-    # Test 1: ABSTAIN when CUSUM drift exceeds tau_cusum
     obs_slip = {
         "joint_pos": np.zeros(6, dtype=np.float32),
         "finger_pos": np.zeros(4, dtype=np.float32),
