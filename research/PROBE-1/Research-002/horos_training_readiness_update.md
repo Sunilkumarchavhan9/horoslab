@@ -42,7 +42,7 @@ Following comprehensive GitHub source review and remote continuous integration d
 | **Physics Validation Firewall** | Analytic kinematics, geometric bounds, true Coulomb cone & torque limits | 100% rejection of physical violations; 100% valid acceptance | **100%** |
 | **Distillation Engine** | Strictly zero mode leakage; correct mode estimator without false sliding | Invariance verified under mode perturbation; Sticking preserved | **100%** |
 | **Evaluation Engine** | Smoke test labeling, disclaimers, baseline checkpoint loader | Verified contract and checkpoint loading | **100%** |
-| **Full Regression Suite** | Continuous integration across all project milestones | **202 / 202 passed** | **100%** |
+| **Full Regression Suite** | Continuous integration across all project milestones | **203 / 203 passed** | **100%** |
 
 ---
 
@@ -67,3 +67,11 @@ The **HOROS Model Teaching Infrastructure is fully unified, mathematically verif
 We recommend:
 - **Accepting the Stage 2 Final Correction as closed.**
 - **Maintaining the strict prohibition on student model training** until formal Stage 3 authorization is granted.
+
+### Follow-up verification — 2026-11-16
+
+The public mirror's full Research-002 GitHub Actions suite passed **203 / 203** (run [43822902317](https://github.com/Sunilkumarchavhan9/horos-probe-1/actions/runs/43822902317), commit `0d4bf493cc8fda749dbc7f520b56a3f106262c96`). The added sampler regression verifies that modern Task 2 collection defaults to Cartesian resultant wrenches and that the legacy padded representation is used only by explicit Phase 3.4/3.5 frozen replay.
+
+The canonical branch's Semgrep check passed. Its separate repository-wide secret scanner and application Phase 1 quality gate did not pass; the reports in `stage2_remote_ci_verification.md` document those unrelated blockers. They do not change the green Research-002 test result.
+
+No student training was run. B1–B4 and the safety filter remain frozen.

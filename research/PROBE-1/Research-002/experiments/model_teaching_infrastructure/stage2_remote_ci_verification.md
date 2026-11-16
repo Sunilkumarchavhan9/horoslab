@@ -119,7 +119,7 @@ To guarantee complete cross-platform deterministic immutability before subsequen
             with open(md_path, "wb") as f:
                 f.write(orig_md)
 ```
-This guarantees 100% pass rate (202 / 202 tests) across both Windows and Ubuntu CI environments.
+At that stage, the regression suite reported 202 / 202. The subsequent sampler-boundary regression and latest full-suite result are recorded in Section 5 below.
 
 
 
@@ -135,3 +135,28 @@ In compliance with program governance directives:
   4. Proxy-bypass mechanisms (`ProxyHandler({})`) for local daemon communications.
   5. Thread-safe concurrency and rate limiting.
 - **Production Scope Boundary:** This test confirms transport-layer and adapter protocol mechanics. It **does not** constitute live integration testing against production commercial APIs (OpenAI, Anthropic, or Gemini) over the public internet. Such testing remains deferred until live credentials and network access are authorized.
+
+---
+
+## 5. Latest Follow-Up CI Result — 2026-11-16
+
+The Task 2 sampler follow-up was verified on the public mirror after separating modern collection from frozen baseline replay.
+
+- **Mirror branch:** `main`
+- **Commit:** `0d4bf493cc8fda749dbc7f520b56a3f106262c96`
+- **Workflow:** [HOROS PROBE-1 CI — run 43822902317](https://github.com/Sunilkumarchavhan9/horos-probe-1/actions/runs/43822902317)
+- **Result:** completed / success; **203 passed in 24.19s**.
+- The full suite includes the new sampler regression test and re-runs the frozen Phase 3.7.1 B4 reference assertion. The expected ID joint simultaneous count remains 38; no frozen baseline values were changed.
+
+### Canonical repository workflow classification
+
+On canonical branch head `0a00b5afaa9dd934a30a9fe07f099df4dbc93cd1`:
+
+- **Semgrep:** success (run `43822927270`).
+- **Security-hardening:** failed at the repository-wide local secret gate (run `43822927359`). The scanner flagged the documented placeholder API key in `README.md:170` and a public calculator URL at `memoryos-frontend/components/landing/calculator-results.tsx:564`; these are outside Research-002. This is recorded as an unresolved repository-wide check, not a passing security result.
+- **Application quality:** failed before its Phase 1 E2E/lint/test gates (run `43822927310`) because the Phase 1 API did not become healthy; its startup log reports `CONNECTOR_OAUTH_STATE_SECRET is required`. This is an application configuration gate, not the Research-002 Python regression suite.
+
+The public mirror's 203/203 Research-002 result is the authoritative test execution result for this follow-up. Canonical Research-002 source and test files were checked byte-for-byte against the mirror. Do not interpret the two unrelated canonical workflow failures as passing.
+
+**Training boundary:** 0 weights changed, 0 gradients, 0 optimizer updates. Frozen baselines B1–B4 and GeometryAwareCBFSafetyFilter v1.0 remain untouched.
+

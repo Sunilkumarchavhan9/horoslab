@@ -149,3 +149,27 @@ if task_id in ("compliant_prelift", "compliant_lift", "multifinger_lift"):
 1. **All Three Task 2 Identifiers Tested:** `compliant_prelift`, `compliant_lift`, and `multifinger_lift` are identically routed through `compute_prelift_resultant_wrench()`.
 2. **Backward Compatibility Preserved:** Phase 2.8 hybrid model test harness `tests/test_p28_harness_remediation.py` explicitly invokes `extract_legacy_checkpoint_state_and_wrench()`, validating that frozen checkpoints retain full backward evaluation compatibility without contaminating modern pipelines.
 3. **Regression Test Suite:** 202 passed across the complete suite.
+
+---
+
+## 5. Post-Closure Sampler Boundary Addendum — 2026-11-16
+
+A follow-up audit found that the Task 2 active boundary sampler still opted into legacy wrench padding for every simulator observation. That made the historical representation reachable from fresh collection paths even though the extractor, distiller, and validator had already been corrected.
+
+The sampler boundary is now explicit:
+
+1. **Modern default:** `ContactBoundarySampler.sample_task2_boundary_trajectory(..., legacy_checkpoint_compatibility=False)` uses the Cartesian resultant wrench for both `CompliantPreLiftContactEnv` and `MultifingerLiftEnv`. The emitted contract is `task2_cartesian_resultant_wrench_v1`.
+2. **Historical state semantics:** The older `MultifingerLiftEnv` exposes `slip_ratio`, not `delta_dot_t`; its episode metadata records `task2_slip_ratio_state_v0`. The current compliant pre-lift simulator records `task2_slip_velocity_state_v1`.
+3. **Frozen replay only:** The Phase 3.4 collection routine and Phase 3.5 frozen offline bundle generator explicitly set `legacy_checkpoint_compatibility=True` to reproduce the B1–B4 historical padded force representation. The output labels this as `legacy_task2_normal_force_padding_v0`. Phase 3.7.2 fresh calibration/validation generation does not opt in and therefore uses the modern Cartesian contract.
+4. **Regression coverage:** `test_task2_boundary_sampler_uses_cartesian_wrench_contract` covers the current compliant simulator, the older multifinger simulator, and the explicitly requested frozen replay adapter.
+
+### Latest full-suite verification
+
+- **Public mirror:** [GitHub Actions run 43822902317](https://github.com/Sunilkumarchavhan9/horos-probe-1/actions/runs/43822902317)
+- **Commit:** `0d4bf493cc8fda749dbc7f520b56a3f106262c96`
+- **Result:** **203 passed in 24.19s** on Ubuntu / Python 3.12.
+- This supersedes the earlier 202-test snapshot. The additional passing test covers the sampler boundary described above.
+- **Canonical branch:** the modified Research-002 files are synchronized byte-for-byte with the public mirror. The canonical Semgrep workflow passed on its corresponding branch head. Separate canonical repository-wide checks remain outside this Research-002 Python suite: the secret gate flagged example strings in `README.md:170` and `memoryos-frontend/components/landing/calculator-results.tsx:564`; the application quality workflow's Phase 1 API health gate failed because `CONNECTOR_OAUTH_STATE_SECRET` was not configured. These checks are not reported as passing.
+
+**Execution boundary remains unchanged:** 0 student-model weight updates, 0 optimizer steps, 0 gradient steps. B1–B4 and `GeometryAwareCBFSafetyFilter v1.0` remain frozen.
+

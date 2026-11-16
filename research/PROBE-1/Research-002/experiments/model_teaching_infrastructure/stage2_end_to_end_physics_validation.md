@@ -103,3 +103,21 @@ research\PROBE-1\Research-002\tests\test_p34_teaching_infrastructure.py ........
 ```
 
 All 25 unit and integration tests for the Model Teaching Infrastructure pass unconditionally.
+
+---
+
+## 4. Follow-Up Sampler Contract Regression — 2026-11-16
+
+A pipeline audit found an explicit legacy-padding option still being passed by the generic Task 2 boundary sampler. It was removed from the modern default and isolated behind `legacy_checkpoint_compatibility=True`.
+
+The added test `test_task2_boundary_sampler_uses_cartesian_wrench_contract` verifies:
+- `CompliantPreLiftContactEnv` and `MultifingerLiftEnv` both emit modern six-axis Cartesian resultant wrenches by default.
+- The two simulators' different slip-state channels are recorded under distinct state-contract identifiers.
+- Frozen Phase 3.4/3.5 replay receives the padded normal-force vector only when the explicit compatibility option is enabled.
+
+The historical Phase 3.4 and Phase 3.5 evaluation paths now opt in explicitly to preserve frozen B1–B4 data. Fresh Phase 3.7.2 data generation remains on the modern Cartesian default.
+
+**Full-suite result:** public mirror GitHub Actions run [43822902317](https://github.com/Sunilkumarchavhan9/horos-probe-1/actions/runs/43822902317), commit `0d4bf493cc8fda749dbc7f520b56a3f106262c96`: **203 passed in 24.19s**. The earlier 25-test focused Module 09 run in this report is a historical subset result; the 203-test count is the full Research-002 regression suite after the sampler follow-up.
+
+No model training or weight updates were performed.
+

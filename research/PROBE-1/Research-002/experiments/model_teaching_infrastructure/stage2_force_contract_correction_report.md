@@ -91,9 +91,12 @@ In `PhysicsValidationEngine.validate_trajectory()`:
 - **Tilting Torque Gatekeeper:** Rather than assuming $\boldsymbol{\tau} = \mathbf{0}$, the resultant torque magnitude $\tau = \|\mathbf{W}[3:]\|$ is checked against the physical tipping threshold $\tau_{\text{max}} = 2.0\text{ N}\cdot\text{m}$. Trajectories exhibiting extreme eccentric loading are rejected with `REJECTED_FORCE_LIMIT`.
 
 ### 3.3 Historical Baseline & Test Harness Preservation
-In `src/selection_aware/counterfactual_rollout.py`, `extract_env_state_and_wrench()` supports backward compatibility:
-- When `task == "multifinger_lift"` or `legacy_padding=True`, it returns the legacy 4 normal forces padded with 2 zeros to maintain exact compatibility with frozen $B1$–$B4$ checkpoint evaluators and Phase 2.8 test harnesses.
-- For modern Task 2 pipelines (`task == "compliant_prelift"` with `legacy_padding=False`), it computes the true 6-axis Cartesian resultant wrench.
+
+All Task 2 task identifiers (`compliant_prelift`, `compliant_lift`, and `multifinger_lift`) use the Cartesian resultant wrench by default in `extract_env_state_and_wrench()`. There is no task-name-based legacy fallback.
+
+Frozen checkpoint compatibility is isolated through `extract_legacy_checkpoint_state_and_wrench()`. The Task 2 boundary sampler exposes `legacy_checkpoint_compatibility=False` by default; its explicit `True` path emits the tagged legacy representation `legacy_task2_normal_force_padding_v0`.
+
+Only the Phase 3.4 frozen B1–B4 data-collection path and Phase 3.5 frozen offline evaluation bundle generator explicitly enable that adapter. Fresh Phase 3.7.2 calibration/validation data remains on the modern Cartesian default. Modern distillation and physics validation reject the legacy padded representation.
 
 ---
 
@@ -121,4 +124,14 @@ Four dedicated analytical test cases were implemented in `tests/test_p34_teachin
 
 - **Zero Student Model Parameter Updates:** Exactly 0 weights altered, 0 gradients computed.
 - **Frozen Baselines Intact:** Checkpoints $B1$, $B2$, $B3$, $B4$ and `GeometryAwareCBFSafetyFilter v1.0` remain 100% frozen.
-- **Full Test Suite Status:** **196 / 196 tests passing**.
+- **Full Test Suite Status:** **203 / 203 tests passing** (public mirror CI run 43822902317, 2026-11-16).
+
+---
+
+## 6. Follow-Up Sampler Regression Verification — 2026-11-16
+
+The public mirror's full Research-002 suite now passes **203 / 203** on Ubuntu / Python 3.12 in [GitHub Actions run 43822902317](https://github.com/Sunilkumarchavhan9/horos-probe-1/actions/runs/43822902317), commit `0d4bf493cc8fda749dbc7f520b56a3f106262c96`.
+
+The new regression confirms that modern Task 2 sampler calls use the Cartesian wrench contract for both supported simulators, while frozen Phase 3.4/3.5 replay opts into the legacy padded representation through the explicit adapter. The frozen Phase 3.7.1 B4 ID joint-coverage count remains 38; the expected baseline was not changed.
+
+No student-model training or weight/gradient updates were performed.
