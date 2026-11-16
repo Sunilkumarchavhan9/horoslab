@@ -103,14 +103,21 @@ def test_phase37_3_gates_all_pass(phase37_3_results: dict) -> None:
     t3 = gates["T3_tristate_decision_quality"]
     assert t3["status"] == "PASS"
     assert t3["trust_precision"] >= 0.90
+    assert t3["trusted_coverage"] == pytest.approx(
+        t3["trusted_samples"] / t3["total_validation_samples"], abs=1e-4
+    )
 
-    # Gate T4
+    # Gate T4 v2.3
     t4 = gates["T4_abstention_latency"]
     assert t4["status"] == "PASS"
+    assert t4["pre_transition_all_trust_at_step_14"] is True
     assert t4["mean_latency_contact_steps"] <= 3.0
     assert t4["mean_latency_contact_ms"] <= 30.0
     assert t4.get("artificial_fallback_removed") is True
     assert t4.get("uncapped_evaluation") is True
+    assert t4.get("latency_capping") is False
+    assert "false_abstentions_before_transition" in t4
+    assert t4["missed_detections"] == 0
 
     # Gate T5
     t5 = gates["T5_artifact_immutability"]
@@ -299,14 +306,29 @@ def test_runtime_three_condition_policy_reasons() -> None:
 
 
 def test_t4_genuine_uncapped_latency_no_synthetic_injection(phase37_3_results: dict) -> None:
-    """Verifies that Gate T4 results are based on zero synthetic slip injection and genuine sensor features."""
+    """Verifies Gate T4 v2.3: TRUST before the friction step, then measured detection latency."""
     t4 = phase37_3_results["gates"]["T4_abstention_latency"]
     assert t4["status"] == "PASS"
+    assert t4["protocol_id"] == "HOROS-P1-R002-P373-T4-v2.3"
     assert t4["synthetic_slip_injection"] is False
     assert t4["uncapped_evaluation"] is True
     assert t4["artificial_fallback_removed"] is True
+    assert t4["latency_capping"] is False
+    assert t4["pre_transition_all_trust_at_step_14"] is True
+    assert t4["missed_detections"] == 0
+    assert isinstance(t4["false_abstentions_before_transition"], int)
     assert t4["mean_latency_contact_steps"] <= 3.0
     assert t4["mean_latency_contact_ms"] <= 30.0
+    assert len(t4["transition_episodes"]) == 4
+    assert len(t4["control_episodes"]) == 4
+    for episode in t4["transition_episodes"]:
+        assert episode["pre_transition_decision"]["state"] == "TRUST"
+        assert episode["pre_transition_decision"]["step"] == 14
+        assert episode["friction_transition_applied"] is True
+        assert episode["latency_steps"] is not None
+        assert episode["detection_reason"]
+    for episode in t4["control_episodes"]:
+        assert episode["friction_transition_applied"] is False
 
 
 def test_t5_full_explicit_sha256_verification(phase37_3_results: dict) -> None:
@@ -333,6 +355,8 @@ def test_t1_actual_intervention_accounting(phase37_3_results: dict) -> None:
     assert t1["total_intervention_episodes"] == 90
     assert t1["violations"] == 0
     assert t1["violation_rate"] == 0.0
+    assert t1["pih_evaluation_kind"] == "cbf_over_recorded_observations"
+    assert t1["pih_closed_loop_resimulation"] is False
 
 
 def test_unidentified_mass_fail_closed_never_enters_trust() -> None:

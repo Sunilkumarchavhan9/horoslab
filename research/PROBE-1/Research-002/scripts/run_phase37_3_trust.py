@@ -1,10 +1,10 @@
 """CLI runner for PROBE-1 Research-002 Phase 3.7.3: Trust-Aware World Model Architecture.
 
-Executes simulation and empirical evaluation of Gates T1–T5 under Manifest v2.0 (v2.2 closure):
+Executes simulation and empirical evaluation of Gates T1–T5 under Manifest v2.0 (T4 protocol v2.3):
 - Gate T1: Zero Safety Filter Violations across Actual Safe-Hold Interventions (40 PiH CBF + 50 Prelift Safe-Hold = 90 Interventions; 10 Non-Abstention Episodes Separately Reported).
 - Gate T2: Active Mass Identifiability on Registered Validation Splits (p37_2_val_task2_ood).
 - Gate T3: Tri-State Decision Quality under Strict Episode Isolation and Fail-Closed Unidentified Mass Policy (p37_2_val_task2_id).
-- Gate T4: Genuine Uncapped Abstention Latency on Regime A Step Transition.
+- Gate T4: Closed-loop friction-change detection after TRUST at step 14 (protocol v2.3).
 - Gate T5: 100% Bitwise Immutability Verified via Pre- and Post-Execution Cryptographic Audit.
 
 Emits deliverables to experiments/phase3_7_uncertainty_intelligence/.
@@ -48,12 +48,35 @@ def generate_markdown_report(results: dict) -> str:
     t3_acc = t3["trusted_accurate_samples"]
     t3_tot = t3["trusted_samples"]
     t3_all = t3.get("total_validation_samples", 1846)
+    t3_cov = t3.get("trusted_coverage", float(t3_tot) / max(t3_all, 1))
     t3_st = t3["status"]
 
-    t4_steps = t4.get("mean_latency_contact_steps", 0.0)
-    t4_ms = t4.get("mean_latency_contact_ms", 0.0)
+    t4_steps = t4.get("mean_latency_contact_steps")
+    t4_ms = t4.get("mean_latency_contact_ms")
     t4_lats = t4.get("latencies_contact_engaged", [])
     t4_st = t4["status"]
+    t4_steps_txt = "n/a" if t4_steps is None else f"{t4_steps:.2f}"
+    t4_ms_txt = "n/a" if t4_ms is None else f"{t4_ms:.2f}"
+    t4_false = t4.get("false_abstentions_before_transition", "n/a")
+    t4_missed = t4.get("missed_detections", "n/a")
+    t4_pre = t4.get("pre_transition_all_trust_at_step_14", False)
+    t4_rows = []
+    for episode in t4.get("transition_episodes", []):
+        t4_rows.append(
+            f"| transition | {episode['seed']} | {episode.get('transition_time_s')} | "
+            f"{episode.get('step14_state')} / {episode.get('step14_reason')} | "
+            f"{episode.get('detection_step')} / {episode.get('detection_reason')} | "
+            f"{episode.get('latency_steps')} | {episode.get('false_abstentions_before_transition')} | "
+            f"{episode.get('missed_detection')} |"
+        )
+    for episode in t4.get("control_episodes", []):
+        t4_rows.append(
+            f"| control | {episode['seed']} | none | "
+            f"{episode.get('step14_state')} / {episode.get('step14_reason')} | "
+            f"none | n/a | {episode.get('false_abstentions_before_transition')} | "
+            f"n/a |"
+        )
+    t4_table = "\n".join(t4_rows)
 
     t5_mis = t5["mismatches"]
     t5_st = t5["status"]
@@ -73,7 +96,7 @@ def generate_markdown_report(results: dict) -> str:
     mv = results.get('manifest_version', 'phase37_3_trust_manifest_v2.0')
 
     report = fr"""# HOROS PROBE-1 — Research-002
-## Phase 3.7.3 Execution Report: Trust-Aware World Model Architecture (v2.2 Closure)
+## Phase 3.7.3 Execution Report: Trust-Aware World Model Architecture (T4 v2.3)
 
 **Author:** Antigravity AI Assistant & HOROS Research-002 Team  
 **Date:** {time_str}  
@@ -93,14 +116,14 @@ def generate_markdown_report(results: dict) -> str:
 
 The Phase 3.7.3 Trust-Aware World Model Architecture introduces a real-time Tri-State Policy (`TRUST`, `PROBE`, `ABSTAIN`) wrapping frozen baselines B1–B4 and interfacing as an upstream setpoint multiplexer into `GeometryAwareCBFSafetyFilter v1.0`.
 
-All five pre-registered acceptance gates (**T1–T5**) have been empirically evaluated and **PASSED** under the pre-registered Manifest v2.0 protocol with v2.2 rigorous adjudication:
+All five pre-registered acceptance gates (**T1–T5**) are evaluated under Manifest v2.0. Gate T4 uses the frozen v2.3 closed-loop protocol. Overall adjudication: **{overall}**.
 
 | Gate | Description | Threshold | Observed Result | Status |
 | :--- | :--- | :--- | :--- | :---: |
-| **T1 — Safety Under Abstention** | Safety filter violations across actual safe-hold interventions | 0 violations (0.0%) | **{t1_viol} / {t1_interventions} violations ({t1_pct:.1f}%)**<br>(PiH CBF: 0/40, Prelift Safe-Hold: 0/50)<br>*(10 non-abstention Prelift eps reported separately)* | **{t1_st}** |
+| **T1 — Safety Under Abstention** | Safety filter violations across actual safe-hold interventions | 0 violations (0.0%) | **{t1_viol} / {t1_interventions} violations ({t1_pct:.1f}%)**<br>(PiH: CBF over recorded observations, 0/40. Prelift safe-hold: 0/50)<br>*(10 non-abstention Prelift eps reported separately)* | **{t1_st}** |
 | **T2 — Active Mass Identifiability** | Latent mass identification under force-gated micro-lift | R^2 >= 0.60, rho >= 0.70 | **All 60 eps: R^2 = {t2_r2_all:.4f}, rho = {t2_rho_all:.4f}**<br>(HighMass/RegimeB: R^2 = {t2_r2_sub:.4f}, rho = {t2_rho_sub:.4f}) | **{t2_st}** |
-| **T3 — Decision Quality** | Precision of TRUST decisions under episode-isolated 3-condition rule | >= 0.90 | **{t3_pr:.4f}** ({t3_acc} / {t3_tot} of {t3_all} total)<br>*(Strict episode reset + fail-closed unidentified mass)* | **{t3_st}** |
-| **T4 — Abstention Latency** | Genuine uncapped steps from step-15 Regime A shift | <= 3.0 steps (<= 30.0 ms) | **{t4_steps:.2f} steps ({t4_ms:.2f} ms)**<br>(Latencies: {t4_lats}; zero synthetic slip injection) | **{t4_st}** |
+| **T3 — Decision Quality** | Precision of TRUST decisions, with trusted coverage reported beside it | >= 0.90 precision | **Precision {t3_pr:.4f}** ({t3_acc} / {t3_tot})<br>**Trusted coverage {t3_cov:.4f}** ({t3_tot} / {t3_all}) | **{t3_st}** |
+| **T4 — Friction-change latency** | Steps from the step-15 transition to ABSTAIN after TRUST at step 14 | <= 3.0 steps (<= 30.0 ms); TRUST at step 14 | **{t4_steps_txt} steps ({t4_ms_txt} ms)**<br>(Latencies: {t4_lats}; step-14 TRUST: {t4_pre}; false abstentions: {t4_false}; misses: {t4_missed}) | **{t4_st}** |
 | **T5 — Pre/Post Immutability** | 3-way pre/post bitwise cryptographic verification of 21 artifacts | 0 SHA-256 mismatches | **{t5_mis} mismatches**<br>(Pre: {t5_pre_mis}, Post: {t5_post_mis}, Delta: {t5_immut_viol}) | **{t5_st}** |
 
 ---
@@ -109,7 +132,7 @@ All five pre-registered acceptance gates (**T1–T5**) have been empirically eva
 
 #### Gate T1: Actual Safe-Hold Intervention Accounting & CBF Safety Integration
 - **Actual Intervention Breakdown:**
-  - **Task 1 (Peg-in-Hole CBF Evaluations):** 40 episodes evaluated under `GeometryAwareCBFSafetyFilter v1.0`. All nominal actions routed through CBF v1.0 under ABSTAIN ($[0, 0, 0, 0, 0, 0]$ safe hold) $\implies$ **0 / 40 barrier violations**.
+  - **Task 1 (Peg-in-Hole):** 40 recorded observation episodes are passed through `GeometryAwareCBFSafetyFilter v1.0`. This is a CBF evaluation over recorded observations, not a new physical closed-loop simulation. ABSTAIN routes the safe hold $[0, 0, 0, 0, 0, 0]$ into the filter $\implies$ **0 / 40 barrier violations**.
   - **Task 2 (Compliant Prelift Safe-Hold Interventions):** 50 out-of-distribution episodes triggered `ABSTAIN` and received the upstream safe-hold command $[0, 0, 0, 0, 0]$ for every remaining step in the episode. Maximum post-abstention normal force observed was **{t1_max_fn:.2f} N**, strictly below the 20.0 N per-finger dynamic crush limit $\implies$ **0 / 50 crush violations**.
   - **Prelift Episodes Without Abstention:** Exactly 10 episodes in `p37_2_val_task2_ood` remained within nominal support boundaries and did not trigger abstention. These 10 episodes are separately reported and excluded from the intervention denominator.
   - **Total Actual Interventions:** Exactly **{t1_interventions} intervention episodes** ({t1_pih} PiH + {t1_pre_interventions} Prelift) with **0 violations (0.0% violation rate)**.
@@ -125,13 +148,19 @@ All five pre-registered acceptance gates (**T1–T5**) have been empirically eva
 #### Gate T3: Tri-State Decision Quality under Strict Episode Isolation and Fail-Closed Policy
 - **Episode Isolation:** Evaluated across all 60 episodes of `p37_2_val_task2_id`. `TrustAwareWorldModel.reset_episode()` is called at the boundary of every single episode, resetting causal CUSUM drift, step counters, and estimator buffers. Zero state leaks across episodes.
 - **Fail-Closed Unidentified Mass Policy:** Unidentified mass can NEVER enter `TRUST`. If contact is established and mass is unidentified, the model actively commands `PROBE`. If probing completes without plateau detection or exceeds budget, the model fails closed to `ABSTAIN` (`UNIDENTIFIED_MASS_FAIL_CLOSED`).
-- **Precision:** Out of {t3_all} validation transitions, {t3_tot} transitions satisfied all three joint conditions simultaneously with identified mass.
-- Of those, {t3_acc} predictions fell strictly within mode-stratified conformal bounds, yielding **{t3_pr:.4f} precision** ($\\ge 0.90$).
+- **Trusted coverage:** {t3_tot} of {t3_all} validation transitions received `TRUST`, coverage **{t3_cov:.4f}**.
+- **Precision:** Of those trusted transitions, {t3_acc} fell inside the mode-stratified conformal bounds, precision **{t3_pr:.4f}** ($\\ge 0.90$).
 
-#### Gate T4: Genuine Uncapped Abstention Latency on Regime A
-- Evaluated on `p37_2_val_task2_ood` Regime A step transition episodes ($t \\ge 15$).
-- Strictly ZERO synthetic slip injection (`delta_dot_t = 0.0`), zero artificial fallback triggers, and zero latency capping.
-- Across all contact-engaged episodes under load, friction collapse triggers `ABSTAIN` in an average of **{t4_steps:.2f} steps ({t4_ms:.2f} ms)** via non-privileged physical sensor deviations, well within the 3.0-step / 30.0-ms budget.
+#### Gate T4: Friction-change detection after TRUST (protocol v2.3)
+- Transition episodes are closed-loop Regime A runs on seeds 6117–6120. Contact is established and mass is identified from measured `Fz` before step 15. The scored pre-transition decision is the policy output at step 14.
+- The registered friction step `0.60 → 0.24` is applied by the environment at step 15. Latency is `detection_step - 15` for the first later `ABSTAIN`. Misses stay misses. Slip velocity is the environment measurement.
+- Paired control episodes use the same seeds and maneuver with friction held at 0.60.
+- Result: step-14 TRUST on every transition episode = **{t4_pre}**. Mean latency **{t4_steps_txt} steps ({t4_ms_txt} ms)**. Latencies `{t4_lats}`. False abstentions before the transition: **{t4_false}**. Missed detections: **{t4_missed}**. Control abstentions after step 14: **{t4.get("control_abstentions_after_step_14", "n/a")}**.
+- A latency of 0 is the decision on the observation produced by step 15, the first step under the new friction. It is counted only when step 14 was `TRUST`.
+
+| Set | Seed | Transition time (s) | Step-14 decision | Detection step / reason | Latency (steps) | False abstentions | Missed |
+| :--- | ---: | :--- | :--- | :--- | ---: | ---: | :--- |
+{t4_table}
 
 #### Gate T5: Pre- and Post-Execution 3-Way Cryptographic Immutability Audit
 - **Independent Authorization Validation:** Manifest digest pinned to `{manifest_sha}`, matching approved v2.0 parameters.
@@ -144,7 +173,7 @@ All five pre-registered acceptance gates (**T1–T5**) have been empirically eva
 
 ### 3. Conclusion & Next Gated Steps
 
-Phase 3.7.3 v2.2 formally closes the Trust-Aware World Model Architecture. All five gates are independently verified and certified passed.
+Phase 3.7.3 T4 v2.3 is the friction-change adjudication for this run. Overall gate status is **{overall}**. Student training remains locked (`training_permitted = 0`).
 
 In accordance with program governance:
 1. Historical dataset inventory comprises 700 episodes.
@@ -154,9 +183,41 @@ In accordance with program governance:
     return report
 
 
+def _closure_receipt(results: dict) -> str:
+    t4 = results["gates"]["T4_abstention_latency"]
+    t3 = results["gates"]["T3_tristate_decision_quality"]
+    lines = [
+        "# HOROS PROBE-1 — Research-002",
+        "## Phase 3.7.3 Closure Receipt (T4 protocol v2.3)",
+        "",
+        f"**Manifest:** `{results.get('manifest_version')}`",
+        f"**Manifest SHA-256:** `{results.get('manifest_sha256')}`",
+        f"**T4 protocol:** `{t4.get('protocol_id')}`",
+        f"**T4 protocol SHA-256:** `{t4.get('protocol_sha256')}`",
+        f"**Overall:** {'PASS' if results.get('all_gates_passed') else 'FAIL'}",
+        f"**Training performed:** {results.get('training_performed')}",
+        "",
+        "Gate T4 was scored on closed-loop Regime A episodes. Every transition episode was `TRUST` at step 14.",
+        f"Mean detection latency: {t4.get('mean_latency_contact_steps')} steps "
+        f"({t4.get('mean_latency_contact_ms')} ms). Latencies: {t4.get('latencies_contact_engaged')}.",
+        f"False abstentions before the transition: {t4.get('false_abstentions_before_transition')}.",
+        f"Missed detections: {t4.get('missed_detections')}.",
+        f"Control abstentions after step 14: {t4.get('control_abstentions_after_step_14')}.",
+        "Synthetic slip injection: none. Artificial fallback: none. Latency capping: none.",
+        "",
+        f"T3 precision: {t3.get('trust_precision')}. T3 trusted coverage: {t3.get('trusted_coverage')}.",
+        "T1 PiH remains a CBF evaluation over recorded observations.",
+        "",
+        "Manifest v2.0, B1–B4, CBF v1.0, and the historical datasets stay frozen.",
+        "Student model training remains disabled. The next research stage is dataset generation, not training.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Run HOROS PROBE-1 Research-002 Phase 3.7.3 Trust-Aware World Model evaluation under Manifest v2.0 (v2.2 closure)."
+        description="Run HOROS PROBE-1 Research-002 Phase 3.7.3 Trust-Aware World Model evaluation under Manifest v2.0 (T4 v2.3)."
     )
     parser.add_argument(
         "--r002-root",
@@ -175,7 +236,7 @@ def main() -> int:
     if str(r002_root) not in sys.path:
         sys.path.insert(0, str(r002_root))
 
-    print(f"=== HOROS PROBE-1 Research-002 Phase 3.7.3 Trust-Aware Evaluation (Manifest v2.0 / v2.2 Closure) ===")
+    print(f"=== HOROS PROBE-1 Research-002 Phase 3.7.3 Trust-Aware Evaluation (Manifest v2.0 / T4 v2.3) ===")
     print(f"R002 Root: {r002_root}")
 
     start_time = time.time()
@@ -208,7 +269,19 @@ def main() -> int:
         print(f"Wrote execution report to {report_path}")
 
         all_passed = results.get("all_gates_passed", False)
-        print(f"\nFinal Phase 3.7.3 v2.2 Adjudication: {'ALL GATES PASSED' if all_passed else 'GATE FAILURE'}")
+        evidence_path = out_dir / "phase37_3_v23_t4_evidence.json"
+        with open(evidence_path, "w", encoding="utf-8") as f:
+            json.dump(results["gates"]["T4_abstention_latency"], f, indent=2)
+        print(f"Wrote T4 v2.3 evidence to {evidence_path}")
+
+        if all_passed:
+            receipt = _closure_receipt(results)
+            receipt_path = out_dir / "phase37_3_v23_closure_receipt.md"
+            with open(receipt_path, "w", encoding="utf-8") as f:
+                f.write(receipt)
+            print(f"Wrote closure receipt to {receipt_path}")
+
+        print(f"\nFinal Phase 3.7.3 v2.3 Adjudication: {'ALL GATES PASSED' if all_passed else 'GATE FAILURE'}")
         return 0 if all_passed else 1
 
     except Exception as e:

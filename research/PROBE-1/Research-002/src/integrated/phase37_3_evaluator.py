@@ -1,5 +1,5 @@
 """
-HOROS PROBE-1 — Research-002: Phase 3.7.3 Evaluation Engine (Manifest v2.0 / Remediation v2.2).
+HOROS PROBE-1 — Research-002: Phase 3.7.3 Evaluation Engine (Manifest v2.0 / T4 v2.3).
 
 Executes rigorous simulation and empirical validation of Gates T1–T5:
 - Gate T1: Zero Safety Filter Violations across Actual Safe-Hold Interventions (40 PiH CBF + 50 Prelift Safe-Hold = 90 Interventions; 10 Non-Abstention Episodes Separately Reported).
@@ -7,8 +7,8 @@ Executes rigorous simulation and empirical validation of Gates T1–T5:
   * Force-gated micro-lift evaluated across p37_2_val_task2_ood (60 episodes, including HighMass & Regime B strata of 28 episodes).
 - Gate T3: Tri-State Decision Quality under Strict Episode Isolation and Fail-Closed Unidentified Mass Policy.
   * Evaluates runtime TrustAwareWorldModel.evaluate_decision() across all episodes in p37_2_val_task2_id with per-episode runtime reset and fail-closed mass gating.
-- Gate T4: Genuine Uncapped Abstention Latency on Regime A Step Transition.
-  * Measures actual decision layer response using genuine observable sensor features (zero synthetic slip injection, zero artificial fallback triggers, zero latency capping).
+- Gate T4: Genuine friction-change detection after TRUST (protocol v2.3).
+  * Closed-loop Regime A episodes must be TRUST at step 14. Latency is measured from the step-15 transition to the first later ABSTAIN. No synthetic slip, no fallback, no latency cap.
 - Gate T5: 100% Bitwise Immutability Verified via Pre- and Post-Execution Cryptographic Audit.
   * Independent manifest digest and configuration validation against registered authorization constants.
   * Pre-execution hash calculation (21 artifacts) -> T1–T4 execution -> Post-execution hash calculation (21 artifacts) -> 3-way bitwise comparison.
@@ -54,6 +54,7 @@ from src.integrated.phase37_2_experiments import (
     _predict_modes_nonprivileged,
     _score_c2_causal,
 )
+from src.integrated.phase37_3_t4_v23 import run_t4_v23_experiment
 from src.integrated.phase37_3_trust_policy import (
     ActiveMicroLiftEstimator,
     TriState,
@@ -110,7 +111,7 @@ def _sha256_of_file(filepath: str) -> str:
 
 def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
     """
-    Executes the complete Phase 3.7.3 Trust-Aware World Model evaluation under Manifest v2.0 (v2.2 closure).
+    Executes the complete Phase 3.7.3 Trust-Aware World Model evaluation under Manifest v2.0 (T4 protocol v2.3).
     """
     t_start = time.time()
     if r002_root not in sys.path:
@@ -534,66 +535,21 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
                     trusted_accurate_samples += 1
 
     trust_precision = float(trusted_accurate_samples / max(trusted_samples, 1))
+    trusted_coverage = float(trusted_samples / max(total_val_samples, 1))
     t3_passed = bool(trust_precision >= 0.90)
 
     # -------------------------------------------------------------------------
-    # 6. Gate T4: Genuine Uncapped Abstention Latency on Regime A
+    # 6. Gate T4 v2.3: friction change after an observed TRUST decision
     # -------------------------------------------------------------------------
-    t4_trust_model = TrustAwareWorldModel(
-        base_world_model=wm_prelift,
+    t4_result = run_t4_v23_experiment(
+        world_model=wm_prelift,
         mode_conformal_bounds=r_conf_mode,
         feature_reference=feat_ref,
         c2_reference=c2_ref,
         config=policy_cfg,
-        task="compliant_prelift",
+        r002_root=r002_root,
     )
-
-    latencies_contact_engaged: List[int] = []
-    latencies_all_regime_a: List[int] = []
-    reasons_regime_a: Dict[str, str] = {}
-
-    for ep_idx in range(39, 50):
-        st, en = int(off_ood[ep_idx]), int(off_ood[ep_idx + 1])
-        ep_len = en - st
-        if ep_len <= 15:
-            continue
-
-        t4_trust_model.reset_episode()
-        trigger_step = None
-        trigger_reason = None
-
-        is_contact_engaged = float(wrenches_ood[st + 14, 2]) > 1.0 or float(np.sum(wrenches_ood[st + 14, :2])) > 5.0
-
-        for k in range(ep_len):
-            idx = st + k
-            obs_k = {
-                "finger_pos": states_ood[idx, 4:8],
-                "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
-                "finger_ft": np.tile(wrenches_ood[idx, :2], (4, 1)),
-                "wrenches": wrenches_ood[idx, :3],
-                "delta_dot_t": np.zeros(4, dtype=np.float32),  # ZERO synthetic injection
-            }
-            t4_trust_model.cusum_statistic = float(s_cusum_ood[idx])
-            pred_m = int(np.argmax(logits_vood[idx]))
-            dec = t4_trust_model.evaluate_decision(obs_k, actions_ood[idx], pred_contact_mode=pred_m)
-            if k >= 15 and dec.state == TriState.ABSTAIN:
-                trigger_step = k
-                trigger_reason = dec.reason
-                break
-
-        if trigger_step is not None:
-            lat = trigger_step - 15
-        else:
-            lat = ep_len - 15
-
-        latencies_all_regime_a.append(lat)
-        reasons_regime_a[f"ep_{ep_idx}"] = trigger_reason or "NO_TRIGGER"
-        if is_contact_engaged:
-            latencies_contact_engaged.append(lat)
-
-    mean_latency_contact = float(np.mean(latencies_contact_engaged)) if latencies_contact_engaged else 0.0
-    mean_latency_contact_ms = float(mean_latency_contact * 10.0)
-    t4_passed = bool(mean_latency_contact <= 3.0 and mean_latency_contact_ms <= 30.0)
+    t4_passed = bool(t4_result["status"] == "PASS")
 
     # -------------------------------------------------------------------------
     # 7. Gate T5 Post-Flight: Calculate Post-Execution Hashes & 3-Way Audit
@@ -642,7 +598,9 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
                 "prelift_violations": t1_prelift_violations,
                 "max_post_abstain_fn_per_finger": round(max(max_post_abstain_fn_all_eps) if max_post_abstain_fn_all_eps else 0.0, 2),
                 "cbf_filter_demonstrated": "GeometryAwareCBFSafetyFilter v1.0",
-                "description": "Zero dynamic crush or safety filter violations across actual intervention episodes (40 PiH CBF + 50 Prelift Safe Hold = 90 interventions)",
+                "pih_evaluation_kind": "cbf_over_recorded_observations",
+                "pih_closed_loop_resimulation": False,
+                "description": "Zero safety-filter violations. PiH is a CBF evaluation over recorded observations, not a new physical closed-loop simulation. Prelift safe-hold is executed on the contact environment after abstention (40 PiH CBF records + 50 Prelift safe-hold = 90 interventions).",
             },
             "T2_active_mass_identifiability": {
                 "status": "PASS" if t2_passed else "FAIL",
@@ -659,6 +617,7 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
             "T3_tristate_decision_quality": {
                 "status": "PASS" if t3_passed else "FAIL",
                 "trust_precision": round(trust_precision, 4),
+                "trusted_coverage": round(trusted_coverage, 4),
                 "conformal_alpha": policy_cfg.conformal_alpha,
                 "mode_conformal_bounds_mm": {str(k): round(v, 4) for k, v in r_conf_mode.items()},
                 "feature_distance_threshold": round(tau_feat_cal, 4),
@@ -670,22 +629,9 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
                 "episode_isolation": True,
                 "fail_closed_unidentified_mass": True,
                 "evaluation_dataset": "p37_2_val_task2_id (Episode-isolated runtime 3-condition rule: CUSUM, Conformal, Feature Dist)",
-                "description": "At least 90% of joint runtime TRUST predictions fall within mode-stratified conformal bounds under strict episode isolation and fail-closed unidentified mass policy",
+                "description": "At least 90% of joint runtime TRUST predictions fall within mode-stratified conformal bounds. trusted_coverage is the fraction of validation samples that received TRUST.",
             },
-            "T4_abstention_latency": {
-                "status": "PASS" if t4_passed else "FAIL",
-                "mean_latency_contact_steps": round(mean_latency_contact, 2),
-                "mean_latency_contact_ms": round(mean_latency_contact_ms, 2),
-                "latencies_contact_engaged": latencies_contact_engaged,
-                "latencies_all_regime_a": latencies_all_regime_a,
-                "reasons_regime_a": reasons_regime_a,
-                "synthetic_slip_injection": False,
-                "uncapped_evaluation": True,
-                "artificial_fallback_removed": True,
-                "threshold_steps": 3.0,
-                "threshold_ms": 30.0,
-                "description": "Genuine uncapped decision layer steps from step-15 friction transition to ABSTAIN trigger without synthetic slip injection",
-            },
+            "T4_abstention_latency": t4_result,
             "T5_artifact_immutability": {
                 "status": "PASS" if t5_passed else "FAIL",
                 "mismatches": total_t5_mismatches,
