@@ -1,19 +1,17 @@
 """
-HOROS PROBE-1 — Research-002: Phase 3.7.3 Evaluation Engine (Manifest v2.0 / Remediation v2.1).
+HOROS PROBE-1 — Research-002: Phase 3.7.3 Evaluation Engine (Manifest v2.0 / Remediation v2.2).
 
 Executes rigorous simulation and empirical validation of Gates T1–T5:
-- Gate T1: Zero Safety Filter Violations under ABSTAIN on OOD Validation Episodes.
-  * Task 1: GeometryAwareCBFSafetyFilter v1.0 evaluated on p37_2_val_pih (40 episodes) with upstream ABSTAIN safe-hold multiplexing.
-  * Task 2: Closed-loop safe-hold [0, 0, 0, 0, 0] applied in CompliantPreLiftContactEnv across all remaining steps on p37_2_val_task2_ood (60 episodes), measuring post-abstention normal forces against the 20.0 N per-finger crush threshold.
+- Gate T1: Zero Safety Filter Violations across Actual Safe-Hold Interventions (40 PiH CBF + 50 Prelift Safe-Hold = 90 Interventions; 10 Non-Abstention Episodes Separately Reported).
 - Gate T2: Active Mass Identifiability on Registered Validation Splits.
   * Force-gated micro-lift evaluated across p37_2_val_task2_ood (60 episodes, including HighMass & Regime B strata of 28 episodes).
-- Gate T3: Tri-State Decision Quality under Full 3-Condition Policy.
-  * Evaluates runtime TrustAwareWorldModel.evaluate_decision() across all transitions in p37_2_val_task2_id under joint CUSUM drift, mode-stratified conformal bounds, and feature-support standardized distance.
+- Gate T3: Tri-State Decision Quality under Strict Episode Isolation and Fail-Closed Unidentified Mass Policy.
+  * Evaluates runtime TrustAwareWorldModel.evaluate_decision() across all episodes in p37_2_val_task2_id with per-episode runtime reset and fail-closed mass gating.
 - Gate T4: Genuine Uncapped Abstention Latency on Regime A Step Transition.
   * Measures actual decision layer response using genuine observable sensor features (zero synthetic slip injection, zero artificial fallback triggers, zero latency capping).
-- Gate T5: 100% Bitwise Immutability of B1-B4 Checkpoints, GeometryAwareCBFSafetyFilter v1.0, and 12 Historical Dataset Archives.
-  * Explicit cryptographic verification of SHA-256 hashes against registered constants.
-  * Pre-flight manifest authorization guard enforcing execution_authorized == 1 and training_permitted == 0.
+- Gate T5: 100% Bitwise Immutability Verified via Pre- and Post-Execution Cryptographic Audit.
+  * Independent manifest digest and configuration validation against registered authorization constants.
+  * Pre-execution hash calculation (21 artifacts) -> T1–T4 execution -> Post-execution hash calculation (21 artifacts) -> 3-way bitwise comparison.
 
 STRICT GOVERNANCE GUARANTEE:
 - Exactly zero world model parameter training (0 weight updates, 0 gradient steps).
@@ -64,6 +62,8 @@ from src.integrated.phase37_3_trust_policy import (
 )
 
 
+EXPECTED_MANIFEST_SHA256 = "535b6c191e9d26d83a012d95ad96f44519503f16432f645aba9f0fcc6718276a"
+
 EXPECTED_SHA256_REGISTRY = {
     "safety_filter": {
         "src/safety/geometry_cbf_safety_filter.py": "77e26c13ddc5b3cd5824604f11ccf08c61379b5f3a9965365de0be654e34d58e",
@@ -110,7 +110,7 @@ def _sha256_of_file(filepath: str) -> str:
 
 def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
     """
-    Executes the complete Phase 3.7.3 Trust-Aware World Model evaluation under Manifest v2.0.
+    Executes the complete Phase 3.7.3 Trust-Aware World Model evaluation under Manifest v2.0 (v2.2 closure).
     """
     t_start = time.time()
     if r002_root not in sys.path:
@@ -122,13 +122,19 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
     manifest_path = os.path.join(r002_root, "manifests", "phase37_3_trust_manifest.json")
     if not os.path.exists(manifest_path):
         raise FileNotFoundError(f"Missing Phase 3.7.3 manifest at {manifest_path}")
-    
+
     with open(manifest_path, "rb") as f:
         manifest_raw = f.read()
     manifest_sha256 = hashlib.sha256(manifest_raw).hexdigest()
     manifest = json.loads(manifest_raw.decode("utf-8"))
 
-    # Pre-Flight Manifest Authorization Guard
+    # Independent Manifest Configuration & Digest Authorization Validation
+    if manifest_sha256 != EXPECTED_MANIFEST_SHA256:
+        raise RuntimeError(
+            f"Phase 3.7.3 independent manifest digest validation failed: expected {EXPECTED_MANIFEST_SHA256}, got {manifest_sha256}"
+        )
+    if str(manifest.get("schema_version")) != "phase37_3_trust_manifest_v2.0":
+        raise RuntimeError("Phase 3.7.3 schema_version must be phase37_3_trust_manifest_v2.0")
     if int(manifest.get("execution_authorized", 0)) != 1:
         raise RuntimeError(
             f"Phase 3.7.3 evaluation blocked: manifest.execution_authorized must be 1, found {manifest.get('execution_authorized')}"
@@ -138,29 +144,36 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
             f"Phase 3.7.3 evaluation blocked: manifest.training_permitted must be 0, found {manifest.get('training_permitted')}"
         )
 
+    probe_cfg_manifest = manifest.get("tri_state_policy", {}).get("force_gated_micro_lift", {})
+    if (
+        probe_cfg_manifest.get("probe_horizon_steps") != 35
+        or probe_cfg_manifest.get("max_displacement_mm") != 2.0
+        or probe_cfg_manifest.get("max_force_cap_n") != 10.0
+    ):
+        raise RuntimeError("Phase 3.7.3 manifest probing configuration does not match approved parameters")
+
     # -------------------------------------------------------------------------
-    # 1. Gate T5: Full Explicit Bitwise Immutability Verification
+    # 1. Gate T5 Pre-Flight: Calculate & Record All 21 Pre-Execution Hashes
     # -------------------------------------------------------------------------
-    t5_mismatches = 0
-    t5_verified_files: Dict[str, str] = {}
+    pre_execution_hashes: Dict[str, str] = {}
+    pre_mismatches = 0
 
     for group_name, file_dict in EXPECTED_SHA256_REGISTRY.items():
         for rel_path, exp_hash in file_dict.items():
             full_path = os.path.join(r002_root, rel_path)
             if not os.path.exists(full_path):
-                t5_mismatches += 1
+                pre_mismatches += 1
                 continue
             act_hash = _sha256_of_file(full_path)
-            t5_verified_files[rel_path] = act_hash
+            pre_execution_hashes[rel_path] = act_hash
             if act_hash != exp_hash:
-                t5_mismatches += 1
+                pre_mismatches += 1
 
     p34_ctx = verify_phase34_artifacts_and_load(r002_root)
     source_locks = verify_all_source_sha256s(r002_root, p34_ctx)
-    t5_passed = bool(t5_mismatches == 0)
 
     # -------------------------------------------------------------------------
-    # 2. Load validation splits
+    # 2. Load Validation Splits
     # -------------------------------------------------------------------------
     cal_t2_id = _load_p37_2_split(r002_root, "p37_2_calib_task2_id")
     val_t2_id = _load_p37_2_split(r002_root, "p37_2_val_task2_id")
@@ -290,11 +303,35 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
 
     t1_prelift_violations = 0
     t1_prelift_abstentions = 0
+    t1_prelift_non_abstentions = 0
     max_post_abstain_fn_all_eps: List[float] = []
 
     for ep_idx in range(ood_episodes):
         st, en = int(off_ood[ep_idx]), int(off_ood[ep_idx + 1])
         trust_model_prelift.reset_episode()
+
+        m_info = meta_list_ood[ep_idx]
+        seed = m_info["seed"]
+        env_cfg = m_info["env_config"]
+        m_true = float(env_cfg["initial_mass_kg"])
+        mu_true = float(env_cfg["initial_mu_true"])
+        reg_val = None if env_cfg.get("nonstationary_regime") == "nominal" else env_cfg.get("nonstationary_regime")
+
+        # Prior active micro-lift probe to identify latent mass upon initial contact
+        env_probe = CompliantPreLiftContactEnv(seed=seed)
+        obs_probe = env_probe.reset(mu_true=mu_true, object_mass=m_true, regime=reg_val)
+        for _ in range(5):
+            obs_probe, _ = env_probe.step(np.array([0.5, 0.5, 0.5, 0.5, 0.0], dtype=np.float32))
+
+        estimator = ActiveMicroLiftEstimator(policy_cfg)
+        for step_i in range(policy_cfg.probe_horizon_steps):
+            fz_total = float(np.sum(obs_probe["finger_ft"][:, 1]))
+            act_p, done_p, m_est = estimator.step(fz_total)
+            obs_probe, _ = env_probe.step(act_p)
+            if done_p and estimator.plateau_detected and m_est is not None:
+                trust_model_prelift.latent_mass_identified = True
+                trust_model_prelift.estimated_mass = m_est
+                break
 
         # Step 1: Detect trigger step under runtime trust policy
         trigger_k = None
@@ -343,10 +380,14 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
             max_post_abstain_fn_all_eps.append(ep_max_fn)
             if has_post_crush:
                 t1_prelift_violations += 1
+        else:
+            t1_prelift_non_abstentions += 1
 
-    total_episodes_t1 = pih_episodes + ood_episodes
+    # T1 Intervention Denominator Accounting:
+    # 40 PiH CBF evaluations + 50 Prelift Safe-Hold Interventions = 90 Total Actual Interventions
+    total_interventions_t1 = pih_episodes + t1_prelift_abstentions
     total_violations_t1 = t1_pih_violations + t1_prelift_violations
-    t1_passed = bool(total_violations_t1 == 0)
+    t1_passed = bool(total_violations_t1 == 0 and total_interventions_t1 == 90)
 
     # -------------------------------------------------------------------------
     # 4. Gate T2: Active Mass Identifiability on Registered Validation Splits
@@ -408,7 +449,7 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
     t2_passed = bool(mass_r2_all >= 0.60 and mass_rho_all >= 0.70)
 
     # -------------------------------------------------------------------------
-    # 5. Gate T3: Tri-State Decision Quality (Runtime 3-Condition Evaluation)
+    # 5. Gate T3: Tri-State Decision Quality (Episode-Isolated Runtime Evaluation)
     # -------------------------------------------------------------------------
     det_vid = _forward_b3_detailed(wm_prelift, val_t2_id["states"], val_t2_id["actions"])
     pm_vid, logits_vid = _predict_modes_nonprivileged(wm_prelift, det_vid["x_norm"])
@@ -430,27 +471,67 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
     states_vid = val_t2_id["states"]
     wrenches_vid = val_t2_id["wrenches"]
     actions_vid = val_t2_id["actions"]
+    raw_meta_id = val_t2_id.get("episode_metadata_json")
+    meta_list_id = json.loads(str(raw_meta_id[0])) if raw_meta_id is not None else []
+    off_id = val_t2_id["episode_offsets"]
+    num_id_episodes = len(off_id) - 1
 
     trusted_samples = 0
     trusted_accurate_samples = 0
-    runtime_trust_model.reset_episode()
+    total_val_samples = len(states_vid)
 
-    for k in range(len(states_vid)):
-        obs_k = {
-            "finger_pos": states_vid[k, 4:8],
-            "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
-            "finger_ft": np.tile(wrenches_vid[k, :2], (4, 1)),
-            "wrenches": wrenches_vid[k, :3],
-            "delta_dot_t": np.zeros(4, dtype=np.float32),
-        }
-        runtime_trust_model.cusum_statistic = float(s_cusum_vid[k])
-        dec = runtime_trust_model.evaluate_decision(
-            obs_k, actions_vid[k], pred_contact_mode=int(pred_m_vid[k])
-        )
-        if dec.state == TriState.TRUST:
-            trusted_samples += 1
-            if errs_vid[k] <= dec.conformal_radius:
-                trusted_accurate_samples += 1
+    for ep_idx in range(num_id_episodes):
+        st, en = int(off_id[ep_idx]), int(off_id[ep_idx + 1])
+        m_info = meta_list_id[ep_idx]
+        seed = m_info["seed"]
+        env_cfg = m_info["env_config"]
+        m_true = float(env_cfg["initial_mass_kg"])
+        mu_true = float(env_cfg["initial_mu_true"])
+        reg_val = None if env_cfg.get("nonstationary_regime") == "nominal" else env_cfg.get("nonstationary_regime")
+
+        # 1. Clean episode isolation: reset runtime state completely
+        runtime_trust_model.reset_episode()
+
+        # 2. Run active micro-lift probe in physical environment to identify mass for this episode
+        env = CompliantPreLiftContactEnv(seed=seed)
+        obs_env = env.reset(mu_true=mu_true, object_mass=m_true, regime=reg_val)
+        for _ in range(5):
+            obs_env, _ = env.step(np.array([0.5, 0.5, 0.5, 0.5, 0.0], dtype=np.float32))
+
+        estimator = ActiveMicroLiftEstimator(policy_cfg)
+        m_identified = False
+        m_est_val = None
+        for step_i in range(policy_cfg.probe_horizon_steps):
+            fz_total = float(np.sum(obs_env["finger_ft"][:, 1]))
+            act_p, done_p, m_est = estimator.step(fz_total)
+            obs_env, _ = env.step(act_p)
+            if done_p and estimator.plateau_detected and m_est is not None:
+                m_identified = True
+                m_est_val = m_est
+                break
+
+        if m_identified:
+            runtime_trust_model.latent_mass_identified = True
+            runtime_trust_model.estimated_mass = m_est_val
+
+        # 3. Evaluate transitions of this episode with fail-closed unidentified mass policy
+        for k in range(en - st):
+            idx = st + k
+            obs_k = {
+                "finger_pos": states_vid[idx, 4:8],
+                "finger_fn": wrenches_vid[idx, :4],
+                "finger_ft": np.tile(wrenches_vid[idx, :2], (4, 1)),
+                "wrenches": wrenches_vid[idx, :3],
+                "delta_dot_t": np.zeros(4, dtype=np.float32),
+            }
+            runtime_trust_model.cusum_statistic = float(s_cusum_vid[idx])
+            dec = runtime_trust_model.evaluate_decision(
+                obs_k, actions_vid[idx], pred_contact_mode=int(pred_m_vid[idx])
+            )
+            if dec.state == TriState.TRUST:
+                trusted_samples += 1
+                if errs_vid[idx] <= dec.conformal_radius:
+                    trusted_accurate_samples += 1
 
     trust_precision = float(trusted_accurate_samples / max(trusted_samples, 1))
     t3_passed = bool(trust_precision >= 0.90)
@@ -458,8 +539,6 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     # 6. Gate T4: Genuine Uncapped Abstention Latency on Regime A
     # -------------------------------------------------------------------------
-    # Evaluates genuine decision layer response on Regime A validation episodes (39..49)
-    # Strictly ZERO synthetic slip injection (delta_dot_t = 0), ZERO fallback triggers, ZERO latency caps.
     t4_trust_model = TrustAwareWorldModel(
         base_world_model=wm_prelift,
         mode_conformal_bounds=r_conf_mode,
@@ -483,7 +562,6 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
         trigger_step = None
         trigger_reason = None
 
-        # Contact-engaged criterion: normal or resultant force under load at transition step 14
         is_contact_engaged = float(wrenches_ood[st + 14, 2]) > 1.0 or float(np.sum(wrenches_ood[st + 14, :2])) > 5.0
 
         for k in range(ep_len):
@@ -493,7 +571,7 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
                 "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
                 "finger_ft": np.tile(wrenches_ood[idx, :2], (4, 1)),
                 "wrenches": wrenches_ood[idx, :3],
-                "delta_dot_t": np.zeros(4, dtype=np.float32),  # ZERO synthetic injection!
+                "delta_dot_t": np.zeros(4, dtype=np.float32),  # ZERO synthetic injection
             }
             t4_trust_model.cusum_statistic = float(s_cusum_ood[idx])
             pred_m = int(np.argmax(logits_vood[idx]))
@@ -517,6 +595,29 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
     mean_latency_contact_ms = float(mean_latency_contact * 10.0)
     t4_passed = bool(mean_latency_contact <= 3.0 and mean_latency_contact_ms <= 30.0)
 
+    # -------------------------------------------------------------------------
+    # 7. Gate T5 Post-Flight: Calculate Post-Execution Hashes & 3-Way Audit
+    # -------------------------------------------------------------------------
+    post_execution_hashes: Dict[str, str] = {}
+    post_mismatches = 0
+    immutability_violations = 0
+
+    for group_name, file_dict in EXPECTED_SHA256_REGISTRY.items():
+        for rel_path, exp_hash in file_dict.items():
+            full_path = os.path.join(r002_root, rel_path)
+            if not os.path.exists(full_path):
+                post_mismatches += 1
+                continue
+            act_hash = _sha256_of_file(full_path)
+            post_execution_hashes[rel_path] = act_hash
+            if act_hash != exp_hash:
+                post_mismatches += 1
+            if act_hash != pre_execution_hashes.get(rel_path):
+                immutability_violations += 1
+
+    total_t5_mismatches = pre_mismatches + post_mismatches + immutability_violations
+    t5_passed = bool(total_t5_mismatches == 0)
+
     elapsed_s = round(time.time() - t_start, 3)
 
     return {
@@ -524,21 +625,24 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
         "stage": "Phase 3.7.3 — Trust-Aware World Model Architecture",
         "manifest_version": "phase37_3_trust_manifest_v2.0",
         "manifest_sha256": manifest_sha256,
+        "manifest_digest_verified": True,
         "execution_status": "COMPLETED_AND_ADJUDICATED",
         "elapsed_seconds": elapsed_s,
         "gates": {
             "T1_safety_under_abstention": {
                 "status": "PASS" if t1_passed else "FAIL",
                 "violations": total_violations_t1,
+                "violation_rate": float(total_violations_t1 / total_interventions_t1),
+                "threshold": 0,
+                "pih_cbf_evaluations": pih_episodes,
+                "prelift_abstention_interventions": t1_prelift_abstentions,
+                "prelift_episodes_without_abstention": t1_prelift_non_abstentions,
+                "total_intervention_episodes": total_interventions_t1,
                 "pih_violations": t1_pih_violations,
                 "prelift_violations": t1_prelift_violations,
-                "prelift_abstentions": t1_prelift_abstentions,
                 "max_post_abstain_fn_per_finger": round(max(max_post_abstain_fn_all_eps) if max_post_abstain_fn_all_eps else 0.0, 2),
-                "total_episodes": total_episodes_t1,
-                "violation_rate": float(total_violations_t1 / total_episodes_t1),
-                "threshold": 0,
                 "cbf_filter_demonstrated": "GeometryAwareCBFSafetyFilter v1.0",
-                "description": "Zero dynamic crush or safety filter violations during upstream safe-hold multiplexing into CBF v1.0 and Prelift safe hold",
+                "description": "Zero dynamic crush or safety filter violations across actual intervention episodes (40 PiH CBF + 50 Prelift Safe Hold = 90 interventions)",
             },
             "T2_active_mass_identifiability": {
                 "status": "PASS" if t2_passed else "FAIL",
@@ -560,11 +664,13 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
                 "feature_distance_threshold": round(tau_feat_cal, 4),
                 "cusum_threshold": policy_cfg.tau_cusum_prelift,
                 "threshold": 0.90,
-                "total_validation_samples": len(errs_vid),
+                "total_validation_samples": total_val_samples,
                 "trusted_samples": trusted_samples,
                 "trusted_accurate_samples": trusted_accurate_samples,
-                "evaluation_dataset": "p37_2_val_task2_id (Runtime 3-condition rule: CUSUM, Conformal, Feature Dist)",
-                "description": "At least 90% of joint runtime TRUST predictions fall within mode-stratified conformal bounds",
+                "episode_isolation": True,
+                "fail_closed_unidentified_mass": True,
+                "evaluation_dataset": "p37_2_val_task2_id (Episode-isolated runtime 3-condition rule: CUSUM, Conformal, Feature Dist)",
+                "description": "At least 90% of joint runtime TRUST predictions fall within mode-stratified conformal bounds under strict episode isolation and fail-closed unidentified mass policy",
             },
             "T4_abstention_latency": {
                 "status": "PASS" if t4_passed else "FAIL",
@@ -582,11 +688,16 @@ def run_phase37_3_evaluation(r002_root: str) -> Dict[str, Any]:
             },
             "T5_artifact_immutability": {
                 "status": "PASS" if t5_passed else "FAIL",
-                "mismatches": t5_mismatches,
+                "mismatches": total_t5_mismatches,
+                "pre_execution_mismatches": pre_mismatches,
+                "post_execution_mismatches": post_mismatches,
+                "immutability_violations": immutability_violations,
                 "threshold": 0,
-                "files_verified_count": len(t5_verified_files),
+                "files_verified_count": len(post_execution_hashes),
+                "pre_execution_verified": True,
+                "post_execution_verified": True,
                 "manifest_sha256": manifest_sha256,
-                "description": "Zero modifications to B1-B4, CBF safety filter, and 12 historical dataset archives",
+                "description": "Zero modifications to B1-B4, CBF safety filter, and 12 historical dataset archives verified via pre- and post-execution cryptographic hash comparison",
             },
         },
         "all_gates_passed": bool(t1_passed and t2_passed and t3_passed and t4_passed and t5_passed),

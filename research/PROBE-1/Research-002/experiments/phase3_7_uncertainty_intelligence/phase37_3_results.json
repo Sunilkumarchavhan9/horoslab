@@ -3,21 +3,24 @@
   "stage": "Phase 3.7.3 \u2014 Trust-Aware World Model Architecture",
   "manifest_version": "phase37_3_trust_manifest_v2.0",
   "manifest_sha256": "535b6c191e9d26d83a012d95ad96f44519503f16432f645aba9f0fcc6718276a",
+  "manifest_digest_verified": true,
   "execution_status": "COMPLETED_AND_ADJUDICATED",
-  "elapsed_seconds": 1.586,
+  "elapsed_seconds": 1.427,
   "gates": {
     "T1_safety_under_abstention": {
       "status": "PASS",
       "violations": 0,
-      "pih_violations": 0,
-      "prelift_violations": 0,
-      "prelift_abstentions": 50,
-      "max_post_abstain_fn_per_finger": 14.85,
-      "total_episodes": 100,
       "violation_rate": 0.0,
       "threshold": 0,
+      "pih_cbf_evaluations": 40,
+      "prelift_abstention_interventions": 50,
+      "prelift_episodes_without_abstention": 10,
+      "total_intervention_episodes": 90,
+      "pih_violations": 0,
+      "prelift_violations": 0,
+      "max_post_abstain_fn_per_finger": 14.85,
       "cbf_filter_demonstrated": "GeometryAwareCBFSafetyFilter v1.0",
-      "description": "Zero dynamic crush or safety filter violations during upstream safe-hold multiplexing into CBF v1.0 and Prelift safe hold"
+      "description": "Zero dynamic crush or safety filter violations across actual intervention episodes (40 PiH CBF + 50 Prelift Safe Hold = 90 interventions)"
     },
     "T2_active_mass_identifiability": {
       "status": "PASS",
@@ -33,7 +36,7 @@
     },
     "T3_tristate_decision_quality": {
       "status": "PASS",
-      "trust_precision": 0.9147,
+      "trust_precision": 0.9149,
       "conformal_alpha": 0.08,
       "mode_conformal_bounds_mm": {
         "0": 1.0645,
@@ -48,43 +51,45 @@
       "cusum_threshold": 2.5,
       "threshold": 0.9,
       "total_validation_samples": 1846,
-      "trusted_samples": 1337,
-      "trusted_accurate_samples": 1223,
-      "evaluation_dataset": "p37_2_val_task2_id (Runtime 3-condition rule: CUSUM, Conformal, Feature Dist)",
-      "description": "At least 90% of joint runtime TRUST predictions fall within mode-stratified conformal bounds"
+      "trusted_samples": 1339,
+      "trusted_accurate_samples": 1225,
+      "episode_isolation": true,
+      "fail_closed_unidentified_mass": true,
+      "evaluation_dataset": "p37_2_val_task2_id (Episode-isolated runtime 3-condition rule: CUSUM, Conformal, Feature Dist)",
+      "description": "At least 90% of joint runtime TRUST predictions fall within mode-stratified conformal bounds under strict episode isolation and fail-closed unidentified mass policy"
     },
     "T4_abstention_latency": {
       "status": "PASS",
-      "mean_latency_contact_steps": 0.83,
-      "mean_latency_contact_ms": 8.33,
+      "mean_latency_contact_steps": 0.0,
+      "mean_latency_contact_ms": 0.0,
       "latencies_contact_engaged": [
-        1,
-        1,
-        2,
         0,
-        1,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "latencies_all_regime_a": [
-        1,
-        27,
-        1,
+        0,
+        19,
+        0,
         13,
-        2,
+        0,
         0,
         1,
-        1,
+        0,
         0
       ],
       "reasons_regime_a": {
-        "ep_39": "FEATURE_SUPPORT_OUTLIER",
-        "ep_41": "FEATURE_SUPPORT_OUTLIER",
-        "ep_42": "FEATURE_SUPPORT_OUTLIER",
+        "ep_39": "UNIDENTIFIED_MASS_FAIL_CLOSED",
+        "ep_41": "UNIDENTIFIED_MASS_FAIL_CLOSED",
+        "ep_42": "UNIDENTIFIED_MASS_FAIL_CLOSED",
         "ep_44": "CUSUM_DRIFT",
-        "ep_45": "FEATURE_SUPPORT_OUTLIER",
+        "ep_45": "UNIDENTIFIED_MASS_FAIL_CLOSED",
         "ep_46": "CUSUM_DRIFT",
         "ep_47": "CUSUM_DRIFT",
-        "ep_48": "FEATURE_SUPPORT_OUTLIER",
+        "ep_48": "UNIDENTIFIED_MASS_FAIL_CLOSED",
         "ep_49": "CUSUM_DRIFT"
       },
       "synthetic_slip_injection": false,
@@ -97,10 +102,15 @@
     "T5_artifact_immutability": {
       "status": "PASS",
       "mismatches": 0,
+      "pre_execution_mismatches": 0,
+      "post_execution_mismatches": 0,
+      "immutability_violations": 0,
       "threshold": 0,
       "files_verified_count": 21,
+      "pre_execution_verified": true,
+      "post_execution_verified": true,
       "manifest_sha256": "535b6c191e9d26d83a012d95ad96f44519503f16432f645aba9f0fcc6718276a",
-      "description": "Zero modifications to B1-B4, CBF safety filter, and 12 historical dataset archives"
+      "description": "Zero modifications to B1-B4, CBF safety filter, and 12 historical dataset archives verified via pre- and post-execution cryptographic hash comparison"
     }
   },
   "all_gates_passed": true,

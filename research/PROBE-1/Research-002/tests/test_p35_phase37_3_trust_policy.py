@@ -316,4 +316,109 @@ def test_t5_full_explicit_sha256_verification(phase37_3_results: dict) -> None:
     assert t5["mismatches"] == 0
     assert t5["files_verified_count"] == 21
     assert len(t5["manifest_sha256"]) == 64
+    assert t5.get("pre_execution_verified") is True
+    assert t5.get("post_execution_verified") is True
+    assert t5.get("immutability_violations") == 0
+    assert t5.get("pre_execution_mismatches") == 0
+    assert t5.get("post_execution_mismatches") == 0
+
+
+def test_t1_actual_intervention_accounting(phase37_3_results: dict) -> None:
+    """Verifies that Gate T1 reports exact actual intervention denominators and safe-hold executions."""
+    t1 = phase37_3_results["gates"]["T1_safety_under_abstention"]
+    assert t1["status"] == "PASS"
+    assert t1["pih_cbf_evaluations"] == 40
+    assert t1["prelift_abstention_interventions"] == 50
+    assert t1["prelift_episodes_without_abstention"] == 10
+    assert t1["total_intervention_episodes"] == 90
+    assert t1["violations"] == 0
+    assert t1["violation_rate"] == 0.0
+
+
+def test_unidentified_mass_fail_closed_never_enters_trust() -> None:
+    """Verifies that under contact, unidentified mass strictly commands PROBE or fails closed to ABSTAIN, never TRUST."""
+    cfg = TrustPolicyConfig(
+        probe_horizon_steps=35,
+        tau_cusum_prelift=2.50,
+        conformal_alpha=0.08,
+    )
+
+    class DummyWorldModel:
+        pass
+
+    model = TrustAwareWorldModel(
+        base_world_model=DummyWorldModel(),
+        config=cfg,
+        task="compliant_prelift",
+    )
+    model.reset_episode()
+    assert model.latent_mass_identified is False
+
+    obs_contact = {
+        "finger_pos": np.zeros(4, dtype=np.float32),
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),  # Contact established
+        "finger_ft": np.zeros((4, 2), dtype=np.float32),
+        "wrenches": np.zeros(3, dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+    nominal_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+
+    # Step through 40 steps without plateau (e.g. constant force)
+    decisions = []
+    for step_i in range(40):
+        dec = model.evaluate_decision(obs_contact, nominal_act, pred_contact_mode=0)
+        decisions.append(dec)
+
+    # In steps 0..33 (probing in progress), state must be PROBE
+    for step_i in range(34):
+        assert decisions[step_i].state == TriState.PROBE, f"Step {step_i} was not PROBE"
+        assert decisions[step_i].reason == "ACTIVE_MICRO_LIFT_PROBING"
+
+    # From step 34 onward (35th step hits probe_horizon_steps=35 without plateau): must fail-closed to ABSTAIN
+    for step_i in range(34, 40):
+        assert decisions[step_i].state == TriState.ABSTAIN, f"Step {step_i} was not ABSTAIN"
+        assert decisions[step_i].reason == "UNIDENTIFIED_MASS_FAIL_CLOSED"
+        assert np.all(decisions[step_i].action == 0.0), "Fail-closed action must be safe hold"
+
+    # Crucial invariant: zero decisions may EVER enter TRUST with unidentified mass
+    for step_i, dec in enumerate(decisions):
+        assert dec.state != TriState.TRUST, f"Strict invariant breached: step {step_i} entered TRUST with unidentified mass!"
+
+
+def test_episode_isolation_wipes_all_runtime_state() -> None:
+    """Verifies that reset_episode() completely cleans all runtime drift, mass, and probing state."""
+    cfg = TrustPolicyConfig()
+
+    class DummyWorldModel:
+        pass
+
+    model = TrustAwareWorldModel(
+        base_world_model=DummyWorldModel(),
+        config=cfg,
+        task="compliant_prelift",
+    )
+
+    # Dirty the runtime state
+    model.latent_mass_identified = True
+    model.probing_failed_closed = True
+    model.estimated_mass = 0.42
+    model.cusum_statistic = 4.80
+    model.step_index = 85
+    model.micro_lift_estimator.probing_step = 22
+    model.micro_lift_estimator.total_disp_mm = 1.10
+    model.micro_lift_estimator.plateau_detected = True
+
+    # Wipe state
+    model.reset_episode()
+
+    # Verify clean slate
+    assert model.latent_mass_identified is False
+    assert model.probing_failed_closed is False
+    assert model.estimated_mass is None
+    assert model.cusum_statistic == 0.0
+    assert model.step_index == 0
+    assert model.micro_lift_estimator.probing_step == 0
+    assert model.micro_lift_estimator.total_disp_mm == 0.0
+    assert model.micro_lift_estimator.plateau_detected is False
+
 

@@ -206,6 +206,7 @@ class TrustAwareWorldModel:
         self.step_index = 0
         self.micro_lift_estimator.reset()
         self.latent_mass_identified = False
+        self.probing_failed_closed = False
         self.estimated_mass: Optional[float] = None
         self.estimated_friction: Optional[float] = None
         self.prev_state: Optional[np.ndarray] = None
@@ -330,45 +331,96 @@ class TrustAwareWorldModel:
                 safety_violation_prevented=True,
             )
 
-        # 4. Check for PROBE trigger (Active Information Gathering)
-        needs_probing = contact_established and not self.latent_mass_identified and (
-            latent_mass_uncertainty >= self.cfg.tau_probe_mass_sigma or self.step_index <= 20
-        )
-
-        if needs_probing and self.task == "compliant_prelift":
-            probe_action, is_complete, mass_est = self.micro_lift_estimator.step(total_fz)
-            if is_complete and mass_est is not None:
-                self.latent_mass_identified = True
-                self.estimated_mass = mass_est
+        # 4. Active Information Gathering / Latent Parameter Verification
+        if self.task == "compliant_prelift" and contact_established:
+            if self.probing_failed_closed:
+                safe_action = np.array(self.cfg.safe_hold_action_prelift, dtype=np.float32)
                 return TrustDecision(
-                    state=TriState.TRUST,
-                    reason="PROBE_COMPLETED_MASS_IDENTIFIED",
-                    confidence=0.95,
-                    action=nominal_action,
-                    estimated_mass_kg=self.estimated_mass,
-                    cusum_statistic=self.cusum_statistic,
-                    conformal_radius=conformal_radius,
-                    feature_distance=feat_dist,
-                    probing_step_count=self.micro_lift_estimator.probing_step,
-                    plateau_detected=True,
-                )
-            else:
-                return TrustDecision(
-                    state=TriState.PROBE,
-                    reason="ACTIVE_MICRO_LIFT_PROBING",
-                    confidence=0.50,
-                    action=probe_action,
+                    state=TriState.ABSTAIN,
+                    reason="UNIDENTIFIED_MASS_FAIL_CLOSED",
+                    confidence=0.0,
+                    action=safe_action,
+                    estimated_mass_kg=None,
                     cusum_statistic=self.cusum_statistic,
                     conformal_radius=conformal_radius,
                     feature_distance=feat_dist,
                     probing_step_count=self.micro_lift_estimator.probing_step,
                     plateau_detected=False,
+                    safety_violation_prevented=True,
                 )
 
-        # 5. Default: TRUST (All 3 Conditions Satisfied)
+            if not self.latent_mass_identified:
+                # Mass is unknown: policy must actively probe or fail-closed into ABSTAIN
+                probe_action, is_complete, mass_est = self.micro_lift_estimator.step(total_fz)
+                if is_complete and self.micro_lift_estimator.plateau_detected and mass_est is not None:
+                    self.latent_mass_identified = True
+                    self.estimated_mass = mass_est
+                    return TrustDecision(
+                        state=TriState.TRUST,
+                        reason="PROBE_COMPLETED_MASS_IDENTIFIED",
+                        confidence=0.95,
+                        action=nominal_action,
+                        estimated_mass_kg=self.estimated_mass,
+                        cusum_statistic=self.cusum_statistic,
+                        conformal_radius=conformal_radius,
+                        feature_distance=feat_dist,
+                        probing_step_count=self.micro_lift_estimator.probing_step,
+                        plateau_detected=True,
+                    )
+                elif is_complete and not self.micro_lift_estimator.plateau_detected:
+                    # Probing completed without plateau detection: fail-closed immediately
+                    self.probing_failed_closed = True
+                    safe_action = np.array(self.cfg.safe_hold_action_prelift, dtype=np.float32)
+                    return TrustDecision(
+                        state=TriState.ABSTAIN,
+                        reason="UNIDENTIFIED_MASS_FAIL_CLOSED",
+                        confidence=0.0,
+                        action=safe_action,
+                        estimated_mass_kg=None,
+                        cusum_statistic=self.cusum_statistic,
+                        conformal_radius=conformal_radius,
+                        feature_distance=feat_dist,
+                        probing_step_count=self.micro_lift_estimator.probing_step,
+                        plateau_detected=False,
+                        safety_violation_prevented=True,
+                    )
+                else:
+                    # Probing in progress
+                    return TrustDecision(
+                        state=TriState.PROBE,
+                        reason="ACTIVE_MICRO_LIFT_PROBING",
+                        confidence=0.50,
+                        action=probe_action,
+                        cusum_statistic=self.cusum_statistic,
+                        conformal_radius=conformal_radius,
+                        feature_distance=feat_dist,
+                        probing_step_count=self.micro_lift_estimator.probing_step,
+                        plateau_detected=False,
+                    )
+
+            # Strict Governance Invariant: If contact is established, unidentified mass can NEVER enter TRUST
+            if not self.latent_mass_identified:
+                self.probing_failed_closed = True
+                safe_action = np.array(self.cfg.safe_hold_action_prelift, dtype=np.float32)
+                return TrustDecision(
+                    state=TriState.ABSTAIN,
+                    reason="UNIDENTIFIED_MASS_FAIL_CLOSED",
+                    confidence=0.0,
+                    action=safe_action,
+                    estimated_mass_kg=None,
+                    cusum_statistic=self.cusum_statistic,
+                    conformal_radius=conformal_radius,
+                    feature_distance=feat_dist,
+                    probing_step_count=self.micro_lift_estimator.probing_step,
+                    plateau_detected=False,
+                    safety_violation_prevented=True,
+                )
+
+        # 5. Default: TRUST (All 3 Conditions Satisfied & Mass Identified or Free Space)
+        reason = "NOMINAL_CALIBRATED_PREDICTION" if contact_established else "FREE_SPACE_KINEMATIC_TRUST"
         return TrustDecision(
             state=TriState.TRUST,
-            reason="NOMINAL_CALIBRATED_PREDICTION",
+            reason=reason,
             confidence=max(0.10, 1.0 - self.cfg.conformal_alpha),
             action=nominal_action,
             estimated_mass_kg=self.estimated_mass,
