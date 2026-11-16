@@ -189,7 +189,9 @@ def _collect_single_episode(
             strategy_name = f"calib_{exp_mode}"
         else:
             raise ValueError(f"Unsupported Phase 3.4 condition '{condition}'.")
-        traj = sampler.sample_task2_boundary_trajectory(\n            env, horizon=horizon, exploration_mode=exp_mode, legacy_checkpoint_compatibility=True\n        )
+        traj = sampler.sample_task2_boundary_trajectory(
+            env, horizon=horizon, exploration_mode=exp_mode, legacy_checkpoint_compatibility=True
+        )
 
     scorer = AcquisitionScorer(mu=0.50)
     raw_sig = scorer.score_trajectory_raw(traj, task=sampler_task)
