@@ -3454,6 +3454,11 @@
     "false_abstentions": 0,
     "latch_trips": 0,
     "unauthorized_transitions_to_trust": 0,
+    "max_fn_n": 8.078728994288463,
+    "max_fn_per_finger_n": 2.0196822485721158,
+    "mean_max_fn_n": 8.069397412023587,
+    "mean_fz_n": 3.4374986451377136,
+    "mean_final_obj_z_mm": 1.9540000290572643,
     "description": "Normal friction operates continuously in TRUST with zero latch trips and zero false abstentions"
   },
   "scenario_2_friction_degradation": {
@@ -6912,6 +6917,8 @@
     "step_16_remained_abstain_despite_zero_slip": true,
     "step_16_measured_slip_zero": true,
     "unauthorized_transitions_to_trust": 0,
+    "max_fn_n": 8.078728994288463,
+    "max_fn_per_finger_n": 2.0196822485721158,
     "description": "Friction drop trips latch at step 15; policy strictly remains in ABSTAIN at step 16 despite zero measured slip"
   },
   "scenario_4_degraded_friction_persists": {
@@ -6924,6 +6931,8 @@
       2
     ],
     "unauthorized_transitions_to_trust": 0,
+    "max_fn_n": 8.078728994288463,
+    "max_fn_per_finger_n": 2.0196822485721158,
     "max_slip_mps": 0.005000000074505806,
     "mean_cumulative_slip_mm": 0.05000000074505807,
     "mean_max_obj_drop_mm": 0.6540000096857547,
@@ -10385,6 +10394,8 @@
     "total_episodes": 4,
     "recovery_success_rate": 1.0,
     "unauthorized_transitions_to_trust": 0,
+    "max_fn_n": 8.078728994288463,
+    "max_fn_per_finger_n": 2.0196822485721158,
     "description": "Restored friction (mu=0.60 at step 25) successfully completes dwell and verification micro-probe; safely transitions to TRUST"
   },
   "scenario_6_recovery_unverified": {
@@ -13842,6 +13853,8 @@
     "failed_closed_count": 4,
     "total_episodes": 4,
     "unauthorized_transitions_to_trust": 0,
+    "max_fn_n": 8.078728994288463,
+    "max_fn_per_finger_n": 2.0196822485721158,
     "description": "Degraded friction during recovery check fails verification micro-probe and fails closed to TERMINAL_ABSTAIN"
   }
 }

@@ -233,3 +233,149 @@ def test_policy_unit_latch_and_recovery_mechanics() -> None:
     assert dec_fail.state == TriState.ABSTAIN
     assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
     assert policy.safety_latched is True
+
+
+def test_settle_timeout_fails_closed() -> None:
+    """Verifies that persistent micro-slip during dwell settle times out into TERMINAL_ABSTAIN."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(),
+        task="compliant_prelift",
+    )
+    base_model.latent_mass_identified = True
+    base_model.estimated_mass = 0.350
+
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(
+            min_latch_dwell_steps=5,
+            settle_timeout_steps=10,  # 10 steps timeout
+            max_quiescent_slip_mps=0.0001,
+        ),
+    )
+    policy.reset_episode()
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.RECOVERING_SETTLE
+    policy.total_settle_steps = 0
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    obs_micro_slip = {
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.array([0.0003, 0.0003, 0.0003, 0.0003], dtype=np.float32),  # > max_quiescent_slip_mps
+    }
+
+    # Step 9 times: still in settle dwell
+    for step_i in range(9):
+        dec = policy.evaluate_decision(obs_micro_slip, nom_act)
+        assert policy.latch_state == SafetyLatchState.RECOVERING_SETTLE
+        assert dec.state == TriState.ABSTAIN
+
+    # Step 10: hits settle_timeout_steps -> must fail closed to TERMINAL_ABSTAIN
+    dec10 = policy.evaluate_decision(obs_micro_slip, nom_act)
+    assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
+    assert dec10.state == TriState.ABSTAIN
+    assert dec10.reason == "RECOVERY_SETTLE_TIMEOUT_EXCEEDED"
+    assert policy.recovery_attempts == 1
+
+
+def test_elevated_cusum_prevents_recovery() -> None:
+    """Verifies that elevated CUSUM drift during verification prevents unauthorized recovery."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(),
+        task="compliant_prelift",
+    )
+    base_model.latent_mass_identified = True
+    base_model.estimated_mass = 0.350
+
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(
+            verify_probe_steps=3,
+            tau_cusum_recovery=1.50,
+        ),
+    )
+    policy.reset_episode()
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
+    policy.verify_step_count = 0
+    # Simulate elevated CUSUM statistic
+    policy.trust_model.cusum_statistic = 2.10  # > 1.50
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    obs_no_slip = {
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+
+    dec = policy.evaluate_decision(obs_no_slip, nom_act)
+    assert dec.state == TriState.ABSTAIN
+    assert dec.reason == "RECOVERY_VERIFICATION_CUSUM_ELEVATED"
+    assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
+    assert policy.recovery_attempts == 1
+
+
+def test_max_recovery_attempts_enforced() -> None:
+    """Verifies that a failed recovery cannot be repeatedly retried."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(),
+        task="compliant_prelift",
+    )
+    base_model.latent_mass_identified = True
+    base_model.estimated_mass = 0.350
+
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(
+            max_recovery_attempts=1,
+            min_latch_dwell_steps=2,
+        ),
+    )
+    policy.reset_episode()
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.LATCHED_ABSTAIN
+    policy.latch_trigger_step = 10
+    policy.step_index = 15
+    policy.recovery_attempts = 1  # Already attempted and failed once
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    obs = {
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+
+    dec = policy.evaluate_decision(obs, nom_act, allow_recovery_trigger=True)
+    # Must immediately lock into TERMINAL_ABSTAIN without re-entering settle
+    assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
+    assert dec.state == TriState.ABSTAIN
+
+
+def test_report_metrics_normal_friction_and_forces(phase37_4_results: Dict[str, Any]) -> None:
+    """Verifies that physical normal-friction and maximum-force reporting metrics are populated and compliant."""
+    scens = phase37_4_results["scenarios"]
+    s1 = scens["scenario_1_normal_friction"]
+    assert "max_fn_n" in s1
+    assert "max_fn_per_finger_n" in s1
+    assert "mean_fz_n" in s1
+    assert s1["max_fn_n"] > 0.0
+    assert s1["max_fn_per_finger_n"] < 20.0  # Dynamic crush limit
+
+    s4 = scens["scenario_4_degraded_friction_persists"]
+    assert "max_fn_n" in s4
+    assert "max_fn_per_finger_n" in s4
+    assert s4["max_fn_n"] > 0.0
+    assert s4["max_fn_per_finger_n"] < 20.0
+

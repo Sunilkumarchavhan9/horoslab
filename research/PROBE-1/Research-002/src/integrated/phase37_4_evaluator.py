@@ -377,12 +377,21 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
         for ep in scen1_eps
     )
     scen1_latch_trips = sum(1 for ep in scen1_eps if ep["latch_tripped"])
+    scen1_max_fn = float(np.max([ep["max_fn_n"] for ep in scen1_eps]))
+    scen1_mean_max_fn = float(np.mean([ep["max_fn_n"] for ep in scen1_eps]))
+    scen1_mean_fz = float(np.mean([ep["mean_fz_n"] for ep in scen1_eps]))
+    scen1_final_z = float(np.mean([ep["final_obj_z_mm"] for ep in scen1_eps]))
     results_by_scenario["scenario_1_normal_friction"] = {
         "episodes": scen1_eps,
         "status": "PASS" if scen1_false_abstentions == 0 and scen1_latch_trips == 0 else "FAIL",
         "false_abstentions": scen1_false_abstentions,
         "latch_trips": scen1_latch_trips,
         "unauthorized_transitions_to_trust": 0,
+        "max_fn_n": scen1_max_fn,
+        "max_fn_per_finger_n": float(scen1_max_fn / 4.0),
+        "mean_max_fn_n": scen1_mean_max_fn,
+        "mean_fz_n": scen1_mean_fz,
+        "mean_final_obj_z_mm": scen1_final_z,
         "description": "Normal friction operates continuously in TRUST with zero latch trips and zero false abstentions",
     }
 
@@ -410,6 +419,7 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
     step16_abstain = all(ep["decisions"][15]["decision_state"] == TriState.ABSTAIN.value for ep in scen2_eps)
     step16_slip_zero = all(ep["decisions"][15]["max_slip_mps"] == 0.0 for ep in scen2_eps)
     scen2_unauthorized = sum(ep["unauthorized_transitions_to_trust"] for ep in scen2_eps)
+    scen2_max_fn = float(np.max([ep["max_fn_n"] for ep in scen2_eps]))
 
     results_by_scenario["scenario_2_friction_degradation"] = {
         "episodes": scen2_eps,
@@ -418,6 +428,8 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
         "step_16_remained_abstain_despite_zero_slip": step16_abstain,
         "step_16_measured_slip_zero": step16_slip_zero,
         "unauthorized_transitions_to_trust": scen2_unauthorized,
+        "max_fn_n": scen2_max_fn,
+        "max_fn_per_finger_n": float(scen2_max_fn / 4.0),
         "description": "Friction drop trips latch at step 15; policy strictly remains in ABSTAIN at step 16 despite zero measured slip",
     }
 
@@ -426,17 +438,18 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
     # -------------------------------------------------------------------------
     scen4_eps = scen2_eps  # Same run without recovery evaluated over full horizon
     scen4_flips = [ep["state_flips"] for ep in scen4_eps]
-    # Under old v2.3, state_flips was ~25 due to TRUST/ABSTAIN flickering!
-    # Under Phase 3.7.4 persistent latch, state_flips must be exactly 1 (TRUST -> ABSTAIN once)!
     scen4_max_flips = max(scen4_flips)
     scen4_post_abstain_ratio = float(np.mean([ep["post_transition_abstain_ratio"] for ep in scen4_eps]))
     scen4_unauthorized = sum(ep["unauthorized_transitions_to_trust"] for ep in scen4_eps)
+    scen4_max_fn = float(np.max([ep["max_fn_n"] for ep in scen4_eps]))
 
     results_by_scenario["scenario_4_degraded_friction_persists"] = {
         "status": "PASS" if scen4_max_flips <= 2 and scen4_post_abstain_ratio == 1.0 and scen4_unauthorized == 0 else "FAIL",
         "mean_post_abstain_ratio": scen4_post_abstain_ratio,
         "state_flips_per_episode": scen4_flips,
         "unauthorized_transitions_to_trust": scen4_unauthorized,
+        "max_fn_n": scen4_max_fn,
+        "max_fn_per_finger_n": float(scen4_max_fn / 4.0),
         "max_slip_mps": float(np.max([ep["max_slip_mps"] for ep in scen4_eps])),
         "mean_cumulative_slip_mm": float(np.mean([ep["cumulative_slip_mm"] for ep in scen4_eps])),
         "mean_max_obj_drop_mm": float(np.mean([ep["max_obj_drop_mm"] for ep in scen4_eps])),
@@ -465,6 +478,7 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
 
     scen5_recovered = sum(1 for ep in scen5_eps if ep["recovery_successful"])
     scen5_unauthorized = sum(ep["unauthorized_transitions_to_trust"] for ep in scen5_eps)
+    scen5_max_fn = float(np.max([ep["max_fn_n"] for ep in scen5_eps]))
     results_by_scenario["scenario_5_recovery_satisfied"] = {
         "episodes": scen5_eps,
         "status": "PASS" if scen5_recovered == len(SEEDS) and scen5_unauthorized == 0 else "FAIL",
@@ -472,6 +486,8 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
         "total_episodes": len(SEEDS),
         "recovery_success_rate": float(scen5_recovered / len(SEEDS)),
         "unauthorized_transitions_to_trust": scen5_unauthorized,
+        "max_fn_n": scen5_max_fn,
+        "max_fn_per_finger_n": float(scen5_max_fn / 4.0),
         "description": "Restored friction (mu=0.60 at step 25) successfully completes dwell and verification micro-probe; safely transitions to TRUST",
     }
 
@@ -497,12 +513,15 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
 
     scen6_failed_closed = sum(1 for ep in scen6_eps if ep["final_latch_state"] == SafetyLatchState.TERMINAL_ABSTAIN.value)
     scen6_unauthorized = sum(ep["unauthorized_transitions_to_trust"] for ep in scen6_eps)
+    scen6_max_fn = float(np.max([ep["max_fn_n"] for ep in scen6_eps]))
     results_by_scenario["scenario_6_recovery_unverified"] = {
         "episodes": scen6_eps,
         "status": "PASS" if scen6_failed_closed == len(SEEDS) and scen6_unauthorized == 0 else "FAIL",
         "failed_closed_count": scen6_failed_closed,
         "total_episodes": len(SEEDS),
         "unauthorized_transitions_to_trust": scen6_unauthorized,
+        "max_fn_n": scen6_max_fn,
+        "max_fn_per_finger_n": float(scen6_max_fn / 4.0),
         "description": "Degraded friction during recovery check fails verification micro-probe and fails closed to TERMINAL_ABSTAIN",
     }
 
@@ -521,7 +540,7 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
 
     return {
         "program": "HOROS PROBE-1 — Research-002",
-        "stage": "Phase 3.7.4 — Persistent Safety and Controlled Recovery",
+        "stage": "Phase 3.7.4.1 — Recovery Gate Hardening",
         "protocol_id": PROTOCOL_ID,
         "manifest_version": manifest.get("schema_version", "phase37_4_recovery_manifest_v1.0"),
         "manifest_sha256": manifest_sha256,

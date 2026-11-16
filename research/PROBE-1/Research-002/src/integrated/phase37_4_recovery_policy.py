@@ -118,6 +118,7 @@ class PersistentSafetyRecoveryPolicy:
         self.latch_trigger_step: Optional[int] = None
         self.latch_trigger_reason: Optional[str] = None
         self.dwell_step_count = 0
+        self.total_settle_steps = 0
         self.verify_step_count = 0
         self.recovery_attempts = 0
         self.unauthorized_trust_attempts = 0
@@ -244,8 +245,13 @@ class PersistentSafetyRecoveryPolicy:
             steps_latched = self.step_index - (self.latch_trigger_step or self.step_index)
             # Check if recovery protocol can be initiated
             if allow_recovery_trigger and steps_latched >= self.cfg.min_latch_dwell_steps:
-                self.latch_state = SafetyLatchState.RECOVERING_SETTLE
-                self.dwell_step_count = 0
+                if self.recovery_attempts >= self.cfg.max_recovery_attempts:
+                    # Recovery attempts exhausted: permanent fail-closed terminal safe hold
+                    self.latch_state = SafetyLatchState.TERMINAL_ABSTAIN
+                else:
+                    self.latch_state = SafetyLatchState.RECOVERING_SETTLE
+                    self.dwell_step_count = 0
+                    self.total_settle_steps = 0
 
             audit_rec = RecoveryAuditRecord(
                 step=self.step_index,
@@ -275,6 +281,36 @@ class PersistentSafetyRecoveryPolicy:
 
         # State 3: RECOVERING_SETTLE (Dwell Phase)
         if self.latch_state == SafetyLatchState.RECOVERING_SETTLE:
+            self.total_settle_steps += 1
+            if self.total_settle_steps >= self.cfg.settle_timeout_steps:
+                # Settle timed out: persistent slip prevented quiescent dwell! Fail closed!
+                self.latch_state = SafetyLatchState.TERMINAL_ABSTAIN
+                self.recovery_attempts += 1
+                audit_rec = RecoveryAuditRecord(
+                    step=self.step_index,
+                    latch_state=self.latch_state,
+                    decision_state=TriState.ABSTAIN,
+                    decision_reason="RECOVERY_SETTLE_TIMEOUT_EXCEEDED",
+                    action=safe_hold_act,
+                    max_slip_mps=max_slip_vel,
+                    total_fn_n=total_fn,
+                    total_fz_n=total_fz,
+                    cusum_statistic=self.trust_model.cusum_statistic,
+                    unauthorized_trust_prevented=unauthorized_attempt,
+                )
+                self.audit_log.append(audit_rec)
+                return TrustDecision(
+                    state=TriState.ABSTAIN,
+                    reason="RECOVERY_SETTLE_TIMEOUT_EXCEEDED",
+                    confidence=0.0,
+                    action=safe_hold_act,
+                    estimated_mass_kg=self.trust_model.estimated_mass,
+                    cusum_statistic=self.trust_model.cusum_statistic,
+                    conformal_radius=underlying_dec.conformal_radius,
+                    feature_distance=underlying_dec.feature_distance,
+                    safety_violation_prevented=True,
+                )
+
             # Check quiescent stability
             if max_slip_vel <= self.cfg.max_quiescent_slip_mps:
                 self.dwell_step_count += 1
@@ -366,6 +402,36 @@ class PersistentSafetyRecoveryPolicy:
                 return TrustDecision(
                     state=TriState.ABSTAIN,
                     reason="RECOVERY_VERIFICATION_UNSAFE_FORCE_RATIO",
+                    confidence=0.0,
+                    action=safe_hold_act,
+                    estimated_mass_kg=self.trust_model.estimated_mass,
+                    cusum_statistic=self.trust_model.cusum_statistic,
+                    conformal_radius=underlying_dec.conformal_radius,
+                    feature_distance=underlying_dec.feature_distance,
+                    safety_violation_prevented=True,
+                )
+
+            # Condition C: Enforce tau_cusum_recovery (P0)
+            if self.trust_model.cusum_statistic > self.cfg.tau_cusum_recovery:
+                # Elevated CUSUM drift: cannot certify recovery! Fail closed!
+                self.latch_state = SafetyLatchState.TERMINAL_ABSTAIN
+                self.recovery_attempts += 1
+                audit_rec = RecoveryAuditRecord(
+                    step=self.step_index,
+                    latch_state=self.latch_state,
+                    decision_state=TriState.ABSTAIN,
+                    decision_reason="RECOVERY_VERIFICATION_CUSUM_ELEVATED",
+                    action=safe_hold_act,
+                    max_slip_mps=max_slip_vel,
+                    total_fn_n=total_fn,
+                    total_fz_n=total_fz,
+                    cusum_statistic=self.trust_model.cusum_statistic,
+                    unauthorized_trust_prevented=unauthorized_attempt,
+                )
+                self.audit_log.append(audit_rec)
+                return TrustDecision(
+                    state=TriState.ABSTAIN,
+                    reason="RECOVERY_VERIFICATION_CUSUM_ELEVATED",
                     confidence=0.0,
                     action=safe_hold_act,
                     estimated_mass_kg=self.trust_model.estimated_mass,

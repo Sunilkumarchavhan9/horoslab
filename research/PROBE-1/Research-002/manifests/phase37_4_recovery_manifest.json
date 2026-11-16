@@ -1,7 +1,7 @@
 {
   "schema_version": "phase37_4_recovery_manifest_v1.0",
   "program": "HOROS PROBE-1 — Research-002",
-  "stage": "Phase 3.7.4 — Persistent Safety and Controlled Recovery",
+  "stage": "Phase 3.7.4.1 — Recovery Gate Hardening",
   "protocol_id": "HOROS-P1-R002-P374-REC-v1.0",
   "governance": {
     "execution_authorized": 1,
