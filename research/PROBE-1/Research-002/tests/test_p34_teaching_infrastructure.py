@@ -1064,8 +1064,6 @@ def test_task2_zero_information_leakage_end_to_end() -> None:
         pert_step = distiller.extract_nonprivileged_step(corrupted_ep.states[0], corrupted_ep.actions[0], corrupted_ep.wrenches[0])
         np.testing.assert_array_equal(orig_step, pert_step)
 
-
-
 def test_task2_boundary_sampler_uses_cartesian_wrench_contract(monkeypatch: pytest.MonkeyPatch) -> None:
     """Current and legacy simulators must both emit Cartesian wrenches from measured finger_ft.
 
@@ -1106,4 +1104,4 @@ def test_task2_boundary_sampler_uses_cartesian_wrench_contract(monkeypatch: pyte
     assert {task for task, _ in calls} == {"compliant_prelift", "multifinger_lift"}
     assert all(not kwargs.get("legacy_compatibility_mode", False) for _, kwargs in calls)
     assert all(not kwargs.get("legacy_padding", False) for _, kwargs in calls)
-\n
+
