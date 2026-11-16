@@ -277,6 +277,8 @@ class CompliantPreLiftContactEnv:
         regime_a_initial_mu: float = 0.60,
         regime_a_changed_mu: float = 0.24,
         regime_a_transition_step: int = 15,
+        regime_a_recovery_step: Optional[int] = None,
+        regime_a_recovered_mu: float = 0.60,
         regime_b_mass_rate_kg_s: float = 0.25,
         regime_b_trigger_time_s: float = 0.0,
     ):
@@ -284,6 +286,8 @@ class CompliantPreLiftContactEnv:
         self.regime_a_initial_mu = float(regime_a_initial_mu)
         self.regime_a_changed_mu = float(regime_a_changed_mu)
         self.regime_a_transition_step = int(regime_a_transition_step)
+        self.regime_a_recovery_step = int(regime_a_recovery_step) if regime_a_recovery_step is not None else None
+        self.regime_a_recovered_mu = float(regime_a_recovered_mu)
         self.regime_b_mass_rate_kg_s = float(regime_b_mass_rate_kg_s)
         self.regime_b_trigger_time_s = float(regime_b_trigger_time_s)
 
@@ -329,6 +333,7 @@ class CompliantPreLiftContactEnv:
         self.mu_true = float(self.initial_mu_true)
         self.object_mass = float(self.initial_object_mass)
         self._regime_a_triggered = False
+        self._regime_a_recovered = False
 
         self.obj_pos = np.array([0.0, 0.0, 0.0], dtype=float)  # mm
         self.obj_vel = np.array([0.0, 0.0, 0.0], dtype=float)  # mm/s
@@ -373,6 +378,22 @@ class CompliantPreLiftContactEnv:
                 self._regime_a_triggered = True
                 self.regime_events.append({
                     "event": "regime_a_friction_step",
+                    "step": int(self.step_count),
+                    "sim_time_s": float(self.sim_time_s),
+                    "from_mu": prev_mu,
+                    "to_mu": float(self.mu_true),
+                })
+            elif (
+                self._regime_a_triggered
+                and (not self._regime_a_recovered)
+                and (self.regime_a_recovery_step is not None)
+                and (self.step_count >= self.regime_a_recovery_step)
+            ):
+                prev_mu = float(self.mu_true)
+                self.mu_true = float(self.regime_a_recovered_mu)
+                self._regime_a_recovered = True
+                self.regime_events.append({
+                    "event": "regime_a_friction_recovery",
                     "step": int(self.step_count),
                     "sim_time_s": float(self.sim_time_s),
                     "from_mu": prev_mu,
@@ -597,3 +618,4 @@ class CompliantPreLiftContactEnv:
             "mass_history": [round(float(x), 6) for x in self.mass_history],
             "step_records": copy.deepcopy(self.step_history),
         }
+

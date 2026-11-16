@@ -1,0 +1,92 @@
+{
+  "schema_version": "phase37_4_recovery_manifest_v1.0",
+  "program": "HOROS PROBE-1 — Research-002",
+  "stage": "Phase 3.7.4 — Persistent Safety and Controlled Recovery",
+  "protocol_id": "HOROS-P1-R002-P374-REC-v1.0",
+  "governance": {
+    "execution_authorized": 1,
+    "training_permitted": 0,
+    "zero_training_guarantee": "Exactly zero world model parameters updated; zero optimizer gradient steps executed",
+    "unauthorized_trust_tolerance": 0
+  },
+  "safety_latch": {
+    "tau_slip_mps": 0.0010,
+    "tau_fz_loaded_n": 1.00,
+    "fn_contact_threshold_n": 0.50,
+    "tau_cusum_prelift": 2.50,
+    "tau_cusum_recovery": 1.50,
+    "min_latch_dwell_steps": 5,
+    "max_quiescent_slip_mps": 0.0001,
+    "settle_timeout_steps": 20
+  },
+  "recovery_protocol": {
+    "verify_probe_steps": 3,
+    "verify_arm_dz_per_step_mm": 0.02,
+    "verify_max_slip_mps": 0.0005,
+    "safe_shear_ratio_cap": 0.35,
+    "max_recovery_attempts": 1,
+    "safe_hold_action_prelift": [0.0, 0.0, 0.0, 0.0, 0.0],
+    "safe_hold_action_pih": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  },
+  "scenarios": {
+    "scenario_1_normal_friction": {
+      "regime": "nominal",
+      "initial_mu": 0.60,
+      "expected_state": "TRUST",
+      "allow_latch": false
+    },
+    "scenario_2_friction_degradation": {
+      "regime": "A",
+      "initial_mu": 0.60,
+      "transition_step": 15,
+      "changed_mu": 0.24,
+      "expected_state": "ABSTAIN",
+      "allow_latch": true
+    },
+    "scenario_3_slip_disappears": {
+      "regime": "A",
+      "initial_mu": 0.60,
+      "transition_step": 15,
+      "changed_mu": 0.24,
+      "step_evaluated": 16,
+      "measured_slip_mps": 0.0,
+      "expected_state": "ABSTAIN",
+      "latch_required": true
+    },
+    "scenario_4_degraded_friction_persists": {
+      "regime": "A",
+      "initial_mu": 0.60,
+      "transition_step": 15,
+      "changed_mu": 0.24,
+      "recovery_step": null,
+      "steps_range": [15, 40],
+      "expected_state": "ABSTAIN",
+      "unauthorized_trust_tolerance": 0
+    },
+    "scenario_5_recovery_satisfied": {
+      "regime": "A",
+      "initial_mu": 0.60,
+      "transition_step": 15,
+      "changed_mu": 0.24,
+      "recovery_step": 25,
+      "recovered_mu": 0.60,
+      "expected_outcome": "RECOVERED_TO_TRUST"
+    },
+    "scenario_6_recovery_unverified": {
+      "regime": "A",
+      "initial_mu": 0.60,
+      "transition_step": 15,
+      "changed_mu": 0.24,
+      "recovery_step": null,
+      "expected_outcome": "TERMINAL_ABSTAIN"
+    }
+  },
+  "frozen_baselines": {
+    "b1_deterministic": "frozen",
+    "b2_probabilistic": "frozen",
+    "b3_ensemble": "frozen",
+    "b4_conformal_calibration": "frozen",
+    "geometry_cbf_safety_filter": "frozen",
+    "phase37_3_v23_artifacts": "frozen"
+  }
+}
