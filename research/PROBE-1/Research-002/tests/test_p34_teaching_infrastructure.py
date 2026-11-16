@@ -1105,3 +1105,12 @@ def test_task2_boundary_sampler_uses_cartesian_wrench_contract(monkeypatch: pyte
     assert all(not kwargs.get("legacy_compatibility_mode", False) for _, kwargs in calls)
     assert all(not kwargs.get("legacy_padding", False) for _, kwargs in calls)
 
+    # Frozen Phase 3.4/3.5 replay must opt in explicitly and be distinguishable by contract.
+    replay_env = CompliantPreLiftContactEnv(seed=2028)
+    replay_result = ContactBoundarySampler(task="compliant_prelift", seed=2028).sample_task2_boundary_trajectory(
+        replay_env, horizon=2, exploration_mode="random", legacy_checkpoint_compatibility=True
+    )
+    assert replay_result["wrench_contract"] == "legacy_task2_normal_force_padding_v0"
+    expected_legacy = np.pad(replay_result["realized_states"][:, 12:16], ((0, 0), (0, 2)))
+    np.testing.assert_allclose(replay_result["realized_wrenches"], expected_legacy, atol=1e-6)
+
