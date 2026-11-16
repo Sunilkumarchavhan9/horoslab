@@ -51,11 +51,13 @@ Following comprehensive GitHub source review and remote continuous integration d
 Before authorization of **Stage 3: World Model vNext Student Training**, the following gating conditions must be formally satisfied:
 
 1. **Formal Program Authorization:** User sign-off approving commencement of student model training.
-2. **Model Architecture Freezing:** Freezing student model hyperparameter specification (HCTT-Base: 4-layer Transformer, hidden dimension 128, 4 attention heads, history horizon $H_{\text{hist}} = 10$).
+2. **Model Architecture Freezing:** Freezing student model hyperparameter specification formally locked in `experiments/world_model_vnext/horos_vnext_locked_training_spec.md` and `manifests/horos_world_model_vnext_manifest.json` (HCTT: 6-layer Transformer decoder, hidden dimension 256, 8 attention heads, history horizon $H_{\text{hist}} = 10$, RoPE).
 3. **Synthetic Dataset Generation:** Generating $N \ge 1,000$ physics-validated interaction scenarios across Peg-in-Hole and Compliant Prelift tasks using the verified Model Teaching Infrastructure.
 4. **Frozen Evaluation Benchmarks:**
-   - Multi-horizon prediction MSE reduction $\ge 20\%$ relative to frozen $B3$ ACMM baseline on Peg-in-Hole and Multifinger Prelift tasks.
+   - Multi-horizon prediction MSE reduction $\ge 40.0\%$ relative to frozen $B3$ ACMM baseline on Peg-in-Hole and Compliant Prelift tasks.
    - Contact-mode prediction macro F1 $\ge 0.85$ across all physical contact modes without privileged access to ground truth.
+   - Latent friction ($R^2 \ge 0.60$) and active mass identifiability ($R^2 \ge 0.60, \rho \ge 0.70$).
+   - OOD domain discrimination AUROC $\ge 0.85$.
    - Conformal calibration empirical coverage $\ge 90.0\%$ at nominal $1 - \alpha = 0.90$ across all contact phases.
 
 ---

@@ -1,0 +1,9 @@
+# Enforce LF line endings on files locked by LF SHA-256 in manifests
+src/integrated/phase37_1_ood_diagnostics.py text eol=lf
+experiments/phase3_5_evaluation/phase35_closure_addendum_report.md text eol=lf
+experiments/phase3_7_uncertainty_intelligence/phase37_2_experimental_specification.md text eol=lf
+
+# Enforce CRLF line endings on files locked by CRLF SHA-256 in manifests
+*.json text eol=crlf
+*.csv text eol=crlf
+experiments/phase3_7_uncertainty_intelligence/phase37_1_epistemic_ood_diagnostic_report.md text eol=crlf

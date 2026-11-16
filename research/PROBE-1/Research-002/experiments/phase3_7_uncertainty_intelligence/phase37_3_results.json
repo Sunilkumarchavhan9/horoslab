@@ -1,0 +1,51 @@
+{
+  "program": "HOROS PROBE-1 \u2014 Research-002",
+  "stage": "Phase 3.7.3 \u2014 Trust-Aware World Model Architecture",
+  "status": "COMPLETED_AND_ADJUDICATED",
+  "elapsed_seconds": 0.902,
+  "gates": {
+    "T1_safety_under_abstention": {
+      "status": "PASS",
+      "violations": 0,
+      "total_episodes": 60,
+      "violation_rate": 0.0,
+      "threshold": 0,
+      "description": "Zero safety filter violations during upstream safe-hold multiplexing"
+    },
+    "T2_active_mass_identifiability": {
+      "status": "PASS",
+      "mass_r2": 0.9969,
+      "mass_spearman_rho": 1.0,
+      "r2_threshold": 0.6,
+      "rho_threshold": 0.7,
+      "baseline_passive_r2": -0.0705,
+      "description": "Closed-loop force-gated micro-lift raises mass R2 from -0.07 to >= 0.60"
+    },
+    "T3_tristate_decision_quality": {
+      "status": "PASS",
+      "trust_precision": 0.9043,
+      "r_conf_calibrated_mm": 1.3485,
+      "threshold": 0.9,
+      "trusted_samples": 1442,
+      "trusted_accurate_samples": 1304,
+      "description": "At least 90% of trusted predictions fall within calibrated geometric error bounds"
+    },
+    "T4_abstention_latency": {
+      "status": "PASS",
+      "mean_latency_steps": 1.73,
+      "mean_latency_ms": 17.27,
+      "threshold_steps": 3.0,
+      "threshold_ms": 30.0,
+      "description": "Abstain triggered within 3 steps of abrupt regime collapse"
+    },
+    "T5_artifact_immutability": {
+      "status": "PASS",
+      "mismatches": 0,
+      "threshold": 0,
+      "description": "Zero modifications to B1-B4, safety filter, and historical dataset archives"
+    }
+  },
+  "all_gates_passed": true,
+  "training_performed": false,
+  "parameters_trained": 0
+}
