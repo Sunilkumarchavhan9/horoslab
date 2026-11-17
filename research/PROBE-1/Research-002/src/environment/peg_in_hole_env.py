@@ -1,9 +1,14 @@
 """
 HOROS PROBE-1 — Research-002: Trustworthy Action-Conditioned Contact World Models
-Task 1: Precision Peg-in-Hole Insertion Simulation Environment
-Implements 7-DoF Franka Panda operational space impedance control,
-5 contact strata (Free, Impact, Chamfer Sliding, Wedging, Seating),
-realistic friction cones, clearance tolerances, and contact wrench dynamics.
+Task 1: Precision Peg-in-Hole Contact Simulation Environment
+
+Simulation Fidelity Specification:
+Implements a task-level contact mechanics simulation with analytical contact dynamics:
+- Operational space impedance control setpoint kinematics (position and orientation increments).
+- Five discrete contact strata (Free, Impact, Chamfer Sliding, Wedging, Seated).
+- Coulomb friction mechanics, clearance tolerances (0.1–4.0 mm), and contact wrench reactions.
+Note on Scope: This environment models task-level contact and wedging dynamics analytically;
+it does not simulate full 7-DoF Franka Panda rigid multi-body dynamics or joint-level motor torque equations.
 """
 
 from __future__ import annotations
@@ -13,8 +18,8 @@ from typing import Dict, Any, Tuple, Optional
 
 class PegInHoleEnv:
     """
-    Precision Peg-in-Hole manipulation environment.
-    Simulates high-fidelity contact mechanics, wedging, jamming, and force telemetry.
+    Precision Peg-in-Hole task-level contact mechanics simulation environment.
+    Simulates analytical contact dynamics, chamfer sliding, wedging, jamming, and force telemetry.
     """
 
     def __init__(
@@ -145,6 +150,7 @@ class PegInHoleEnv:
 
     def _simulate_contact_dynamics(self, target_pos: np.ndarray, target_rot: np.ndarray):
         """Physics engine computing compliant contact response, friction, and wedging."""
+        previous_pos = self.peg_pos.copy()
         # Unconstrained candidate motion
         candidate_pos = target_pos
         candidate_rot = target_rot
@@ -155,9 +161,10 @@ class PegInHoleEnv:
 
         # 1. Free Space regime (z > 0)
         if z > 0.0:
-            self.peg_pos = candidate_pos
+            accepted_pos = candidate_pos.copy()
+            self.peg_vel = (accepted_pos - previous_pos) / self.dt
+            self.peg_pos = accepted_pos
             self.peg_rot = candidate_rot
-            self.peg_vel = (candidate_pos - self.peg_pos) / self.dt
             self.contact_wrench = np.zeros(6, dtype=np.float64)
             self.contact_stratum = 0
             return
@@ -179,7 +186,7 @@ class PegInHoleEnv:
             Fn = max(0.0, Fn)
 
             # Friction opposes vertical and tangential motion
-            vel_z = candidate_pos[2] - self.peg_pos[2]
+            vel_z = candidate_pos[2] - previous_pos[2]
             Ft_z = -np.sign(vel_z + 1e-6) * min(self.friction_coeff * Fn, abs(vel_z) * 10.0)
             Ft_lateral = -radial_dir * min(self.friction_coeff * Fn, Fn * 0.5)
 
@@ -209,18 +216,20 @@ class PegInHoleEnv:
             constrained_pos = candidate_pos.copy()
             constrained_pos[:2] = (self.clearance + (penetration * 0.1)) * radial_dir
             if self.contact_stratum == 3:  # Wedged
-                constrained_pos[2] = self.peg_pos[2] + 0.1 * (candidate_pos[2] - self.peg_pos[2])
+                constrained_pos[2] = previous_pos[2] + 0.1 * (candidate_pos[2] - previous_pos[2])
             else:
                 constrained_pos[2] = candidate_pos[2] + 0.5 * (self.dt * Ft_z / 10.0)
 
-            self.peg_vel = (constrained_pos - self.peg_pos) / self.dt
-            self.peg_pos = constrained_pos
+            accepted_pos = constrained_pos.copy()
+            self.peg_vel = (accepted_pos - previous_pos) / self.dt
+            self.peg_pos = accepted_pos
             self.peg_rot = candidate_rot
         else:
             # Clear inside hole
-            self.peg_pos = candidate_pos
+            accepted_pos = candidate_pos.copy()
+            self.peg_vel = (accepted_pos - previous_pos) / self.dt
+            self.peg_pos = accepted_pos
             self.peg_rot = candidate_rot
-            self.peg_vel = (candidate_pos - self.peg_pos) / self.dt
             # Pure viscous sliding friction
             self.contact_wrench = np.array([0.0, 0.0, -0.5 * self.friction_coeff, 0.0, 0.0, 0.0], dtype=np.float64)
             if insertion >= 50.0:

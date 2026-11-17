@@ -1,0 +1,1586 @@
+[
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111000",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111000,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "3d613b390ca7ac81e50a30cd057c8734bf60fa2d3a44b4927d3b1e7d523c3231",
+    "observation_sha256": "f7786b5600b31bd6d23b102a6b2ef51faabe6c2c2eaa5b45e0b61f7ca9877624",
+    "privileged_sha256": "e23d983fa223cd14418e735c51ae97c9fc1b1b4690e20d9777e6a7459b1bae8a",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.84,
+      "max_total_fn_n": 11.256,
+      "max_fz_shear_n": 4.449,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.154,
+      "final_lift_mm": 0.154,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111001",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111001,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "7bb0502a5e29f7090ae9d81356cbf70b6a622bcf0edf6daadd24bb182c22f864",
+    "observation_sha256": "fa7a6e67d54d68bbc45743d088713d7cd51766e5a9c7bfb3691997713bf17ac0",
+    "privileged_sha256": "5b34828d6d1fd79b0c236991f8602378fbdd5dbcf6da776758545b3fbc6cc01a",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.839,
+      "max_total_fn_n": 11.242,
+      "max_fz_shear_n": 4.933,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.104,
+      "final_lift_mm": 0.104,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111002",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111002,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "d62c338dae3e6d6181d58999d184250773399065d0198fe1f0556acdb53f04c9",
+    "observation_sha256": "37c051edb7463d5475a5d8bf5b5a0bf18980ab13a670689b289e1c96c83f2627",
+    "privileged_sha256": "32f6921cbd0ca789757722c93f4b974bafac9ad0e4b060ae6ea34b6fd3dbe4b7",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.831,
+      "max_total_fn_n": 11.25,
+      "max_fz_shear_n": 3.85,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.254,
+      "final_lift_mm": 0.254,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111003",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111003,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "17ce11422b70760ae9822f350558176689f4184cef02277071931aee481042d7",
+    "observation_sha256": "c5d85eca965a9c42f58e35c12688b46052c648700e88367ec67041888d1457c3",
+    "privileged_sha256": "249f8f942956cd1506b72191bfaaaa44662e5933b6afcabede4a00d51bf801d6",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.831,
+      "max_total_fn_n": 11.229,
+      "max_fz_shear_n": 4.986,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.004,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 17,
+        "3": 1
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111004",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111004,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "44378cae13062ce9b28c3a4de1efa6a59b68a8eb1c354686098d2ee658a3b151",
+    "observation_sha256": "cce7a7686615159ddefa57d8ce6b07984ce04ad6432982813b38a9bf7d040750",
+    "privileged_sha256": "ad481fb2b91a2b4e676ebf8595e2303b8c06d9e8fcd27dc3408fbe0072c1d6be",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.846,
+      "max_total_fn_n": 11.259,
+      "max_fz_shear_n": 4.159,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.204,
+      "final_lift_mm": 0.204,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111005",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111005,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "7011921dac7c1345e8839f84e5a572f53ab15f1b3487ce56fcdd78e596648c40",
+    "observation_sha256": "075a2433574af2dc4748c14e7d63341f204e0377becad31ba9af68f4addb9d5d",
+    "privileged_sha256": "cb73e5bf3889a943f9300611e4da4234b1fbe9f3ced71bd6378bb6d7e98ce375",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.842,
+      "max_total_fn_n": 11.273,
+      "max_fz_shear_n": 3.634,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.304,
+      "final_lift_mm": 0.304,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111006",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111006,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "172d60cf45f10633e89f68eb1c9f851fbd1e2202a36b93ef5467a074a205aa79",
+    "observation_sha256": "df50553b3044b81c8b6345aab2bda9732266ea09e93e55e90363730f1782e764",
+    "privileged_sha256": "1d4cb5036d1ab8a1ec410870dcb2f53f71267ed6d92fed6b8386fbb7626e1614",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.828,
+      "max_total_fn_n": 11.236,
+      "max_fz_shear_n": 5.283,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.054,
+      "final_lift_mm": 0.054,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111007",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111007,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "e522c3e07535890ea4b96733b110f0969388a8baf3555e27ecc46ac6e6306b29",
+    "observation_sha256": "3d4eec0d765b60e3a9aa57aefd05992bd14899ba0c9c10a5eb277974f1f02c0f",
+    "privileged_sha256": "cfaf84257cd97239ade227df06c8520c60a6b6fd100d2807008bf709ca6d2404",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.829,
+      "max_total_fn_n": 11.229,
+      "max_fz_shear_n": 5.398,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.0022,
+      "final_lift_mm": 0.0022,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111008",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111008,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "46fbeb475a086e3ba47445e0e10ea7fe6c3093d20ef5d372f4a708d2ae76d4e9",
+    "observation_sha256": "06552d09c929221e401e53bc61f106e9e0a09efbbaa0cbf8c22e0150076679d7",
+    "privileged_sha256": "965a9a845ca09199784652873a0a3af8bd2421548e8a15b2999788c48c34bbdc",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.842,
+      "max_total_fn_n": 11.258,
+      "max_fz_shear_n": 4.616,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.154,
+      "final_lift_mm": 0.154,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3111009",
+    "task": "compliant_prelift",
+    "stratum": "nominal",
+    "seed": 3111009,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "35d12b211b48f78c2be02b4a619a9aa9b001fc6f7796df536713c3953fabb4c7",
+    "observation_sha256": "5bd0ef0df4dc0cb08ebe2589088d51147530aac4eae0b828108e257aaf3aad19",
+    "privileged_sha256": "15e4847ab90c991b65a6fa26f63f3ee0d6b39d0eb3302dc757da2ff9bf590646",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.833,
+      "max_total_fn_n": 11.236,
+      "max_fz_shear_n": 3.393,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.354,
+      "final_lift_mm": 0.354,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112000",
+    "task": "compliant_prelift",
+    "stratum": "probe",
+    "seed": 3112000,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "4a1ce0387ce14d92ad38aaf43505f722f20b9e11349eec395e2fe9ae6799df13",
+    "observation_sha256": "6c7d3ceda80bac028beb98682f9ca0680ca5b02eae10ab162f010f0454f3639f",
+    "privileged_sha256": "b57e378e4c50164c496b96e9e0ae1fe0d4699138ddb032bfa6f8108f24256aa1",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.848,
+      "max_total_fn_n": 11.261,
+      "max_fz_shear_n": 3.9,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.0,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 15,
+        "3": 3
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112001",
+    "task": "compliant_prelift",
+    "stratum": "probe",
+    "seed": 3112001,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "e11c77feb9e3b93e199ffdff1cb6f199ea264d9d7f358daa18b7a3d0bd91eb2a",
+    "observation_sha256": "4e035870406a84390fec999403d22527b01f43ce29c3f568b4ba8c82bd51556f",
+    "privileged_sha256": "b39ef0b12d7b3c358dc50c915837cd8d427df8925fbf29ce48a45776525c73bc",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.831,
+      "max_total_fn_n": 11.251,
+      "max_fz_shear_n": 3.247,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.0,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 14,
+        "3": 4
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112002",
+    "task": "compliant_prelift",
+    "stratum": "probe",
+    "seed": 3112002,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "b19f73765df822e296b969b524dfec38017bd9a81a0bc92e967149206f36b09e",
+    "observation_sha256": "3d296316fec78274a1739a3249271342d2379247e626b12997b796c026735632",
+    "privileged_sha256": "1a9efa8d42b4e98dee4897bc05efe5809e63628b4646aabc0a36779c8001f1ef",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.835,
+      "max_total_fn_n": 11.261,
+      "max_fz_shear_n": 1.541,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.0,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 5,
+        "3": 13
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112003",
+    "task": "compliant_prelift",
+    "stratum": "probe",
+    "seed": 3112003,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "c95b2b4f64989440fac6d29a8b2a4f634f1d77cbd2c81feccfe5e330e963727e",
+    "observation_sha256": "1a780c73e210aeb3110e7e8fc2190efe680e519196812bf4b6d3663d1241db8e",
+    "privileged_sha256": "56f35dffadce00ac68c5319064b737fc488c0b9d1b88274df29b3e2bea34ab74",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.833,
+      "max_total_fn_n": 11.264,
+      "max_fz_shear_n": 2.693,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.0,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 9,
+        "3": 9
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112004",
+    "task": "compliant_prelift",
+    "stratum": "probe",
+    "seed": 3112004,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "6b10ea0f4474bdb3822933685d9544179f17ac86f9c503c6cc1cc37432c10ff5",
+    "observation_sha256": "42e9d181b469514c38550cd858fa8ea6db641b053c446f3809512921cb4f67b7",
+    "privileged_sha256": "e06f2a4dc59de622a2a03f84ace68fcfc2a9f43e2a812d1f67bde94539ae1068",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.829,
+      "max_total_fn_n": 11.236,
+      "max_fz_shear_n": 3.987,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.0,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 15,
+        "3": 3
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112005",
+    "task": "compliant_prelift",
+    "stratum": "probe",
+    "seed": 3112005,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "dec5283bee54945f217ddbea161553bc439055a7abfaca76831a7a7228fcf6f5",
+    "observation_sha256": "5c5c812e2328ffad76c9f6a57e365051c452a79fa8632b541cc5f7344bd43ee4",
+    "privileged_sha256": "df8dcdc3f7315b3a7d90b90203c264e4b4f8905736afd4d5bed9c9545d52c5cf",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.833,
+      "max_total_fn_n": 11.255,
+      "max_fz_shear_n": 2.711,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.0,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 9,
+        "3": 9
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113000",
+    "task": "compliant_prelift",
+    "stratum": "nonstationary",
+    "seed": 3113000,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "c37523bb25b6a2daecf5ec66e53fe8065b0a1ac8893292e1152218778301cd63",
+    "observation_sha256": "c0e1638bbcd5e4100933f1e28e774218d125254ceaf74e330ec51eea2e216580",
+    "privileged_sha256": "733bc618410e08e31a1f819412a4b2082b3a1c4ba238d46dd64f0f2174b4e4ae",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_a_friction_collapse_slip",
+      "max_fn_finger_n": 2.85,
+      "max_total_fn_n": 11.268,
+      "max_fz_shear_n": 3.434,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.004,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 12,
+        "3": 6
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113001",
+    "task": "compliant_prelift",
+    "stratum": "nonstationary",
+    "seed": 3113001,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "1294e0e210721d61c6d3fa7e7c27f7498f92dd1ca1c16b6250d9d4bb9146feaf",
+    "observation_sha256": "136ab5e718b14ed1a85ce7b8968b4b419c98ab0959ceaf4ee737ad7fc0cb5a8d",
+    "privileged_sha256": "ef35658759858cde407179d852450dc8a125a8cf7d40c74cb5a10cc5d1041213",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_b_mass_influx_hold",
+      "max_fn_finger_n": 2.827,
+      "max_total_fn_n": 11.253,
+      "max_fz_shear_n": 4.011,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.254,
+      "final_lift_mm": 0.254,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113002",
+    "task": "compliant_prelift",
+    "stratum": "nonstationary",
+    "seed": 3113002,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "089b2ab53ce37494fd0ab29630fc37c3219584f862fdc7b8b37d07e3f0062bfb",
+    "observation_sha256": "e75806ec5abc54c207f0f71ded8c820c17db6c8747cddadf538cce989b06989e",
+    "privileged_sha256": "3c03b0aa1b20805fd08904dfb9b1de3e6a8f28f6de2497cc637d3d5e368e6690",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_a_friction_collapse_slip",
+      "max_fn_finger_n": 2.838,
+      "max_total_fn_n": 11.238,
+      "max_fz_shear_n": 3.446,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.004,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 12,
+        "3": 6
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113003",
+    "task": "compliant_prelift",
+    "stratum": "nonstationary",
+    "seed": 3113003,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "44df975e7d3dff162c3520089224c87f61e11ae9be97617014541d8cb349dbca",
+    "observation_sha256": "ea9b80e3fc78a64c8f7c09301df776d944f8a01e1e7543d0dc3d8b2d188f348b",
+    "privileged_sha256": "c2906bf00a37e5a5ddb799c68a6649e0df9102d00b135ea60b09842e1ba29655",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_b_mass_influx_hold",
+      "max_fn_finger_n": 2.833,
+      "max_total_fn_n": 11.253,
+      "max_fz_shear_n": 4.038,
+      "max_slip_mps": 0.0,
+      "max_lift_mm": 0.254,
+      "final_lift_mm": 0.254,
+      "modes_observed": [
+        0,
+        2,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 18
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121000",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121000,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "07feefad1539307beb7315f8005bea10ddece273192107ccd9460430f89b6264",
+    "observation_sha256": "bf558e59dab409c75962de275f1ac3aa11dabcb2f0bd9c8bf2a3ce935a87358a",
+    "privileged_sha256": "5e60149af762a12db752a02536bf9e4afbce8affd4c591192844b82876969c82",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.261,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -12.914,
+      "max_insertion_mm": 12.914,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 16,
+        "1": 1,
+        "2": 13
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121001",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121001,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "894dd42474a02c9ad7fd3b1a9c3c62acb51d5591dc14f407035ee3a08428ca0d",
+    "observation_sha256": "81ca3480f911075d76ee3051ef75774f78943501b0ab400f04f8e999e42b14c7",
+    "privileged_sha256": "933b11d92b7f50acba565a23a972ccaa66379b1a817f434c8763ecc25ff7f0ca",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.331,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -13.489,
+      "max_insertion_mm": 13.489,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 15,
+        "1": 1,
+        "2": 14
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121002",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121002,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "e30e3893d0e558fa33a886bc03dba71afb391f54cbeff3f838d401074658939d",
+    "observation_sha256": "72c33e7613d5d2e129916343349b5b267292ea6100f90782869ff2d6b88ab6f1",
+    "privileged_sha256": "9933ab6618949618bb438ad1bc31ddd9fd492258357742dc078867e6a148cc0b",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.317,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -14.167,
+      "max_insertion_mm": 14.167,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 15,
+        "1": 1,
+        "2": 14
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121003",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121003,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "109f3f680d0042ff3013c7374d1d124ee1c16716646b2fee75f578c38b235230",
+    "observation_sha256": "cca8f66419e6bce3e7680b4fce71442af1643c07980c84f2ed7799910df3ffb8",
+    "privileged_sha256": "fbcc151eb2266f033d55317d1d1eb6a929d10638c550ff601cc349d821ea05d7",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.22,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -12.783,
+      "max_insertion_mm": 12.783,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 16,
+        "1": 1,
+        "2": 13
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121004",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121004,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "e8915fafd3ddfa1a6d4456b85821ed5873224b1c86451d5aca3b0e297c99ec58",
+    "observation_sha256": "246460f2415ac17097416a5ac248657ea772761cd4cab444121bdabfb8bb5154",
+    "privileged_sha256": "21632d6586672527e152fad67becccd3f5392c82bd10285c6881f5940f963ae4",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.387,
+      "max_torque_nm": 0.018,
+      "min_z_mm": -13.029,
+      "max_insertion_mm": 13.029,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 16,
+        "1": 1,
+        "2": 13
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121005",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121005,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "96f05a9be330902883b86ea428e12a060386c5114434d2b30be7221342d4f586",
+    "observation_sha256": "b5b706fb09dce19a77b620042566f4c7532f42c92b525297a234a849e8c5a772",
+    "privileged_sha256": "cd012c08bf057745fc8de2e3cd00ef33bc23e332aeed199d504d2cc6555327b8",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.258,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -13.399,
+      "max_insertion_mm": 13.399,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 15,
+        "1": 1,
+        "2": 14
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121006",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121006,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "01ec91cef22e763d256de46c4c761ff2fe37dc39d309b175c4d5299faa91e139",
+    "observation_sha256": "bf4cf89c95d4a06c5e969ebb69f04ed38a4a4f9cac4b47d1f84101e817a45780",
+    "privileged_sha256": "3f876c4b47155b34ddc4ad2bb7719573bd97536c418adc1ec2fa1f325142f80c",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.165,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -13.889,
+      "max_insertion_mm": 13.889,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 15,
+        "1": 1,
+        "2": 14
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121007",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121007,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "02b89fa2116206e60b4e218be1afa9085a12827d9ecb5206e8dee4933b04f368",
+    "observation_sha256": "2ab864aca02884843a319832dcc8ba6b79cc916630b00392afb0dca15e3520aa",
+    "privileged_sha256": "a4d6b9d67a2add25703166de262f5bbd02028514100cbe555ec2e0c7db65a62b",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.243,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -12.853,
+      "max_insertion_mm": 12.853,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 16,
+        "1": 1,
+        "2": 13
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121008",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121008,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "adecdf0323c3dd2491e893d1262785d0031f905ac144b7d785f3dd1414b2f8dd",
+    "observation_sha256": "6764d95b1b08c868c96da73c563239188051edb94d3f4724e219818ff67399bb",
+    "privileged_sha256": "0b3bf9d47c7720e9c1f105f1980b00add20dd4a55d0a75206069267f8560fb33",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.33,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -13.238,
+      "max_insertion_mm": 13.238,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 16,
+        "1": 1,
+        "2": 13
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3121009",
+    "task": "peg_in_hole",
+    "stratum": "nominal",
+    "seed": 3121009,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "3278dca3f0fb31ede5b2a731f008293d951b271e3426f6d5cfa8d1054a5a7596",
+    "observation_sha256": "9caedeb0fe1d389f2c0dea384d325252af81d9dc72c4e2b049f37fa5aa3c8d7a",
+    "privileged_sha256": "82241f582f24b58acabd4cf8ddb8b01c3f6fe321586271d74873f10156caa89c",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.27,
+      "max_torque_nm": 0.0,
+      "min_z_mm": -13.862,
+      "max_insertion_mm": 13.862,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 15,
+        "1": 1,
+        "2": 14
+      },
+      "strata_observed": [
+        0,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3124000",
+    "task": "peg_in_hole",
+    "stratum": "impact",
+    "seed": 3124000,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "aefcd412928422b2520ff09426d54da90e01e20d7b56a32f94a37546a19cad3a",
+    "observation_sha256": "5d16facbe296973ab2289383ff376c44e646fe111d679bac9ac74a1b0efe2d64",
+    "privileged_sha256": "45ee231b36aa7087f57fa1c851d991515adddf1171dee7e4da43b3900b3392df",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 6.617,
+      "max_torque_nm": 0.259,
+      "min_z_mm": -13.285,
+      "max_insertion_mm": 13.285,
+      "modes_observed": [
+        0,
+        1,
+        3
+      ],
+      "mode_counts": {
+        "0": 18,
+        "3": 11,
+        "1": 1
+      },
+      "strata_observed": [
+        0,
+        1,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3124001",
+    "task": "peg_in_hole",
+    "stratum": "impact",
+    "seed": 3124001,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "65a4fa5798f42581c2c5e19be4c46485289f478e921c2785b2d5ee30b32199a7",
+    "observation_sha256": "dc155e5978e9ecfcd23fc7bc1ab5cb088580f9a1a8e4981e07da12749c5f81ec",
+    "privileged_sha256": "9ac95159d65a0ff4c08628304522d0ac832f7726bf0ca151eba8af11c721bfbb",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 9.963,
+      "max_torque_nm": 0.395,
+      "min_z_mm": -13.41,
+      "max_insertion_mm": 13.41,
+      "modes_observed": [
+        0,
+        1,
+        3
+      ],
+      "mode_counts": {
+        "0": 18,
+        "3": 11,
+        "1": 1
+      },
+      "strata_observed": [
+        0,
+        1,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3124002",
+    "task": "peg_in_hole",
+    "stratum": "impact",
+    "seed": 3124002,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "ea731759c2a1bd35faf207590a7d0295affe1e2a3e16c8f3f22c91d0ce103c42",
+    "observation_sha256": "770d8f871ebc63640486d773c99dd3a8038fbd27370e928e93efea4668265cd4",
+    "privileged_sha256": "2f24968cb518b63b6d058d1b1b92166af640cfe8692197ec99f7f9b8b428feeb",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 0.273,
+      "max_torque_nm": 0.005,
+      "min_z_mm": -13.982,
+      "max_insertion_mm": 13.982,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 15,
+        "1": 1,
+        "2": 14
+      },
+      "strata_observed": [
+        0,
+        1,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3124003",
+    "task": "peg_in_hole",
+    "stratum": "impact",
+    "seed": 3124003,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "50086b5daa7ff51307797756da29b72df1ae67d8e61a4d4728412c670f9751f7",
+    "observation_sha256": "d5a7ca5e89fc184af15105e7f09140163964b6b7e03f58fa2ae2ce43cebacc47",
+    "privileged_sha256": "159e7d52c7fb92166e33be4073a3b5221ebc191a9a578fd23d1cd4fd2609492a",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 6.495,
+      "max_torque_nm": 0.283,
+      "min_z_mm": -13.574,
+      "max_insertion_mm": 13.574,
+      "modes_observed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "mode_counts": {
+        "0": 16,
+        "3": 1,
+        "1": 1,
+        "2": 12
+      },
+      "strata_observed": [
+        0,
+        1,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3124004",
+    "task": "peg_in_hole",
+    "stratum": "impact",
+    "seed": 3124004,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "27cdce535db1c589264913748a414ffcbbcb90aaffc63b10f40ca3c658f0c195",
+    "observation_sha256": "b5ffff936d40bcf2f7b9ee5fb996cba6773819744bd2a1d8ac73e1ccb0fb0c81",
+    "privileged_sha256": "87f063f599ae91315156e0f38405231472714186d405c0baa54c868ef40f024d",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 1.725,
+      "max_torque_nm": 0.068,
+      "min_z_mm": -13.481,
+      "max_insertion_mm": 13.481,
+      "modes_observed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "mode_counts": {
+        "0": 16,
+        "3": 1,
+        "1": 1,
+        "2": 12
+      },
+      "strata_observed": [
+        0,
+        1,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3124005",
+    "task": "peg_in_hole",
+    "stratum": "impact",
+    "seed": 3124005,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "915a62944f14fbbe6701679bd6d36443624557c98c46edf98c9155173c78eb0d",
+    "observation_sha256": "a70234f6ac09897daa73d0ee42eed37707b913e5253005ff46c0373458a31788",
+    "privileged_sha256": "58f6ffc009d3626bdd40a91f602fbde9f7d86b6b48ae64a9b114ed109a3dd595",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 5.754,
+      "max_torque_nm": 0.231,
+      "min_z_mm": -14.011,
+      "max_insertion_mm": 14.011,
+      "modes_observed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "mode_counts": {
+        "0": 17,
+        "3": 1,
+        "1": 1,
+        "2": 11
+      },
+      "strata_observed": [
+        0,
+        1,
+        2
+      ],
+      "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3125000",
+    "task": "peg_in_hole",
+    "stratum": "wedging",
+    "seed": 3125000,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "eaa2b77fe03de937d7b5950ae776ef15b65265963e9f213440b472b6bb766f3a",
+    "observation_sha256": "f1e0cb5d90bfef3337bb7b36dac64ec41c4242da50ea4791ec389cce41caec3d",
+    "privileged_sha256": "42a26e32e1eda85a25bbeba0def53b8c68d01088c469e893940a8cddaf5ce732",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 3.544,
+      "max_torque_nm": 0.225,
+      "min_z_mm": -5.373,
+      "max_insertion_mm": 5.373,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 17,
+        "1": 2,
+        "2": 11
+      },
+      "strata_observed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0879,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3125001",
+    "task": "peg_in_hole",
+    "stratum": "wedging",
+    "seed": 3125001,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "e8a869aa464ff5276f9dd11645df70f6f896fafa7d76f09311397f036444ef63",
+    "observation_sha256": "b75d4db89e45a882ab1fc4348858c0f71f4586b73680b6ecfc2230c0736e984a",
+    "privileged_sha256": "4297069ff564b96cb7001cab31582821ba9ca62c50ddc0acef8e2681e3a9c29a",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 2.898,
+      "max_torque_nm": 0.182,
+      "min_z_mm": -5.375,
+      "max_insertion_mm": 5.375,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 15,
+        "1": 1,
+        "2": 14
+      },
+      "strata_observed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0897,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3125002",
+    "task": "peg_in_hole",
+    "stratum": "wedging",
+    "seed": 3125002,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "d1a672fbdc77a841e1ce4839c3fd6a9d9892751ea6ff2500f3b9a97d57e3865b",
+    "observation_sha256": "d220426b59dd66a5d298370e22110aef70456791216d3c78a1b307ca7492b9e4",
+    "privileged_sha256": "d06126fb4606bc2270d24384f372e7145868c0df4a299bbe51de337300568ef7",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 4.563,
+      "max_torque_nm": 0.29,
+      "min_z_mm": -5.666,
+      "max_insertion_mm": 5.666,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 17,
+        "1": 2,
+        "2": 11
+      },
+      "strata_observed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0011,
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_peg_in_hole_stage3_pilot_controller_v1_seed3125003",
+    "task": "peg_in_hole",
+    "stratum": "wedging",
+    "seed": 3125003,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "3e2f5a9cbeda8f88cb0f55e77cf72d1f1ec97b9e54d66d0814c90cc2a7a94fc9",
+    "observation_sha256": "3183a61a1bb7eca3b9341d971a965a09d7016c9e18a42fc6117feafeb7b54375",
+    "privileged_sha256": "424ddc35a1d161eac810a7f82d371717fdf1f2306613ace5e2bbb14eaddf0c78",
+    "metrics": {
+      "insertion_attained": true,
+      "contact_attained": true,
+      "forces_bounded": true,
+      "contact_modes_attained": true,
+      "stratum_specific_passed": true,
+      "max_contact_force_n": 1.667,
+      "max_torque_nm": 0.104,
+      "min_z_mm": -5.5,
+      "max_insertion_mm": 5.5,
+      "modes_observed": [
+        0,
+        1,
+        2
+      ],
+      "mode_counts": {
+        "0": 17,
+        "1": 2,
+        "2": 11
+      },
+      "strata_observed": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0248,
+      "interaction_passed": true
+    }
+  }
+]

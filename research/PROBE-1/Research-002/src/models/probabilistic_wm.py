@@ -55,6 +55,25 @@ class ProbabilisticWorldModel(nn.Module):
 
         return next_mean, next_var
 
+    def predict_with_uncertainty(
+        self,
+        state: torch.Tensor,
+        action: torch.Tensor,
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """
+        Returns:
+          - next_mean: predicted next state mean
+          - epistemic_var: zero tensor (B2 single probabilistic network models aleatoric variance only)
+          - aleatoric_var: predicted heteroscedastic aleatoric variance sigma^2
+        """
+        next_mean, aleatoric_var = self.forward(state, action)
+        epistemic_var = torch.zeros_like(aleatoric_var)
+        return next_mean, epistemic_var, aleatoric_var
+
+    def compute_nll(self, state: torch.Tensor, action: torch.Tensor, target_next_state: torch.Tensor) -> torch.Tensor:
+        """Computes mean per-transition Gaussian negative log-likelihood."""
+        return self.loss(state, action, target_next_state)
+
     def loss(self, state: torch.Tensor, action: torch.Tensor, target_next_state: torch.Tensor) -> torch.Tensor:
         """Gaussian Negative Log-Likelihood loss."""
         mean, var = self.forward(state, action)

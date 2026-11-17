@@ -1,0 +1,873 @@
+{
+  "architecture_id": "B4",
+  "model_class": "ContactStratifiedConformalWM",
+  "is_conformal_architecture": 1,
+  "note": "Non-neural split-conformal calibration evaluated strictly on the disjoint 60-episode calibration pool in original physical feature units.",
+  "task": "peg_in_hole",
+  "training_condition": "M0_passive",
+  "calibration_split": "calibration",
+  "calibration_seeds": [
+    2100,
+    2101,
+    2102,
+    2103,
+    2104,
+    2105,
+    2106,
+    2107,
+    2108,
+    2109,
+    2110,
+    2111,
+    2112,
+    2113,
+    2114,
+    2115,
+    2116,
+    2117,
+    2118,
+    2119,
+    2120,
+    2121,
+    2122,
+    2123,
+    2124,
+    2125,
+    2126,
+    2127,
+    2128,
+    2129,
+    2130,
+    2131,
+    2132,
+    2133,
+    2134,
+    2135,
+    2136,
+    2137,
+    2138,
+    2139,
+    2140,
+    2141,
+    2142,
+    2143,
+    2144,
+    2145,
+    2146,
+    2147,
+    2148,
+    2149,
+    2150,
+    2151,
+    2152,
+    2153,
+    2154,
+    2155,
+    2156,
+    2157,
+    2158,
+    2159
+  ],
+  "num_calibration_episodes": 60,
+  "num_calibration_transitions": 1630,
+  "calibration_manifest_sha256": "29281d1d8b6b003961ca5457690bebb3cc8282040bb480fa555ac9ed8fd93256",
+  "base_model_checkpoint": "b1_deterministic.pt",
+  "base_model_sha256": "11b2c034b83ab5929442a2ff0a05332106f570793a2afeb89b80b3b02a0777c1",
+  "b4_contact_stratified": {
+    "architecture_id": "B4",
+    "model_class": "ContactStratifiedConformalWM",
+    "num_strata": 7,
+    "alpha": 0.1,
+    "target_coverage": 0.9,
+    "n_min_marginal": 9,
+    "min_stratum_samples": 29,
+    "calibrated": 1,
+    "global_quantile": 302.19952392578125,
+    "any_fallback_to_global": 1,
+    "stratum_quantiles": {
+      "0": 202.85958862304688,
+      "1": 331.7379455566406,
+      "2": 305.4468688964844,
+      "3": 445.19110107421875,
+      "4": 302.19952392578125,
+      "5": 302.19952392578125,
+      "6": 302.19952392578125
+    },
+    "stratum_sample_counts": {
+      "0": 895,
+      "1": 86,
+      "2": 405,
+      "3": 231,
+      "4": 11,
+      "5": 2,
+      "6": 0
+    },
+    "calibration_diagnostics": {
+      "alpha": 0.1,
+      "target_coverage": 0.9,
+      "n_min_marginal": 9,
+      "min_stratum_samples": 29,
+      "min_stratum_floor_rationale": "Conservative operational minimum (29) matching the 3-channel Bonferroni joint floor; scalar L2 nonconformity score mathematical feasibility is n_min_marginal.",
+      "calibrated": 1,
+      "global_quantile": 302.1995,
+      "any_fallback_to_global": 1,
+      "stratum_fallback_log": {
+        "0": {
+          "stratum": 0,
+          "sample_count": 895,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 0,
+          "fallback_triggered": 0,
+          "source": "empirical_stratum",
+          "quantile": 202.8596
+        },
+        "1": {
+          "stratum": 1,
+          "sample_count": 86,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 0,
+          "fallback_triggered": 0,
+          "source": "empirical_stratum",
+          "quantile": 331.7379
+        },
+        "2": {
+          "stratum": 2,
+          "sample_count": 405,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 0,
+          "fallback_triggered": 0,
+          "source": "empirical_stratum",
+          "quantile": 305.4469
+        },
+        "3": {
+          "stratum": 3,
+          "sample_count": 231,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 0,
+          "fallback_triggered": 0,
+          "source": "empirical_stratum",
+          "quantile": 445.1911
+        },
+        "4": {
+          "stratum": 4,
+          "sample_count": 11,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "fallback_triggered": 1,
+          "source": "global_fallback",
+          "quantile": 302.1995
+        },
+        "5": {
+          "stratum": 5,
+          "sample_count": 2,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "fallback_triggered": 1,
+          "source": "global_fallback",
+          "quantile": 302.1995
+        },
+        "6": {
+          "stratum": 6,
+          "sample_count": 0,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "fallback_triggered": 1,
+          "source": "global_fallback",
+          "quantile": 302.1995
+        }
+      }
+    }
+  },
+  "b4_calibration_fit_summary": {
+    "empirical_coverage_on_calib": 0.8963,
+    "mean_interval_radius": 270.2838,
+    "mean_l2_error": 171.1513,
+    "per_stratum_calibration_fit": {
+      "0": {
+        "covered": 806,
+        "total": 895,
+        "coverage": 0.9006,
+        "radius": 202.8596,
+        "fallback_to_global": 0,
+        "source": "empirical_stratum"
+      },
+      "1": {
+        "covered": 79,
+        "total": 86,
+        "coverage": 0.9186,
+        "radius": 331.7379,
+        "fallback_to_global": 0,
+        "source": "empirical_stratum"
+      },
+      "2": {
+        "covered": 365,
+        "total": 405,
+        "coverage": 0.9012,
+        "radius": 305.4469,
+        "fallback_to_global": 0,
+        "source": "empirical_stratum"
+      },
+      "3": {
+        "covered": 209,
+        "total": 231,
+        "coverage": 0.9048,
+        "radius": 445.1911,
+        "fallback_to_global": 0,
+        "source": "empirical_stratum"
+      },
+      "4": {
+        "covered": 0,
+        "total": 11,
+        "coverage": 0.0,
+        "radius": 302.1995,
+        "fallback_to_global": 1,
+        "source": "global_fallback"
+      },
+      "5": {
+        "covered": 2,
+        "total": 2,
+        "coverage": 1.0,
+        "radius": 302.1995,
+        "fallback_to_global": 1,
+        "source": "global_fallback"
+      },
+      "6": {
+        "covered": 0,
+        "total": 0,
+        "coverage": null,
+        "radius": 302.1995,
+        "fallback_to_global": 1,
+        "source": "global_fallback"
+      }
+    },
+    "n_min_marginal_scalar_l2": 9,
+    "operational_min_stratum_samples": 29,
+    "num_strata_total": 7,
+    "num_strata_empirical": 4,
+    "num_strata_fallback_to_global": 3,
+    "empirical_strata": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "fallback_strata": [
+      4,
+      5,
+      6
+    ],
+    "stratum_fallback_fraction": 0.4286,
+    "calib_transitions_total": 1630,
+    "calib_transitions_in_fallback_strata": 13,
+    "calib_global_fallback_transition_frequency": 0.008,
+    "classes_below_n_min_marginal_9": [
+      {
+        "mode_id": 5,
+        "mode_name": "Jamming",
+        "calib_count": 2
+      },
+      {
+        "mode_id": 6,
+        "mode_name": "Release",
+        "calib_count": 0
+      }
+    ],
+    "classes_insufficient_operational_29": [
+      {
+        "mode_id": 4,
+        "mode_name": "Impact",
+        "calib_count": 11
+      },
+      {
+        "mode_id": 5,
+        "mode_name": "Jamming",
+        "calib_count": 2
+      },
+      {
+        "mode_id": 6,
+        "mode_name": "Release",
+        "calib_count": 0
+      }
+    ]
+  },
+  "aps_calibration": {
+    "alpha_mode": 0.1,
+    "aps_quantile": 0.991423,
+    "num_calibration_transitions": 1630,
+    "calibration_set_coverage": 0.9466,
+    "mean_prediction_set_size": 3.819
+  },
+  "episode_conformal_calibration": {
+    "diagnostics": {
+      "alpha": 0.1,
+      "target_coverage": 0.9,
+      "n_calibration_episodes": 60,
+      "recommended_n_calib": 60,
+      "n_min_marginal": 9,
+      "n_min_joint": 29,
+      "min_stratum_samples": 29,
+      "calibrated": 1,
+      "marginal_calibrated": 1,
+      "joint_calibrated": 1,
+      "has_infinite_quantiles": 0,
+      "calibration_status": "calibrated_finite",
+      "any_fallback_to_global": 1,
+      "fallback_modes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "empirical_stratified_modes": [
+        0
+      ],
+      "stratum_fallback_log": {
+        "0": {
+          "mode": 0,
+          "sample_count": 60,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 0,
+          "source": "empirical_stratum",
+          "reason": null,
+          "k_rank": 59,
+          "finite": 1
+        },
+        "1": {
+          "mode": 1,
+          "sample_count": 0,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "source": "global_joint_fallback",
+          "reason": "stratum_samples_0_below_min_29",
+          "k_rank": 59,
+          "finite": 1
+        },
+        "2": {
+          "mode": 2,
+          "sample_count": 0,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "source": "global_joint_fallback",
+          "reason": "stratum_samples_0_below_min_29",
+          "k_rank": 59,
+          "finite": 1
+        },
+        "3": {
+          "mode": 3,
+          "sample_count": 0,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "source": "global_joint_fallback",
+          "reason": "stratum_samples_0_below_min_29",
+          "k_rank": 59,
+          "finite": 1
+        },
+        "4": {
+          "mode": 4,
+          "sample_count": 0,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "source": "global_joint_fallback",
+          "reason": "stratum_samples_0_below_min_29",
+          "k_rank": 59,
+          "finite": 1
+        },
+        "5": {
+          "mode": 5,
+          "sample_count": 0,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "source": "global_joint_fallback",
+          "reason": "stratum_samples_0_below_min_29",
+          "k_rank": 59,
+          "finite": 1
+        },
+        "6": {
+          "mode": 6,
+          "sample_count": 0,
+          "min_stratum_samples": 29,
+          "fallback_to_global": 1,
+          "source": "global_joint_fallback",
+          "reason": "stratum_samples_0_below_min_29",
+          "k_rank": 59,
+          "finite": 1
+        }
+      }
+    },
+    "joint_quantiles": {
+      "q_state_joint": 2835.90869140625,
+      "q_wrench_joint": 113.28604888916016,
+      "q_mode_joint": 0.9925644902959113
+    },
+    "marginal_quantiles": {
+      "q_state_marginal": 2780.118408203125,
+      "q_wrench_marginal": 98.81600952148438,
+      "q_mode_marginal": 0.9897525625188163
+    },
+    "unstratified_baseline": {
+      "alpha": 0.1,
+      "target_coverage": 0.9,
+      "n_episodes": 60,
+      "n_state_samples": 60,
+      "n_wrench_samples": 60,
+      "n_min_marginal": 9,
+      "calibrated": 1,
+      "is_finite": 1,
+      "q_state_unstratified": 4936.9238,
+      "q_wrench_unstratified": 224.6472,
+      "state_interval_width": 9873.8477,
+      "wrench_interval_width": 449.2945
+    }
+  },
+  "multihorizon_quantile_calibration": {
+    "diagnostics": {
+      "alpha": 0.1,
+      "target_coverage": 0.9,
+      "n_min_marginal": 9,
+      "min_cell_samples": 15,
+      "fold1_episodes": 30,
+      "fold2_episodes": 30,
+      "calibrated": 1,
+      "fold2_calibrated": 1,
+      "lambda_sim": 1.0801,
+      "any_fallback_to_global": 1,
+      "cell_sample_counts": [
+        [
+          30,
+          30,
+          30,
+          29,
+          18
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "cell_fallback_log": {
+        "mode_0_H1": {
+          "mode": 0,
+          "horizon": 1,
+          "sample_count": 30,
+          "min_cell_samples": 15,
+          "fallback_to_global": 0,
+          "source": "empirical_cell",
+          "finite": 1
+        },
+        "mode_0_H3": {
+          "mode": 0,
+          "horizon": 3,
+          "sample_count": 30,
+          "min_cell_samples": 15,
+          "fallback_to_global": 0,
+          "source": "empirical_cell",
+          "finite": 1
+        },
+        "mode_0_H5": {
+          "mode": 0,
+          "horizon": 5,
+          "sample_count": 30,
+          "min_cell_samples": 15,
+          "fallback_to_global": 0,
+          "source": "empirical_cell",
+          "finite": 1
+        },
+        "mode_0_H10": {
+          "mode": 0,
+          "horizon": 10,
+          "sample_count": 29,
+          "min_cell_samples": 15,
+          "fallback_to_global": 0,
+          "source": "empirical_cell",
+          "finite": 1
+        },
+        "mode_0_H20": {
+          "mode": 0,
+          "horizon": 20,
+          "sample_count": 18,
+          "min_cell_samples": 15,
+          "fallback_to_global": 0,
+          "source": "empirical_cell",
+          "finite": 1
+        },
+        "mode_1_H1": {
+          "mode": 1,
+          "horizon": 1,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_1_H3": {
+          "mode": 1,
+          "horizon": 3,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_1_H5": {
+          "mode": 1,
+          "horizon": 5,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_1_H10": {
+          "mode": 1,
+          "horizon": 10,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_1_H20": {
+          "mode": 1,
+          "horizon": 20,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_2_H1": {
+          "mode": 2,
+          "horizon": 1,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_2_H3": {
+          "mode": 2,
+          "horizon": 3,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_2_H5": {
+          "mode": 2,
+          "horizon": 5,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_2_H10": {
+          "mode": 2,
+          "horizon": 10,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_2_H20": {
+          "mode": 2,
+          "horizon": 20,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_3_H1": {
+          "mode": 3,
+          "horizon": 1,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_3_H3": {
+          "mode": 3,
+          "horizon": 3,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_3_H5": {
+          "mode": 3,
+          "horizon": 5,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_3_H10": {
+          "mode": 3,
+          "horizon": 10,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_3_H20": {
+          "mode": 3,
+          "horizon": 20,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_4_H1": {
+          "mode": 4,
+          "horizon": 1,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_4_H3": {
+          "mode": 4,
+          "horizon": 3,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_4_H5": {
+          "mode": 4,
+          "horizon": 5,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_4_H10": {
+          "mode": 4,
+          "horizon": 10,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_4_H20": {
+          "mode": 4,
+          "horizon": 20,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_5_H1": {
+          "mode": 5,
+          "horizon": 1,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_5_H3": {
+          "mode": 5,
+          "horizon": 3,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_5_H5": {
+          "mode": 5,
+          "horizon": 5,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_5_H10": {
+          "mode": 5,
+          "horizon": 10,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_5_H20": {
+          "mode": 5,
+          "horizon": 20,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_6_H1": {
+          "mode": 6,
+          "horizon": 1,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_6_H3": {
+          "mode": 6,
+          "horizon": 3,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_6_H5": {
+          "mode": 6,
+          "horizon": 5,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_6_H10": {
+          "mode": 6,
+          "horizon": 10,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        },
+        "mode_6_H20": {
+          "mode": 6,
+          "horizon": 20,
+          "sample_count": 0,
+          "min_cell_samples": 15,
+          "fallback_to_global": 1,
+          "source": "global_fallback",
+          "finite": 1
+        }
+      }
+    },
+    "Q_matrix": [
+      [
+        282.70037841796875,
+        559.134765625,
+        937.3201293945312,
+        1728.8211669921875,
+        3300.3447265625
+      ],
+      [
+        282.70037841796875,
+        559.134765625,
+        937.3201293945312,
+        1728.8211669921875,
+        3300.3447265625
+      ],
+      [
+        282.70037841796875,
+        559.134765625,
+        937.3201293945312,
+        1728.8211669921875,
+        3300.3447265625
+      ],
+      [
+        282.70037841796875,
+        559.134765625,
+        937.3201293945312,
+        1728.8211669921875,
+        3300.3447265625
+      ],
+      [
+        282.70037841796875,
+        559.134765625,
+        937.3201293945312,
+        1728.8211669921875,
+        3300.3447265625
+      ],
+      [
+        282.70037841796875,
+        559.134765625,
+        937.3201293945312,
+        1728.8211669921875,
+        3300.3447265625
+      ],
+      [
+        282.70037841796875,
+        559.134765625,
+        937.3201293945312,
+        1728.8211669921875,
+        3300.3447265625
+      ]
+    ],
+    "q_global": [
+      282.70037841796875,
+      559.134765625,
+      937.3201293945312,
+      1728.8211669921875,
+      3300.3447265625
+    ],
+    "q_mode": [
+      1799.825439453125,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0
+    ]
+  }
+}

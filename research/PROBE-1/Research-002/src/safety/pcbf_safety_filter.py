@@ -85,13 +85,12 @@ class PredictiveCBFSafetyFilter:
                 certified_action[:2] = -pos[:2] * 0.3
                 intervened = True
 
-        elif task == "multifinger_lift":
+        elif task in ("multifinger_lift", "compliant_prelift", "compliant_lift"):
             # Fingertip forces
-            finger_fn = current_state.get("finger_fn", np.zeros(4))
-            slip_ratio = current_state.get("slip_ratio", np.zeros(4))
+            finger_fn = np.asarray(current_state.get("finger_fn", np.zeros(4)), dtype=float)
 
             # 1. Crush barrier: limit squeeze command if Fn > 20 N
-            max_fn = float(np.max(finger_fn))
+            max_fn = float(np.max(finger_fn)) if len(finger_fn) > 0 else 0.0
             if max_fn > 20.0:
                 # Clamp squeezing
                 for i in range(len(finger_fn)):
@@ -99,9 +98,19 @@ class PredictiveCBFSafetyFilter:
                         certified_action[i] = 0.0
                         intervened = True
 
-            # 2. Slip barrier: if slip ratio > 0.85, gently squeeze to restore normal preload before lifting
-            max_slip = float(np.max(slip_ratio))
-            if max_slip > 0.85:
+            # 2. Slip barrier: handle both legacy slip_ratio and CompliantPreLift delta_dot_t (m/s)
+            if "slip_ratio" in current_state:
+                slip_ratio = np.asarray(current_state["slip_ratio"], dtype=float)
+                is_slipping = (float(np.max(slip_ratio)) > 0.85) if len(slip_ratio) > 0 else False
+            else:
+                delta_dot_t = np.asarray(current_state.get("delta_dot_t", np.zeros(4)), dtype=float)
+                in_contact = finger_fn > 0.05
+                if np.any(in_contact) and len(delta_dot_t) == len(finger_fn):
+                    is_slipping = float(np.max(np.abs(delta_dot_t[in_contact]))) >= 1e-4
+                else:
+                    is_slipping = False
+
+            if is_slipping:
                 # Halt arm lift acceleration and increase grasp preload
                 if len(candidate_action) > 4 and candidate_action[4] > 0.0:
                     certified_action[4] = 0.0  # Pause lift

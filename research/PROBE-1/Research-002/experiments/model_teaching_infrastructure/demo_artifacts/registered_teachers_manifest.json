@@ -1,0 +1,51 @@
+{
+  "schema_version": "teacher_model_registry_manifest_v1.0",
+  "model_count": 2,
+  "teachers": {
+    "mock_teacher_deterministic_v1": {
+      "model_id": "mock_teacher_deterministic_v1",
+      "display_name": "Deterministic Physical Prior Teacher v1",
+      "version": "1.0.0",
+      "provider": "mock_deterministic",
+      "supported_modalities": [
+        "state_vector",
+        "proprioceptive_wrench"
+      ],
+      "capabilities": [
+        "trajectory_proposal",
+        "compliant_grip_guidance"
+      ],
+      "license": "internal_horos_research",
+      "has_representations": true,
+      "representation_dim": 128,
+      "endpoint_url": null,
+      "local_weights_path": null,
+      "rate_limit_rpm": 60,
+      "deterministic_seed_supported": true,
+      "metadata": {},
+      "provenance_hash": "c3e3154ba2a4a93505a8ad322c1dca3a75a3ba3c857e6cf01c7c84f2d17741ec"
+    },
+    "mock_teacher_adversarial_v1": {
+      "model_id": "mock_teacher_adversarial_v1",
+      "display_name": "Adversarial Stress Teacher v1",
+      "version": "1.0.0",
+      "provider": "mock_adversarial",
+      "supported_modalities": [
+        "state_vector"
+      ],
+      "capabilities": [
+        "stress_testing",
+        "boundary_violation_injection"
+      ],
+      "license": "internal_horos_research",
+      "has_representations": false,
+      "representation_dim": null,
+      "endpoint_url": null,
+      "local_weights_path": null,
+      "rate_limit_rpm": 60,
+      "deterministic_seed_supported": true,
+      "metadata": {},
+      "provenance_hash": "eba58b464b1169d5bb263e17e28796713fdc963e0758861858b576ab3fd38c2f"
+    }
+  }
+}

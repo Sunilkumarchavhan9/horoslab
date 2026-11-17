@@ -1,0 +1,446 @@
+{
+  "protocol": "HOROS-P1-R002-STAGE3.2.2-ONTOLOGY-CAUSAL",
+  "training_permitted": 0,
+  "training_performed": false,
+  "parameters_trained": 0,
+  "task_episode_lengths": {
+    "compliant_prelift": 20,
+    "peg_in_hole": 30
+  },
+  "tasks": {
+    "compliant_prelift": {
+      "generated": 20,
+      "accepted": 20,
+      "rejected": 0,
+      "strata": {
+        "nominal": 10,
+        "probe": 6,
+        "nonstationary": 4
+      },
+      "rejections": [],
+      "finite": true,
+      "privileged_leaks": [],
+      "reproduced": true,
+      "physical_interaction_verified": true,
+      "stratum_statistics": {
+        "nominal": {
+          "count": 10,
+          "max_fn_finger_n": 2.846,
+          "max_total_fn_n": 11.273,
+          "max_fz_n": 5.398,
+          "max_slip_mps": 0.005,
+          "max_lift_mm": 0.354,
+          "final_lift_mm": 0.15842,
+          "modes_observed": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "timestep_mode_histogram": {
+            "0": 10,
+            "4": 10,
+            "2": 179,
+            "3": 1
+          },
+          "episode_mode_presence": {
+            "0": 10,
+            "2": 10,
+            "4": 10,
+            "3": 1
+          }
+        },
+        "probe": {
+          "count": 6,
+          "max_fn_finger_n": 2.848,
+          "max_total_fn_n": 11.264,
+          "max_fz_n": 3.987,
+          "max_slip_mps": 0.005,
+          "max_lift_mm": 0.0,
+          "final_lift_mm": 0.0,
+          "modes_observed": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "timestep_mode_histogram": {
+            "0": 6,
+            "4": 6,
+            "2": 67,
+            "3": 41
+          },
+          "episode_mode_presence": {
+            "0": 6,
+            "2": 6,
+            "3": 6,
+            "4": 6
+          }
+        },
+        "nonstationary": {
+          "count": 4,
+          "max_fn_finger_n": 2.85,
+          "max_total_fn_n": 11.268,
+          "max_fz_n": 4.038,
+          "max_slip_mps": 0.005,
+          "max_lift_mm": 0.254,
+          "final_lift_mm": 0.127,
+          "modes_observed": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "timestep_mode_histogram": {
+            "0": 4,
+            "4": 4,
+            "2": 60,
+            "3": 12
+          },
+          "episode_mode_presence": {
+            "0": 4,
+            "2": 4,
+            "3": 2,
+            "4": 4
+          }
+        }
+      },
+      "regime_verification": {
+        "regime_a_seeds": [
+          3113000,
+          3113002
+        ],
+        "regime_a_friction_transition_verified": true,
+        "regime_a_slip_triggered": true,
+        "regime_a_peak_slip_mps": 0.004999999888241291,
+        "regime_b_seeds": [
+          3113001,
+          3113003
+        ],
+        "regime_b_mass_influx_verified": true,
+        "regime_b_final_mass_kg": 0.4,
+        "regime_a_episode_ids": [
+          "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113000",
+          "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113002"
+        ],
+        "regime_a_slip_criterion": "post_transition_only",
+        "regime_a_pre_transition_slip_used_for_acceptance": false,
+        "regime_a_peak_slip_definition": "maximum of per-episode post-transition peak absolute slip; indices before the friction transition are excluded",
+        "regime_a_episodes": [
+          {
+            "indexing": {
+              "post_action_index": "t",
+              "simulator_step_count": "t + 1",
+              "friction_alignment": "step_mu_true[t] is the friction applied on simulator step_count t+1 and is stored with the post-action state next_states[t]",
+              "slip_channels": [
+                16,
+                17,
+                18,
+                19
+              ],
+              "slip_reduction": "max absolute value across the four fingertip slip channels",
+              "slip_window": "post_transition_only",
+              "pre_transition_mu": 0.6,
+              "post_transition_mu": 0.24,
+              "slip_threshold_mps": 0.001
+            },
+            "transition_index": 14,
+            "simulator_step_count": 15,
+            "friction_sequence_verified": true,
+            "pre_transition_length": 14,
+            "post_transition_length": 6,
+            "pre_transition_mu_values": [
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6
+            ],
+            "post_transition_mu_values": [
+              0.24,
+              0.24,
+              0.24,
+              0.24,
+              0.24,
+              0.24
+            ],
+            "pre_transition_peak_slip_mps": 0.0,
+            "post_transition_peak_slip_mps": 0.004999999888241291,
+            "first_post_transition_slip_index": 14,
+            "first_post_transition_slip_simulator_step": 15,
+            "post_transition_slip_verified": true,
+            "pre_transition_slip_used_for_acceptance": false,
+            "passed": true,
+            "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113000",
+            "seed": 3113000
+          },
+          {
+            "indexing": {
+              "post_action_index": "t",
+              "simulator_step_count": "t + 1",
+              "friction_alignment": "step_mu_true[t] is the friction applied on simulator step_count t+1 and is stored with the post-action state next_states[t]",
+              "slip_channels": [
+                16,
+                17,
+                18,
+                19
+              ],
+              "slip_reduction": "max absolute value across the four fingertip slip channels",
+              "slip_window": "post_transition_only",
+              "pre_transition_mu": 0.6,
+              "post_transition_mu": 0.24,
+              "slip_threshold_mps": 0.001
+            },
+            "transition_index": 14,
+            "simulator_step_count": 15,
+            "friction_sequence_verified": true,
+            "pre_transition_length": 14,
+            "post_transition_length": 6,
+            "pre_transition_mu_values": [
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6
+            ],
+            "post_transition_mu_values": [
+              0.24,
+              0.24,
+              0.24,
+              0.24,
+              0.24,
+              0.24
+            ],
+            "pre_transition_peak_slip_mps": 0.0,
+            "post_transition_peak_slip_mps": 0.004999999888241291,
+            "first_post_transition_slip_index": 14,
+            "first_post_transition_slip_simulator_step": 15,
+            "post_transition_slip_verified": true,
+            "pre_transition_slip_used_for_acceptance": false,
+            "passed": true,
+            "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3113002",
+            "seed": 3113002
+          }
+        ],
+        "regime_b_mass_increment_kg": 0.0025
+      },
+      "empirical_telemetry_verified": "PASS",
+      "observation_files": 20
+    },
+    "peg_in_hole": {
+      "generated": 20,
+      "accepted": 20,
+      "rejected": 0,
+      "strata": {
+        "nominal": 10,
+        "impact": 6,
+        "wedging": 4
+      },
+      "rejections": [],
+      "finite": true,
+      "privileged_leaks": [],
+      "reproduced": true,
+      "physical_interaction_verified": true,
+      "stratum_statistics": {
+        "nominal": {
+          "count": 10,
+          "max_force_n": 0.387,
+          "max_torque_nm": 0.018,
+          "min_z_mm": -14.167,
+          "max_insertion_mm": 14.167,
+          "modes_observed": [
+            0,
+            1,
+            2
+          ],
+          "strata_observed": [
+            0,
+            2
+          ],
+          "wedging_stratum_attained": false,
+          "timestep_mode_histogram": {
+            "0": 155,
+            "1": 10,
+            "2": 135
+          },
+          "episode_mode_presence": {
+            "0": 10,
+            "1": 10,
+            "2": 10
+          }
+        },
+        "impact": {
+          "count": 6,
+          "max_force_n": 9.963,
+          "max_torque_nm": 0.395,
+          "min_z_mm": -14.011,
+          "max_insertion_mm": 14.011,
+          "modes_observed": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "strata_observed": [
+            0,
+            1,
+            2
+          ],
+          "wedging_stratum_attained": false,
+          "timestep_mode_histogram": {
+            "0": 100,
+            "3": 25,
+            "1": 6,
+            "2": 49
+          },
+          "episode_mode_presence": {
+            "0": 6,
+            "1": 6,
+            "3": 5,
+            "2": 4
+          }
+        },
+        "wedging": {
+          "count": 4,
+          "max_force_n": 4.563,
+          "max_torque_nm": 0.29,
+          "min_z_mm": -5.666,
+          "max_insertion_mm": 5.666,
+          "modes_observed": [
+            0,
+            1,
+            2
+          ],
+          "strata_observed": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "wedging_stratum_attained": true,
+          "timestep_mode_histogram": {
+            "0": 66,
+            "1": 7,
+            "2": 47
+          },
+          "episode_mode_presence": {
+            "0": 4,
+            "1": 4,
+            "2": 4
+          },
+          "wedging_aligned_count": 4
+        }
+      },
+      "wedging_verified": "PASS",
+      "wedging_aligned_verified": "PASS",
+      "empirical_telemetry_verified": "PASS",
+      "observation_files": 20
+    }
+  },
+  "all_criteria_passed": true,
+  "stage": "3.2.2",
+  "parent_canonical_commit": "298b0227a66bfcc3916ac07c987aa7257b333b13",
+  "parent_mirror_commit": "223a7afb33cf6ce4ddee766066c84c3d21f0857e",
+  "trajectories_regenerated": false,
+  "ontology": {
+    "source": "src/contact_modes/contact_mode_definitions.py",
+    "enum": "ContactMode",
+    "numeric_labels_remapped": false,
+    "contact_modes": [
+      {
+        "id": 0,
+        "enum_name": "FREE",
+        "display_name": "Free"
+      },
+      {
+        "id": 1,
+        "enum_name": "FIRST_CONTACT",
+        "display_name": "FirstContact"
+      },
+      {
+        "id": 2,
+        "enum_name": "STICKING",
+        "display_name": "Sticking"
+      },
+      {
+        "id": 3,
+        "enum_name": "SLIDING",
+        "display_name": "Sliding"
+      },
+      {
+        "id": 4,
+        "enum_name": "IMPACT",
+        "display_name": "Impact"
+      },
+      {
+        "id": 5,
+        "enum_name": "JAMMING",
+        "display_name": "Jamming"
+      },
+      {
+        "id": 6,
+        "enum_name": "RELEASE",
+        "display_name": "Release"
+      }
+    ],
+    "simulator_contact_strata": [
+      {
+        "id": 0,
+        "name": "FREE"
+      },
+      {
+        "id": 1,
+        "name": "IMPACT"
+      },
+      {
+        "id": 2,
+        "name": "SLIDING"
+      },
+      {
+        "id": 3,
+        "name": "WEDGING"
+      },
+      {
+        "id": 4,
+        "name": "SEATED"
+      }
+    ],
+    "label_systems": "distinct",
+    "classifier_mode_3": "SLIDING",
+    "simulator_stratum_3": "WEDGING",
+    "classifier_mode_3_is_not_simulator_stratum_3": true,
+    "classifier_jamming_id": 5,
+    "wedging_modes_observed": [
+      0,
+      1,
+      2
+    ],
+    "wedging_strata_observed": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "simulator_stratum_3_reached": true,
+    "classifier_jamming_emitted_on_wedging_episodes": false,
+    "simulator_stratum_3_reached_without_classifier_jamming": true
+  }
+}

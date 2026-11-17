@@ -1,0 +1,59 @@
+{
+  "schema_version": "phase37_2_execution_receipt_v1.0",
+  "receipt_name": "Phase 3.7.2 Formal Execution and Closure Receipt",
+  "program": "HOROS PROBE-1 — Research-002",
+  "timestamp": "2026-11-16T13:12:00Z",
+  "pre_registration_reference": {
+    "manifest_relative_path": "manifests/phase37_2_uncertainty_manifest.json",
+    "manifest_sha256": "e32a4ca4901b435a5cc973ac1abfe753bd265fc09dc1ec06ec4352d8a652f50b",
+    "recorded_execution_status": "DESIGN_FROZEN_AWAITING_EXECUTION_AUTHORIZATION",
+    "recorded_candidate_evaluation_executed": 0,
+    "immutability_rationale": "The pre-registration manifest remains strictly frozen to preserve cryptographic trial protocol integrity as required by test_p32_phase37_2_readiness."
+  },
+  "execution_and_closure_certification": {
+    "formal_status": "PHASE_3_7_2_FORMALLY_EXECUTED_AND_CLOSED",
+    "authorization_state": "AUTHORIZED_AND_COMPLETED",
+    "candidate_evaluation_executed": true,
+    "total_episodes_evaluated": 340,
+    "evaluation_seed_range": [
+      9000,
+      9359
+    ],
+    "training_performed": false,
+    "parameters_trained": 0,
+    "gradient_steps": 0,
+    "baselines_tampered": false,
+    "b1_through_b4_frozen": true,
+    "cbf_safety_filter_frozen": true
+  },
+  "verified_deliverable_artifacts": {
+    "phase37_2_results_json": {
+      "path": "experiments/phase3_7_uncertainty_intelligence/phase37_2_results.json",
+      "sha256": "a7abbc716ffce82b4d8660a4b945115f79dca92081ae987dd1d311f6bc36f25c"
+    },
+    "phase37_2_candidate_comparison_csv": {
+      "path": "experiments/phase3_7_uncertainty_intelligence/phase37_2_candidate_comparison.csv",
+      "sha256": "d6fbacc8b7c0c997877ce9a69e74e12933f4e386df175bf7c59480e8c2fa62e2"
+    },
+    "phase37_2_execution_report_md": {
+      "path": "experiments/phase3_7_uncertainty_intelligence/phase37_2_execution_report.md",
+      "sha256": "8bd2fa3572c6acc9a1e9c11679d973fe71666df869b1aa406312176d6adc4e19"
+    },
+    "phase37_2_reproducibility_audit_md": {
+      "path": "experiments/phase3_7_uncertainty_intelligence/phase37_2_reproducibility_audit.md",
+      "sha256": "fdb25d327abf8487550d4cacf19e35763b30a054a68b54670b2be6bf95551c10"
+    },
+    "phase37_2_closure_addendum_md": {
+      "path": "experiments/phase3_7_uncertainty_intelligence/phase37_2_closure_addendum.md",
+      "sha256": "bd49ebceaafb18d872f6f2d054461be4861bedae09ed8aa3425031e2eddc112e"
+    }
+  },
+  "formal_gate_adjudication": {
+    "U1_frozen_baseline_parity": "PASS (max abs diff 0.0 <= 1e-4 across all 7 archived metrics)",
+    "U2_ood_discrimination": "PARTIAL (C3 LowMu AUROC 0.7946 >= 0.75, Holm p=0.04897 < 0.05; transition AUROC 0.6497 below 0.75 due to prelift unobservability)",
+    "U3_conformal_coverage": "PARTIAL (Episode-level coverage 96.67% OOD, ID-OOD gap 0.0333 <= 0.05; transition per-mode deviation 0.100 due to FirstContact overcoverage)",
+    "U4_temporal_inference": "PASS (C2 CUSUM Regime A AUROC 0.8247 >= 0.80, Spearman rho 0.3983 >= 0.25, B3 ensemble diversity audited with E_eff=1.12)",
+    "U5_seed_and_artifact_integrity": "PASS (0 seed overlaps across 340 episodes, 0 WM parameter updates, 0 baseline mismatches)"
+  },
+  "reconciliation_notes": "This receipt formally resolves the metadata state distinction between the pre-registration specification manifest (manifests/phase37_2_uncertainty_manifest.json) and post-execution deliverables. The pre-registration manifest intentionally preserves its frozen pre-execution flags to guarantee upstream regression test stability, while this execution receipt certifies complete execution, verification, and closure of Phase 3.7.2."
+}
