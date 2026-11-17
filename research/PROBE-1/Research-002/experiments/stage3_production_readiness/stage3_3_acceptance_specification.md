@@ -118,13 +118,14 @@ Every timestep $t \in [0, T-1]$ has a discrete classification label $m_t \in \{0
 ##### B. Impact Stratum (150 episodes)
 1. `insertion_attained`: $\min_t z(t) \le 0.0\text{ mm}$.
 2. `forces_bounded`: Resultant force $\le 35.0\text{ N}$, torque $\le 7.0\text{ Nm}$.
-3. `stratum_specific_passed`: **Impact Dynamics Established:**
-   $$1 \in \text{step\_contact\_stratum} \quad \lor \quad 4 \in \text{modes} \quad \lor \quad \max_t \|\mathbf{F}(t)\| > 1.0\text{ N}$$
+3. `stratum_specific_passed`: **Authentic Rim Impact Established:**
+   $$(1 \in \text{step\_contact\_stratum} \lor 4 \in \text{modes}) \land (\max_t \|\mathbf{F}(t)\| \ge 1.0\text{ N}) \land (\max_t \|\mathbf{F}(t)\| \le 35.0\text{ N}) \land (\max_t \|\boldsymbol{\tau}(t)\| \le 7.0\text{ Nm})$$
+   Both kinematic collision detection (simulator stratum 1 `RIM_IMPACT` or classified mode 4 `ContactMode.IMPACT`) AND authentic dynamic force impulse ($\ge 1.0\text{ N}$) are strictly required. Infinitesimal forces or unconfirmed impacts are rejected.
 
 ##### C. Wedging Stratum (100 episodes)
 1. `insertion_attained`: $\min_t z(t) \le 0.0\text{ mm}$.
 2. `forces_bounded`: Compliant resultant force $\le 35.0\text{ N}$ (typically $\le 6.0\text{ N}$), torque $\le 7.0\text{ Nm}$ (typically $\le 0.5\text{ Nm}$).
-3. `stratum_specific_passed`: **Exact Timestep State/Telemetry Wedging Alignment:**
+3. `stratum_specific_passed`: **Exact Timestep State/Telemetry Wedging Alignment & Jamming Prohibition:**
    There must exist at least one timestep $t$ such that ALL four conditions hold simultaneously at index $t$:
    $$\begin{cases}
    \text{step\_contact\_stratum}[t] = 3 \\
@@ -132,13 +133,17 @@ Every timestep $t \in [0, T-1]$ has a discrete classification label $m_t \in \{0
    \max(0.0, -next\_states[t, 2]) > 5.0\text{ mm} \\
    |\text{step\_insertion\_depth\_mm}[t] - \max(0.0, -next\_states[t, 2])| < 10^{-3}\text{ mm}
    \end{cases}$$
+   And classifier mode 5 (`ContactMode.JAMMING`) is strictly forbidden across all timesteps:
+   $$5 \notin \text{modes}$$
 
 ---
 
-### 5. Failure Accounting & Circuit Breakers
+### 5. Failure Accounting, Reserve Pool & Security Guard
 
 1. **No Silent Reseeding:** Under no circumstances shall a rejected scenario be re-run with a perturbed seed, parameter offset, or modified teacher command.
-2. **Rejection Persistence:** Every rejected episode is saved to `experiments/stage3_production/rejected/` and recorded in `rejected_manifest.json` with full diagnostic metadata.
-3. **5% Rejection Circuit Breaker:**
+2. **Rejection Persistence:** Every rejected episode is saved to `experiments/stage3_production/rejected/` and recorded in `rejected_manifest.json` with fail-closed status and diagnostic metadata.
+3. **Pre-registered Reserve Pool:** A dedicated reserve pool of 300 seeds (base $3,390,000$, 50 reserve seeds per stratum across 6 strata) is locked in `stage3_3_seed_registry.json`. Reserve seeds cannot be silently consumed; they require explicit audit and authorization during Stage 3.4.
+4. **Model-Visible Allowlist & Zero Leakage:** Dataloader inputs must strictly adhere to `MODEL_VISIBLE_ALLOWLIST`. Any presence of privileged quantities (`mu_true`, `object_mass`, `step_contact_stratum`, `env_metadata`, etc.) triggers an immediate `SecurityViolationError`.
+5. **5% Rejection Circuit Breaker:**
    - If cumulative rejections in any stratum exceed $5.0\%$ ($>12$ in nominal, $>7$ in probe/impact, $>5$ in nonstationary/wedging), generation is automatically paused.
    - Requires engineering review to inspect simulator dynamics before resuming.
