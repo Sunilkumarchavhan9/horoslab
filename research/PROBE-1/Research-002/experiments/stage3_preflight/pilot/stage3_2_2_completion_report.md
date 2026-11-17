@@ -7,7 +7,10 @@
 **Date:** 2026-11-17  
 **Parent canonical commit:** `298b0227a66bfcc3916ac07c987aa7257b333b13` (`Sunilkumarchavhan9/horoslab`)  
 **Parent mirror commit:** `223a7afb33cf6ce4ddee766066c84c3d21f0857e` (`Sunilkumarchavhan9/horos-probe-1`)  
-**Publication commits:** recorded after this report is committed; see the branch heads below once the publication commit lands.
+**Canonical Stage 3.2.2 commit:** `d132b4cdc0adb7b9e91a107de96f0d5fe3306fcb`  
+**Mirror Stage 3.2.2 commit:** `c580a05cd64fd756c5b2bc2be84a89300d6b1b7d`  
+
+The hashes above are the commits that introduce this certification. A following documentation commit on the same branch records these hashes inside the report.
 
 ## Decision
 
