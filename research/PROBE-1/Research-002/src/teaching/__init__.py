@@ -20,7 +20,10 @@ from teaching.inference import (
     TeacherQueryPayload,
 )
 from teaching.validator import (
+    PIH_TASK_LIMITS,
+    PRELIFT_TASK_LIMITS,
     PhysicsValidationEngine,
+    TaskPhysicsLimits,
     ValidationReport,
     ValidationVerdict,
 )
@@ -50,6 +53,9 @@ __all__ = [
     "AdversarialMockTeacher",
     "ExternalRestApiTeacher",
     "TeacherInferenceEngine",
+    "TaskPhysicsLimits",
+    "PRELIFT_TASK_LIMITS",
+    "PIH_TASK_LIMITS",
     "ValidationVerdict",
     "ValidationReport",
     "PhysicsValidationEngine",
