@@ -1,8 +1,11 @@
 {
-  "protocol": "HOROS-P1-R002-STAGE3.1-PILOT",
+  "protocol": "HOROS-P1-R002-STAGE3.2-PILOT-REMEDIATION",
   "training_performed": false,
   "parameters_trained": 0,
-  "episode_length": 20,
+  "task_episode_lengths": {
+    "compliant_prelift": 20,
+    "peg_in_hole": 30
+  },
   "tasks": {
     "compliant_prelift": {
       "generated": 20,
@@ -21,36 +24,49 @@
       "stratum_statistics": {
         "nominal": {
           "count": 10,
-          "max_fn_finger_n": 2.046,
-          "max_total_fn_n": 8.073,
-          "max_fz_n": 3.592,
-          "max_slip_mps": 0.0035,
+          "max_fn_finger_n": 2.846,
+          "max_total_fn_n": 11.273,
+          "max_fz_n": 4.612,
+          "max_slip_mps": 0.0,
+          "max_lift_mm": 0.184,
+          "final_lift_mm": 0.06520000000000001,
           "modes_observed": [
             0,
             2,
-            3,
             4
           ],
-          "mode_counts": {
+          "timestep_mode_histogram": {
+            "0": 10,
+            "4": 10,
+            "2": 180
+          },
+          "episode_mode_presence": {
             "0": 10,
             "2": 10,
-            "3": 4,
             "4": 10
           }
         },
         "probe": {
           "count": 6,
-          "max_fn_finger_n": 2.048,
-          "max_total_fn_n": 8.064,
-          "max_fz_n": 2.851,
-          "max_slip_mps": 0.0035,
+          "max_fn_finger_n": 2.848,
+          "max_total_fn_n": 11.264,
+          "max_fz_n": 4.076,
+          "max_slip_mps": 0.0045,
+          "max_lift_mm": 0.0,
+          "final_lift_mm": 0.0,
           "modes_observed": [
             0,
             2,
             3,
             4
           ],
-          "mode_counts": {
+          "timestep_mode_histogram": {
+            "0": 6,
+            "4": 6,
+            "2": 81,
+            "3": 27
+          },
+          "episode_mode_presence": {
             "0": 6,
             "2": 6,
             "3": 6,
@@ -59,17 +75,25 @@
         },
         "nonstationary": {
           "count": 4,
-          "max_fn_finger_n": 2.05,
-          "max_total_fn_n": 8.068,
-          "max_fz_n": 3.565,
-          "max_slip_mps": 0.0035,
+          "max_fn_finger_n": 2.85,
+          "max_total_fn_n": 11.268,
+          "max_fz_n": 4.044,
+          "max_slip_mps": 0.0045,
+          "max_lift_mm": 0.094,
+          "final_lift_mm": 0.047,
           "modes_observed": [
             0,
             2,
             3,
             4
           ],
-          "mode_counts": {
+          "timestep_mode_histogram": {
+            "0": 4,
+            "4": 4,
+            "2": 60,
+            "3": 12
+          },
+          "episode_mode_presence": {
             "0": 4,
             "2": 4,
             "3": 2,
@@ -82,14 +106,17 @@
           3113000,
           3113002
         ],
+        "regime_a_friction_transition_verified": true,
         "regime_a_slip_triggered": true,
-        "regime_a_peak_slip_mps": 0.0035000001080334187,
+        "regime_a_peak_slip_mps": 0.004500000271946192,
         "regime_b_seeds": [
           3113001,
           3113003
         ],
-        "regime_b_final_mass_kg": 0.39999999999999997
+        "regime_b_mass_influx_verified": true,
+        "regime_b_final_mass_kg": 0.4
       },
+      "empirical_telemetry_verified": "PASS",
       "observation_files": 20
     },
     "peg_in_hole": {
@@ -109,16 +136,26 @@
       "stratum_statistics": {
         "nominal": {
           "count": 10,
-          "max_force_n": 0.331,
-          "max_torque_nm": 0.0,
-          "min_z_mm": -2.767,
-          "max_insertion_mm": 2.767,
+          "max_force_n": 0.387,
+          "max_torque_nm": 0.018,
+          "min_z_mm": -13.217,
+          "max_insertion_mm": 13.217,
           "modes_observed": [
             0,
             1,
             2
           ],
-          "mode_counts": {
+          "strata_observed": [
+            0,
+            2
+          ],
+          "wedging_stratum_attained": false,
+          "timestep_mode_histogram": {
+            "0": 155,
+            "1": 10,
+            "2": 135
+          },
+          "episode_mode_presence": {
             "0": 10,
             "1": 10,
             "2": 10
@@ -126,41 +163,67 @@
         },
         "impact": {
           "count": 6,
-          "max_force_n": 6.995,
-          "max_torque_nm": 0.305,
-          "min_z_mm": -2.611,
-          "max_insertion_mm": 2.611,
+          "max_force_n": 9.963,
+          "max_torque_nm": 0.395,
+          "min_z_mm": -13.061,
+          "max_insertion_mm": 13.061,
           "modes_observed": [
             0,
             1,
             2,
             3
           ],
-          "mode_counts": {
+          "strata_observed": [
+            0,
+            1,
+            2
+          ],
+          "wedging_stratum_attained": false,
+          "timestep_mode_histogram": {
+            "0": 100,
+            "3": 25,
+            "1": 6,
+            "2": 49
+          },
+          "episode_mode_presence": {
             "0": 6,
             "1": 6,
-            "2": 2,
-            "3": 6
+            "3": 5,
+            "2": 4
           }
         },
         "wedging": {
           "count": 4,
-          "max_force_n": 0.55,
-          "max_torque_nm": 0.029,
-          "min_z_mm": -2.525,
-          "max_insertion_mm": 2.525,
+          "max_force_n": 4.563,
+          "max_torque_nm": 0.29,
+          "min_z_mm": -5.571,
+          "max_insertion_mm": 5.571,
           "modes_observed": [
             0,
             1,
             2
           ],
-          "mode_counts": {
+          "strata_observed": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "wedging_stratum_attained": true,
+          "timestep_mode_histogram": {
+            "0": 66,
+            "1": 7,
+            "2": 47
+          },
+          "episode_mode_presence": {
             "0": 4,
             "1": 4,
             "2": 4
           }
         }
       },
+      "wedging_verified": "PASS",
+      "empirical_telemetry_verified": "PASS",
       "observation_files": 20
     }
   },
