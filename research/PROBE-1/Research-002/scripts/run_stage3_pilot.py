@@ -191,8 +191,8 @@ def verify_physical_interaction(task: str, episode: Any) -> Tuple[bool, Dict[str
         return is_valid_interaction, metrics
 
 
-def generate_markdown_report(summary: Dict[str, Any], manifest_sha: str) -> str:
-    time_str = time.strftime("%Y-%m-%d %H:%M:%S")
+def generate_markdown_report(summary: Dict[str, Any], manifest_sha: str, timestamp: str = "2026-11-17 14:00:00") -> str:
+    time_str = timestamp
     prelift = summary["tasks"]["compliant_prelift"]
     pih = summary["tasks"]["peg_in_hole"]
     overall_status = "PASSED" if summary.get("all_criteria_passed") else "FAILED"
