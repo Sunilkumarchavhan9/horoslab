@@ -133,6 +133,7 @@ def test_peg_in_hole_physical_interaction_statistics(pilot_report: Dict[str, Any
 def test_wedging_stratum_achieves_stratum_3_and_insertion_depth(pilot_report: Dict[str, Any], accepted_manifest: list[Dict[str, Any]]) -> None:
     pih = pilot_report["tasks"]["peg_in_hole"]
     assert pih.get("wedging_verified") == "PASS"
+    assert pih.get("wedging_aligned_verified") == "PASS"
 
     wedging_stats = pih["stratum_statistics"]["wedging"]
     assert wedging_stats["wedging_stratum_attained"] is True
@@ -140,8 +141,9 @@ def test_wedging_stratum_achieves_stratum_3_and_insertion_depth(pilot_report: Di
     assert wedging_stats["max_insertion_mm"] > 5.0
     assert wedging_stats["max_force_n"] <= 35.0
     assert wedging_stats["max_torque_nm"] <= 7.0
+    assert wedging_stats["wedging_aligned_count"] == 4
 
-    # Verify per-episode manifest for all 4 wedging episodes
+    # Direct artifact-level verification for all 4 wedging episodes
     wedging_manifest_eps = [m for m in accepted_manifest if m["task"] == "peg_in_hole" and m["stratum"] == "wedging"]
     assert len(wedging_manifest_eps) == 4
     for ep_entry in wedging_manifest_eps:
@@ -149,6 +151,103 @@ def test_wedging_stratum_achieves_stratum_3_and_insertion_depth(pilot_report: Di
         assert metrics["wedging_stratum_attained"] is True
         assert metrics["max_insertion_mm"] > 5.0
         assert metrics["interaction_passed"] is True
+        assert len(metrics["wedging_aligned_steps"]) > 0
+
+        # Load privileged file and observation file directly from disk
+        priv_path = PILOT_DIR / "accepted" / f"{ep_entry['episode_id']}.privileged.json"
+        npz_path = PILOT_DIR / "accepted" / f"{ep_entry['episode_id']}.npz"
+        assert priv_path.is_file()
+        assert npz_path.is_file()
+
+        with open(priv_path, "r", encoding="utf-8") as handle:
+            priv_data = json.load(handle)
+        with np.load(npz_path, allow_pickle=False) as npz_data:
+            next_states = npz_data["next_states"]
+
+        meta = priv_data["env_metadata"]
+        strata = meta["step_contact_stratum"]
+        telem_depths = meta["step_insertion_depth_mm"]
+
+        for t in metrics["wedging_aligned_steps"]:
+            # 1. Authoritative simulator contact stratum 3
+            assert strata[t] == 3
+            # 2. Simulator telemetry insertion depth > 5.0 mm
+            assert telem_depths[t] > 5.0
+            # 3. Model-visible post-action state insertion depth > 5.0 mm
+            state_depth = float(max(0.0, -next_states[t, 2]))
+            assert state_depth > 5.0
+            # 4. Strict physical consistency between telemetry and state array
+            assert abs(telem_depths[t] - state_depth) < 1e-3
+
+
+def test_prelift_event_specific_acceptance(pilot_report: Dict[str, Any], accepted_manifest: list[Dict[str, Any]]) -> None:
+    prelift = pilot_report["tasks"]["compliant_prelift"]
+    assert prelift["physical_interaction_verified"] is True
+
+    prelift_eps = [m for m in accepted_manifest if m["task"] == "compliant_prelift"]
+    assert len(prelift_eps) == 20
+
+    for ep_entry in prelift_eps:
+        metrics = ep_entry["metrics"]
+        stratum = ep_entry["stratum"]
+        assert metrics["interaction_passed"] is True
+        assert metrics["event_specific_passed"] is True
+        assert metrics["max_fn_finger_n"] <= 20.0
+        assert metrics["max_total_fn_n"] <= 20.0
+        assert metrics["max_fz_shear_n"] <= 15.0
+
+        if stratum == "nominal":
+            # Nominal: positive object lift off table above numerical tolerance (z > 0.001 mm)
+            assert metrics["event_type"] == "nominal_positive_lift"
+            assert metrics["max_lift_mm"] > 0.001
+            assert 0.002 <= metrics["max_lift_mm"] <= 0.354
+        elif stratum == "probe":
+            # Probe: expected probing/sliding response with measured slip velocity >= 0.0005 m/s
+            assert metrics["event_type"] == "probe_coulomb_slip"
+            assert metrics["max_slip_mps"] >= 0.0005
+        elif stratum == "nonstationary":
+            priv_path = PILOT_DIR / "accepted" / f"{ep_entry['episode_id']}.privileged.json"
+            with open(priv_path, "r", encoding="utf-8") as handle:
+                priv_data = json.load(handle)
+            regime = priv_data["env_metadata"].get("regime")
+            if regime == "A":
+                assert metrics["event_type"] == "regime_a_friction_collapse_slip"
+                assert metrics["max_slip_mps"] > 0.0010
+            elif regime == "B":
+                assert metrics["event_type"] == "regime_b_mass_influx_hold"
+                assert metrics["max_total_fn_n"] >= 0.50
+                assert metrics["max_fz_shear_n"] >= 0.50
+
+
+def test_manifest_consistency_and_zero_rejections() -> None:
+    acc_path = PILOT_DIR / "accepted_manifest.json"
+    rej_path = PILOT_DIR / "rejected_manifest.json"
+    assert acc_path.is_file()
+    assert rej_path.is_file()
+
+    with open(acc_path, "r", encoding="utf-8") as handle:
+        acc_entries = json.load(handle)
+    with open(rej_path, "r", encoding="utf-8") as handle:
+        rej_entries = json.load(handle)
+
+    # Rejection manifest must be non-null and empty
+    assert len(acc_entries) == 40
+    assert len(rej_entries) == 0
+
+    import hashlib
+    for entry in acc_entries:
+        assert entry["is_valid"] is True
+        obs_file = PILOT_DIR / "accepted" / f"{entry['episode_id']}.npz"
+        priv_file = PILOT_DIR / "accepted" / f"{entry['episode_id']}.privileged.json"
+        assert obs_file.is_file()
+        assert priv_file.is_file()
+
+        with open(obs_file, "rb") as handle:
+            obs_sha = hashlib.sha256(handle.read()).hexdigest()
+        with open(priv_file, "rb") as handle:
+            priv_sha = hashlib.sha256(handle.read()).hexdigest()
+        assert obs_sha == entry["observation_sha256"]
+        assert priv_sha == entry["privileged_sha256"]
 
 
 def test_empirical_nonstationary_telemetry(pilot_report: Dict[str, Any], accepted_manifest: list[Dict[str, Any]]) -> None:
@@ -190,27 +289,29 @@ def test_empirical_nonstationary_telemetry(pilot_report: Dict[str, Any], accepte
 
 def test_privileged_data_separation(accepted_manifest: list[Dict[str, Any]]) -> None:
     assert len(accepted_manifest) == 40
-    sample = accepted_manifest[0]
-    npz_path = PILOT_DIR / "accepted" / f"{sample['episode_id']}.npz"
-    privileged_path = PILOT_DIR / "accepted" / f"{sample['episode_id']}.privileged.json"
+    privileged_field_names = {
+        "modes", "mu_true", "initial_mu_true", "object_mass", "initial_mass_kg",
+        "clearance_mm", "clearance", "step_mu_true", "step_object_mass_kg",
+        "step_contact_stratum", "step_insertion_depth_mm", "step_force_norm_n",
+        "step_torque_norm_nm"
+    }
 
-    assert npz_path.is_file()
-    assert privileged_path.is_file()
+    # Verify ALL 40 observation packages for zero leakage
+    for entry in accepted_manifest:
+        npz_path = PILOT_DIR / "accepted" / f"{entry['episode_id']}.npz"
+        privileged_path = PILOT_DIR / "accepted" / f"{entry['episode_id']}.privileged.json"
 
-    with np.load(npz_path, allow_pickle=False) as archive:
-        keys = set(archive.files)
-        # Model-visible archive must NEVER expose privileged simulator fields
-        assert "modes" not in keys
-        assert "mu_true" not in keys
-        assert "initial_mu_true" not in keys
-        assert "initial_mass_kg" not in keys
-        assert "clearance_mm" not in keys
-        assert "step_mu_true" not in keys
-        assert "step_object_mass_kg" not in keys
-        assert "step_contact_stratum" not in keys
+        assert npz_path.is_file()
+        assert privileged_path.is_file()
 
-    with open(privileged_path, "r", encoding="utf-8") as handle:
-        privileged_data = json.load(handle)
-        # Privileged JSON correctly holds ground truth
-        assert "modes" in privileged_data
-        assert "env_metadata" in privileged_data
+        with np.load(npz_path, allow_pickle=False) as archive:
+            keys = set(archive.files)
+            # Model-visible archive must NEVER expose privileged simulator fields
+            leaks = keys.intersection(privileged_field_names)
+            assert len(leaks) == 0, f"Leaked keys in {npz_path}: {leaks}"
+
+        with open(privileged_path, "r", encoding="utf-8") as handle:
+            privileged_data = json.load(handle)
+            # Privileged JSON correctly holds ground truth
+            assert "modes" in privileged_data
+            assert "env_metadata" in privileged_data

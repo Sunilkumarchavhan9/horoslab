@@ -6,21 +6,22 @@
     "seed": 3111000,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "fc2f62a86ee16a075da185e6e4c1f24e64242cae49e0e024e51159bfb2b300d6",
-    "observation_sha256": "e9b3ba624f491ba3ea1901329e8417fe81cfb5e603f656b5ec4591455802de75",
-    "privileged_sha256": "7fc25f1e592ba11fa6a1445cd169b0e79887bdce8b5a2484b38380230c5fe101",
+    "provenance_hash": "3d613b390ca7ac81e50a30cd057c8734bf60fa2d3a44b4927d3b1e7d523c3231",
+    "observation_sha256": "f7786b5600b31bd6d23b102a6b2ef51faabe6c2c2eaa5b45e0b61f7ca9877624",
+    "privileged_sha256": "e23d983fa223cd14418e735c51ae97c9fc1b1b4690e20d9777e6a7459b1bae8a",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.84,
       "max_total_fn_n": 11.256,
-      "max_fz_shear_n": 4.411,
+      "max_fz_shear_n": 4.449,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.049,
-      "final_lift_mm": 0.049,
+      "max_lift_mm": 0.154,
+      "final_lift_mm": 0.154,
       "modes_observed": [
         0,
         2,
@@ -41,21 +42,22 @@
     "seed": 3111001,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "7aa60eff01ea40ea0909fc691c914d27fe6127cfae64543dafaa06814dcf8a62",
-    "observation_sha256": "c0942ae2f38c6ebef139e9187d46b75fe98013aaa9eb35dcc043bc9099297acd",
-    "privileged_sha256": "87a580012b0ce2508505ec200fe67ebfd032b163055a77dc7e88eb7fe62ec478",
+    "provenance_hash": "7bb0502a5e29f7090ae9d81356cbf70b6a622bcf0edf6daadd24bb182c22f864",
+    "observation_sha256": "fa7a6e67d54d68bbc45743d088713d7cd51766e5a9c7bfb3691997713bf17ac0",
+    "privileged_sha256": "5b34828d6d1fd79b0c236991f8602378fbdd5dbcf6da776758545b3fbc6cc01a",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
-      "max_fn_finger_n": 2.828,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
+      "max_fn_finger_n": 2.839,
       "max_total_fn_n": 11.242,
-      "max_fz_shear_n": 4.608,
+      "max_fz_shear_n": 4.933,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.0,
-      "final_lift_mm": 0.0,
+      "max_lift_mm": 0.104,
+      "final_lift_mm": 0.104,
       "modes_observed": [
         0,
         2,
@@ -76,21 +78,22 @@
     "seed": 3111002,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "c512dc72d5647c3786388b474f24d2b5f4b8276a73a8270c185b07f3f1e78d7e",
-    "observation_sha256": "52ae2292d1335a6a8c3c32c29490845466330407ccb01a04cb5052c685ec8270",
-    "privileged_sha256": "e3d6e913a42de6aaf45114f9a7a1dd36b0bf026c743a00d30ef2da0b8890e358",
+    "provenance_hash": "d62c338dae3e6d6181d58999d184250773399065d0198fe1f0556acdb53f04c9",
+    "observation_sha256": "37c051edb7463d5475a5d8bf5b5a0bf18980ab13a670689b289e1c96c83f2627",
+    "privileged_sha256": "32f6921cbd0ca789757722c93f4b974bafac9ad0e4b060ae6ea34b6fd3dbe4b7",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.831,
       "max_total_fn_n": 11.25,
-      "max_fz_shear_n": 3.791,
+      "max_fz_shear_n": 3.85,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.139,
-      "final_lift_mm": 0.139,
+      "max_lift_mm": 0.254,
+      "final_lift_mm": 0.254,
       "modes_observed": [
         0,
         2,
@@ -111,30 +114,33 @@
     "seed": 3111003,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "7ed7cee52e303f9f0586188d2271162941c0fe4ed39afda8b542eea14af21120",
-    "observation_sha256": "edbc8e74488392e84999e0c586e36bcae4ff05702ad8442817d9bc355bb4ca04",
-    "privileged_sha256": "721df7fdd65b7f2302a1f8ac64c670967bec1c4b1c7baf8f562f9030a54297e7",
+    "provenance_hash": "17ce11422b70760ae9822f350558176689f4184cef02277071931aee481042d7",
+    "observation_sha256": "c5d85eca965a9c42f58e35c12688b46052c648700e88367ec67041888d1457c3",
+    "privileged_sha256": "249f8f942956cd1506b72191bfaaaa44662e5933b6afcabede4a00d51bf801d6",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.831,
       "max_total_fn_n": 11.229,
-      "max_fz_shear_n": 4.581,
-      "max_slip_mps": 0.0,
-      "max_lift_mm": 0.0,
+      "max_fz_shear_n": 4.986,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.004,
       "final_lift_mm": 0.0,
       "modes_observed": [
         0,
         2,
+        3,
         4
       ],
       "mode_counts": {
         "0": 1,
         "4": 1,
-        "2": 18
+        "2": 17,
+        "3": 1
       },
       "interaction_passed": true
     }
@@ -146,21 +152,22 @@
     "seed": 3111004,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "2638dbbd00f0e67b46c3e055ccb9ab872a169aaa03e0eb0c6016bb5fb4c0e7c8",
-    "observation_sha256": "7d8c571081e000fe3058a543ef23571cad1470c6c8b59b120935c264e5ab42f4",
-    "privileged_sha256": "fc4eaa2feb7a7041b30834cc9473c9e1cfd7bf517a9d6fee49f4ebcd03064cce",
+    "provenance_hash": "44378cae13062ce9b28c3a4de1efa6a59b68a8eb1c354686098d2ee658a3b151",
+    "observation_sha256": "cce7a7686615159ddefa57d8ce6b07984ce04ad6432982813b38a9bf7d040750",
+    "privileged_sha256": "ad481fb2b91a2b4e676ebf8595e2303b8c06d9e8fcd27dc3408fbe0072c1d6be",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.846,
       "max_total_fn_n": 11.259,
-      "max_fz_shear_n": 4.141,
+      "max_fz_shear_n": 4.159,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.094,
-      "final_lift_mm": 0.094,
+      "max_lift_mm": 0.204,
+      "final_lift_mm": 0.204,
       "modes_observed": [
         0,
         2,
@@ -181,21 +188,22 @@
     "seed": 3111005,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "23a4b0d3efa6363af99c20a588e5332b08bbe99ebc0cbc0408a4dd3844eeba47",
-    "observation_sha256": "be381084c42c6d28c5196a6ada01b723257386fe5b009d6ef7c48a2ce68a6cf2",
-    "privileged_sha256": "1e1500e5e42675b567a2f62e0852ff21ee639337c51af64ee7af98f2f67e5312",
+    "provenance_hash": "7011921dac7c1345e8839f84e5a572f53ab15f1b3487ce56fcdd78e596648c40",
+    "observation_sha256": "075a2433574af2dc4748c14e7d63341f204e0377becad31ba9af68f4addb9d5d",
+    "privileged_sha256": "cb73e5bf3889a943f9300611e4da4234b1fbe9f3ced71bd6378bb6d7e98ce375",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.842,
       "max_total_fn_n": 11.273,
-      "max_fz_shear_n": 3.649,
+      "max_fz_shear_n": 3.634,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.182,
-      "final_lift_mm": 0.182,
+      "max_lift_mm": 0.304,
+      "final_lift_mm": 0.304,
       "modes_observed": [
         0,
         2,
@@ -216,21 +224,22 @@
     "seed": 3111006,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "18978ffffea8cc6eb65d1d99134438bdf148d15c8568a5dd33d057636385cc42",
-    "observation_sha256": "290af4c0d35522be66470b0dd59f50577c8683ed358d1c0309ff538ddc45d00a",
-    "privileged_sha256": "feed521ca06046f1cbbf04a48571e856e62bca00984c3f1d7706340c237dfd9c",
+    "provenance_hash": "172d60cf45f10633e89f68eb1c9f851fbd1e2202a36b93ef5467a074a205aa79",
+    "observation_sha256": "df50553b3044b81c8b6345aab2bda9732266ea09e93e55e90363730f1782e764",
+    "privileged_sha256": "1d4cb5036d1ab8a1ec410870dcb2f53f71267ed6d92fed6b8386fbb7626e1614",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.828,
       "max_total_fn_n": 11.236,
-      "max_fz_shear_n": 4.596,
+      "max_fz_shear_n": 5.283,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.0,
-      "final_lift_mm": 0.0,
+      "max_lift_mm": 0.054,
+      "final_lift_mm": 0.054,
       "modes_observed": [
         0,
         2,
@@ -251,21 +260,22 @@
     "seed": 3111007,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "83f75dc278b1c2ddc01a15dfb3e80ba942fa4d532facb08c7545321e30f88b2a",
-    "observation_sha256": "3503c0797226bfff0253ad6b9b25b2699e22931a99d6ff97ca20f549fe898f1c",
-    "privileged_sha256": "9fd32a2661eb298d01f6eb3a0c0cc0868caf76b6dc92c74956b7a7c69187df72",
+    "provenance_hash": "e522c3e07535890ea4b96733b110f0969388a8baf3555e27ecc46ac6e6306b29",
+    "observation_sha256": "3d4eec0d765b60e3a9aa57aefd05992bd14899ba0c9c10a5eb277974f1f02c0f",
+    "privileged_sha256": "cfaf84257cd97239ade227df06c8520c60a6b6fd100d2807008bf709ca6d2404",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.829,
       "max_total_fn_n": 11.229,
-      "max_fz_shear_n": 4.612,
+      "max_fz_shear_n": 5.398,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.0,
-      "final_lift_mm": 0.0,
+      "max_lift_mm": 0.0022,
+      "final_lift_mm": 0.0022,
       "modes_observed": [
         0,
         2,
@@ -286,21 +296,22 @@
     "seed": 3111008,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "b0da07ee69caaba1985ea87e4a04a31b1d5c5c0facdc4589fcf298aae75146d2",
-    "observation_sha256": "34c12031ef8841f8ce999e0c79149512a512652d64710810b33f3f29ee538414",
-    "privileged_sha256": "93ef5f13354a571fd12558c2dee495fff4102a017ceadbd5003bf87df5afcdf2",
+    "provenance_hash": "46fbeb475a086e3ba47445e0e10ea7fe6c3093d20ef5d372f4a708d2ae76d4e9",
+    "observation_sha256": "06552d09c929221e401e53bc61f106e9e0a09efbbaa0cbf8c22e0150076679d7",
+    "privileged_sha256": "965a9a845ca09199784652873a0a3af8bd2421548e8a15b2999788c48c34bbdc",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.842,
       "max_total_fn_n": 11.258,
-      "max_fz_shear_n": 4.428,
+      "max_fz_shear_n": 4.616,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.004,
-      "final_lift_mm": 0.004,
+      "max_lift_mm": 0.154,
+      "final_lift_mm": 0.154,
       "modes_observed": [
         0,
         2,
@@ -321,21 +332,22 @@
     "seed": 3111009,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "1478788ae85c6fc8f8b32c1c68d8a7bc7cd8f65bab2707d44116b2b217e1765f",
-    "observation_sha256": "ff09940e75afd20a047bca8c16da94b435f748ab5ddce02b6ac9f597ab29efa8",
-    "privileged_sha256": "33a8c5743ad1ef91836d1dbd6434026c2a81cf2dff9c173e2c0fe0be18d6fc6b",
+    "provenance_hash": "35d12b211b48f78c2be02b4a619a9aa9b001fc6f7796df536713c3953fabb4c7",
+    "observation_sha256": "5bd0ef0df4dc0cb08ebe2589088d51147530aac4eae0b828108e257aaf3aad19",
+    "privileged_sha256": "15e4847ab90c991b65a6fa26f63f3ee0d6b39d0eb3302dc757da2ff9bf590646",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "nominal_positive_lift",
       "max_fn_finger_n": 2.833,
       "max_total_fn_n": 11.236,
-      "max_fz_shear_n": 3.357,
+      "max_fz_shear_n": 3.393,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.184,
-      "final_lift_mm": 0.184,
+      "max_lift_mm": 0.354,
+      "final_lift_mm": 0.354,
       "modes_observed": [
         0,
         2,
@@ -356,56 +368,20 @@
     "seed": 3112000,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "a79de8ab4e4a3162790006e3a6c7f33fe16f687a9229f228511c62694cffcf2b",
-    "observation_sha256": "c3afb69038e3a80b0e59204d295b8bf5d1c5bcec4b06a3099fa82113bfc1fddd",
-    "privileged_sha256": "e14898f908e9dfaa90b241810cad32ded6ab5933d1da01f20342285b5faf341b",
+    "provenance_hash": "4a1ce0387ce14d92ad38aaf43505f722f20b9e11349eec395e2fe9ae6799df13",
+    "observation_sha256": "6c7d3ceda80bac028beb98682f9ca0680ca5b02eae10ab162f010f0454f3639f",
+    "privileged_sha256": "b57e378e4c50164c496b96e9e0ae1fe0d4699138ddb032bfa6f8108f24256aa1",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
       "max_fn_finger_n": 2.848,
       "max_total_fn_n": 11.261,
-      "max_fz_shear_n": 3.836,
-      "max_slip_mps": 0.0045,
-      "max_lift_mm": 0.0,
-      "final_lift_mm": 0.0,
-      "modes_observed": [
-        0,
-        2,
-        3,
-        4
-      ],
-      "mode_counts": {
-        "0": 1,
-        "4": 1,
-        "2": 16,
-        "3": 2
-      },
-      "interaction_passed": true
-    }
-  },
-  {
-    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112001",
-    "task": "compliant_prelift",
-    "stratum": "probe",
-    "seed": 3112001,
-    "is_valid": true,
-    "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "7b674d88cc0179db6c7b891f2ab1ce64e03391eecadfded9c7f90b18f0711b2f",
-    "observation_sha256": "123fa9c9e6385d3fec0a6dabde65ecd243a90d2f726d731a125225c2df7f24f6",
-    "privileged_sha256": "1dbca2877906d07eb1fc21a81aecc48b354fc6691f076fd06e4d977dedfc8566",
-    "metrics": {
-      "contact_attained": true,
-      "forces_bounded": true,
-      "shear_attained": true,
-      "contact_modes_attained": true,
-      "displacement_attained": true,
-      "max_fn_finger_n": 2.831,
-      "max_total_fn_n": 11.251,
-      "max_fz_shear_n": 3.219,
-      "max_slip_mps": 0.0045,
+      "max_fz_shear_n": 3.9,
+      "max_slip_mps": 0.005,
       "max_lift_mm": 0.0,
       "final_lift_mm": 0.0,
       "modes_observed": [
@@ -424,25 +400,26 @@
     }
   },
   {
-    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112002",
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112001",
     "task": "compliant_prelift",
     "stratum": "probe",
-    "seed": 3112002,
+    "seed": 3112001,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "2f421b268d7f4d72cb28f909c568527dbf82c24c646d2047c7112b20dab60f03",
-    "observation_sha256": "3b9482d50e1cf5fca4382489d0f5d2e629b0e21e48fb9e3171a458847069814b",
-    "privileged_sha256": "947fca2c0abb8cf0f17c7e7675421158011ad393cf2acc957ddc1b346109b841",
+    "provenance_hash": "e11c77feb9e3b93e199ffdff1cb6f199ea264d9d7f358daa18b7a3d0bd91eb2a",
+    "observation_sha256": "4e035870406a84390fec999403d22527b01f43ce29c3f568b4ba8c82bd51556f",
+    "privileged_sha256": "b39ef0b12d7b3c358dc50c915837cd8d427df8925fbf29ce48a45776525c73bc",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
-      "max_fn_finger_n": 2.835,
-      "max_total_fn_n": 11.261,
-      "max_fz_shear_n": 1.617,
-      "max_slip_mps": 0.0045,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.831,
+      "max_total_fn_n": 11.251,
+      "max_fz_shear_n": 3.247,
+      "max_slip_mps": 0.005,
       "max_lift_mm": 0.0,
       "final_lift_mm": 0.0,
       "modes_observed": [
@@ -454,8 +431,46 @@
       "mode_counts": {
         "0": 1,
         "4": 1,
-        "2": 6,
-        "3": 12
+        "2": 14,
+        "3": 4
+      },
+      "interaction_passed": true
+    }
+  },
+  {
+    "episode_id": "syn_compliant_prelift_stage3_pilot_controller_v1_seed3112002",
+    "task": "compliant_prelift",
+    "stratum": "probe",
+    "seed": 3112002,
+    "is_valid": true,
+    "verdict": "PHYSICALLY_VALID",
+    "provenance_hash": "b19f73765df822e296b969b524dfec38017bd9a81a0bc92e967149206f36b09e",
+    "observation_sha256": "3d296316fec78274a1739a3249271342d2379247e626b12997b796c026735632",
+    "privileged_sha256": "1a9efa8d42b4e98dee4897bc05efe5809e63628b4646aabc0a36779c8001f1ef",
+    "metrics": {
+      "contact_attained": true,
+      "forces_bounded": true,
+      "shear_attained": true,
+      "contact_modes_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
+      "max_fn_finger_n": 2.835,
+      "max_total_fn_n": 11.261,
+      "max_fz_shear_n": 1.541,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.0,
+      "final_lift_mm": 0.0,
+      "modes_observed": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "mode_counts": {
+        "0": 1,
+        "4": 1,
+        "2": 5,
+        "3": 13
       },
       "interaction_passed": true
     }
@@ -467,19 +482,20 @@
     "seed": 3112003,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "91041cd3767bd983493cac337738bb9fa25a9000980c245165ba58ddce645eed",
-    "observation_sha256": "d96d3d431bfc84cb9b538a6b856986f5a8ef77dfc49098fc91d88169e8b2e751",
-    "privileged_sha256": "59b4fa391f47653cd84f8ddd55e08052aadc9527ae80e39c8e1ddd27f28723df",
+    "provenance_hash": "c95b2b4f64989440fac6d29a8b2a4f634f1d77cbd2c81feccfe5e330e963727e",
+    "observation_sha256": "1a780c73e210aeb3110e7e8fc2190efe680e519196812bf4b6d3663d1241db8e",
+    "privileged_sha256": "56f35dffadce00ac68c5319064b737fc488c0b9d1b88274df29b3e2bea34ab74",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
       "max_fn_finger_n": 2.833,
       "max_total_fn_n": 11.264,
-      "max_fz_shear_n": 2.921,
-      "max_slip_mps": 0.0045,
+      "max_fz_shear_n": 2.693,
+      "max_slip_mps": 0.005,
       "max_lift_mm": 0.0,
       "final_lift_mm": 0.0,
       "modes_observed": [
@@ -491,8 +507,8 @@
       "mode_counts": {
         "0": 1,
         "4": 1,
-        "2": 14,
-        "3": 4
+        "2": 9,
+        "3": 9
       },
       "interaction_passed": true
     }
@@ -504,19 +520,20 @@
     "seed": 3112004,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "8818655ba142d28dd4aac73a54c046c29e1e7fe601cb7285e1e8a699dead656a",
-    "observation_sha256": "2b58076c1009274bfe938a77de283f5b8d8d5042e8ae9567380a672edd180c89",
-    "privileged_sha256": "e26943ec9ceb816886e39d0e351c2d4b83a5eb3682c1acc8d62d04ce9f1c8a06",
+    "provenance_hash": "6b10ea0f4474bdb3822933685d9544179f17ac86f9c503c6cc1cc37432c10ff5",
+    "observation_sha256": "42e9d181b469514c38550cd858fa8ea6db641b053c446f3809512921cb4f67b7",
+    "privileged_sha256": "e06f2a4dc59de622a2a03f84ace68fcfc2a9f43e2a812d1f67bde94539ae1068",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
       "max_fn_finger_n": 2.829,
       "max_total_fn_n": 11.236,
-      "max_fz_shear_n": 4.076,
-      "max_slip_mps": 0.0045,
+      "max_fz_shear_n": 3.987,
+      "max_slip_mps": 0.005,
       "max_lift_mm": 0.0,
       "final_lift_mm": 0.0,
       "modes_observed": [
@@ -528,8 +545,8 @@
       "mode_counts": {
         "0": 1,
         "4": 1,
-        "2": 16,
-        "3": 2
+        "2": 15,
+        "3": 3
       },
       "interaction_passed": true
     }
@@ -541,19 +558,20 @@
     "seed": 3112005,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "d5fe0fe358a6c5367dc756c2f944fe184546328ad617a825171ab74451e00358",
-    "observation_sha256": "7bfbefb73dd175d2eeb4f70332ca79b0525dbd09d4b30c728ba3c5c9b504efac",
-    "privileged_sha256": "e4e49b9f4584e6a5c8fd122c403225e8bb934432fff2aa0533697b02271a7c85",
+    "provenance_hash": "dec5283bee54945f217ddbea161553bc439055a7abfaca76831a7a7228fcf6f5",
+    "observation_sha256": "5c5c812e2328ffad76c9f6a57e365051c452a79fa8632b541cc5f7344bd43ee4",
+    "privileged_sha256": "df8dcdc3f7315b3a7d90b90203c264e4b4f8905736afd4d5bed9c9545d52c5cf",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "probe_coulomb_slip",
       "max_fn_finger_n": 2.833,
       "max_total_fn_n": 11.255,
-      "max_fz_shear_n": 2.818,
-      "max_slip_mps": 0.0045,
+      "max_fz_shear_n": 2.711,
+      "max_slip_mps": 0.005,
       "max_lift_mm": 0.0,
       "final_lift_mm": 0.0,
       "modes_observed": [
@@ -565,8 +583,8 @@
       "mode_counts": {
         "0": 1,
         "4": 1,
-        "2": 14,
-        "3": 4
+        "2": 9,
+        "3": 9
       },
       "interaction_passed": true
     }
@@ -578,20 +596,21 @@
     "seed": 3113000,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "124b0737a66f582ebc6df16b899cb751890da48fb7e4dbbb50cf8d0dbb383c1d",
-    "observation_sha256": "8d71e995d4f5811a63411b3101e3fdab0103fd38c7faff1a5d7a08a202e298cc",
-    "privileged_sha256": "846a4d3d8f7b78ff0e79da3cefce4de14ceddb8a0cff9d4509e6a53ac90339b5",
+    "provenance_hash": "c37523bb25b6a2daecf5ec66e53fe8065b0a1ac8893292e1152218778301cd63",
+    "observation_sha256": "c0e1638bbcd5e4100933f1e28e774218d125254ceaf74e330ec51eea2e216580",
+    "privileged_sha256": "733bc618410e08e31a1f819412a4b2082b3a1c4ba238d46dd64f0f2174b4e4ae",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_a_friction_collapse_slip",
       "max_fn_finger_n": 2.85,
       "max_total_fn_n": 11.268,
-      "max_fz_shear_n": 3.228,
-      "max_slip_mps": 0.0045,
-      "max_lift_mm": 0.0,
+      "max_fz_shear_n": 3.434,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.004,
       "final_lift_mm": 0.0,
       "modes_observed": [
         0,
@@ -615,21 +634,22 @@
     "seed": 3113001,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "be74831f757dbf8dd5f1de66a378475ddb754c1f638100fa75e087c1b91da9ea",
-    "observation_sha256": "3f3da7190ee00c5ebd4e55d4bb811420fc6bccc3e939b5ea72bbc1616a4992a3",
-    "privileged_sha256": "ac535d71212c44878d1e0dbe3a1b1c66533d05332ec1a947d6719881d4e70e2e",
+    "provenance_hash": "1294e0e210721d61c6d3fa7e7c27f7498f92dd1ca1c16b6250d9d4bb9146feaf",
+    "observation_sha256": "136ab5e718b14ed1a85ce7b8968b4b419c98ab0959ceaf4ee737ad7fc0cb5a8d",
+    "privileged_sha256": "ef35658759858cde407179d852450dc8a125a8cf7d40c74cb5a10cc5d1041213",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_b_mass_influx_hold",
       "max_fn_finger_n": 2.827,
       "max_total_fn_n": 11.253,
-      "max_fz_shear_n": 4.044,
+      "max_fz_shear_n": 4.011,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.094,
-      "final_lift_mm": 0.094,
+      "max_lift_mm": 0.254,
+      "final_lift_mm": 0.254,
       "modes_observed": [
         0,
         2,
@@ -650,20 +670,21 @@
     "seed": 3113002,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "d3568ec637fd1337251d3bb686b363b20d03fe5d441a33e363bf42dbb2b9dd7c",
-    "observation_sha256": "eb10507547b0a54c6f767da48095d8158b3a48181c0013569868c10be1970b92",
-    "privileged_sha256": "c5633ae8c9f3c8b3b8201953a647f7ecbbb1a24de6abe916b123ca97524249aa",
+    "provenance_hash": "089b2ab53ce37494fd0ab29630fc37c3219584f862fdc7b8b37d07e3f0062bfb",
+    "observation_sha256": "e75806ec5abc54c207f0f71ded8c820c17db6c8747cddadf538cce989b06989e",
+    "privileged_sha256": "3c03b0aa1b20805fd08904dfb9b1de3e6a8f28f6de2497cc637d3d5e368e6690",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_a_friction_collapse_slip",
       "max_fn_finger_n": 2.838,
       "max_total_fn_n": 11.238,
-      "max_fz_shear_n": 3.239,
-      "max_slip_mps": 0.0045,
-      "max_lift_mm": 0.0,
+      "max_fz_shear_n": 3.446,
+      "max_slip_mps": 0.005,
+      "max_lift_mm": 0.004,
       "final_lift_mm": 0.0,
       "modes_observed": [
         0,
@@ -687,21 +708,22 @@
     "seed": 3113003,
     "is_valid": true,
     "verdict": "PHYSICALLY_VALID",
-    "provenance_hash": "7d62abea1cf85daa88b9bbc0d5637aa7c6117e2856aa0fed572d3a9fc0c68bee",
-    "observation_sha256": "38a76360e92fc744cdf0fa0512c42c9ff20175a11d16139a74e8a245331f6e10",
-    "privileged_sha256": "9a6171e7e21584eb71107d4dd88ae48b2e4e2268c2f39dba7224916d7f79c1ea",
+    "provenance_hash": "44df975e7d3dff162c3520089224c87f61e11ae9be97617014541d8cb349dbca",
+    "observation_sha256": "ea9b80e3fc78a64c8f7c09301df776d944f8a01e1e7543d0dc3d8b2d188f348b",
+    "privileged_sha256": "c2906bf00a37e5a5ddb799c68a6649e0df9102d00b135ea60b09842e1ba29655",
     "metrics": {
       "contact_attained": true,
       "forces_bounded": true,
       "shear_attained": true,
       "contact_modes_attained": true,
-      "displacement_attained": true,
+      "event_specific_passed": true,
+      "event_type": "regime_b_mass_influx_hold",
       "max_fn_finger_n": 2.833,
       "max_total_fn_n": 11.253,
-      "max_fz_shear_n": 4.029,
+      "max_fz_shear_n": 4.038,
       "max_slip_mps": 0.0,
-      "max_lift_mm": 0.094,
-      "final_lift_mm": 0.094,
+      "max_lift_mm": 0.254,
+      "final_lift_mm": 0.254,
       "modes_observed": [
         0,
         2,
@@ -733,8 +755,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.261,
       "max_torque_nm": 0.0,
-      "min_z_mm": -11.964,
-      "max_insertion_mm": 11.964,
+      "min_z_mm": -12.914,
+      "max_insertion_mm": 12.914,
       "modes_observed": [
         0,
         1,
@@ -750,6 +772,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -771,8 +795,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.331,
       "max_torque_nm": 0.0,
-      "min_z_mm": -12.539,
-      "max_insertion_mm": 12.539,
+      "min_z_mm": -13.489,
+      "max_insertion_mm": 13.489,
       "modes_observed": [
         0,
         1,
@@ -788,6 +812,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -809,8 +835,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.317,
       "max_torque_nm": 0.0,
-      "min_z_mm": -13.217,
-      "max_insertion_mm": 13.217,
+      "min_z_mm": -14.167,
+      "max_insertion_mm": 14.167,
       "modes_observed": [
         0,
         1,
@@ -826,6 +852,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -847,8 +875,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.22,
       "max_torque_nm": 0.0,
-      "min_z_mm": -11.833,
-      "max_insertion_mm": 11.833,
+      "min_z_mm": -12.783,
+      "max_insertion_mm": 12.783,
       "modes_observed": [
         0,
         1,
@@ -864,6 +892,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -885,8 +915,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.387,
       "max_torque_nm": 0.018,
-      "min_z_mm": -12.079,
-      "max_insertion_mm": 12.079,
+      "min_z_mm": -13.029,
+      "max_insertion_mm": 13.029,
       "modes_observed": [
         0,
         1,
@@ -902,6 +932,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -923,8 +955,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.258,
       "max_torque_nm": 0.0,
-      "min_z_mm": -12.449,
-      "max_insertion_mm": 12.449,
+      "min_z_mm": -13.399,
+      "max_insertion_mm": 13.399,
       "modes_observed": [
         0,
         1,
@@ -940,6 +972,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -961,8 +995,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.165,
       "max_torque_nm": 0.0,
-      "min_z_mm": -12.939,
-      "max_insertion_mm": 12.939,
+      "min_z_mm": -13.889,
+      "max_insertion_mm": 13.889,
       "modes_observed": [
         0,
         1,
@@ -978,6 +1012,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -999,8 +1035,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.243,
       "max_torque_nm": 0.0,
-      "min_z_mm": -11.903,
-      "max_insertion_mm": 11.903,
+      "min_z_mm": -12.853,
+      "max_insertion_mm": 12.853,
       "modes_observed": [
         0,
         1,
@@ -1016,6 +1052,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1037,8 +1075,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.33,
       "max_torque_nm": 0.0,
-      "min_z_mm": -12.288,
-      "max_insertion_mm": 12.288,
+      "min_z_mm": -13.238,
+      "max_insertion_mm": 13.238,
       "modes_observed": [
         0,
         1,
@@ -1054,6 +1092,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1075,8 +1115,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.27,
       "max_torque_nm": 0.0,
-      "min_z_mm": -12.912,
-      "max_insertion_mm": 12.912,
+      "min_z_mm": -13.862,
+      "max_insertion_mm": 13.862,
       "modes_observed": [
         0,
         1,
@@ -1092,6 +1132,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1113,8 +1155,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 6.617,
       "max_torque_nm": 0.259,
-      "min_z_mm": -12.335,
-      "max_insertion_mm": 12.335,
+      "min_z_mm": -13.285,
+      "max_insertion_mm": 13.285,
       "modes_observed": [
         0,
         1,
@@ -1131,6 +1173,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1152,8 +1196,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 9.963,
       "max_torque_nm": 0.395,
-      "min_z_mm": -12.46,
-      "max_insertion_mm": 12.46,
+      "min_z_mm": -13.41,
+      "max_insertion_mm": 13.41,
       "modes_observed": [
         0,
         1,
@@ -1170,6 +1214,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1191,8 +1237,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 0.273,
       "max_torque_nm": 0.005,
-      "min_z_mm": -13.032,
-      "max_insertion_mm": 13.032,
+      "min_z_mm": -13.982,
+      "max_insertion_mm": 13.982,
       "modes_observed": [
         0,
         1,
@@ -1209,6 +1255,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1230,8 +1278,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 6.495,
       "max_torque_nm": 0.283,
-      "min_z_mm": -12.624,
-      "max_insertion_mm": 12.624,
+      "min_z_mm": -13.574,
+      "max_insertion_mm": 13.574,
       "modes_observed": [
         0,
         1,
@@ -1250,6 +1298,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1271,8 +1321,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 1.725,
       "max_torque_nm": 0.068,
-      "min_z_mm": -12.531,
-      "max_insertion_mm": 12.531,
+      "min_z_mm": -13.481,
+      "max_insertion_mm": 13.481,
       "modes_observed": [
         0,
         1,
@@ -1291,6 +1341,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1312,8 +1364,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 5.754,
       "max_torque_nm": 0.231,
-      "min_z_mm": -13.061,
-      "max_insertion_mm": 13.061,
+      "min_z_mm": -14.011,
+      "max_insertion_mm": 14.011,
       "modes_observed": [
         0,
         1,
@@ -1332,6 +1384,8 @@
         2
       ],
       "wedging_stratum_attained": false,
+      "wedging_aligned_steps": [],
+      "wedging_aligned_depth_mm": 0.0,
       "interaction_passed": true
     }
   },
@@ -1353,8 +1407,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 3.544,
       "max_torque_nm": 0.225,
-      "min_z_mm": -5.278,
-      "max_insertion_mm": 5.278,
+      "min_z_mm": -5.373,
+      "max_insertion_mm": 5.373,
       "modes_observed": [
         0,
         1,
@@ -1372,6 +1426,13 @@
         3
       ],
       "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0879,
       "interaction_passed": true
     }
   },
@@ -1393,8 +1454,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 2.898,
       "max_torque_nm": 0.182,
-      "min_z_mm": -5.28,
-      "max_insertion_mm": 5.28,
+      "min_z_mm": -5.375,
+      "max_insertion_mm": 5.375,
       "modes_observed": [
         0,
         1,
@@ -1412,6 +1473,13 @@
         3
       ],
       "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0897,
       "interaction_passed": true
     }
   },
@@ -1433,8 +1501,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 4.563,
       "max_torque_nm": 0.29,
-      "min_z_mm": -5.571,
-      "max_insertion_mm": 5.571,
+      "min_z_mm": -5.666,
+      "max_insertion_mm": 5.666,
       "modes_observed": [
         0,
         1,
@@ -1452,6 +1520,17 @@
         3
       ],
       "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0011,
       "interaction_passed": true
     }
   },
@@ -1473,8 +1552,8 @@
       "stratum_specific_passed": true,
       "max_contact_force_n": 1.667,
       "max_torque_nm": 0.104,
-      "min_z_mm": -5.405,
-      "max_insertion_mm": 5.405,
+      "min_z_mm": -5.5,
+      "max_insertion_mm": 5.5,
       "modes_observed": [
         0,
         1,
@@ -1492,6 +1571,15 @@
         3
       ],
       "wedging_stratum_attained": true,
+      "wedging_aligned_steps": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "wedging_aligned_depth_mm": 5.0248,
       "interaction_passed": true
     }
   }

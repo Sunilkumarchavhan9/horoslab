@@ -1,5 +1,6 @@
 {
-  "protocol": "HOROS-P1-R002-STAGE3.2-PILOT-REMEDIATION",
+  "protocol": "HOROS-P1-R002-STAGE3.2.1-FINAL-EVIDENCE",
+  "training_permitted": 0,
   "training_performed": false,
   "parameters_trained": 0,
   "task_episode_lengths": {
@@ -26,32 +27,35 @@
           "count": 10,
           "max_fn_finger_n": 2.846,
           "max_total_fn_n": 11.273,
-          "max_fz_n": 4.612,
-          "max_slip_mps": 0.0,
-          "max_lift_mm": 0.184,
-          "final_lift_mm": 0.06520000000000001,
+          "max_fz_n": 5.398,
+          "max_slip_mps": 0.005,
+          "max_lift_mm": 0.354,
+          "final_lift_mm": 0.15842,
           "modes_observed": [
             0,
             2,
+            3,
             4
           ],
           "timestep_mode_histogram": {
             "0": 10,
             "4": 10,
-            "2": 180
+            "2": 179,
+            "3": 1
           },
           "episode_mode_presence": {
             "0": 10,
             "2": 10,
-            "4": 10
+            "4": 10,
+            "3": 1
           }
         },
         "probe": {
           "count": 6,
           "max_fn_finger_n": 2.848,
           "max_total_fn_n": 11.264,
-          "max_fz_n": 4.076,
-          "max_slip_mps": 0.0045,
+          "max_fz_n": 3.987,
+          "max_slip_mps": 0.005,
           "max_lift_mm": 0.0,
           "final_lift_mm": 0.0,
           "modes_observed": [
@@ -63,8 +67,8 @@
           "timestep_mode_histogram": {
             "0": 6,
             "4": 6,
-            "2": 81,
-            "3": 27
+            "2": 67,
+            "3": 41
           },
           "episode_mode_presence": {
             "0": 6,
@@ -77,10 +81,10 @@
           "count": 4,
           "max_fn_finger_n": 2.85,
           "max_total_fn_n": 11.268,
-          "max_fz_n": 4.044,
-          "max_slip_mps": 0.0045,
-          "max_lift_mm": 0.094,
-          "final_lift_mm": 0.047,
+          "max_fz_n": 4.038,
+          "max_slip_mps": 0.005,
+          "max_lift_mm": 0.254,
+          "final_lift_mm": 0.127,
           "modes_observed": [
             0,
             2,
@@ -108,7 +112,7 @@
         ],
         "regime_a_friction_transition_verified": true,
         "regime_a_slip_triggered": true,
-        "regime_a_peak_slip_mps": 0.004500000271946192,
+        "regime_a_peak_slip_mps": 0.004999999888241291,
         "regime_b_seeds": [
           3113001,
           3113003
@@ -138,8 +142,8 @@
           "count": 10,
           "max_force_n": 0.387,
           "max_torque_nm": 0.018,
-          "min_z_mm": -13.217,
-          "max_insertion_mm": 13.217,
+          "min_z_mm": -14.167,
+          "max_insertion_mm": 14.167,
           "modes_observed": [
             0,
             1,
@@ -165,8 +169,8 @@
           "count": 6,
           "max_force_n": 9.963,
           "max_torque_nm": 0.395,
-          "min_z_mm": -13.061,
-          "max_insertion_mm": 13.061,
+          "min_z_mm": -14.011,
+          "max_insertion_mm": 14.011,
           "modes_observed": [
             0,
             1,
@@ -196,8 +200,8 @@
           "count": 4,
           "max_force_n": 4.563,
           "max_torque_nm": 0.29,
-          "min_z_mm": -5.571,
-          "max_insertion_mm": 5.571,
+          "min_z_mm": -5.666,
+          "max_insertion_mm": 5.666,
           "modes_observed": [
             0,
             1,
@@ -219,10 +223,12 @@
             "0": 4,
             "1": 4,
             "2": 4
-          }
+          },
+          "wedging_aligned_count": 4
         }
       },
       "wedging_verified": "PASS",
+      "wedging_aligned_verified": "PASS",
       "empirical_telemetry_verified": "PASS",
       "observation_files": 20
     }
