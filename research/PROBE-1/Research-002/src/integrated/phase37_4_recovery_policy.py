@@ -67,6 +67,7 @@ class RecoveryConfig:
     verify_max_slip_mps: float = 0.0005       # Max slip permitted during verification micro-probe
     safe_shear_ratio_cap: float = 0.35        # Max observable Fz / Fn ratio for certified stability
     max_recovery_attempts: int = 1            # Single attempt allowed; fail-closed upon failure
+    require_underlying_trust: bool = True     # Phase 3.7.4.2: Invariant requiring underlying model TRUST throughout verification
 
     # Safe hold actions
     safe_hold_action_prelift: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0)
@@ -350,6 +351,44 @@ class PersistentSafetyRecoveryPolicy:
 
         # State 4: RECOVERING_VERIFY (Verification Micro-Probe & Grasp Ratio Check)
         if self.latch_state == SafetyLatchState.RECOVERING_VERIFY:
+            # Condition 0: Phase 3.7.4.2 Recovery Re-entry Trust Invariant
+            # Inspect underlying_dec.state during every recovery verification step.
+            # Must independently return TRUST throughout the complete verification sequence.
+            if self.cfg.require_underlying_trust and underlying_dec.state != TriState.TRUST:
+                self.latch_state = SafetyLatchState.TERMINAL_ABSTAIN
+                self.recovery_attempts += 1
+                if underlying_dec.state == TriState.ABSTAIN:
+                    reason = f"RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_{underlying_dec.reason}"
+                elif underlying_dec.state == TriState.PROBE:
+                    reason = f"RECOVERY_VERIFICATION_UNDERLYING_PROBE_{underlying_dec.reason}"
+                else:
+                    reason = f"RECOVERY_VERIFICATION_UNDERLYING_NON_TRUST_{underlying_dec.state}"
+
+                audit_rec = RecoveryAuditRecord(
+                    step=self.step_index,
+                    latch_state=self.latch_state,
+                    decision_state=TriState.ABSTAIN,
+                    decision_reason=reason,
+                    action=safe_hold_act,
+                    max_slip_mps=max_slip_vel,
+                    total_fn_n=total_fn,
+                    total_fz_n=total_fz,
+                    cusum_statistic=self.trust_model.cusum_statistic,
+                    unauthorized_trust_prevented=unauthorized_attempt,
+                )
+                self.audit_log.append(audit_rec)
+                return TrustDecision(
+                    state=TriState.ABSTAIN,
+                    reason=reason,
+                    confidence=0.0,
+                    action=safe_hold_act,
+                    estimated_mass_kg=self.trust_model.estimated_mass,
+                    cusum_statistic=self.trust_model.cusum_statistic,
+                    conformal_radius=underlying_dec.conformal_radius,
+                    feature_distance=underlying_dec.feature_distance,
+                    safety_violation_prevented=True,
+                )
+
             # Condition A: Check slip during verification
             if max_slip_vel > self.cfg.verify_max_slip_mps:
                 # Slip detected during micro-probe: verification failed closed!

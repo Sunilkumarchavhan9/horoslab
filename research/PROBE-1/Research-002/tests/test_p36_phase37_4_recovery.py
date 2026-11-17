@@ -292,9 +292,6 @@ def test_elevated_cusum_prevents_recovery() -> None:
         config=TrustPolicyConfig(),
         task="compliant_prelift",
     )
-    base_model.latent_mass_identified = True
-    base_model.estimated_mass = 0.350
-
     policy = PersistentSafetyRecoveryPolicy(
         base_trust_model=base_model,
         recovery_config=RecoveryConfig(
@@ -303,6 +300,8 @@ def test_elevated_cusum_prevents_recovery() -> None:
         ),
     )
     policy.reset_episode()
+    policy.trust_model.latent_mass_identified = True
+    policy.trust_model.estimated_mass = 0.350
     policy.safety_latched = True
     policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
     policy.verify_step_count = 0
@@ -378,4 +377,302 @@ def test_report_metrics_normal_friction_and_forces(phase37_4_results: Dict[str, 
     assert "max_fn_per_finger_n" in s4
     assert s4["max_fn_n"] > 0.0
     assert s4["max_fn_per_finger_n"] < 20.0
+
+
+# -----------------------------------------------------------------------------
+# Phase 3.7.4.2 — Recovery Re-entry Trust Invariant Regression Tests
+# -----------------------------------------------------------------------------
+
+def test_recovery_reentry_rejects_underlying_abstain_conformal_bound() -> None:
+    """Verifies that an underlying conformal-bound exceedance during verification prevents recovery."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(delta_safe_prelift_m=0.002),
+        task="compliant_prelift",
+    )
+    base_model.latent_mass_identified = True
+    base_model.estimated_mass = 0.350
+    # Mode 0 conformal bound 15.0 mm > delta_safe (2.0 mm) -> triggers CONFORMAL_BOUND_EXCEEDED
+    base_model.mode_conformal_bounds = {0: 15.0}
+
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(verify_probe_steps=3),
+    )
+    policy.reset_episode()
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
+    policy.verify_step_count = 0
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    obs = {
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+
+    dec = policy.evaluate_decision(obs, nom_act)
+    assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
+    assert dec.state == TriState.ABSTAIN
+    assert "CONFORMAL_BOUND_EXCEEDED" in dec.reason
+    assert np.all(dec.action == 0.0)
+    assert policy.recovery_attempts == 1
+    assert policy.recovery_successful is False
+    assert dec.state != TriState.TRUST
+
+
+def test_recovery_reentry_rejects_underlying_abstain_feature_support() -> None:
+    """Verifies that an underlying feature-support outlier during verification prevents recovery."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(tau_feat=2.0),
+        task="compliant_prelift",
+    )
+    base_model.latent_mass_identified = True
+    base_model.estimated_mass = 0.350
+    base_model.feature_ref = {
+        "mu_feat": np.zeros(7, dtype=np.float32),
+        "std_feat": np.ones(7, dtype=np.float32),
+    }
+
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(verify_probe_steps=3),
+    )
+    policy.reset_episode()
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
+    policy.verify_step_count = 0
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    # Severe outlier in wrenches channel -> norm(z) >> tau_feat (2.0)
+    obs = {
+        "finger_pos": np.zeros(4, dtype=np.float32),
+        "wrenches": np.array([50.0, 50.0, 50.0], dtype=np.float32),
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+
+    dec = policy.evaluate_decision(obs, nom_act)
+    assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
+    assert dec.state == TriState.ABSTAIN
+    assert "FEATURE_SUPPORT_OUTLIER" in dec.reason
+    assert np.all(dec.action == 0.0)
+    assert policy.recovery_attempts == 1
+    assert policy.recovery_successful is False
+    assert dec.state != TriState.TRUST
+
+
+def test_recovery_reentry_rejects_underlying_probe_unidentified_mass() -> None:
+    """Verifies that an underlying PROBE state (unidentified latent mass) fails closed and is never upgraded to TRUST."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(),
+        task="compliant_prelift",
+    )
+    # Latent mass has NOT been identified
+    base_model.latent_mass_identified = False
+    base_model.estimated_mass = None
+
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(verify_probe_steps=3),
+    )
+    policy.reset_episode()
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
+    policy.verify_step_count = 0
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    obs = {
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+
+    dec = policy.evaluate_decision(obs, nom_act)
+    assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
+    assert dec.state == TriState.ABSTAIN
+    assert "PROBE" in dec.reason
+    assert np.all(dec.action == 0.0)  # Commanded safe-hold, never upgraded or probing
+    assert policy.recovery_attempts == 1
+    assert policy.recovery_successful is False
+    assert dec.state != TriState.TRUST
+
+
+def test_recovery_reentry_rejects_underlying_abstain_at_final_verification_step() -> None:
+    """Verifies that an underlying ABSTAIN occurring at the final verification step prevents recovery certification."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(delta_safe_prelift_m=0.002),
+        task="compliant_prelift",
+    )
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(verify_probe_steps=3),
+    )
+    policy.reset_episode()
+    policy.trust_model.latent_mass_identified = True
+    policy.trust_model.estimated_mass = 0.350
+    policy.trust_model.mode_conformal_bounds = {0: 1.0}  # Valid bound initially
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
+    policy.verify_step_count = 0
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    obs = {
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+
+    # Step 1: Nominal -> PROBE (micro-probe active)
+    dec1 = policy.evaluate_decision(obs, nom_act)
+    assert policy.latch_state == SafetyLatchState.RECOVERING_VERIFY
+    assert dec1.state == TriState.PROBE
+    assert policy.verify_step_count == 1
+
+    # Step 2: Nominal -> PROBE (micro-probe active)
+    dec2 = policy.evaluate_decision(obs, nom_act)
+    assert policy.latch_state == SafetyLatchState.RECOVERING_VERIFY
+    assert dec2.state == TriState.PROBE
+    assert policy.verify_step_count == 2
+
+    # Step 3 (Final step): Underlying model triggers ABSTAIN via conformal breach
+    policy.trust_model.mode_conformal_bounds = {0: 10.0}
+    dec3 = policy.evaluate_decision(obs, nom_act)
+
+    # Must immediately abort recovery and fail closed to TERMINAL_ABSTAIN
+    assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN
+    assert dec3.state == TriState.ABSTAIN
+    assert "CONFORMAL_BOUND_EXCEEDED" in dec3.reason
+    assert np.all(dec3.action == 0.0)
+    assert policy.recovery_attempts == 1
+    assert policy.recovery_successful is False
+    assert dec3.state != TriState.TRUST
+
+
+def test_recovery_reentry_certified_when_underlying_trust_throughout() -> None:
+    """Verifies that recovery is safely certified to TRUST when underlying model returns TRUST across all verification steps."""
+    class DummyModel:
+        pass
+
+    base_model = TrustAwareWorldModel(
+        base_world_model=DummyModel(),
+        config=TrustPolicyConfig(delta_safe_prelift_m=0.002),
+        task="compliant_prelift",
+    )
+    policy = PersistentSafetyRecoveryPolicy(
+        base_trust_model=base_model,
+        recovery_config=RecoveryConfig(verify_probe_steps=3, tau_cusum_recovery=1.50),
+    )
+    policy.reset_episode()
+    policy.trust_model.latent_mass_identified = True
+    policy.trust_model.estimated_mass = 0.350
+    policy.trust_model.mode_conformal_bounds = {0: 1.0}
+    policy.trust_model.cusum_statistic = 1.0  # < tau_cusum_recovery (1.50)
+    policy.safety_latched = True
+    policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
+    policy.verify_step_count = 0
+
+    nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+    obs = {
+        "finger_fn": np.array([4.0, 4.0, 4.0, 4.0], dtype=np.float32),
+        "finger_ft": np.array([[0.0, 0.85], [0.0, 0.85], [0.0, 0.85], [0.0, 0.85]], dtype=np.float32),
+        "delta_dot_t": np.zeros(4, dtype=np.float32),
+    }
+
+    # Step 1: Verification in progress
+    dec1 = policy.evaluate_decision(obs, nom_act)
+    assert dec1.state == TriState.PROBE
+    assert policy.latch_state == SafetyLatchState.RECOVERING_VERIFY
+    assert policy.verify_step_count == 1
+    assert policy.trust_model.cusum_statistic == 1.0  # Not reset yet
+
+    # Step 2: Verification in progress
+    dec2 = policy.evaluate_decision(obs, nom_act)
+    assert dec2.state == TriState.PROBE
+    assert policy.latch_state == SafetyLatchState.RECOVERING_VERIFY
+    assert policy.verify_step_count == 2
+    assert policy.trust_model.cusum_statistic == 1.0  # Not reset yet
+
+    # Step 3: Final step successfully passes -> RECOVERY CERTIFIED!
+    dec3 = policy.evaluate_decision(obs, nom_act)
+    assert dec3.state == TriState.TRUST
+    assert dec3.reason == "RECOVERY_SUCCESSFUL_VERIFIED"
+    assert policy.latch_state == SafetyLatchState.RECOVERED
+    assert policy.safety_latched is False
+    assert policy.recovery_successful is True
+    assert policy.trust_model.cusum_statistic == 0.0  # Reset only upon full certification!
+    assert np.allclose(dec3.action, nom_act)
+
+
+def test_zero_unauthorized_transitions_across_all_failure_modes() -> None:
+    """Verifies that across every possible recovery verification failure mode, zero unauthorized jumps to TRUST occur."""
+    failure_cases = [
+        ("conformal_breach", {"mode_conformal_bounds": {0: 25.0}}),
+        ("elevated_cusum", {"cusum_statistic": 2.20}),
+        ("unidentified_mass", {"latent_mass_identified": False}),
+        ("excessive_slip", {"slip": 0.0020}),
+        ("unsafe_shear_ratio", {"shear_fz": 5.0, "total_fn": 4.0}),  # Fz/Fn = 1.25 > 0.35
+    ]
+
+    for mode_name, override in failure_cases:
+        class DummyModel:
+            pass
+
+        base_model = TrustAwareWorldModel(
+            base_world_model=DummyModel(),
+            config=TrustPolicyConfig(delta_safe_prelift_m=0.002),
+            task="compliant_prelift",
+        )
+        policy = PersistentSafetyRecoveryPolicy(
+            base_trust_model=base_model,
+            recovery_config=RecoveryConfig(
+                verify_probe_steps=3,
+                tau_cusum_recovery=1.50,
+                verify_max_slip_mps=0.0005,
+                safe_shear_ratio_cap=0.35,
+            ),
+        )
+        policy.reset_episode()
+        policy.trust_model.latent_mass_identified = override.get("latent_mass_identified", True)
+        policy.trust_model.estimated_mass = 0.350 if policy.trust_model.latent_mass_identified else None
+        policy.trust_model.mode_conformal_bounds = override.get("mode_conformal_bounds", {0: 1.0})
+        policy.trust_model.cusum_statistic = override.get("cusum_statistic", 0.0)
+        policy.safety_latched = True
+        policy.latch_state = SafetyLatchState.RECOVERING_VERIFY
+        policy.verify_step_count = 0
+
+        slip = override.get("slip", 0.0)
+        fz_per_finger = override.get("shear_fz", 3.4) / 4.0
+        fn_per_finger = override.get("total_fn", 16.0) / 4.0
+
+        obs = {
+            "finger_fn": np.array([fn_per_finger] * 4, dtype=np.float32),
+            "finger_ft": np.array([[0.0, fz_per_finger]] * 4, dtype=np.float32),
+            "delta_dot_t": np.array([slip] * 4, dtype=np.float32),
+        }
+        nom_act = np.array([0.0, 0.0, 0.0, 0.0, 0.05], dtype=np.float32)
+
+        dec = policy.evaluate_decision(obs, nom_act)
+        assert dec.state == TriState.ABSTAIN, f"Failure mode {mode_name} returned non-ABSTAIN {dec.state}"
+        assert policy.latch_state == SafetyLatchState.TERMINAL_ABSTAIN, f"Failure mode {mode_name} did not fail closed"
+        assert policy.recovery_successful is False, f"Failure mode {mode_name} certified recovery"
+        assert np.all(dec.action == 0.0), f"Failure mode {mode_name} commanded non-zero action"
+        assert dec.state != TriState.TRUST, f"Failure mode {mode_name} leaked unauthorized TRUST"
+
 

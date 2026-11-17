@@ -1,11 +1,11 @@
 {
   "program": "HOROS PROBE-1 \u2014 Research-002",
-  "stage": "Phase 3.7.4.1 \u2014 Recovery Gate Hardening",
+  "stage": "Phase 3.7.4.2 \u2014 Recovery Re-entry Trust Invariant",
   "protocol_id": "HOROS-P1-R002-P374-REC-v1.0",
   "manifest_version": "phase37_4_recovery_manifest_v1.0",
-  "manifest_sha256": "7d36ec8391d2bab4a4fae7a267f7d29cc52c48edab19b2cd429cac25c2d3b50a",
+  "manifest_sha256": "70015bcc1b2c70e4e63c0580468c46cdc40723c98efedc246b63f637f55aaf16",
   "execution_status": "COMPLETED_AND_ADJUDICATED",
-  "elapsed_seconds": 1.267,
+  "elapsed_seconds": 1.35,
   "main_acceptance_criterion": {
     "name": "zero_unauthorized_transitions_to_trust",
     "required": 0,
@@ -11040,7 +11040,7 @@
               "step": 28,
               "sim_time_s": 0.28,
               "decision_state": "ABSTAIN",
-              "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+              "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
               "latch_state": "TERMINAL_ABSTAIN",
               "safety_latched": true,
               "action": [
@@ -11902,7 +11902,7 @@
               "step": 28,
               "sim_time_s": 0.28,
               "decision_state": "ABSTAIN",
-              "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+              "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
               "latch_state": "TERMINAL_ABSTAIN",
               "safety_latched": true,
               "action": [
@@ -12764,7 +12764,7 @@
               "step": 28,
               "sim_time_s": 0.28,
               "decision_state": "ABSTAIN",
-              "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+              "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
               "latch_state": "TERMINAL_ABSTAIN",
               "safety_latched": true,
               "action": [
@@ -13626,7 +13626,7 @@
               "step": 28,
               "sim_time_s": 0.28,
               "decision_state": "ABSTAIN",
-              "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+              "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
               "latch_state": "TERMINAL_ABSTAIN",
               "safety_latched": true,
               "action": [

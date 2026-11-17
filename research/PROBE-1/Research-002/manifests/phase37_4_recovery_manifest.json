@@ -1,7 +1,7 @@
 {
   "schema_version": "phase37_4_recovery_manifest_v1.0",
   "program": "HOROS PROBE-1 — Research-002",
-  "stage": "Phase 3.7.4.1 — Recovery Gate Hardening",
+  "stage": "Phase 3.7.4.2 — Recovery Re-entry Trust Invariant",
   "protocol_id": "HOROS-P1-R002-P374-REC-v1.0",
   "governance": {
     "execution_authorized": 1,
@@ -25,6 +25,7 @@
     "verify_max_slip_mps": 0.0005,
     "safe_shear_ratio_cap": 0.35,
     "max_recovery_attempts": 1,
+    "require_underlying_trust": true,
     "safe_hold_action_prelift": [0.0, 0.0, 0.0, 0.0, 0.0],
     "safe_hold_action_pih": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   },

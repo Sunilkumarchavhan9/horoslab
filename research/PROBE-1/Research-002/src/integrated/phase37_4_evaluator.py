@@ -540,7 +540,7 @@ def run_phase37_4_evaluation(r002_root: str) -> Dict[str, Any]:
 
     return {
         "program": "HOROS PROBE-1 — Research-002",
-        "stage": "Phase 3.7.4.1 — Recovery Gate Hardening",
+        "stage": manifest.get("stage", "Phase 3.7.4.2 — Recovery Re-entry Trust Invariant"),
         "protocol_id": PROTOCOL_ID,
         "manifest_version": manifest.get("schema_version", "phase37_4_recovery_manifest_v1.0"),
         "manifest_sha256": manifest_sha256,

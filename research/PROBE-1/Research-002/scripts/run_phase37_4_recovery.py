@@ -31,7 +31,7 @@ def generate_markdown_report(results: dict) -> str:
     overall = "PASSED" if results.get("all_gates_passed", False) else "FAILED"
     time_str = time.strftime('%Y-%m-%d %H:%M:%S')
     prog = results.get('program', 'HOROS PROBE-1 — Research-002')
-    stg = results.get('stage', 'Phase 3.7.4.1 — Recovery Gate Hardening')
+    stg = results.get('stage', 'Phase 3.7.4.2 — Recovery Re-entry Trust Invariant')
     stat = results.get('execution_status', 'COMPLETED_AND_ADJUDICATED')
     tp = results.get('training_performed', False)
     pt = results.get('parameters_trained', 0)
@@ -47,7 +47,7 @@ def generate_markdown_report(results: dict) -> str:
     s6 = scen.get("scenario_6_recovery_unverified", {})
 
     report = fr"""# HOROS PROBE-1 — Research-002
-## Phase 3.7.4.1 Execution Report: Recovery Gate Hardening & Persistent Safety
+## Phase 3.7.4.2 Execution Report: Recovery Re-entry Trust Invariant & Persistent Safety
 
 **Author:** Antigravity AI Assistant & HOROS Research-002 Team  
 **Date:** {time_str}  
@@ -65,11 +65,12 @@ def generate_markdown_report(results: dict) -> str:
 
 ### 1. Executive Summary & Acceptance Gates Scorecard
 
-Phase 3.7.4.1 hardens the **Persistent Safety and Controlled Recovery Architecture** with three formal fail-closed governance guarantees:
-1. **Settle Timeout Guarantee (`settle_timeout_steps`):** Persistent micro-slip during dwell settle cannot leave recovery waiting indefinitely; fails closed to `TERMINAL_ABSTAIN` if dwell is not achieved within 20 steps.
-2. **Elevated CUSUM Invariant (`tau_cusum_recovery`):** Elevated model drift ($S_k > 1.50$) strictly prevents recovery certification and forces `TERMINAL_ABSTAIN`.
-3. **Recovery Attempt Throttling (`max_recovery_attempts`):** A failed recovery check cannot be repeatedly retried; locks permanently into `TERMINAL_ABSTAIN`.
-4. **Physical Force & Friction Verification:** Normal contact forces ($F_n$), vertical shear load ($F_z$), and slip velocities are comprehensively tracked across all scenarios.
+Phase 3.7.4.2 formally establishes the **Recovery Re-entry Trust Invariant** alongside persistent safety and recovery guarantees:
+1. **Recovery Re-entry Trust Invariant (`require_underlying_trust`):** During every step of recovery verification, `underlying_dec.state` is strictly inspected. Recovery cannot be certified unless the underlying `TrustAwareWorldModel` independently returns `TRUST` throughout the complete verification sequence. Any underlying `ABSTAIN` or `PROBE` state forces an immediate fail-closed transition to `TERMINAL_ABSTAIN`.
+2. **Settle Timeout Guarantee (`settle_timeout_steps`):** Persistent micro-slip during dwell settle cannot leave recovery waiting indefinitely; fails closed to `TERMINAL_ABSTAIN` if dwell is not achieved within 20 steps.
+3. **Elevated CUSUM Invariant (`tau_cusum_recovery`):** Elevated model drift ($S_k > 1.50$) strictly prevents recovery certification and forces `TERMINAL_ABSTAIN`.
+4. **Recovery Attempt Throttling (`max_recovery_attempts`):** A failed recovery check cannot be repeatedly retried; locks permanently into `TERMINAL_ABSTAIN`.
+5. **Physical Force & Friction Verification:** Normal contact forces ($F_n$), vertical shear load ($F_z$), and slip velocities are comprehensively tracked across all scenarios.
 
 All pre-registered acceptance gates have been empirically evaluated and **PASSED**:
 

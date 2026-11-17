@@ -10991,7 +10991,7 @@
             "step": 28,
             "sim_time_s": 0.28,
             "decision_state": "ABSTAIN",
-            "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+            "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
             "latch_state": "TERMINAL_ABSTAIN",
             "safety_latched": true,
             "action": [
@@ -11853,7 +11853,7 @@
             "step": 28,
             "sim_time_s": 0.28,
             "decision_state": "ABSTAIN",
-            "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+            "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
             "latch_state": "TERMINAL_ABSTAIN",
             "safety_latched": true,
             "action": [
@@ -12715,7 +12715,7 @@
             "step": 28,
             "sim_time_s": 0.28,
             "decision_state": "ABSTAIN",
-            "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+            "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
             "latch_state": "TERMINAL_ABSTAIN",
             "safety_latched": true,
             "action": [
@@ -13577,7 +13577,7 @@
             "step": 28,
             "sim_time_s": 0.28,
             "decision_state": "ABSTAIN",
-            "decision_reason": "RECOVERY_VERIFICATION_SLIP_DETECTED",
+            "decision_reason": "RECOVERY_VERIFICATION_UNDERLYING_ABSTAIN_SLIP_COLLAPSE",
             "latch_state": "TERMINAL_ABSTAIN",
             "safety_latched": true,
             "action": [
