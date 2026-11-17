@@ -67,4 +67,9 @@ The frozen 21-artifact registry imported from `phase37_3_evaluator.py` still mat
 
 ## Git
 
-Commit SHAs are appended after the commits that contain this report are created.
+Implementation commit, which contains the pipeline, tests, pilot script, and this report before the SHA lines below were added:
+
+- Canonical `horoslab`, branch `feat/probe1-stage3-preflight`: `0196748f4cd6044fe1c035c62f3ff1e95c375d49`
+- Public mirror `horos-probe-1`, branch `feat/probe1-stage3-preflight`: `1a62a92ebce3ae42d4d0ab57d34b640a4ac67768`
+
+A follow-up commit on each branch records these SHAs. Unrelated dirty files in the canonical worktree were left unstaged.
