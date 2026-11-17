@@ -1,0 +1,168 @@
+{
+  "protocol": "HOROS-P1-R002-STAGE3.1-PILOT",
+  "training_performed": false,
+  "parameters_trained": 0,
+  "episode_length": 20,
+  "tasks": {
+    "compliant_prelift": {
+      "generated": 20,
+      "accepted": 20,
+      "rejected": 0,
+      "strata": {
+        "nominal": 10,
+        "probe": 6,
+        "nonstationary": 4
+      },
+      "rejections": [],
+      "finite": true,
+      "privileged_leaks": [],
+      "reproduced": true,
+      "physical_interaction_verified": true,
+      "stratum_statistics": {
+        "nominal": {
+          "count": 10,
+          "max_fn_finger_n": 2.046,
+          "max_total_fn_n": 8.073,
+          "max_fz_n": 3.592,
+          "max_slip_mps": 0.0035,
+          "modes_observed": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "mode_counts": {
+            "0": 10,
+            "2": 10,
+            "3": 4,
+            "4": 10
+          }
+        },
+        "probe": {
+          "count": 6,
+          "max_fn_finger_n": 2.048,
+          "max_total_fn_n": 8.064,
+          "max_fz_n": 2.851,
+          "max_slip_mps": 0.0035,
+          "modes_observed": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "mode_counts": {
+            "0": 6,
+            "2": 6,
+            "3": 6,
+            "4": 6
+          }
+        },
+        "nonstationary": {
+          "count": 4,
+          "max_fn_finger_n": 2.05,
+          "max_total_fn_n": 8.068,
+          "max_fz_n": 3.565,
+          "max_slip_mps": 0.0035,
+          "modes_observed": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "mode_counts": {
+            "0": 4,
+            "2": 4,
+            "3": 2,
+            "4": 4
+          }
+        }
+      },
+      "regime_verification": {
+        "regime_a_seeds": [
+          3113000,
+          3113002
+        ],
+        "regime_a_slip_triggered": true,
+        "regime_a_peak_slip_mps": 0.0035000001080334187,
+        "regime_b_seeds": [
+          3113001,
+          3113003
+        ],
+        "regime_b_final_mass_kg": 0.39999999999999997
+      },
+      "observation_files": 20
+    },
+    "peg_in_hole": {
+      "generated": 20,
+      "accepted": 20,
+      "rejected": 0,
+      "strata": {
+        "nominal": 10,
+        "impact": 6,
+        "wedging": 4
+      },
+      "rejections": [],
+      "finite": true,
+      "privileged_leaks": [],
+      "reproduced": true,
+      "physical_interaction_verified": true,
+      "stratum_statistics": {
+        "nominal": {
+          "count": 10,
+          "max_force_n": 0.331,
+          "max_torque_nm": 0.0,
+          "min_z_mm": -2.767,
+          "max_insertion_mm": 2.767,
+          "modes_observed": [
+            0,
+            1,
+            2
+          ],
+          "mode_counts": {
+            "0": 10,
+            "1": 10,
+            "2": 10
+          }
+        },
+        "impact": {
+          "count": 6,
+          "max_force_n": 6.995,
+          "max_torque_nm": 0.305,
+          "min_z_mm": -2.611,
+          "max_insertion_mm": 2.611,
+          "modes_observed": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "mode_counts": {
+            "0": 6,
+            "1": 6,
+            "2": 2,
+            "3": 6
+          }
+        },
+        "wedging": {
+          "count": 4,
+          "max_force_n": 0.55,
+          "max_torque_nm": 0.029,
+          "min_z_mm": -2.525,
+          "max_insertion_mm": 2.525,
+          "modes_observed": [
+            0,
+            1,
+            2
+          ],
+          "mode_counts": {
+            "0": 4,
+            "1": 4,
+            "2": 4
+          }
+        }
+      },
+      "observation_files": 20
+    }
+  },
+  "all_criteria_passed": true
+}
