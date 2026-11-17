@@ -1,27 +1,25 @@
-"""HOROS PROBE-1 — Research-002: Regression Suite for Stage 3.2 Pilot Remediation.
+"""HOROS PROBE-1 — Research-002: Regression Suite for the Stage 3.2.2 pilot.
 
-Verifies:
-1. Deliverable artifacts exist on disk and follow expected schemas (reports, manifests, .npz, .privileged.json).
-2. Zero student model training guarantee (0 parameters updated, 0 gradient steps).
-3. False-success prevention (zero accepted episodes or missing interactions fail).
-4. Full 40-episode execution: 20 Prelift and 20 Peg-in-Hole across all strata.
-5. Physical-interaction criteria satisfied (forces, torques, slip, insertion, contact modes).
-6. Issue A Remediated — Peg-in-Hole wedging stratum achieves genuine wedging (contact_stratum = 3, insertion > 5.0 mm).
-7. Issue B Remediated — Empirical simulator telemetry recorded for Regime A (0.60 -> 0.24) and Regime B (0.25 kg/s influx).
-8. Strict separation of model-visible observations and privileged simulator ground truth.
-9. Deterministic reproducibility from scenario seeds.
-10. Correct mode accounting: timestep mode histograms and episode mode presence.
-11. Measurable Prelift vertical displacement verified.
+Verifies the saved 40-episode pilot, the seven-class ContactMode ontology, and the
+Regime A friction-to-slip timing. Simulator contact stratum 3 (wedging) stays a
+separate label from classifier mode 3 (sliding).
 """
 
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any, Dict
 
 import numpy as np
 import pytest
+
+R002_SRC = Path(__file__).resolve().parents[1] / "src"
+if str(R002_SRC) not in sys.path:
+    sys.path.insert(0, str(R002_SRC))
+
+from contact_modes.contact_mode_definitions import ContactMode, MODE_NAMES, NUM_MODES  # noqa: E402
 
 TESTS_DIR = Path(__file__).resolve().parent
 R002_ROOT = TESTS_DIR.parent
@@ -315,3 +313,176 @@ def test_privileged_data_separation(accepted_manifest: list[Dict[str, Any]]) -> 
             # Privileged JSON correctly holds ground truth
             assert "modes" in privileged_data
             assert "env_metadata" in privileged_data
+
+
+AUTHORITATIVE_CONTACT_MODES = (
+    (0, "FREE", "Free"),
+    (1, "FIRST_CONTACT", "FirstContact"),
+    (2, "STICKING", "Sticking"),
+    (3, "SLIDING", "Sliding"),
+    (4, "IMPACT", "Impact"),
+    (5, "JAMMING", "Jamming"),
+    (6, "RELEASE", "Release"),
+)
+REGIME_A_SLIP_THRESHOLD_MPS = 0.0010
+
+
+def test_contact_mode_ontology_matches_enum() -> None:
+    assert NUM_MODES == 7
+    assert len(list(ContactMode)) == 7
+    for value, enum_name, display_name in AUTHORITATIVE_CONTACT_MODES:
+        mode = ContactMode(value)
+        assert mode.name == enum_name
+        assert MODE_NAMES[mode] == display_name
+        assert int(mode) == value
+    assert int(ContactMode.SLIDING) == 3
+    assert int(ContactMode.JAMMING) == 5
+    assert ContactMode.SLIDING.name != "WEDGING"
+
+
+def test_saved_episode_modes_belong_to_contact_mode_enum(accepted_manifest: list[Dict[str, Any]]) -> None:
+    assert len(accepted_manifest) == 40
+    for entry in accepted_manifest:
+        privileged_path = PILOT_DIR / "accepted" / f"{entry['episode_id']}.privileged.json"
+        with open(privileged_path, "r", encoding="utf-8") as handle:
+            privileged = json.load(handle)
+        for label in privileged["modes"]:
+            assert int(label) in ContactMode
+            assert ContactMode(int(label)).name == AUTHORITATIVE_CONTACT_MODES[int(label)][1]
+
+
+def test_classifier_mode_3_is_sliding_and_stratum_3_is_wedging(
+    pilot_report: Dict[str, Any],
+    accepted_manifest: list[Dict[str, Any]],
+) -> None:
+    ontology = pilot_report["ontology"]
+    assert ontology["numeric_labels_remapped"] is False
+    assert ontology["classifier_mode_3"] == "SLIDING"
+    assert ontology["simulator_stratum_3"] == "WEDGING"
+    assert ontology["classifier_mode_3_is_not_simulator_stratum_3"] is True
+    assert ontology["contact_modes"][3]["enum_name"] == "SLIDING"
+    assert ontology["simulator_contact_strata"][3]["name"] == "WEDGING"
+    assert ontology["simulator_stratum_3_reached_without_classifier_jamming"] is True
+    assert ontology["classifier_jamming_emitted_on_wedging_episodes"] is False
+
+    execution_report = (PILOT_DIR / "stage3_2_execution_report.md").read_text(encoding="utf-8")
+    assert "3 | `SLIDING` | Sliding" in execution_report
+    assert "3 | WEDGING" in execution_report
+    assert "ID 3 Sticking" not in execution_report
+    assert "$1$: Impact, $2$: Sliding, $3$: Sticking" not in execution_report
+
+    wedging_entries = [entry for entry in accepted_manifest if entry["task"] == "peg_in_hole" and entry["stratum"] == "wedging"]
+    assert len(wedging_entries) == 4
+    for entry in wedging_entries:
+        privileged_path = PILOT_DIR / "accepted" / f"{entry['episode_id']}.privileged.json"
+        with open(privileged_path, "r", encoding="utf-8") as handle:
+            privileged = json.load(handle)
+        modes = [int(mode) for mode in privileged["modes"]]
+        strata = [int(value) for value in privileged["env_metadata"]["step_contact_stratum"]]
+        assert 3 in strata
+        assert ContactMode(3).name == "SLIDING"
+        assert int(ContactMode.JAMMING) not in modes
+        assert "WEDGING" not in {ContactMode(mode).name for mode in modes}
+
+
+def test_regime_a_slip_is_after_friction_transition(pilot_report: Dict[str, Any]) -> None:
+    regime = pilot_report["tasks"]["compliant_prelift"]["regime_verification"]
+    assert regime["regime_a_slip_criterion"] == "post_transition_only"
+    assert regime["regime_a_pre_transition_slip_used_for_acceptance"] is False
+    assert regime["regime_a_slip_triggered"] is True
+    assert regime["regime_a_friction_transition_verified"] is True
+    episodes = regime["regime_a_episodes"]
+    assert len(episodes) == 2
+    assert pilot_report["trajectories_regenerated"] is False
+    assert pilot_report["protocol"] == "HOROS-P1-R002-STAGE3.2.2-ONTOLOGY-CAUSAL"
+
+    reported_ids = []
+    for recorded in episodes:
+        episode_id = recorded["episode_id"]
+        reported_ids.append(episode_id)
+        privileged_path = PILOT_DIR / "accepted" / f"{episode_id}.privileged.json"
+        npz_path = PILOT_DIR / "accepted" / f"{episode_id}.npz"
+        with open(privileged_path, "r", encoding="utf-8") as handle:
+            privileged = json.load(handle)
+        mu = [float(value) for value in privileged["env_metadata"]["step_mu_true"]]
+        with np.load(npz_path) as archive:
+            next_states = archive["next_states"]
+        slip = np.max(np.abs(next_states[:, 16:20]), axis=1)
+
+        transition_index = recorded["transition_index"]
+        assert transition_index == 14
+        assert recorded["simulator_step_count"] == 15
+        assert mu[:transition_index] == [0.60] * transition_index
+        assert mu[transition_index:] == [0.24] * (len(mu) - transition_index)
+        assert recorded["pre_transition_mu_values"] == [0.60] * transition_index
+        assert recorded["post_transition_mu_values"] == [0.24] * (len(mu) - transition_index)
+
+        pre_peak = float(np.max(slip[:transition_index]))
+        post_slip = slip[transition_index:]
+        post_peak = float(np.max(post_slip))
+        qualifying = [index for index in range(transition_index, len(slip)) if float(slip[index]) > REGIME_A_SLIP_THRESHOLD_MPS]
+        assert pre_peak <= REGIME_A_SLIP_THRESHOLD_MPS
+        assert post_peak > REGIME_A_SLIP_THRESHOLD_MPS
+        assert qualifying
+        assert qualifying[0] == recorded["first_post_transition_slip_index"]
+        assert qualifying[0] >= transition_index
+        assert recorded["first_post_transition_slip_simulator_step"] == qualifying[0] + 1
+        assert abs(recorded["post_transition_peak_slip_mps"] - post_peak) < 1e-8
+        assert abs(recorded["pre_transition_peak_slip_mps"] - pre_peak) < 1e-8
+        assert recorded["passed"] is True
+        assert recorded["indexing"]["slip_window"] == "post_transition_only"
+        # The pre-transition peak alone does not satisfy the acceptance threshold.
+        assert pre_peak <= REGIME_A_SLIP_THRESHOLD_MPS < post_peak
+
+    assert regime["regime_a_episode_ids"] == reported_ids
+    execution_report = (PILOT_DIR / "stage3_2_execution_report.md").read_text(encoding="utf-8")
+    for episode_id in reported_ids:
+        assert episode_id in execution_report
+
+
+def test_regime_b_mass_increments_every_timestep(accepted_manifest: list[Dict[str, Any]]) -> None:
+    regime_b = [
+        entry
+        for entry in accepted_manifest
+        if entry["task"] == "compliant_prelift" and entry["stratum"] == "nonstationary"
+    ]
+    checked = 0
+    for entry in regime_b:
+        privileged_path = PILOT_DIR / "accepted" / f"{entry['episode_id']}.privileged.json"
+        with open(privileged_path, "r", encoding="utf-8") as handle:
+            meta = json.load(handle)["env_metadata"]
+        if meta.get("regime") != "B":
+            continue
+        mass = np.asarray(meta["step_object_mass_kg"], dtype=np.float64)
+        assert mass.shape == (20,)
+        assert np.allclose(np.diff(mass), 0.0025, atol=1e-4)
+        assert abs(float(mass[-1]) - 0.400) < 1e-4
+        checked += 1
+    assert checked == 2
+
+
+def test_acceptance_function_rejects_slip_before_the_friction_transition() -> None:
+    import importlib.util
+
+    script_path = R002_ROOT / "scripts" / "run_stage3_pilot.py"
+    spec = importlib.util.spec_from_file_location("run_stage3_pilot_stage322", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+
+    friction = [0.60] * 14 + [0.24] * 6
+    states = np.zeros((20, 23), dtype=np.float64)
+    states[:14, 16] = 0.05
+    rejected = module.verify_regime_a_causal_slip(friction, states)
+    assert rejected["friction_sequence_verified"] is True
+    assert rejected["pre_transition_peak_slip_mps"] > REGIME_A_SLIP_THRESHOLD_MPS
+    assert rejected["post_transition_peak_slip_mps"] <= REGIME_A_SLIP_THRESHOLD_MPS
+    assert rejected["post_transition_slip_verified"] is False
+    assert rejected["passed"] is False
+    assert rejected["pre_transition_slip_used_for_acceptance"] is False
+
+    states[14, 16] = 0.005
+    accepted = module.verify_regime_a_causal_slip(friction, states)
+    assert accepted["transition_index"] == 14
+    assert accepted["first_post_transition_slip_index"] == 14
+    assert accepted["passed"] is True

@@ -1,12 +1,15 @@
 # HOROS PROBE-1 — Research-002
-## Stage 3.2.1 Execution Report: Final Evidence and Acceptance Corrections
+## Stage 3.2.2 Execution Report: Contact Label Ontology and Causal Event Verification
 
-**Author:** Antigravity AI Assistant & HOROS Research-002 Team  
-**Date:** 2026-11-17 15:30:00  
+**Author:** HOROS Research-002  
+**Date:** 2026-11-17 18:50:00  
 **Program:** HOROS PROBE-1 — Research-002  
-**Stage:** Stage 3.2.1 — Final Evidence and Acceptance Corrections  
-**Protocol:** HOROS-P1-R002-STAGE3.2.1-FINAL-EVIDENCE  
+**Stage:** Stage 3.2.2 — Contact Label Ontology and Causal Event Verification  
+**Protocol:** HOROS-P1-R002-STAGE3.2.2-ONTOLOGY-CAUSAL  
+**Parent canonical commit:** `298b0227a66bfcc3916ac07c987aa7257b333b13`  
+**Parent mirror commit:** `223a7afb33cf6ce4ddee766066c84c3d21f0857e`  
 **Overall Status:** **PASSED**  
+**Trajectories regenerated:** False  
 **World Model Training Permitted:** 0  
 **World Model Training Performed:** False  
 **Parameters Trained:** 0  
@@ -17,29 +20,53 @@
 
 ### 1. Executive Summary & Remediation Scorecard
 
-Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 40-episode physical interaction pilot (20 Compliant Prelift and 20 Peg-in-Hole), resolving all remaining scientific verification gaps before production dataset construction:
+Stage 3.2.2 certifies the existing 40-episode pilot. The recorded episode files are unchanged. Two certification errors from Stage 3.2.1 are corrected:
 
-1. **Prelift Event-Specific Acceptance Standardized:**
-   - Evaluates post-action state arrays (`next_states[:, :]`) and post-action wrench arrays (`next_wrenches[:, :]`).
-   - Replaced generic displacement with distinct, measurable physical criteria per stratum:
-     - **Nominal:** Positive object lift above documented numerical tolerance ($z_{\text{obj}} > 0.001\text{ mm}$, observed range $[0.0022, 0.3540]\text{ mm}$).
-     - **Probe:** Expected Coulomb slip velocity ($\max \|\dot{\delta}_t\| \ge 0.0005\text{ m/s}$, observed $0.0050\text{ m/s}$) with object securely held on table ($z_{\text{obj}} = 0.0\text{ mm}$).
-     - **Nonstationary Regime A:** Measured friction collapse at step 15 ($0.60 \to 0.24$) triggering slip ($\max \|\dot{\delta}_t\| > 0.0010\text{ m/s}$, observed $0.0050\text{ m/s}$).
-     - **Nonstationary Regime B:** Continuous mass influx ($0.25\text{ kg/s}$ reaching $0.400\text{ kg}$) with safe clamping hold ($F_n \ge 0.50\text{ N}$, $F_z \ge 0.50\text{ N}$).
-   - Strict adherence to physical safety envelopes across all 20 episodes ($F_n \le 20.0\text{ N}$, $F_z \le 15.0\text{ N}$).
+1. **Contact-mode ontology.** The Stage 3.2.1 report listed four classifier classes and assigned the wrong names to IDs 1, 2, and 3. The authoritative `ContactMode` enum has seven classes. Saved numeric mode labels were not remapped.
+2. **Regime A causality.** Acceptance now requires the measured friction sequence and slip on the post-transition post-action states of each Regime A episode. A maximum taken over the whole episode is not used.
 
-2. **Peg-in-Hole Post-Action State/Telemetry Alignment:**
-   - Evaluates post-action state arrays (`next_states[:, :3]`) and matching post-action privileged telemetry (`step_insertion_depth_mm`, `step_contact_stratum`).
-   - For 100% of wedging episodes (4/4), confirmed that the **exact same timestep $t$** satisfies:
-     - `step_contact_stratum[t] == 3` (simulator contact stratum 3: wedging)
-     - `step_insertion_depth_mm[t] > 5.0 mm` (simulator empirical depth)
-     - `next_states[t]` insertion depth ($\max(0.0, -z) > 5.0\text{ mm}$)
-     - Physical consistency between state depth and telemetry depth: $|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$ (observed $< 10^{-4}\text{ mm}$).
-   - Compliant force bounds ($\le 35.0\text{ N}$) and torque bounds ($\le 7.0\text{ Nm}$) strictly maintained.
+Retained physical checks:
 
-3. **Precise Terminology Distinction:**
-   - **Contact Mode:** Classifier discrete enum ($0$: Free, $1$: Impact, $2$: Sliding, $3$: Sticking).
-   - **Simulator Contact Stratum:** Authoritative ground-truth simulator physics stratum ($0$: Free, $1$: Impact, $2$: Sliding, $3$: Wedging, $4$: Seated).
+- **Nominal:** Object lift $z_{\text{obj}} > 0.001\text{ mm}$.
+- **Probe:** Coulomb slip $\max \|\dot{\delta}_t\| \ge 0.0005\text{ m/s}$.
+- **Regime B:** Mass increment $0.0025\text{ kg}$ at every timestep, ending at $0.400\text{ kg}$, with $F_n \ge 0.50\text{ N}$ and $F_z \ge 0.50\text{ N}$.
+- **Wedging:** The same post-action index $t$ has simulator stratum 3, insertion depth $> 5.0\text{ mm}$ in telemetry and in `next_states[t]`, and $|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$.
+
+### 1.1 Authoritative classifier contact modes
+
+Source: `src/contact_modes/contact_mode_definitions.py`, enum `ContactMode`, map `MODE_NAMES`.
+
+| ID | Enum name | Display name |
+| :--- | :--- | :--- |
+| 0 | `FREE` | Free |
+| 1 | `FIRST_CONTACT` | FirstContact |
+| 2 | `STICKING` | Sticking |
+| 3 | `SLIDING` | Sliding |
+| 4 | `IMPACT` | Impact |
+| 5 | `JAMMING` | Jamming |
+| 6 | `RELEASE` | Release |
+
+Histogram integers in this report use these IDs. Bin 1 is `FIRST_CONTACT`. Bin 2 is `STICKING`. Bin 3 is `SLIDING`. Bin 4 is `IMPACT`. Bin 5 is `JAMMING`. Bin 6 is `RELEASE`.
+
+### 1.2 Simulator contact strata
+
+This is a separate label system owned by the peg-in-hole simulator. It is not `ContactMode`.
+
+| ID | Stratum |
+| :--- | :--- |
+| 0 | FREE |
+| 1 | IMPACT |
+| 2 | SLIDING |
+| 3 | WEDGING |
+| 4 | SEATED |
+
+Classifier mode 3 is `SLIDING`. Simulator stratum 3 is `WEDGING`. Those two IDs must not be read as the same event.
+
+Wedging episodes reached simulator stratum 3: **True**.  
+Classifier mode `JAMMING` (ID 5) emitted on those episodes: **False**.  
+Stratum 3 reached without classifier jamming: **True**.  
+Wedging classifier modes observed: [0, 1, 2].  
+Wedging simulator strata observed: [0, 1, 2, 3].
 
 | Metric / Check | Required | Prelift Observed | Peg-in-Hole Observed | Status |
 | :--- | :--- | :--- | :--- | :---: |
@@ -70,8 +97,8 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 - **Max Slip Velocity ($\max |\dot{\delta}_t|$):** $0.005000\text{ m/s}$
 - **Vertical Displacement:** Max lift $= 0.3540\text{ mm}$, Final lift $= 0.1584\text{ mm}$
 - **Observed Contact Modes:** [0, 2, 3, 4]
-- **Timestep Mode Histogram:** {0: 10, 4: 10, 2: 179, 3: 1}
-- **Episode Mode Presence:** {0: 10, 2: 10, 4: 10, 3: 1}
+- **Timestep Mode Histogram:** {'0': 10, '4': 10, '2': 179, '3': 1}
+- **Episode Mode Presence:** {'0': 10, '2': 10, '4': 10, '3': 1}
 
 ##### Stratum: `probe` (6 episodes)
 - **Normal Force:** Peak total $F_n = 11.26\text{ N}$ (per finger: $2.85\text{ N}$)
@@ -79,8 +106,8 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 - **Max Slip Velocity ($\max |\dot{\delta}_t|$):** $0.005000\text{ m/s}$
 - **Vertical Displacement:** Max lift $= 0.0000\text{ mm}$, Final lift $= 0.0000\text{ mm}$
 - **Observed Contact Modes:** [0, 2, 3, 4]
-- **Timestep Mode Histogram:** {0: 6, 4: 6, 2: 67, 3: 41}
-- **Episode Mode Presence:** {0: 6, 2: 6, 3: 6, 4: 6}
+- **Timestep Mode Histogram:** {'0': 6, '4': 6, '2': 67, '3': 41}
+- **Episode Mode Presence:** {'0': 6, '2': 6, '3': 6, '4': 6}
 
 ##### Stratum: `nonstationary` (4 episodes)
 - **Normal Force:** Peak total $F_n = 11.27\text{ N}$ (per finger: $2.85\text{ N}$)
@@ -88,15 +115,47 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 - **Max Slip Velocity ($\max |\dot{\delta}_t|$):** $0.005000\text{ m/s}$
 - **Vertical Displacement:** Max lift $= 0.2540\text{ mm}$, Final lift $= 0.1270\text{ mm}$
 - **Observed Contact Modes:** [0, 2, 3, 4]
-- **Timestep Mode Histogram:** {0: 4, 4: 4, 2: 60, 3: 12}
-- **Episode Mode Presence:** {0: 4, 2: 4, 3: 2, 4: 4}
+- **Timestep Mode Histogram:** {'0': 4, '4': 4, '2': 60, '3': 12}
+- **Episode Mode Presence:** {'0': 4, '2': 4, '3': 2, '4': 4}
 
 #### Empirical Nonstationary Regime Verification:
-- **Regime A (Friction Drop Transition):**
+
+Step indexing used for Regime A:
+
+- `t` is the shared post-action index of `step_mu_true[t]` and `next_states[t]`.
+- Simulator `step_count` is `t + 1`. The friction update runs at the start of `step()` after `step_count` increments, and it changes friction when `step_count >= 15`.
+- Slip is the maximum absolute value of `next_states[t, 16:20]`, in m/s, and is evaluated only for `t` greater than or equal to the transition index.
+- Pre-transition slip is reported and is excluded from `regime_a_slip_triggered`.
+
+- **Regime A (friction transition, then slip):**
   - Episodes evaluated: seeds [3113000, 3113002]
-  - Measured simulator friction: confirmed transition from $\mu = 0.60$ (steps 0–14) to $\mu = 0.24$ (steps 15–19) directly from `step_mu_true` telemetry.
-  - Empirical transition verified: **True**.
-  - Physical slip triggered upon friction drop: **True** (Peak slip velocity: $0.00500\text{ m/s}$).
+  - Friction sequence verified on every Regime A episode: **True**
+  - Post-transition slip verified independently on both episodes: **True**
+  - Slip criterion: `post_transition_only`
+  - Pre-transition slip used for acceptance: **False**
+  - Post-transition peak slip across episodes: $0.00500\text{ m/s}$
+  - Definition: maximum of per-episode post-transition peak absolute slip; indices before the friction transition are excluded
+
+  - Episode `syn_compliant_prelift_stage3_pilot_controller_v1_seed3113000` seed 3113000:
+    - Transition post-action index `t=14` (simulator step_count 15)
+    - Pre-transition friction length 14: [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6]
+    - Post-transition friction length 6: [0.24, 0.24, 0.24, 0.24, 0.24, 0.24]
+    - Friction sequence verified: **True**
+    - First post-transition slip index `t=14` (simulator step_count 15)
+    - Pre-transition peak slip: $0.00000\text{ m/s}$
+    - Post-transition peak slip: $0.00500\text{ m/s}$
+    - Episode passed: **True**
+
+  - Episode `syn_compliant_prelift_stage3_pilot_controller_v1_seed3113002` seed 3113002:
+    - Transition post-action index `t=14` (simulator step_count 15)
+    - Pre-transition friction length 14: [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6]
+    - Post-transition friction length 6: [0.24, 0.24, 0.24, 0.24, 0.24, 0.24]
+    - Friction sequence verified: **True**
+    - First post-transition slip index `t=14` (simulator step_count 15)
+    - Pre-transition peak slip: $0.00000\text{ m/s}$
+    - Post-transition peak slip: $0.00500\text{ m/s}$
+    - Episode passed: **True**
+
 - **Regime B (Continuous Mass Influx):**
   - Episodes evaluated: seeds [3113001, 3113003]
   - Measured simulator mass: confirmed continuous influx rate of $0.25\text{ kg/s}$ ($0.0025\text{ kg/step}$) directly from `step_object_mass_kg` telemetry.
@@ -119,8 +178,8 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 - **Insertion Depth:** Maximum insertion depth $= 14.17\text{ mm}$ (lowest z: $-14.17\text{ mm}$)
 - **Simulator Contact Strata Observed:** [0, 2] (Wedging stratum 3 attained: False)
 - **Observed Contact Modes:** [0, 1, 2]
-- **Timestep Mode Histogram:** {0: 155, 1: 10, 2: 135}
-- **Episode Mode Presence:** {0: 10, 1: 10, 2: 10}
+- **Timestep Mode Histogram:** {'0': 155, '1': 10, '2': 135}
+- **Episode Mode Presence:** {'0': 10, '1': 10, '2': 10}
 
 ##### Stratum: `impact` (6 episodes)
 - **Contact Force:** Peak resultant force $= 9.96\text{ N}$ ($< 35.0\text{ N}$ safety limit)
@@ -128,8 +187,8 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 - **Insertion Depth:** Maximum insertion depth $= 14.01\text{ mm}$ (lowest z: $-14.01\text{ mm}$)
 - **Simulator Contact Strata Observed:** [0, 1, 2] (Wedging stratum 3 attained: False)
 - **Observed Contact Modes:** [0, 1, 2, 3]
-- **Timestep Mode Histogram:** {0: 100, 3: 25, 1: 6, 2: 49}
-- **Episode Mode Presence:** {0: 6, 1: 6, 3: 5, 2: 4}
+- **Timestep Mode Histogram:** {'0': 100, '3': 25, '1': 6, '2': 49}
+- **Episode Mode Presence:** {'0': 6, '1': 6, '3': 5, '2': 4}
 
 ##### Stratum: `wedging` (4 episodes)
 - **Contact Force:** Peak resultant force $= 4.56\text{ N}$ ($< 35.0\text{ N}$ safety limit)
@@ -137,8 +196,8 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 - **Insertion Depth:** Maximum insertion depth $= 5.67\text{ mm}$ (lowest z: $-5.67\text{ mm}$)
 - **Simulator Contact Strata Observed:** [0, 1, 2, 3] (Wedging stratum 3 attained: True)
 - **Observed Contact Modes:** [0, 1, 2]
-- **Timestep Mode Histogram:** {0: 66, 1: 7, 2: 47}
-- **Episode Mode Presence:** {0: 4, 1: 4, 2: 4}
+- **Timestep Mode Histogram:** {'0': 66, '1': 7, '2': 47}
+- **Episode Mode Presence:** {'0': 4, '1': 4, '2': 4}
 
 #### Wedging Stratum State/Telemetry Alignment Detail:
 - All 4 wedging scenarios demonstrated authentic two-point wedging transitions.
@@ -159,7 +218,10 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 ### 5. Governance & Production Generation Readiness Statement
 
 - **World Model Training Permitted:** 0
-- **World Model Parameters Trained:** 0 (strictly zero gradient steps, zero optimizer updates)
-- **Stage 3.0 Codebase:** 100% frozen (no modifications to `src/teaching/factory.py`, `src/teaching/validator.py`, `src/teaching/__init__.py`, `tests/test_p38_stage3_preflight.py`, `src/teaching/inference.py`).
-- **Production 1,000-Scenario Generation (Stage 3.3):** Blocked pending formal review and authorization of this Stage 3.2.1 remediation report.
+- **World Model Parameters Trained:** 0 (zero gradient steps, zero optimizer updates, no checkpoint modifications)
+- **Stage 3.0 Codebase:** frozen (`src/teaching/factory.py`, `src/teaching/validator.py`, `src/teaching/__init__.py`, `tests/test_p38_stage3_preflight.py`, `src/teaching/inference.py`)
+- **B1–B4 and CBF v1.0:** frozen
+- **Production 1,000-episode generation (Stage 3.3):** prohibited until a separate formal authorization
+- **Numeric contact labels:** not remapped
+- **Report SHA-256:** `ee9e21ae910753fc1e1e663ff0e971148e1b7d1c48bc0a767c852b8f8da0b244`
 

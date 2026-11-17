@@ -1,6 +1,8 @@
 # HOROS PROBE-1 — Research-002
 ## Stage 3.2.1 Execution Report: Final Evidence and Acceptance Corrections
 
+> Stage 3.2.2 correction: the four-class contact-mode legend below is not the training ontology. The authoritative `ContactMode` IDs are 0 FREE, 1 FIRST_CONTACT, 2 STICKING, 3 SLIDING, 4 IMPACT, 5 JAMMING, and 6 RELEASE. Simulator contact stratum 3 remains WEDGING and is a different label system. See `stage3_2_execution_report.md`. Numeric labels were not remapped.
+
 **Author:** Antigravity AI Assistant & HOROS Research-002 Team  
 **Date:** 2026-11-17 15:30:00  
 **Program:** HOROS PROBE-1 — Research-002  
@@ -38,7 +40,7 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
    - Compliant force bounds ($\le 35.0\text{ N}$) and torque bounds ($\le 7.0\text{ Nm}$) strictly maintained.
 
 3. **Precise Terminology Distinction:**
-   - **Contact Mode:** Classifier discrete enum ($0$: Free, $1$: Impact, $2$: Sliding, $3$: Sticking).
+   - **Contact Mode:** Superseded by Stage 3.2.2. Authoritative `ContactMode` IDs are 0 FREE, 1 FIRST_CONTACT, 2 STICKING, 3 SLIDING, 4 IMPACT, 5 JAMMING, 6 RELEASE. The previous line that called ID 3 Sticking was incorrect.
    - **Simulator Contact Stratum:** Authoritative ground-truth simulator physics stratum ($0$: Free, $1$: Impact, $2$: Sliding, $3$: Wedging, $4$: Seated).
 
 | Metric / Check | Required | Prelift Observed | Peg-in-Hole Observed | Status |

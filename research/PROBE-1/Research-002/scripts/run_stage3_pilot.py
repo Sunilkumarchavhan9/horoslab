@@ -1,25 +1,17 @@
-"""Stage 3.2 targeted pilot remediation: 20 Prelift and 20 Peg-in-Hole scenarios.
+"""Stage 3.2.2 pilot certification: contact-label ontology and causal Regime A slip.
 
-Remediates scientific verification gaps identified during Stage 3.1 independent review:
-1. Issue A — Peg-in-Hole wedging stratum achieves genuine two-point wedging:
-   - Insertion depth > 5.0 mm (min z <= -5.0 mm) with tilt exceeding critical wedging angle.
-   - Authoritative simulator contact_stratum = 3 (Wedging) attained across all 4 wedging episodes.
-   - Specific wedging event verification in physical-interaction acceptance criteria.
-2. Issue B — Empirical nonstationary telemetry measured directly from simulator:
-   - Step-by-step simulator ground-truth friction recorded for Regime A (0.60 -> 0.24 at step 15).
-   - Step-by-step simulator workpiece mass recorded for Regime B (0.25 kg/s continuous mass influx).
-   - Telemetry stored strictly in privileged evidence (.privileged.json), zero model-visible leaks.
-3. Enhanced acceptance accounting and reporting:
-   - Acceptance strictly reflects both physics validation and physical-interaction validation.
-   - Timestep mode frequency histograms over all timesteps in each stratum.
-   - Slip calculated via maximum absolute velocity: max |delta_dot_t|.
-   - Measurable Prelift vertical displacement required and reported (z_obj > 0.0 mm).
-   - Preservation of any rejected trajectories and failure manifests.
-4. Governance restrictions:
-   - Stage 3.0 infrastructure remains completely frozen.
-   - Baselines B1-B4, CBF v1.0, and Phase 3.7.3/3.7.4 artifacts remain frozen.
-   - Strictly zero student model parameter training, zero gradient updates, zero optimizer steps.
-   - Production 1,000-scenario dataset generation blocked until Stage 3.2 passes review.
+The 40-episode pilot trajectories from Stage 3.2.1 stay in place. This stage corrects
+how those trajectories are interpreted and accepted:
+
+1. ContactMode labels are the seven-class enum in contact_mode_definitions.py.
+   Numeric labels already stored on episodes are not remapped.
+2. Simulator contact strata are a separate label system. Stratum 3 is wedging.
+   Classifier mode 3 is sliding. Classifier mode 5 is jamming.
+3. Regime A acceptance requires the recorded friction sequence 0.60 -> 0.24 and
+   slip on the post-transition post-action states. A whole-episode slip peak is
+   not evidence that the friction change triggered slip.
+4. Stage 3.0, B1-B4, and CBF v1.0 stay frozen. Student training stays at zero
+   updates. Stage 3.3 production generation stays prohibited.
 """
 
 from __future__ import annotations
@@ -58,6 +50,7 @@ from teaching.inference import (  # noqa: E402
     TeacherQueryPayload,
 )
 from teaching.validator import PhysicsValidationEngine, ValidationVerdict  # noqa: E402
+from contact_modes.contact_mode_definitions import ContactMode, MODE_NAMES, NUM_MODES  # noqa: E402
 
 
 TRAINING_PERFORMED = False
@@ -65,6 +58,26 @@ TASK_EPISODE_LENGTHS = {
     "compliant_prelift": 20,
     "peg_in_hole": 30,
 }
+STAGE322_PROTOCOL = "HOROS-P1-R002-STAGE3.2.2-ONTOLOGY-CAUSAL"
+STAGE322_TIMESTAMP = "2026-11-17 18:50:00"
+PARENT_CANONICAL_COMMIT = "298b0227a66bfcc3916ac07c987aa7257b333b13"
+PARENT_MIRROR_COMMIT = "223a7afb33cf6ce4ddee766066c84c3d21f0857e"
+
+# Regime A friction change. Recorded arrays use the post-action index t.
+# Simulator step_count = t + 1. The environment applies mu = 0.24 when
+# step_count >= 15, so the first post-action sample at 0.24 is t = 14.
+REGIME_A_PRE_MU = 0.60
+REGIME_A_POST_MU = 0.24
+REGIME_A_SLIP_THRESHOLD_MPS = 0.0010
+REGIME_A_SLIP_CHANNELS = (16, 17, 18, 19)
+
+SIMULATOR_CONTACT_STRATA = (
+    {"id": 0, "name": "FREE"},
+    {"id": 1, "name": "IMPACT"},
+    {"id": 2, "name": "SLIDING"},
+    {"id": 3, "name": "WEDGING"},
+    {"id": 4, "name": "SEATED"},
+)
 
 
 class Stage3PilotController(BaseTeacherAdapter):
@@ -206,6 +219,143 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def contact_mode_ontology_record() -> Dict[str, Any]:
+    """Authoritative ContactMode mapping. Simulator strata are not derived from it."""
+    if NUM_MODES != 7 or len(ContactMode) != 7:
+        raise RuntimeError("ContactMode no longer has seven classes")
+    if int(ContactMode.SLIDING) != 3 or ContactMode(3).name != "SLIDING":
+        raise RuntimeError("Classifier mode 3 is no longer SLIDING")
+    if int(ContactMode.JAMMING) != 5:
+        raise RuntimeError("Classifier mode 5 is no longer JAMMING")
+    if SIMULATOR_CONTACT_STRATA[3]["id"] != 3 or SIMULATOR_CONTACT_STRATA[3]["name"] != "WEDGING":
+        raise RuntimeError("Simulator stratum 3 is no longer WEDGING")
+
+    modes = [
+        {
+            "id": int(mode),
+            "enum_name": mode.name,
+            "display_name": MODE_NAMES[mode],
+        }
+        for mode in ContactMode
+    ]
+    expected = [
+        (0, "FREE", "Free"),
+        (1, "FIRST_CONTACT", "FirstContact"),
+        (2, "STICKING", "Sticking"),
+        (3, "SLIDING", "Sliding"),
+        (4, "IMPACT", "Impact"),
+        (5, "JAMMING", "Jamming"),
+        (6, "RELEASE", "Release"),
+    ]
+    observed = [(row["id"], row["enum_name"], row["display_name"]) for row in modes]
+    if observed != expected:
+        raise RuntimeError(f"ContactMode ontology drifted: {observed}")
+
+    return {
+        "source": "src/contact_modes/contact_mode_definitions.py",
+        "enum": "ContactMode",
+        "numeric_labels_remapped": False,
+        "contact_modes": modes,
+        "simulator_contact_strata": [dict(row) for row in SIMULATOR_CONTACT_STRATA],
+        "label_systems": "distinct",
+        "classifier_mode_3": "SLIDING",
+        "simulator_stratum_3": "WEDGING",
+        "classifier_mode_3_is_not_simulator_stratum_3": True,
+        "classifier_jamming_id": int(ContactMode.JAMMING),
+    }
+
+
+def verify_regime_a_causal_slip(step_mu_true: Any, next_states: Any) -> Dict[str, Any]:
+    """Verify that Regime A slip is measured after the friction transition.
+
+    Indexing, fixed for every returned timestep:
+    - ``t`` is the post-action index shared by ``step_mu_true[t]`` and ``next_states[t]``.
+    - Simulator ``step_count`` is ``t + 1``. ``step()`` increments ``step_count`` and then
+      applies the Regime A friction change when ``step_count >= 15``.
+    - The friction value stored at ``t`` is the coefficient used to integrate that step,
+      and ``next_states[t, 16:20]`` is the resulting fingertip slip velocity in m/s.
+    - Acceptance uses slip at indices ``t >= transition_index`` only.
+    """
+    mu = np.asarray(step_mu_true, dtype=np.float64).reshape(-1)
+    states = np.asarray(next_states, dtype=np.float64)
+    result: Dict[str, Any] = {
+        "indexing": {
+            "post_action_index": "t",
+            "simulator_step_count": "t + 1",
+            "friction_alignment": (
+                "step_mu_true[t] is the friction applied on simulator step_count t+1 "
+                "and is stored with the post-action state next_states[t]"
+            ),
+            "slip_channels": list(REGIME_A_SLIP_CHANNELS),
+            "slip_reduction": "max absolute value across the four fingertip slip channels",
+            "slip_window": "post_transition_only",
+            "pre_transition_mu": REGIME_A_PRE_MU,
+            "post_transition_mu": REGIME_A_POST_MU,
+            "slip_threshold_mps": REGIME_A_SLIP_THRESHOLD_MPS,
+        },
+        "transition_index": None,
+        "simulator_step_count": None,
+        "friction_sequence_verified": False,
+        "pre_transition_length": 0,
+        "post_transition_length": 0,
+        "pre_transition_mu_values": [],
+        "post_transition_mu_values": [],
+        "pre_transition_peak_slip_mps": None,
+        "post_transition_peak_slip_mps": None,
+        "first_post_transition_slip_index": None,
+        "first_post_transition_slip_simulator_step": None,
+        "post_transition_slip_verified": False,
+        "pre_transition_slip_used_for_acceptance": False,
+        "passed": False,
+    }
+    if states.ndim != 2 or states.shape[1] < 20 or mu.shape[0] != states.shape[0] or mu.shape[0] < 2:
+        return result
+
+    slip = np.max(np.abs(states[:, 16:20]), axis=1)
+    transition_index = None
+    for t in range(1, int(mu.shape[0])):
+        previous_is_pre = bool(np.isclose(mu[t - 1], REGIME_A_PRE_MU, atol=1e-6))
+        current_is_post = bool(np.isclose(mu[t], REGIME_A_POST_MU, atol=1e-6))
+        if previous_is_pre and current_is_post:
+            transition_index = int(t)
+            break
+    if transition_index is None:
+        return result
+
+    pre_mu = mu[:transition_index]
+    post_mu = mu[transition_index:]
+    pre_ok = bool(pre_mu.size > 0 and np.all(np.isclose(pre_mu, REGIME_A_PRE_MU, atol=1e-6)))
+    post_ok = bool(post_mu.size > 0 and np.all(np.isclose(post_mu, REGIME_A_POST_MU, atol=1e-6)))
+    pre_slip = slip[:transition_index]
+    post_slip = slip[transition_index:]
+    qualifying = [
+        int(t)
+        for t in range(transition_index, int(slip.shape[0]))
+        if float(slip[t]) > REGIME_A_SLIP_THRESHOLD_MPS
+    ]
+    first = qualifying[0] if qualifying else None
+    slip_ok = first is not None
+    result.update(
+        {
+            "transition_index": transition_index,
+            "simulator_step_count": transition_index + 1,
+            "friction_sequence_verified": bool(pre_ok and post_ok),
+            "pre_transition_length": int(pre_mu.size),
+            "post_transition_length": int(post_mu.size),
+            "pre_transition_mu_values": [round(float(value), 4) for value in pre_mu],
+            "post_transition_mu_values": [round(float(value), 4) for value in post_mu],
+            "pre_transition_peak_slip_mps": float(np.max(pre_slip)) if pre_slip.size else 0.0,
+            "post_transition_peak_slip_mps": float(np.max(post_slip)) if post_slip.size else 0.0,
+            "first_post_transition_slip_index": first,
+            "first_post_transition_slip_simulator_step": None if first is None else first + 1,
+            "post_transition_slip_verified": bool(slip_ok),
+            "pre_transition_slip_used_for_acceptance": False,
+            "passed": bool(pre_ok and post_ok and slip_ok),
+        }
+    )
+    return result
+
+
 def verify_physical_interaction(task: str, episode: Any) -> Tuple[bool, Dict[str, Any]]:
     """
     Evaluates physical-interaction acceptance criteria:
@@ -240,10 +390,11 @@ def verify_physical_interaction(task: str, episode: Any) -> Tuple[bool, Dict[str
         shear_attained = max_fz >= 0.50
         contact_modes_attained = any(m != 0 for m in modes)
 
-        # Stage 3.2.1: Event-specific acceptance criteria
+        # Event-specific acceptance criteria. Regime A uses the post-transition window.
         regime = str(episode.env_metadata.get("regime", "nominal"))
         event_passed = False
         event_type = ""
+        regime_a_causal: Optional[Dict[str, Any]] = None
         if stratum == "nominal":
             # Nominal: measurable positive object lift above documented numerical tolerance (z > 0.001 mm)
             event_passed = (max_lift_mm > 0.001)
@@ -254,8 +405,15 @@ def verify_physical_interaction(task: str, episode: Any) -> Tuple[bool, Dict[str
             event_type = "probe_coulomb_slip"
         elif stratum == "nonstationary":
             if regime == "A":
-                # Regime A: friction collapse triggers slip velocity > 0.0010 m/s
-                event_passed = (max_slip > 0.0010)
+                # Regime A passes only when the recorded 0.60 -> 0.24 transition is complete
+                # and post-action slip after that index exceeds 0.0010 m/s.
+                # Pre-transition slip is recorded and is not an acceptance input.
+                causal = verify_regime_a_causal_slip(
+                    episode.env_metadata.get("step_mu_true", []),
+                    episode.next_states,
+                )
+                regime_a_causal = causal
+                event_passed = bool(causal["passed"])
                 event_type = "regime_a_friction_collapse_slip"
             elif regime == "B":
                 # Regime B: mass influx held securely under clamp
@@ -293,6 +451,8 @@ def verify_physical_interaction(task: str, episode: Any) -> Tuple[bool, Dict[str
             "mode_counts": dict(Counter(modes)),
             "interaction_passed": is_valid_interaction,
         }
+        if regime_a_causal is not None:
+            metrics["regime_a_causal"] = regime_a_causal
         return is_valid_interaction, metrics
 
     else:
@@ -369,7 +529,27 @@ def verify_physical_interaction(task: str, episode: Any) -> Tuple[bool, Dict[str
         return is_valid_interaction, metrics
 
 
-def generate_markdown_report(summary: Dict[str, Any], manifest_sha: str, timestamp: str = "2026-11-17 15:30:00") -> str:
+def _ontology_summary(summary: Dict[str, Any]) -> Dict[str, Any]:
+    ontology = contact_mode_ontology_record()
+    wedging = (
+        summary.get("tasks", {})
+        .get("peg_in_hole", {})
+        .get("stratum_statistics", {})
+        .get("wedging", {})
+    )
+    modes_observed = [int(mode) for mode in wedging.get("modes_observed", [])]
+    strata_observed = [int(stratum) for stratum in wedging.get("strata_observed", [])]
+    ontology["wedging_modes_observed"] = modes_observed
+    ontology["wedging_strata_observed"] = strata_observed
+    ontology["simulator_stratum_3_reached"] = bool(3 in strata_observed or wedging.get("wedging_stratum_attained"))
+    ontology["classifier_jamming_emitted_on_wedging_episodes"] = bool(int(ContactMode.JAMMING) in modes_observed)
+    ontology["simulator_stratum_3_reached_without_classifier_jamming"] = bool(
+        ontology["simulator_stratum_3_reached"] and not ontology["classifier_jamming_emitted_on_wedging_episodes"]
+    )
+    return ontology
+
+
+def generate_markdown_report(summary: Dict[str, Any], manifest_sha: str, timestamp: str = STAGE322_TIMESTAMP) -> str:
     time_str = timestamp
     prelift = summary["tasks"]["compliant_prelift"]
     pih = summary["tasks"]["peg_in_hole"]
@@ -378,15 +558,29 @@ def generate_markdown_report(summary: Dict[str, Any], manifest_sha: str, timesta
     pre_stats = prelift.get("stratum_statistics", {})
     pih_stats = pih.get("stratum_statistics", {})
 
-    report = fr"""# HOROS PROBE-1 — Research-002
-## Stage 3.2.1 Execution Report: Final Evidence and Acceptance Corrections
+    ontology = summary.get("ontology") or _ontology_summary(summary)
+    mode_lines = "\n".join(
+        f"| {row['id']} | `{row['enum_name']}` | {row['display_name']} |"
+        for row in ontology["contact_modes"]
+    )
+    stratum_lines = "\n".join(
+        f"| {row['id']} | {row['name']} |"
+        for row in ontology["simulator_contact_strata"]
+    )
+    regenerated = summary.get("trajectories_regenerated", False)
 
-**Author:** Antigravity AI Assistant & HOROS Research-002 Team  
+    report = fr"""# HOROS PROBE-1 — Research-002
+## Stage 3.2.2 Execution Report: Contact Label Ontology and Causal Event Verification
+
+**Author:** HOROS Research-002  
 **Date:** {time_str}  
 **Program:** HOROS PROBE-1 — Research-002  
-**Stage:** Stage 3.2.1 — Final Evidence and Acceptance Corrections  
-**Protocol:** {summary.get('protocol', 'HOROS-P1-R002-STAGE3.2.1-FINAL-EVIDENCE')}  
+**Stage:** Stage 3.2.2 — Contact Label Ontology and Causal Event Verification  
+**Protocol:** {summary.get('protocol', STAGE322_PROTOCOL)}  
+**Parent canonical commit:** `{summary.get('parent_canonical_commit', PARENT_CANONICAL_COMMIT)}`  
+**Parent mirror commit:** `{summary.get('parent_mirror_commit', PARENT_MIRROR_COMMIT)}`  
 **Overall Status:** **{overall_status}**  
+**Trajectories regenerated:** {regenerated}  
 **World Model Training Permitted:** {summary.get('training_permitted', 0)}  
 **World Model Training Performed:** {summary.get('training_performed', False)}  
 **Parameters Trained:** {summary.get('parameters_trained', 0)}  
@@ -397,29 +591,43 @@ def generate_markdown_report(summary: Dict[str, Any], manifest_sha: str, timesta
 
 ### 1. Executive Summary & Remediation Scorecard
 
-Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 40-episode physical interaction pilot (20 Compliant Prelift and 20 Peg-in-Hole), resolving all remaining scientific verification gaps before production dataset construction:
+Stage 3.2.2 certifies the existing 40-episode pilot. The recorded episode files are unchanged. Two certification errors from Stage 3.2.1 are corrected:
 
-1. **Prelift Event-Specific Acceptance Standardized:**
-   - Evaluates post-action state arrays (`next_states[:, :]`) and post-action wrench arrays (`next_wrenches[:, :]`).
-   - Replaced generic displacement with distinct, measurable physical criteria per stratum:
-     - **Nominal:** Positive object lift above documented numerical tolerance ($z_{{\text{{obj}}}} > 0.001\text{{ mm}}$, observed range $[0.0022, 0.3540]\text{{ mm}}$).
-     - **Probe:** Expected Coulomb slip velocity ($\max \|\dot{{\delta}}_t\| \ge 0.0005\text{{ m/s}}$, observed $0.0050\text{{ m/s}}$) with object securely held on table ($z_{{\text{{obj}}}} = 0.0\text{{ mm}}$).
-     - **Nonstationary Regime A:** Measured friction collapse at step 15 ($0.60 \to 0.24$) triggering slip ($\max \|\dot{{\delta}}_t\| > 0.0010\text{{ m/s}}$, observed $0.0050\text{{ m/s}}$).
-     - **Nonstationary Regime B:** Continuous mass influx ($0.25\text{{ kg/s}}$ reaching $0.400\text{{ kg}}$) with safe clamping hold ($F_n \ge 0.50\text{{ N}}$, $F_z \ge 0.50\text{{ N}}$).
-   - Strict adherence to physical safety envelopes across all 20 episodes ($F_n \le 20.0\text{{ N}}$, $F_z \le 15.0\text{{ N}}$).
+1. **Contact-mode ontology.** The Stage 3.2.1 report listed four classifier classes and assigned the wrong names to IDs 1, 2, and 3. The authoritative `ContactMode` enum has seven classes. Saved numeric mode labels were not remapped.
+2. **Regime A causality.** Acceptance now requires the measured friction sequence and slip on the post-transition post-action states of each Regime A episode. A maximum taken over the whole episode is not used.
 
-2. **Peg-in-Hole Post-Action State/Telemetry Alignment:**
-   - Evaluates post-action state arrays (`next_states[:, :3]`) and matching post-action privileged telemetry (`step_insertion_depth_mm`, `step_contact_stratum`).
-   - For 100% of wedging episodes (4/4), confirmed that the **exact same timestep $t$** satisfies:
-     - `step_contact_stratum[t] == 3` (simulator contact stratum 3: wedging)
-     - `step_insertion_depth_mm[t] > 5.0 mm` (simulator empirical depth)
-     - `next_states[t]` insertion depth ($\max(0.0, -z) > 5.0\text{{ mm}}$)
-     - Physical consistency between state depth and telemetry depth: $|z_{{\text{{telem}}}} - z_{{\text{{state}}}}| < 10^{{-3}}\text{{ mm}}$ (observed $< 10^{{-4}}\text{{ mm}}$).
-   - Compliant force bounds ($\le 35.0\text{{ N}}$) and torque bounds ($\le 7.0\text{{ Nm}}$) strictly maintained.
+Retained physical checks:
 
-3. **Precise Terminology Distinction:**
-   - **Contact Mode:** Classifier discrete enum ($0$: Free, $1$: Impact, $2$: Sliding, $3$: Sticking).
-   - **Simulator Contact Stratum:** Authoritative ground-truth simulator physics stratum ($0$: Free, $1$: Impact, $2$: Sliding, $3$: Wedging, $4$: Seated).
+- **Nominal:** Object lift $z_{{\text{{obj}}}} > 0.001\text{{ mm}}$.
+- **Probe:** Coulomb slip $\max \|\dot{{\delta}}_t\| \ge 0.0005\text{{ m/s}}$.
+- **Regime B:** Mass increment $0.0025\text{{ kg}}$ at every timestep, ending at $0.400\text{{ kg}}$, with $F_n \ge 0.50\text{{ N}}$ and $F_z \ge 0.50\text{{ N}}$.
+- **Wedging:** The same post-action index $t$ has simulator stratum 3, insertion depth $> 5.0\text{{ mm}}$ in telemetry and in `next_states[t]`, and $|z_{{\text{{telem}}}} - z_{{\text{{state}}}}| < 10^{{-3}}\text{{ mm}}$.
+
+### 1.1 Authoritative classifier contact modes
+
+Source: `src/contact_modes/contact_mode_definitions.py`, enum `ContactMode`, map `MODE_NAMES`.
+
+| ID | Enum name | Display name |
+| :--- | :--- | :--- |
+{mode_lines}
+
+Histogram integers in this report use these IDs. Bin 1 is `FIRST_CONTACT`. Bin 2 is `STICKING`. Bin 3 is `SLIDING`. Bin 4 is `IMPACT`. Bin 5 is `JAMMING`. Bin 6 is `RELEASE`.
+
+### 1.2 Simulator contact strata
+
+This is a separate label system owned by the peg-in-hole simulator. It is not `ContactMode`.
+
+| ID | Stratum |
+| :--- | :--- |
+{stratum_lines}
+
+Classifier mode 3 is `SLIDING`. Simulator stratum 3 is `WEDGING`. Those two IDs must not be read as the same event.
+
+Wedging episodes reached simulator stratum 3: **{ontology.get('simulator_stratum_3_reached', False)}**.  
+Classifier mode `JAMMING` (ID 5) emitted on those episodes: **{ontology.get('classifier_jamming_emitted_on_wedging_episodes', False)}**.  
+Stratum 3 reached without classifier jamming: **{ontology.get('simulator_stratum_3_reached_without_classifier_jamming', False)}**.  
+Wedging classifier modes observed: {ontology.get('wedging_modes_observed', [])}.  
+Wedging simulator strata observed: {ontology.get('wedging_strata_observed', [])}.
 
 | Metric / Check | Required | Prelift Observed | Peg-in-Hole Observed | Status |
 | :--- | :--- | :--- | :--- | :---: |
@@ -459,11 +667,36 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
     regime_res = prelift.get("regime_verification", {})
     report += fr"""
 #### Empirical Nonstationary Regime Verification:
-- **Regime A (Friction Drop Transition):**
+
+Step indexing used for Regime A:
+
+- `t` is the shared post-action index of `step_mu_true[t]` and `next_states[t]`.
+- Simulator `step_count` is `t + 1`. The friction update runs at the start of `step()` after `step_count` increments, and it changes friction when `step_count >= 15`.
+- Slip is the maximum absolute value of `next_states[t, 16:20]`, in m/s, and is evaluated only for `t` greater than or equal to the transition index.
+- Pre-transition slip is reported and is excluded from `regime_a_slip_triggered`.
+
+- **Regime A (friction transition, then slip):**
   - Episodes evaluated: seeds {regime_res.get('regime_a_seeds', [])}
-  - Measured simulator friction: confirmed transition from $\mu = 0.60$ (steps 0–14) to $\mu = 0.24$ (steps 15–19) directly from `step_mu_true` telemetry.
-  - Empirical transition verified: **{regime_res.get('regime_a_friction_transition_verified', False)}**.
-  - Physical slip triggered upon friction drop: **{regime_res.get('regime_a_slip_triggered', False)}** (Peak slip velocity: ${regime_res.get('regime_a_peak_slip_mps', 0.0):.5f}\text{{ m/s}}$).
+  - Friction sequence verified on every Regime A episode: **{regime_res.get('regime_a_friction_transition_verified', False)}**
+  - Post-transition slip verified independently on both episodes: **{regime_res.get('regime_a_slip_triggered', False)}**
+  - Slip criterion: `{regime_res.get('regime_a_slip_criterion', 'post_transition_only')}`
+  - Pre-transition slip used for acceptance: **{regime_res.get('regime_a_pre_transition_slip_used_for_acceptance', False)}**
+  - Post-transition peak slip across episodes: ${regime_res.get('regime_a_peak_slip_mps', 0.0):.5f}\text{{ m/s}}$
+  - Definition: {regime_res.get('regime_a_peak_slip_definition', 'post-transition window only')}
+"""
+    for episode_row in regime_res.get("regime_a_episodes", []):
+        report += fr"""
+  - Episode `{episode_row.get('episode_id')}` seed {episode_row.get('seed')}:
+    - Transition post-action index `t={episode_row.get('transition_index')}` (simulator step_count {episode_row.get('simulator_step_count')})
+    - Pre-transition friction length {episode_row.get('pre_transition_length')}: {episode_row.get('pre_transition_mu_values')}
+    - Post-transition friction length {episode_row.get('post_transition_length')}: {episode_row.get('post_transition_mu_values')}
+    - Friction sequence verified: **{episode_row.get('friction_sequence_verified')}**
+    - First post-transition slip index `t={episode_row.get('first_post_transition_slip_index')}` (simulator step_count {episode_row.get('first_post_transition_slip_simulator_step')})
+    - Pre-transition peak slip: ${float(episode_row.get('pre_transition_peak_slip_mps') or 0.0):.5f}\text{{ m/s}}$
+    - Post-transition peak slip: ${float(episode_row.get('post_transition_peak_slip_mps') or 0.0):.5f}\text{{ m/s}}$
+    - Episode passed: **{episode_row.get('passed')}**
+"""
+    report += fr"""
 - **Regime B (Continuous Mass Influx):**
   - Episodes evaluated: seeds {regime_res.get('regime_b_seeds', [])}
   - Measured simulator mass: confirmed continuous influx rate of $0.25\text{{ kg/s}}$ ($0.0025\text{{ kg/step}}$) directly from `step_object_mass_kg` telemetry.
@@ -519,9 +752,12 @@ Stage 3.2.1 delivers the **final evidence and acceptance corrections** for the 4
 ### 5. Governance & Production Generation Readiness Statement
 
 - **World Model Training Permitted:** 0
-- **World Model Parameters Trained:** 0 (strictly zero gradient steps, zero optimizer updates)
-- **Stage 3.0 Codebase:** 100% frozen (no modifications to `src/teaching/factory.py`, `src/teaching/validator.py`, `src/teaching/__init__.py`, `tests/test_p38_stage3_preflight.py`, `src/teaching/inference.py`).
-- **Production 1,000-Scenario Generation (Stage 3.3):** Blocked pending formal review and authorization of this Stage 3.2.1 remediation report.
+- **World Model Parameters Trained:** 0 (zero gradient steps, zero optimizer updates, no checkpoint modifications)
+- **Stage 3.0 Codebase:** frozen (`src/teaching/factory.py`, `src/teaching/validator.py`, `src/teaching/__init__.py`, `tests/test_p38_stage3_preflight.py`, `src/teaching/inference.py`)
+- **B1–B4 and CBF v1.0:** frozen
+- **Production 1,000-episode generation (Stage 3.3):** prohibited until a separate formal authorization
+- **Numeric contact labels:** not remapped
+- **Report SHA-256:** `{manifest_sha}`
 """
     return report
 
@@ -561,7 +797,10 @@ def main() -> int:
     validator = PhysicsValidationEngine.for_tasks()
 
     summary: Dict[str, Any] = {
-        "protocol": "HOROS-P1-R002-STAGE3.2.1-FINAL-EVIDENCE",
+        "protocol": STAGE322_PROTOCOL,
+        "stage": "3.2.2",
+        "parent_canonical_commit": PARENT_CANONICAL_COMMIT,
+        "parent_mirror_commit": PARENT_MIRROR_COMMIT,
         "training_permitted": 0,
         "training_performed": False,
         "parameters_trained": 0,
@@ -729,23 +968,35 @@ def main() -> int:
                         1 for m in metrics_list if len(m.get("wedging_aligned_steps", [])) > 0
                     )
 
-        # Verify Prelift nonstationary regimes A & B empirically from telemetry
+        # Verify Prelift nonstationary regimes A and B from privileged telemetry.
+        # Regime A slip is accepted only on the post-transition post-action window.
         if task in ("compliant_prelift", "compliant_lift", "multifinger_lift"):
             nonstat_eps = [ep for ep in episodes if ep.env_metadata.get("stratum") == "nonstationary"]
             regime_a_eps = [ep for ep in nonstat_eps if ep.env_metadata.get("regime") == "A"]
             regime_b_eps = [ep for ep in nonstat_eps if ep.env_metadata.get("regime") == "B"]
 
-            peak_slip_a = float(np.max([np.max(np.abs(ep.next_states[:, 16:20])) for ep in regime_a_eps])) if regime_a_eps else 0.0
-
-            # Verify Regime A friction drop from telemetry
-            regime_a_trans_ok = True
+            episode_results = []
             for ep in regime_a_eps:
-                mu_steps = ep.env_metadata.get("step_mu_true", [])
-                if len(mu_steps) >= 20:
-                    if mu_steps[13] != 0.60 or mu_steps[14] != 0.24 or mu_steps[-1] != 0.24:
-                        regime_a_trans_ok = False
-                else:
-                    regime_a_trans_ok = False
+                causal = verify_regime_a_causal_slip(
+                    ep.env_metadata.get("step_mu_true", []),
+                    ep.next_states,
+                )
+                causal["episode_id"] = ep.episode_id
+                causal["seed"] = int(ep.seed)
+                episode_results.append(causal)
+            episode_results.sort(key=lambda row: int(row["seed"]))
+            regime_a_trans_ok = bool(episode_results) and all(
+                row["friction_sequence_verified"] for row in episode_results
+            )
+            regime_a_slip_ok = (
+                len(episode_results) == 2
+                and all(row["passed"] for row in episode_results)
+            )
+            post_peaks = [
+                float(row["post_transition_peak_slip_mps"])
+                for row in episode_results
+                if row["post_transition_peak_slip_mps"] is not None
+            ]
 
             # Verify Regime B mass influx from telemetry
             regime_b_mass_ok = True
@@ -763,14 +1014,25 @@ def main() -> int:
 
             task_summary["regime_verification"] = {
                 "regime_a_seeds": [int(ep.seed) for ep in regime_a_eps],
+                "regime_a_episode_ids": [row["episode_id"] for row in episode_results],
                 "regime_a_friction_transition_verified": regime_a_trans_ok,
-                "regime_a_slip_triggered": bool(peak_slip_a > 0.0010),
-                "regime_a_peak_slip_mps": peak_slip_a,
+                "regime_a_slip_triggered": bool(regime_a_slip_ok),
+                "regime_a_slip_criterion": "post_transition_only",
+                "regime_a_pre_transition_slip_used_for_acceptance": False,
+                "regime_a_peak_slip_mps": float(max(post_peaks)) if post_peaks else 0.0,
+                "regime_a_peak_slip_definition": (
+                    "maximum of per-episode post-transition peak absolute slip; "
+                    "indices before the friction transition are excluded"
+                ),
+                "regime_a_episodes": episode_results,
                 "regime_b_seeds": [int(ep.seed) for ep in regime_b_eps],
-                "regime_b_mass_influx_verified": regime_b_mass_ok,
+                "regime_b_mass_influx_verified": regime_b_mass_ok and len(regime_b_eps) == 2,
+                "regime_b_mass_increment_kg": 0.0025,
                 "regime_b_final_mass_kg": float(np.max(final_masses)) if final_masses else 0.35,
             }
-            task_summary["empirical_telemetry_verified"] = "PASS" if (regime_a_trans_ok and regime_b_mass_ok) else "FAIL"
+            task_summary["empirical_telemetry_verified"] = (
+                "PASS" if (regime_a_trans_ok and regime_a_slip_ok and regime_b_mass_ok and len(regime_b_eps) == 2) else "FAIL"
+            )
 
         else:
             # Peg-in-Hole wedging verification with post-action state/telemetry alignment
@@ -830,6 +1092,8 @@ def main() -> int:
             failed = True
 
     summary["all_criteria_passed"] = not failed
+    summary["trajectories_regenerated"] = True
+    summary["ontology"] = _ontology_summary(summary)
 
     # Write accepted and rejected manifests
     with open(out_root / "accepted_manifest.json", "w", encoding="utf-8") as handle:
@@ -849,18 +1113,12 @@ def main() -> int:
 
     # Write Markdown Execution Reports
     manifest_sha = _sha256(report_path)
-    md_report = generate_markdown_report(summary, manifest_sha, timestamp="2026-11-17 15:30:00")
+    md_report = generate_markdown_report(summary, manifest_sha, timestamp=STAGE322_TIMESTAMP)
     md_path_32 = out_root / "stage3_2_execution_report.md"
     with open(md_path_32, "w", encoding="utf-8") as handle:
         handle.write(md_report)
         handle.write("\n")
     print(f"Wrote markdown report to {md_path_32}")
-
-    # Also keep stage3_1_execution_report.md up to date
-    md_path_31 = out_root / "stage3_1_execution_report.md"
-    with open(md_path_31, "w", encoding="utf-8") as handle:
-        handle.write(md_report)
-        handle.write("\n")
 
     if failed:
         print("\nStage 3.2 Pilot Adjudication: FAILED")
@@ -868,6 +1126,84 @@ def main() -> int:
 
     print("\nStage 3.2 Pilot Adjudication: ALL CRITERIA PASSED")
     return 0
+
+
+def refresh_stage322_certification(pilot_dir: Optional[Path] = None) -> Dict[str, Any]:
+    """Rewrite the Stage 3.2.2 report from the saved pilot.
+
+    Opens the existing Regime A privileged JSON and model-visible NPZ files.
+    Does not regenerate episodes, manifests, or privileged evidence.
+    """
+    out_root = pilot_dir or (R002_ROOT / "experiments" / "stage3_preflight" / "pilot")
+    report_path = out_root / "stage3_pilot_report.json"
+    with open(report_path, "r", encoding="utf-8") as handle:
+        summary = json.load(handle)
+
+    accepted = out_root / "accepted"
+    episode_results: List[Dict[str, Any]] = []
+    for privileged_path in sorted(accepted.glob("syn_compliant_prelift_*.privileged.json")):
+        with open(privileged_path, "r", encoding="utf-8") as handle:
+            privileged = json.load(handle)
+        meta = privileged["env_metadata"]
+        if meta.get("stratum") != "nonstationary" or meta.get("regime") != "A":
+            continue
+        episode_id = str(privileged["episode_id"])
+        with np.load(accepted / f"{episode_id}.npz") as archive:
+            next_states = np.array(archive["next_states"], copy=True)
+        causal = verify_regime_a_causal_slip(meta["step_mu_true"], next_states)
+        causal["episode_id"] = episode_id
+        causal["seed"] = int(privileged["seed"])
+        episode_results.append(causal)
+
+    episode_results.sort(key=lambda row: int(row["seed"]))
+    if len(episode_results) != 2 or not all(bool(row["passed"]) for row in episode_results):
+        raise RuntimeError(
+            "Saved Regime A trajectories do not satisfy the post-transition slip criterion: "
+            + json.dumps(episode_results, default=str)
+        )
+
+    regime = summary["tasks"]["compliant_prelift"]["regime_verification"]
+    post_peaks = [float(row["post_transition_peak_slip_mps"]) for row in episode_results]
+    regime.update(
+        {
+            "regime_a_seeds": [int(row["seed"]) for row in episode_results],
+            "regime_a_episode_ids": [row["episode_id"] for row in episode_results],
+            "regime_a_friction_transition_verified": True,
+            "regime_a_slip_triggered": True,
+            "regime_a_slip_criterion": "post_transition_only",
+            "regime_a_pre_transition_slip_used_for_acceptance": False,
+            "regime_a_peak_slip_mps": float(max(post_peaks)),
+            "regime_a_peak_slip_definition": (
+                "maximum of per-episode post-transition peak absolute slip; "
+                "indices before the friction transition are excluded"
+            ),
+            "regime_a_episodes": episode_results,
+            "regime_b_mass_increment_kg": 0.0025,
+        }
+    )
+    summary["protocol"] = STAGE322_PROTOCOL
+    summary["stage"] = "3.2.2"
+    summary["parent_canonical_commit"] = PARENT_CANONICAL_COMMIT
+    summary["parent_mirror_commit"] = PARENT_MIRROR_COMMIT
+    summary["trajectories_regenerated"] = False
+    summary["training_permitted"] = 0
+    summary["training_performed"] = False
+    summary["parameters_trained"] = 0
+    summary["ontology"] = _ontology_summary(summary)
+    if not summary["ontology"]["simulator_stratum_3_reached_without_classifier_jamming"]:
+        raise RuntimeError("Wedging episodes did not reach simulator stratum 3 without classifier jamming")
+    if summary.get("all_criteria_passed") is not True:
+        raise RuntimeError("Existing pilot report is not an accepted 40-episode pilot")
+
+    with open(report_path, "w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2)
+        handle.write("\n")
+    manifest_sha = _sha256(report_path)
+    markdown = generate_markdown_report(summary, manifest_sha, timestamp=STAGE322_TIMESTAMP)
+    with open(out_root / "stage3_2_execution_report.md", "w", encoding="utf-8") as handle:
+        handle.write(markdown)
+        handle.write("\n")
+    return summary
 
 
 if __name__ == "__main__":
