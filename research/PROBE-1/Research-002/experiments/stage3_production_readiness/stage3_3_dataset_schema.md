@@ -80,7 +80,7 @@ The Research-002 Stage 3 production dataset enforces a strict two-tier data sepa
   - **Full Physical Layout ($D = 15$, exported by `extract_env_state_and_wrench`):**
     - Indices `0..2` (3 floats): Peg tip position $[x, y, z]$ relative to hole coordinate frame in mm.
     - Indices `3..5` (3 floats): Peg linear velocity $[\dot{x}, \dot{y}, \dot{z}]$ in mm/s.
-    - Indices `6..8` (3 floats): Peg orientation Euler angles $[\phi, \theta, \psi]$ in radians.
+    - Indices `6..8` (3 floats): Peg orientation Euler angles $[\phi, \theta, \psi]$ in degrees.
     - Indices `9..14` (6 floats): 6-axis ATI wrist reaction wrench $[F_x, F_y, F_z, T_x, T_y, T_z]$ in N, Nm.
   - **Kinematic-Only Layout ($D = 12$, supported by approved state widths):**
     - Indices `0..2` (3 floats): Peg tip position $[x, y, z]$ relative to hole coordinate frame in mm.

@@ -507,11 +507,7 @@ def verify_production_physical_interaction(
             )
             stratum_specific_passed = bool(impact_metrics["passed"])
         elif stratum == "wedging":
-            # Geometric wedging is simulator stratum 3 at insertion > 5 mm.
-            # ContactMode.JAMMING is a different label. It is valid only at a
-            # timestep that also satisfies the frozen mechanical-lock evidence.
-            jamming_tilt = episode.env_metadata.get("tilt_deg")
-            mode_horizon = len(modes)
+            # Geometric wedging requires aligned wedging step in simulator stratum 3 at depth > 5 mm.
             telemetry_horizon = min(len(strata_observed), len(depths_observed), episode.next_states.shape[0])
             for t in range(telemetry_horizon):
                 state_depth = float(max(0.0, -episode.next_states[t, 2]))
@@ -523,32 +519,41 @@ def verify_production_physical_interaction(
                     and abs(telem_depth - state_depth) < 1e-3
                 ):
                     wedging_aligned_steps.append(t)
-            for t in range(mode_horizon):
-                if int(modes[t]) != int(ContactMode.JAMMING):
-                    continue
-                if (
-                    t >= len(strata_observed)
-                    or t >= len(depths_observed)
-                    or t >= episode.next_wrenches.shape[0]
-                    or t >= episode.next_states.shape[0]
-                ):
-                    invalid_jamming_steps.append(t)
-                    continue
-                state_depth = float(max(0.0, -episode.next_states[t, 2]))
-                telem_depth = float(depths_observed[t])
-                depth_aligned = (abs(telem_depth - state_depth) < 1e-3) and (state_depth > WEDGING_MIN_DEPTH_MM)
-                lateral_force = float(np.linalg.norm(episode.next_wrenches[t, :2]))
-                if depth_aligned and jamming_label_is_physically_valid(
-                    mode=int(modes[t]),
-                    stratum=int(strata_observed[t]),
-                    depth_mm=telem_depth,
-                    lateral_force_n=lateral_force,
-                    tilt_deg=None if jamming_tilt is None else float(jamming_tilt),
-                ):
-                    valid_jamming_steps.append(t)
-                else:
-                    invalid_jamming_steps.append(t)
-            stratum_specific_passed = (len(wedging_aligned_steps) > 0) and (len(invalid_jamming_steps) == 0)
+            stratum_specific_passed = len(wedging_aligned_steps) > 0
+
+        # Universal ContactMode.JAMMING physical validation across all strata (AUDIT-3.3A.3-01)
+        # Evaluates every step where mode == ContactMode.JAMMING, regardless of whether
+        # the episode was sampled from nominal, impact, or wedging strata.
+        mode_horizon = len(modes)
+        for t in range(mode_horizon):
+            if int(modes[t]) != int(ContactMode.JAMMING):
+                continue
+            if (
+                t >= len(strata_observed)
+                or t >= len(depths_observed)
+                or t >= episode.next_wrenches.shape[0]
+                or t >= episode.next_states.shape[0]
+            ):
+                invalid_jamming_steps.append(t)
+                continue
+            state_depth = float(max(0.0, -episode.next_states[t, 2]))
+            telem_depth = float(depths_observed[t])
+            depth_aligned = (abs(telem_depth - state_depth) < 1e-3) and (state_depth > WEDGING_MIN_DEPTH_MM)
+            lateral_force = float(np.linalg.norm(episode.next_wrenches[t, :2]))
+
+            # Derive instantaneous physical tilt from state tensor at timestep t (AUDIT-3.3A.3-02)
+            step_tilt_deg = extract_instantaneous_tilt_deg(episode.next_states[t])
+
+            if depth_aligned and jamming_label_is_physically_valid(
+                mode=int(modes[t]),
+                stratum=int(strata_observed[t]),
+                depth_mm=telem_depth,
+                lateral_force_n=lateral_force,
+                tilt_deg=step_tilt_deg,
+            ):
+                valid_jamming_steps.append(t)
+            else:
+                invalid_jamming_steps.append(t)
 
         is_valid_interaction = (
             insertion_attained
@@ -556,6 +561,7 @@ def verify_production_physical_interaction(
             and forces_bounded
             and contact_modes_attained
             and stratum_specific_passed
+            and (len(invalid_jamming_steps) == 0)
         )
 
         metrics = {
@@ -630,6 +636,29 @@ def evaluate_aligned_rim_impact(
         "max_contact_force_n": max_force,
         "max_torque_nm": max_torque,
     }
+
+
+def extract_instantaneous_tilt_deg(state: np.ndarray) -> float:
+    """Extract instantaneous physical tilt angle in degrees from peg state vector.
+
+    Layout definitions:
+    - 15-D Full Physical layout (extract_env_state_and_wrench):
+      pos [0:3], vel [3:6], rot [6:9] (Euler roll, pitch, yaw in deg), wrench [9:15]
+      Instantaneous tilt: hypot(roll, pitch) from rot[6:8]
+    - 12-D Kinematic layout:
+      pos [0:3], rot [3:6] (Euler roll, pitch, yaw in deg), vel [6:9], omega [9:12]
+      Instantaneous tilt: hypot(roll, pitch) from rot[3:5]
+    """
+    state_arr = np.asarray(state, dtype=np.float64).reshape(-1)
+    if state_arr.shape[0] >= 15:
+        roll = state_arr[6]
+        pitch = state_arr[7]
+        return float(np.hypot(roll, pitch))
+    elif state_arr.shape[0] >= 12:
+        roll = state_arr[3]
+        pitch = state_arr[4]
+        return float(np.hypot(roll, pitch))
+    return 0.0
 
 
 def jamming_label_is_physically_valid(

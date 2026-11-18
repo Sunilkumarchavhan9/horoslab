@@ -135,7 +135,7 @@ Episode Acceptance = [Physics Engine Valid] AND [Interaction Criteria Satisfied]
    - Kinematic velocity limits: Prelift $\le 100\text{ mm/s}$, Peg-in-Hole $\le 100\text{ mm/s}$.
 2. **ContactMode Ontology Classification:**
    - Every timestep's classified contact mode must belong to the approved 7-class ontology (`0: FREE`, `1: FIRST_CONTACT`, `2: STICKING`, `3: SLIDING`, `4: IMPACT`, `5: JAMMING`, `6: RELEASE`).
-   - Classifier labels are not remapped from simulator strata. Simulator stratum 3 is WEDGING. Classifier ID 5 is `ContactMode.JAMMING`, the frozen geometric lock. A JAMMING label is valid only when that timestep is also stratum 3, deeper than 5 mm, and above 15 N lateral force. Sliding is classifier ID 3 and is not JAMMING.
+   - Classifier labels are not remapped from simulator strata. Simulator stratum 3 is WEDGING. Classifier ID 5 is `ContactMode.JAMMING`, the frozen geometric lock. A JAMMING label is valid only when that timestep is also stratum 3, deeper than 5 mm, above 15 N lateral force, and instantaneous physical state tilt $> 1.8^\circ$. Validated universally across all strata: any occurrence of JAMMING in non-wedging strata is strictly rejected. Sliding is classifier ID 3 and is not JAMMING.
 3. **Prelift Event-Specific Verification:**
    - *Nominal:* $\max(z_{\text{obj}}) > 0.001\text{ mm}$ (positive liftoff).
    - *Probe:* $\max \|\dot{\delta}_t\| \ge 0.0005\text{ m/s}$ (Coulomb slip) and workpiece rests on table ($z_{\text{obj}} = 0.0\text{ mm}$).
@@ -153,7 +153,7 @@ Episode Acceptance = [Physics Engine Valid] AND [Interaction Criteria Satisfied]
      2. Telemetry insertion depth `step_insertion_depth_mm[t] > 5.0 mm`
      3. Model-visible post-action state insertion depth $\max(0.0, -next\_states[t, 2]) > 5.0\text{ mm}$
      4. Physical consistency $|z_{\text{telem}}[t] - z_{\text{state}}[t]| < 10^{-3}\text{ mm}$.
-   - Every `ContactMode.JAMMING` step must satisfy state/telemetry depth alignment ($|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$ at $z > 5.0\text{ mm}$), lateral force $> 15.0\text{ N}$, and tilt $> 1.8^\circ$.
+   - Every `ContactMode.JAMMING` step must satisfy state/telemetry depth alignment ($|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$ at $z > 5.0\text{ mm}$), lateral force $> 15.0\text{ N}$, and instantaneous physical state tilt $\theta_{\text{state}} = \|\mathbf{rot}_{xy}\| > 1.8^\circ$ derived directly from the simulator state tensor. Occurrence in non-wedging strata causes immediate episode rejection.
 
 #### 5.2 Zero Silent Retry / Overwrite Policy
 - Failed episodes are **NEVER** silently regenerated, discarded, or retried under altered seeds.

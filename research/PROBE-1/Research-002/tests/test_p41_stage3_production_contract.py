@@ -210,6 +210,7 @@ def test_wedging_alignment_and_jamming_geometric_lock() -> None:
             self.states = np.zeros((H, 12), dtype=np.float32)
             self.next_states = np.zeros((H, 12), dtype=np.float32)
             self.next_states[:, 2] = [-d for d in depths]
+            self.next_states[:, 3] = 2.5  # Instantaneous roll tilt in deg
             self.wrenches = np.zeros((H, 6), dtype=np.float32)
             self.next_wrenches = np.zeros((H, 6), dtype=np.float32)
             self.next_wrenches[:, 0] = 3.0  # Fx

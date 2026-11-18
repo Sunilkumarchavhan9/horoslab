@@ -35,6 +35,7 @@ from scripts.stage3_production_adapter import (  # noqa: E402
     build_training_package_and_audit,
     create_deterministic_mock_engine,
     evaluate_aligned_rim_impact,
+    extract_instantaneous_tilt_deg,
     jamming_label_is_physically_valid,
     opaque_sample_id,
     verify_deterministic_reproducibility,
@@ -54,11 +55,13 @@ def _peg_episode(
     torques: Optional[List[float]] = None,
     depths: Optional[List[float]] = None,
     lateral: Optional[List[float]] = None,
+    tilts: Optional[List[float]] = None,
 ) -> Any:
     horizon = len(strata)
     torques = torques if torques is not None else [0.1] * horizon
     depths = depths if depths is not None else [1.0] * horizon
     lateral = lateral if lateral is not None else forces
+    tilts = tilts if tilts is not None else [2.5] * horizon
 
     class Episode:
         pass
@@ -67,6 +70,7 @@ def _peg_episode(
     episode.states = np.zeros((horizon, 12), dtype=np.float32)
     episode.next_states = np.zeros((horizon, 12), dtype=np.float32)
     episode.next_states[:, 2] = np.array([-d for d in depths], dtype=np.float32)
+    episode.next_states[:, 3] = np.array(tilts, dtype=np.float32)  # Roll Euler angle in deg
     episode.wrenches = np.zeros((horizon, 6), dtype=np.float32)
     episode.next_wrenches = np.zeros((horizon, 6), dtype=np.float32)
     episode.next_wrenches[:, 0] = np.array(lateral, dtype=np.float32)
@@ -256,6 +260,88 @@ def test_sliding_contact_is_not_relabeled_as_jamming() -> None:
     assert jamming_label_is_physically_valid(
         mode=5, stratum=3, depth_mm=6.0, lateral_force_n=16.0, tilt_deg=0.4
     ) is False
+
+
+def test_jamming_label_in_nominal_stratum_is_rejected() -> None:
+    """AUDIT-3.3A.3-01: Every JAMMING prediction across all strata must be validated."""
+    episode = _peg_episode(
+        [0, 1, 2, 2],
+        [0, 1, 5, 2],  # Spurious JAMMING prediction at step 2 in nominal stratum
+        [0.0, 1.0, 18.0, 1.0],
+        stratum="nominal",
+        depths=[1.0, 3.0, 6.0, 8.0],
+        lateral=[0.0, 1.0, 18.0, 1.0],
+    )
+    passed, metrics = verify_production_physical_interaction("peg_in_hole", episode)
+    assert passed is False, "Spurious JAMMING in nominal stratum MUST be rejected!"
+    assert 2 in metrics["invalid_jamming_steps"]
+
+
+def test_jamming_label_in_impact_stratum_is_rejected() -> None:
+    """AUDIT-3.3A.3-01: JAMMING in impact stratum without stratum 3 wedging must be rejected."""
+    episode = _peg_episode(
+        [0, 1, 2, 2],
+        [0, 4, 5, 2],  # JAMMING prediction at step 2 in impact stratum
+        [0.0, 5.0, 18.0, 1.0],
+        stratum="impact",
+        depths=[1.0, 2.0, 6.0, 7.0],
+        lateral=[0.0, 5.0, 18.0, 1.0],
+    )
+    passed, metrics = verify_production_physical_interaction("peg_in_hole", episode)
+    assert passed is False, "JAMMING in impact stratum MUST be rejected!"
+    assert 2 in metrics["invalid_jamming_steps"]
+
+
+def test_jamming_label_with_insufficient_instantaneous_tilt_is_rejected() -> None:
+    """AUDIT-3.3A.3-02: Instantaneous tilt <= 1.8 deg derived from state must reject JAMMING."""
+    episode = _peg_episode(
+        [0, 3, 3],
+        [0, 5, 2],
+        [0.0, 18.0, 18.0],
+        stratum="wedging",
+        depths=[1.0, 6.0, 6.5],
+        lateral=[0.0, 18.0, 18.0],
+        tilts=[0.0, 1.2, 1.2],  # Instantaneous tilt is 1.2 deg <= 1.8 deg
+    )
+    # Even if initial metadata claimed 2.5 deg, instantaneous state tilt must govern:
+    episode.env_metadata["tilt_deg"] = 2.5
+    passed, metrics = verify_production_physical_interaction("peg_in_hole", episode)
+    assert passed is False, "JAMMING with low instantaneous tilt (1.2 deg) MUST be rejected!"
+    assert 1 in metrics["invalid_jamming_steps"]
+
+
+def test_jamming_label_with_sufficient_instantaneous_tilt_is_accepted() -> None:
+    """AUDIT-3.3A.3-02: Instantaneous tilt > 1.8 deg derived from state must accept valid JAMMING."""
+    episode = _peg_episode(
+        [0, 3, 3],
+        [0, 5, 2],
+        [0.0, 18.0, 18.0],
+        stratum="wedging",
+        depths=[1.0, 6.0, 6.5],
+        lateral=[0.0, 18.0, 18.0],
+        tilts=[0.0, 2.4, 2.4],  # Instantaneous tilt is 2.4 deg > 1.8 deg
+    )
+    # Even if initial metadata had small tilt (1.0 deg), dynamic state tilt must govern:
+    episode.env_metadata["tilt_deg"] = 1.0
+    passed, metrics = verify_production_physical_interaction("peg_in_hole", episode)
+    assert passed is True, "Valid JAMMING with sufficient instantaneous state tilt MUST be accepted!"
+    assert metrics["valid_jamming_steps"] == [1]
+    assert metrics["invalid_jamming_steps"] == []
+
+
+def test_instantaneous_tilt_extraction_12d_and_15d() -> None:
+    """AUDIT-3.3A.3-02: Verify state tilt derivation for both 12-D and 15-D formats."""
+    # 12-D Kinematic layout: rot is at indices 3:5 (roll, pitch)
+    s12 = np.zeros(12, dtype=np.float64)
+    s12[3] = 1.2  # roll
+    s12[4] = 1.6  # pitch -> hypot(1.2, 1.6) = 2.0 deg
+    assert extract_instantaneous_tilt_deg(s12) == pytest.approx(2.0, rel=1e-5)
+
+    # 15-D Full Physical layout: rot is at indices 6:8 (roll, pitch)
+    s15 = np.zeros(15, dtype=np.float64)
+    s15[6] = 1.5  # roll
+    s15[7] = 2.0  # pitch -> hypot(1.5, 2.0) = 2.5 deg
+    assert extract_instantaneous_tilt_deg(s15) == pytest.approx(2.5, rel=1e-5)
 
 
 def test_model_package_rejects_reconstructable_identifiers() -> None:

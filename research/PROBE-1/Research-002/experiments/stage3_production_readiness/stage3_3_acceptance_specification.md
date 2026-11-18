@@ -141,7 +141,9 @@ Every timestep $t \in [0, T-1]$ has a discrete classification label $m_t \in \{0
    \max(0.0, -next\_states[t, 2]) > 5.0\text{ mm} \\
    |\text{step\_insertion\_depth\_mm}[t] - \max(0.0, -next\_states[t, 2])| < 10^{-3}\text{ mm}
    \end{cases}$$
-   If classifier mode 5 (`ContactMode.JAMMING`) occurs at timestep $t$, that same timestep must also have stratum 3, depth $> 5.0\,\text{mm}$, physical state-depth alignment ($|\text{step\_insertion\_depth\_mm}[t] - \max(0.0, -next\_states[t, 2])| < 10^{-3}\text{ mm}$ with model-visible state depth $> 5.0\text{ mm}$), and lateral force $\|F_{xy}(t)\| > 15.0\,\text{N}$. A label that fails those conditions is rejected. A valid label is not rejected because the episode belongs to the wedging stratum.
+   If classifier mode 5 (`ContactMode.JAMMING`) occurs at timestep $t$, that same timestep must also have stratum 3, depth $> 5.0\,\text{mm}$, physical state-depth alignment ($|\text{step\_insertion\_depth\_mm}[t] - \max(0.0, -next\_states[t, 2])| < 10^{-3}\text{ mm}$ with model-visible state depth $> 5.0\text{ mm}$), lateral force $\|F_{xy}(t)\| > 15.0\,\text{N}$, and instantaneous physical state tilt $\theta_{\text{state}}(t) = \|\mathbf{rot}_{xy}(t)\| > 1.8^\circ$ derived directly from the simulator state vector.
+   
+   **Universal Stratum Gate:** Every occurrence of `ContactMode.JAMMING` is validated across ALL strata (nominal, impact, wedging). A `JAMMING` label occurring in nominal or impact strata, or failing the mechanical lock gates, is flagged in `invalid_jamming_steps` and causes immediate episode rejection. Valid wedging episodes without `JAMMING` labels (e.g. compliant sliding/sticking) are accepted.
 
 ---
 
