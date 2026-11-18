@@ -219,6 +219,22 @@ def test_jamming_label_without_mechanical_lock_force_is_rejected() -> None:
     assert 1 in metrics["invalid_jamming_steps"]
 
 
+def test_jamming_label_with_depth_misalignment_is_rejected() -> None:
+    episode = _peg_episode(
+        [0, 3, 3],
+        [0, 5, 2],
+        [0.0, 18.0, 18.0],
+        stratum="wedging",
+        depths=[1.0, 6.0, 6.5],
+        lateral=[0.0, 18.0, 18.0],
+    )
+    # Misalign model-visible state depth (2.0 mm) with simulator telemetry depth (6.0 mm)
+    episode.next_states[1, 2] = -2.0
+    passed, metrics = verify_production_physical_interaction("peg_in_hole", episode)
+    assert passed is False
+    assert 1 in metrics["invalid_jamming_steps"]
+
+
 def test_genuine_wedging_without_jamming_label_is_accepted() -> None:
     episode = _peg_episode(
         [0, 2, 3, 3],
@@ -350,6 +366,25 @@ def test_dataloader_refuses_audit_manifest_and_reinserted_seed(tmp_path: Path) -
 
     audit = training / "stage3_3_a2_audit_manifest.json"
     audit.write_text("{}", encoding="utf-8")
+    with pytest.raises(SecurityViolationError):
+        ProductionTrainingDataloader(training)
+
+
+def test_dataloader_validates_next_states_pair(tmp_path: Path) -> None:
+    training = tmp_path / "training"
+    training.mkdir()
+    sample_id = "ac" * 32
+    # next_states has invalid dimension (7 instead of 12 or 15)
+    np.savez_compressed(
+        training / f"{sample_id}.npz",
+        sample_id=sample_id,
+        task="peg_in_hole",
+        states=np.zeros((3, 15), dtype=np.float32),
+        actions=np.zeros((3, 6), dtype=np.float32),
+        next_states=np.zeros((3, 7), dtype=np.float32),
+        wrenches=np.zeros((3, 6), dtype=np.float32),
+        next_wrenches=np.zeros((3, 6), dtype=np.float32),
+    )
     with pytest.raises(SecurityViolationError):
         ProductionTrainingDataloader(training)
 

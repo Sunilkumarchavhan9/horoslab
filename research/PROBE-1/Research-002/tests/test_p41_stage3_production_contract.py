@@ -202,7 +202,7 @@ def test_impact_acceptance_contract_reconciliation() -> None:
     assert pass5 is False, "Excessive impact force MUST be rejected!"
 
 
-def test_wedging_alignment_and_jamming_prohibition() -> None:
+def test_wedging_alignment_and_jamming_geometric_lock() -> None:
     """Verifies wedging alignment and rejects a JAMMING label that lacks the geometric lock."""
     class MockWedgingEpisode:
         def __init__(self, strata: List[int], depths: List[float], modes: List[int]):

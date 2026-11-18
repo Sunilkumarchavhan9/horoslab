@@ -141,12 +141,19 @@ Episode Acceptance = [Physics Engine Valid] AND [Interaction Criteria Satisfied]
    - *Probe:* $\max \|\dot{\delta}_t\| \ge 0.0005\text{ m/s}$ (Coulomb slip) and workpiece rests on table ($z_{\text{obj}} = 0.0\text{ mm}$).
    - *Regime A:* $\mu$ steps verify $0.60 \to 0.24$ at step 15 ($t=14$), and causal post-transition slip $\max_{t \ge 14} \|\dot{\delta}_t\| > 0.0010\text{ m/s}$. Pre-transition slip cannot satisfy acceptance.
    - *Regime B:* Step mass verifies continuous influx $+0.0025\text{ kg/step}$, reaching $0.400\text{ kg}$ at step 20, with clamping hold $F_n \ge 0.50\text{ N}, F_z \ge 0.50\text{ N}$.
-4. **Peg-in-Hole Wedging Verification:**
+4. **Peg-in-Hole Event-Aligned Rim-Impact Verification:**
+   - Evaluated strictly on the rim collision event set: $\mathcal{E} = \{t : \text{step\_contact\_stratum}[t] = 1\}$.
+   - Event impulse must be strictly positive: $J_{\mathcal{E}} = \sum_{t \in \mathcal{E}} \|\mathbf{F}(t)\| \Delta t > 10^{-6}\text{ N}\cdot\text{s}$.
+   - Rising force rate across event onset must satisfy: $\dot{F} > 0.01\text{ N/s}$.
+   - Resultant contact force and torque bounded throughout: $\max_t \|\mathbf{F}(t)\| \le 35.0\text{ N}$, $\max_t \|\boldsymbol{\tau}(t)\| \le 7.0\text{ Nm}$.
+   - Force peaks occurring outside $\mathcal{E}$ are rejected as unaligned.
+5. **Peg-in-Hole Wedging Verification:**
    - Timestep alignment: There must exist at least one timestep $t$ where simultaneously:
      1. Simulator `step_contact_stratum[t] == 3`
      2. Telemetry insertion depth `step_insertion_depth_mm[t] > 5.0 mm`
      3. Model-visible post-action state insertion depth $\max(0.0, -next\_states[t, 2]) > 5.0\text{ mm}$
      4. Physical consistency $|z_{\text{telem}}[t] - z_{\text{state}}[t]| < 10^{-3}\text{ mm}$.
+   - Every `ContactMode.JAMMING` step must satisfy state/telemetry depth alignment ($|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$ at $z > 5.0\text{ mm}$), lateral force $> 15.0\text{ N}$, and tilt $> 1.8^\circ$.
 
 #### 5.2 Zero Silent Retry / Overwrite Policy
 - Failed episodes are **NEVER** silently regenerated, discarded, or retried under altered seeds.
@@ -157,14 +164,17 @@ Episode Acceptance = [Physics Engine Valid] AND [Interaction Criteria Satisfied]
 
 ### 6. Two-Tier Data Separation & Packaging
 
-To eliminate observation leakage while preserving complete scientific provenance, every episode produces two strictly separated artifacts:
+To eliminate observation leakage while preserving complete scientific provenance, production artifacts are partitioned into two strictly segregated directory tiers:
 
-1. **Model-Visible Observation Archive (`<episode_id>.npz`):**
-   - Contains ONLY model-permissible tensors: `states`, `actions`, `next_states`, `wrenches`, `next_wrenches`, `rewards`, `seed`, `episode_id`, `task`, `provenance_hash`.
-   - **Strict Zero-Leakage Guarantee:** Absolutely zero simulator ground-truth parameters (`modes`, `mu_true`, `initial_mu_true`, `object_mass`, `initial_mass_kg`, `clearance_mm`, `clearance`, `contact_mode`, `friction`, `step_mu_true`, `step_object_mass_kg`, `step_contact_stratum`, `step_insertion_depth_mm`, `step_force_norm_n`, `step_torque_norm_nm`) are present in the `.npz` archive.
-2. **Privileged Evidence Package (`<episode_id>.privileged.json`):**
-   - Contains authoritative simulator ground truth: step-by-step telemetry (`step_mu_true`, `step_object_mass_kg`, `step_contact_stratum`, `step_insertion_depth_mm`, `step_force_norm_n`, `step_torque_norm_nm`), 7-class `ContactMode` arrays, full environmental metadata, teacher suggestion records, and validation verdict details.
-   - Cross-referenced with the model-visible package via `observation_sha256`.
+1. **Model-Visible Training Tier (`training/<sample_id>.npz`):**
+   - Stored in a dedicated `training/` directory containing ONLY model-visible compressed NumPy archives.
+   - Files are named strictly by their opaque 64-character HMAC-SHA256 hex string (`<sample_id>.npz`).
+   - Contains ONLY model-permissible tensors: `states`, `actions`, `next_states`, `wrenches`, `next_wrenches`, `sample_id`, `task`.
+   - **Strict Zero-Leakage Guarantee:** Reconstructable identifiers (`seed`, `episode_id`, `slot_alias`, `canonical_episode_id`, `provenance_hash`, `rewards`) and simulator ground-truth quantities (`modes`, `mu_true`, `object_mass`, `clearance_mm`, `step_contact_stratum`, etc.) are **strictly forbidden**.
+   - `ProductionTrainingDataloader` refuses any directory containing colocated audit manifests, seed registries, or `.privileged.json` files.
+2. **Privileged Audit Tier (`audit/<canonical_episode_id>.privileged.json` & `.audit.json`):**
+   - Stored in a separate `audit/` directory isolated from student model dataloaders.
+   - Contains authoritative simulator ground truth: step-by-step telemetry (`step_mu_true`, `step_object_mass_kg`, `step_contact_stratum`, `step_insertion_depth_mm`, `step_force_norm_n`, `step_torque_norm_nm`), 7-class `ContactMode` arrays, full environmental metadata, teacher suggestion records, the HMAC audit salt, and the join mapping from `sample_id` to `canonical_episode_id` and `seed`.
 
 ---
 

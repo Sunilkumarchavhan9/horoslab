@@ -51,8 +51,11 @@ The Research-002 Stage 3 production dataset enforces a strict two-tier data sepa
 
 #### 2.1 File Format & Packing
 - **Format:** Standard NumPy compressed zip archive (`np.savez_compressed`), serialized with `allow_pickle=False`.
-- **Naming Convention:** `syn_<task>_<model_id>_seed<seed>.npz`
-  - Example: `syn_compliant_prelift_stage3_pilot_controller_v1_seed3311000.npz`
+- **Naming Convention:** `<sample_id>.npz`
+  - Filename is strictly the 64-character lowercase hex string of the opaque `sample_id` (HMAC-SHA256).
+  - Example: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.npz`
+  - Reconstructable identifiers (`seed`, `task`, `model_id`, `episode_id`) are **forbidden** in the training file path.
+  - Canonical identifiers (`syn_<task>_<model_id>_seed<seed>`) are stored strictly in the separate audit tier (`audit/<canonical_episode_id>.privileged.json` and `audit/<canonical_episode_id>.audit.json`).
 
 #### 2.2 Tensor Definitions & Shapes
 
@@ -73,11 +76,17 @@ The Research-002 Stage 3 production dataset enforces a strict two-tier data sepa
   - Indices `12..15` (4 floats): Fingertip normal forces $[F_{n,1}, F_{n,2}, F_{n,3}, F_{n,4}]$ in N.
   - Indices `16..19` (4 floats): Fingertip tangential slip velocities $[\dot{\delta}_1, \dot{\delta}_2, \dot{\delta}_3, \dot{\delta}_4]$ in m/s.
   - Indices `20..22` (3 floats): Workpiece Cartesian position $[x_{\text{obj}}, y_{\text{obj}}, z_{\text{obj}}]$ in mm.
-- **Task 2: Peg-in-Hole ($D = 12$, Horizon $T = 30$):**
-  - Indices `0..2` (3 floats): Peg tip position $[x, y, z]$ relative to hole coordinate frame in mm.
-  - Indices `3..5` (3 floats): Peg orientation Euler angles $[\phi, \theta, \psi]$ (Roll, Pitch, Yaw) in degrees.
-  - Indices `6..8` (3 floats): Peg linear velocity $[\dot{x}, \dot{y}, \dot{z}]$ in mm/s.
-  - Indices `9..11` (3 floats): Peg angular velocity $[\omega_x, \omega_y, \omega_z]$ in deg/s.
+- **Task 2: Peg-in-Hole ($D \in \{12, 15\}$, Horizon $T = 30$):**
+  - **Full Physical Layout ($D = 15$, exported by `extract_env_state_and_wrench`):**
+    - Indices `0..2` (3 floats): Peg tip position $[x, y, z]$ relative to hole coordinate frame in mm.
+    - Indices `3..5` (3 floats): Peg linear velocity $[\dot{x}, \dot{y}, \dot{z}]$ in mm/s.
+    - Indices `6..8` (3 floats): Peg orientation Euler angles $[\phi, \theta, \psi]$ in radians.
+    - Indices `9..14` (6 floats): 6-axis ATI wrist reaction wrench $[F_x, F_y, F_z, T_x, T_y, T_z]$ in N, Nm.
+  - **Kinematic-Only Layout ($D = 12$, supported by approved state widths):**
+    - Indices `0..2` (3 floats): Peg tip position $[x, y, z]$ relative to hole coordinate frame in mm.
+    - Indices `3..5` (3 floats): Peg orientation Euler angles $[\phi, \theta, \psi]$ in degrees.
+    - Indices `6..8` (3 floats): Peg linear velocity $[\dot{x}, \dot{y}, \dot{z}]$ in mm/s.
+    - Indices `9..11` (3 floats): Peg angular velocity $[\omega_x, \omega_y, \omega_z]$ in deg/s.
 
 #### 2.4 Task Action Vector Dimensionality ($A$)
 - **Task 1: Compliant Prelift ($A = 5$):**

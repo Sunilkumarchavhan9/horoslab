@@ -12,15 +12,19 @@
 
 ### 1. Storage Architecture & Directory Hierarchy
 
-Production dataset artifacts generated in Stage 3.3B shall reside in a dedicated, isolated directory tree under `experiments/stage3_production/`.
+Production dataset artifacts generated in Stage 3.3B shall reside in a dedicated, isolated directory tree under `experiments/stage3_production/`, strictly partitioned into separate training and audit tiers:
 
 ```
 experiments/stage3_production/
-├── accepted/
-│   ├── syn_compliant_prelift_stage3_pilot_controller_v1_seed3311000.npz
-│   ├── syn_compliant_prelift_stage3_pilot_controller_v1_seed3311000.privileged.json
-│   ├── ... (1,000 .npz files + 1,000 .privileged.json files)
-│   └── syn_peg_in_hole_stage3_pilot_controller_v1_seed3325099.privileged.json
+├── training/                       # Model-visible training tier (student dataloaders read this)
+│   ├── <sample_id_001>.npz         # Opaque HMAC-SHA256 filename; allowed observation tensors only
+│   ├── <sample_id_002>.npz
+│   └── ... (1,000 .npz files; ZERO privileged metadata, zero seeds, zero task names in filenames)
+├── audit/                          # Privileged audit tier (isolated from training dataloaders)
+│   ├── syn_compliant_prelift_..._seed3311000.privileged.json
+│   ├── syn_compliant_prelift_..._seed3311000.audit.json
+│   ├── ... (1,000 .privileged.json + 1,000 .audit.json files)
+│   └── stage3_3_audit_manifest.json  # Full join mapping of sample_id -> canonical_id, seed & ground truth
 ├── rejected/
 │   ├── (Any candidate episodes rejected by validation or physical interaction checks)
 │   └── syn_<task>_<model_id>_seed<seed>.privileged.json

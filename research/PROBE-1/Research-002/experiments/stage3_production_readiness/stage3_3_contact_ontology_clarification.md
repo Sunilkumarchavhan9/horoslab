@@ -61,6 +61,7 @@ Following the classical manipulation mechanics established by Whitney (1982) and
 1. **Geometric Wedging (Simulator Stratum 3):**
    - Occurs when opposite ends of the peg contact opposite walls of the hole fixture simultaneously at a tilt angle exceeding the critical geometric clearance angle:
      $$\theta \ge \theta_c = \arctan\left(\frac{2 c}{L_p}\right)$$
+     where $c$ is radial clearance $c = R_{\text{hole}} - R_{\text{peg}}$ and $L_p$ is insertion depth / contact length (Whitney 1982).
    - Wedging is a **geometric kinematic state**. Once wedging occurs, the normal vectors at the two contact points oppose each other.
    - Depending on applied forces, a wedged peg can experience:
      - Quasi-static compliant sliding down the walls (`ContactMode.SLIDING` 3).
@@ -81,7 +82,7 @@ The Stage 3.3A.1 blanket prohibition (`5 not in modes`) is formally rescinded an
 #### 5.1 Valid `JAMMING` Label During Wedging
 A `ContactMode.JAMMING` (5) classification is **scientifically valid and accepted** if and only if all of the following hold at the same timestep $t$:
 1. Simulator Contact Stratum is active wedging: $\text{step\_contact\_stratum}[t] = 3$.
-2. Insertion depth exceeds the wedging threshold: $z_{\text{depth}}[t] > 5.0\text{ mm}$.
+2. State-depth alignment is verified: telemetry insertion depth $z_{\text{telem}}[t] > 5.0\text{ mm}$, model-visible post-action state depth $z_{\text{state}}[t] = \max(0.0, -next\_states[t, 2]) > 5.0\text{ mm}$, and $|z_{\text{telem}}[t] - z_{\text{state}}[t]| < 10^{-3}\text{ mm}$.
 3. Lateral contact force indicates a genuine mechanical lock: $\|\mathbf{F}_t(t)\| > 15.0\text{ N}$.
 4. Tilt angle exceeds the geometric lock gate: $\theta(t) > 1.8^\circ$.
 
@@ -90,6 +91,7 @@ A scenario is **REJECTED** if `ContactMode.JAMMING` (5) is emitted under any of 
 1. **Free-Space Jamming:** Mode 5 emitted when $F_n < 0.01\text{ N}$ or $z_{\text{depth}} \le 0.0\text{ mm}$.
 2. **Chamfer / Sliding Jamming:** Mode 5 emitted during stratum 2 (`CHAMFER_SLIDE`) or when lateral force is low ($\|\mathbf{F}_t\| \le 15.0\text{ N}$).
 3. **Low-Tilt Jamming:** Mode 5 emitted when $\theta \le 1.8^\circ$.
+4. **Misaligned Depth Jamming:** Mode 5 emitted when telemetry depth and model-visible state depth diverge ($|z_{\text{telem}}[t] - z_{\text{state}}[t]| \ge 10^{-3}\text{ mm}$) or model-visible state depth is shallow ($z_{\text{state}}[t] \le 5.0\text{ mm}$).
 
 #### 5.3 Valid Wedging Without Jamming
 Wedging scenarios where compliant downward insertion proceeds without exceeding $15.0\text{ N}$ lateral force will exhibit valid `ContactMode.STICKING` (2) and `ContactMode.SLIDING` (3). These episodes are **fully valid and accepted** provided the state/telemetry depth alignment ($z_{\text{telem}} = z_{\text{state}} > 5.0\text{ mm}$) at stratum 3 is verified.

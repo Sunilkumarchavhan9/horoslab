@@ -526,14 +526,22 @@ def verify_production_physical_interaction(
             for t in range(mode_horizon):
                 if int(modes[t]) != int(ContactMode.JAMMING):
                     continue
-                if t >= len(strata_observed) or t >= len(depths_observed) or t >= episode.next_wrenches.shape[0]:
+                if (
+                    t >= len(strata_observed)
+                    or t >= len(depths_observed)
+                    or t >= episode.next_wrenches.shape[0]
+                    or t >= episode.next_states.shape[0]
+                ):
                     invalid_jamming_steps.append(t)
                     continue
+                state_depth = float(max(0.0, -episode.next_states[t, 2]))
+                telem_depth = float(depths_observed[t])
+                depth_aligned = (abs(telem_depth - state_depth) < 1e-3) and (state_depth > WEDGING_MIN_DEPTH_MM)
                 lateral_force = float(np.linalg.norm(episode.next_wrenches[t, :2]))
-                if jamming_label_is_physically_valid(
+                if depth_aligned and jamming_label_is_physically_valid(
                     mode=int(modes[t]),
                     stratum=int(strata_observed[t]),
-                    depth_mm=float(depths_observed[t]),
+                    depth_mm=telem_depth,
                     lateral_force_n=lateral_force,
                     tilt_deg=None if jamming_tilt is None else float(jamming_tilt),
                 ):
@@ -818,6 +826,7 @@ class ProductionTrainingDataloader:
             }
         validate_model_visible_package(package)
         assert_tensor_channels_clean(str(package["task"]), package["states"], package["wrenches"], {})
+        assert_tensor_channels_clean(str(package["task"]), package["next_states"], package["next_wrenches"], {})
         return package
 
     def batches(self, batch_size: int) -> List[Dict[str, Any]]:
