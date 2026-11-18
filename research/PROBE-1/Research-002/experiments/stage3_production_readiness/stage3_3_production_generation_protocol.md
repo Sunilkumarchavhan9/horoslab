@@ -135,7 +135,7 @@ Episode Acceptance = [Physics Engine Valid] AND [Interaction Criteria Satisfied]
    - Kinematic velocity limits: Prelift $\le 100\text{ mm/s}$, Peg-in-Hole $\le 100\text{ mm/s}$.
 2. **ContactMode Ontology Classification:**
    - Every timestep's classified contact mode must belong to the approved 7-class ontology (`0: FREE`, `1: FIRST_CONTACT`, `2: STICKING`, `3: SLIDING`, `4: IMPACT`, `5: JAMMING`, `6: RELEASE`).
-   - Classifier labels must never be conflated with simulator contact strata. Specifically, simulator stratum 3 wedging must be classified under valid physical modes (`FREE`, `FIRST_CONTACT`, `STICKING`), never mislabeled as classifier `JAMMING` (ID 5) or classifier `SLIDING` (ID 3).
+   - Classifier labels are not remapped from simulator strata. Simulator stratum 3 is WEDGING. Classifier ID 5 is `ContactMode.JAMMING`, the frozen geometric lock. A JAMMING label is valid only when that timestep is also stratum 3, deeper than 5 mm, and above 15 N lateral force. Sliding is classifier ID 3 and is not JAMMING.
 3. **Prelift Event-Specific Verification:**
    - *Nominal:* $\max(z_{\text{obj}}) > 0.001\text{ mm}$ (positive liftoff).
    - *Probe:* $\max \|\dot{\delta}_t\| \ge 0.0005\text{ m/s}$ (Coulomb slip) and workpiece rests on table ($z_{\text{obj}} = 0.0\text{ mm}$).

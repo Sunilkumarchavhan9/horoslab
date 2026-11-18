@@ -29,8 +29,8 @@ Zero production episodes were synthesized, zero pilot trajectories were regenera
 | **Seed Namespace Formula** | Frozen factory defaulted to `3_100_000` base | `Stage3ProductionExperienceFactory` implements `3_300_000 + task_code*10,000 + stratum_code*1,000 + index`. Matches `stage3_3_seed_registry.json` 1,000/1,000. | **RECONCILED** |
 | **Stage 3.0 Codebase Freeze** | Frozen code risk | Zero modifications to `src/teaching/factory.py`, `validator.py`, `inference.py`, `registry.py`, or `test_p38_stage3_preflight.py`. All extensions built via subclassing in `scripts/stage3_production_adapter.py`. | **RECONCILED** |
 | **Episode Identity** | Inconsistent naming (`syn_...` vs `prod_...`) | Dual episode identity resolution implemented. Primary ID maps to slot alias (`prod_{task}_{stratum}_{idx:03d}`); metadata preserves canonical ID (`syn_{task}_{teacher}_seed{seed}`) and slot alias. Full two-way traceability. | **RECONCILED** |
-| **Peg Impact Acceptance** | Loose check: `stratum==1 or mode==4 or max_force > 1.0` | Hardened: strictly requires `(stratum==1 or mode==4) and (max_force >= 1.0) and forces_bounded`. Eliminates false PASS on non-rim collisions with force. | **RECONCILED** |
-| **Contact Mode Semantics** | Potential stratum/mode confusion | 7-class ontology strictly decoupled from simulator strata. Classifier mode 5 (`JAMMING`) is strictly forbidden across wedging episodes. Same-timestep alignment enforced. | **RECONCILED** |
+| **Peg Impact Acceptance** | Loose check: `stratum==1 or mode==4 or max_force > 1.0` | Stage 3.3A.1 used a magnitude gate. Stage 3.3A.2 replaces it with an event-aligned impulse and rising-rate test on simulator stratum 1. | **CORRECTED IN 3.3A.2** |
+| **Contact Mode Semantics** | Potential stratum/mode confusion | 7-class ontology remains frozen and is not remapped onto simulator strata. Stage 3.3A.2 corrected the earlier ban on `JAMMING` during wedging: the label is valid only as a geometric lock. | **CORRECTED IN 3.3A.2** |
 | **Model Observation Security** | Generic dict filtering | Strict `MODEL_VISIBLE_ALLOWLIST` enforced via `validate_model_visible_package()`. Any privileged token (`mu_true`, `object_mass`, `step_contact_stratum`, etc.) triggers immediate `SecurityViolationError`. | **RECONCILED** |
 | **Deterministic Replay** | Assumed reproducibility | Verified bitwise reproducibility: dual independent rollouts with production seeds yield identical state/action/wrench arrays and identical 64-character SHA-256 provenance hashes. | **RECONCILED** |
 | **Rejection & Reserve Pool** | Undefined replacement policy | Non-silent fail-closed rejection: failures permanently log to `rejected_manifest.json`. Pre-registered reserve pool of 300 seeds (`3_390_000` base, 50 per stratum) locked in registry for audited allocation. | **RECONCILED** |
@@ -64,13 +64,13 @@ The new production adapter (`scripts/stage3_production_adapter.py`) serves as th
 A dedicated reserve pool of 300 seeds has been generated, validated, and pre-registered into `stage3_3_seed_registry.json`:
 - **Formula:** `3_390_000 + task_code * 10_000 + stratum_code * 1_000 + reserve_index` ($0 \le \text{reserve\_index} < 50$)
 - **Task 1: Compliant Prelift:**
-  - `nominal`: `3_391_000` to `3_391_049` (50 seeds)
-  - `probe`: `3_392_000` to `3_392_049` (50 seeds)
-  - `nonstationary`: `3_393_000` to `3_393_049` (50 seeds)
+  - `nominal`: `3_401_000` to `3_401_049` (50 seeds)
+  - `probe`: `3_402_000` to `3_402_049` (50 seeds)
+  - `nonstationary`: `3_403_000` to `3_403_049` (50 seeds)
 - **Task 2: Peg-in-Hole:**
-  - `nominal`: `3_394_000` to `3_394_049` (50 seeds)
-  - `impact`: `3_395_000` to `3_395_049` (50 seeds)
-  - `wedging`: `3_396_000` to `3_396_049` (50 seeds)
+  - `nominal`: `3_411_000` to `3_411_049` (50 seeds)
+  - `impact`: `3_414_000` to `3_414_049` (50 seeds)
+  - `wedging`: `3_415_000` to `3_415_049` (50 seeds)
 - **Collision Proof:**
   - Overlap with 40 pilot seeds (`3_111_000`..`3_125_003`): **0**
   - Overlap with 1,000 production primary seeds (`3_311_000`..`3_325_099`): **0**

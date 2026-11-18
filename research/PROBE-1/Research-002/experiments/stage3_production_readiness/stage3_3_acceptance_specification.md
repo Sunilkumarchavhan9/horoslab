@@ -55,14 +55,14 @@ Every timestep $t \in [0, T-1]$ has a discrete classification label $m_t \in \{0
 - `1: ContactMode.FIRST_CONTACT` — Impact transition step ($\Delta F_n > 0.5\text{ N}$).
 - `2: ContactMode.STICKING` — Contact active ($F_n \ge 0.5\text{ N}$), tangential velocity $\|\dot{\delta}\| < 0.001\text{ m/s}$.
 - `3: ContactMode.SLIDING` — Contact active ($F_n \ge 0.5\text{ N}$), Coulomb sliding velocity $\|\dot{\delta}\| \ge 0.001\text{ m/s}$.
-- `4: ContactMode.IMPACT` — Normal force impulse exceeding contact stiffness derivative threshold.
-- `5: ContactMode.JAMMING` — Mechanical jamming (friction-locked wedge without geometric two-point constraint).
+- `4: ContactMode.IMPACT` — Rapid force rise. The frozen classifier uses $\Delta F_n / \Delta t > 500\,\text{N/s}$. That label is not a substitute for the simulator rim-impact event.
+- `5: ContactMode.JAMMING` — Two-point geometric wedging / mechanical lock. Frozen enum comment and document 12: lateral force $> 15.0\,\text{N}$ and tilt above the geometric wedge angle. This is not a friction lock without geometry, and it is not the same identifier as simulator stratum 3.
 - `6: ContactMode.RELEASE` — Breaking contact ($\Delta F_n < -0.5\text{ N}$, transitioning to Free).
 
 #### 3.2 Invariant: Mode vs Stratum Decoupling
 - **Simulator Contact Strata** represent authoritative ground-truth boundary states in simulation: `0: FREE, 1: IMPACT, 2: SLIDING, 3: WEDGING, 4: SEATED`.
-- **Prohibition:** Simulator stratum 3 (`WEDGING`) must NEVER be equated with or remapped to classifier ID 5 (`JAMMING`) or classifier ID 3 (`SLIDING`).
-- In all wedging episodes, classifier modes must consist solely of valid physical modes (`FREE`, `FIRST_CONTACT`, `STICKING`), and must not emit spurious `JAMMING` labels.
+- **Decoupling:** Simulator stratum 3 (`WEDGING`) is not remapped to classifier ID 5 (`JAMMING`). The two identifiers live in different spaces.
+- A `JAMMING` label is physically valid during a wedging episode only at a timestep that is also simulator stratum 3, has insertion depth $> 5.0\,\text{mm}$, and has lateral force $> 15.0\,\text{N}$. If tilt is available, it must exceed $1.8^\circ$. A `JAMMING` label during sliding, or without that lock, is rejected. A wedging episode with no `JAMMING` label is not rejected for that absence.
 
 ---
 
@@ -118,14 +118,22 @@ Every timestep $t \in [0, T-1]$ has a discrete classification label $m_t \in \{0
 ##### B. Impact Stratum (150 episodes)
 1. `insertion_attained`: $\min_t z(t) \le 0.0\text{ mm}$.
 2. `forces_bounded`: Resultant force $\le 35.0\text{ N}$, torque $\le 7.0\text{ Nm}$.
-3. `stratum_specific_passed`: **Authentic Rim Impact Established:**
-   $$(1 \in \text{step\_contact\_stratum} \lor 4 \in \text{modes}) \land (\max_t \|\mathbf{F}(t)\| \ge 1.0\text{ N}) \land (\max_t \|\mathbf{F}(t)\| \le 35.0\text{ N}) \land (\max_t \|\boldsymbol{\tau}(t)\| \le 7.0\text{ Nm})$$
-   Both kinematic collision detection (simulator stratum 1 `RIM_IMPACT` or classified mode 4 `ContactMode.IMPACT`) AND authentic dynamic force impulse ($\ge 1.0\text{ N}$) are strictly required. Infinitesimal forces or unconfirmed impacts are rejected.
+3. `stratum_specific_passed`: **Event-aligned rim impact.**
+   Let $E = \{t : \text{step\_contact\_stratum}[t] = 1\}$ and $\Delta t = 0.01\,\text{s}$ (the factory control period; `PegInHoleEnv` defaults to $0.02\,\text{s}$ but the factory overrides it).
+   $$
+   r(t) = \frac{\|F(t)\| - \|F(t-1)\|}{\Delta t}, \qquad
+   J_E = \sum_{t \in E} \|F(t)\|\,\Delta t
+   $$
+   with $\|F(-1)\| = 0$. Units: $r$ in N/s, $J_E$ in N·s, $\|F\|$ in N.
+   Accept the dynamic test only if $E$ is non-empty, $J_E > 10^{-6}\,\text{N·s}$, and $\max_{t \in E} r(t) > 0.01\,\text{N/s}$.
+   Those floors are one telemetry quantum ($10^{-4}\,\text{N}$) over one control step. They are not the old $1.0\,\text{N}$ magnitude gate, and they are not document 12's $2.0\,\text{N·s}$ shock: at $\Delta t = 0.01\,\text{s}$ the $35\,\text{N}$ cap limits one step to $0.35\,\text{N·s}$, and the six certified pilot rim impulses are $0.0012$–$0.0996\,\text{N·s}$.
+   Classifier mode 4 does not replace $E$. A force peak at $t \notin E$ does not satisfy the test.
+4. Force and torque limits are independent of that dynamic test: $\max_t \|F(t)\| \le 35.0\,\text{N}$ and $\max_t \|\tau(t)\| \le 7.0\,\text{N·m}$.
 
 ##### C. Wedging Stratum (100 episodes)
 1. `insertion_attained`: $\min_t z(t) \le 0.0\text{ mm}$.
 2. `forces_bounded`: Compliant resultant force $\le 35.0\text{ N}$ (typically $\le 6.0\text{ N}$), torque $\le 7.0\text{ Nm}$ (typically $\le 0.5\text{ Nm}$).
-3. `stratum_specific_passed`: **Exact Timestep State/Telemetry Wedging Alignment & Jamming Prohibition:**
+3. `stratum_specific_passed`: **Aligned geometric wedging, with JAMMING checked rather than banned.**
    There must exist at least one timestep $t$ such that ALL four conditions hold simultaneously at index $t$:
    $$\begin{cases}
    \text{step\_contact\_stratum}[t] = 3 \\
@@ -133,8 +141,7 @@ Every timestep $t \in [0, T-1]$ has a discrete classification label $m_t \in \{0
    \max(0.0, -next\_states[t, 2]) > 5.0\text{ mm} \\
    |\text{step\_insertion\_depth\_mm}[t] - \max(0.0, -next\_states[t, 2])| < 10^{-3}\text{ mm}
    \end{cases}$$
-   And classifier mode 5 (`ContactMode.JAMMING`) is strictly forbidden across all timesteps:
-   $$5 \notin \text{modes}$$
+   If classifier mode 5 (`ContactMode.JAMMING`) occurs at timestep $t$, that same timestep must also have stratum 3, depth $> 5.0\,\text{mm}$, and lateral force $\|F_{xy}(t)\| > 15.0\,\text{N}$. A label that fails those conditions is rejected. A valid label is not rejected because the episode belongs to the wedging stratum.
 
 ---
 
@@ -143,7 +150,7 @@ Every timestep $t \in [0, T-1]$ has a discrete classification label $m_t \in \{0
 1. **No Silent Reseeding:** Under no circumstances shall a rejected scenario be re-run with a perturbed seed, parameter offset, or modified teacher command.
 2. **Rejection Persistence:** Every rejected episode is saved to `experiments/stage3_production/rejected/` and recorded in `rejected_manifest.json` with fail-closed status and diagnostic metadata.
 3. **Pre-registered Reserve Pool:** A dedicated reserve pool of 300 seeds (base $3,390,000$, 50 reserve seeds per stratum across 6 strata) is locked in `stage3_3_seed_registry.json`. Reserve seeds cannot be silently consumed; they require explicit audit and authorization during Stage 3.4.
-4. **Model-Visible Allowlist & Zero Leakage:** Dataloader inputs must strictly adhere to `MODEL_VISIBLE_ALLOWLIST`. Any presence of privileged quantities (`mu_true`, `object_mass`, `step_contact_stratum`, `env_metadata`, etc.) triggers an immediate `SecurityViolationError`.
+4. **Model-visible training package:** The dataloader must not receive `seed`, `episode_id`, `provenance_hash`, or raw simulator `rewards`. Those fields either join the public seed registry to privileged parameters or encode seated/jammed termination bonuses. The training archive carries an opaque `sample_id` (HMAC-SHA256 of the canonical episode id under an audit salt). The salt and the seed mapping live only in the audit manifest, which must not sit in the training directory.
 5. **5% Rejection Circuit Breaker:**
    - If cumulative rejections in any stratum exceed $5.0\%$ ($>12$ in nominal, $>7$ in probe/impact, $>5$ in nonstationary/wedging), generation is automatically paused.
    - Requires engineering review to inspect simulator dynamics before resuming.

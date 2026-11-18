@@ -4,9 +4,9 @@ Bridges the frozen Stage 3.0 factory with the approved Stage 3.3 production cont
 1. Reconciles seed namespace: implements production 3,300,000 seed formula and reserve 3,390,000 pool.
 2. Implements Stage3ProductionExperienceFactory subclassing SyntheticExperienceFactory without modifying Stage 3.0 code.
 3. Provides dual episode identity resolution: canonical ID (syn_{task}_{teacher}_seed{seed}) and slot alias (prod_{task}_{stratum}_{idx:03d}).
-4. Hardens impact acceptance: strictly requires authentic rim contact (stratum 1 or mode 4) AND measurable impact force (>= 1.0 N).
-5. Enforces ContactMode 7-class ontology decoupling from simulator strata (mode 5 JAMMING strictly prohibited in wedging).
-6. Enforces strict model-visible observation allowlist and protects privileged simulator telemetry.
+4. Accepts peg rim impact only when the stratum-1 event and the force-time measurement coincide.
+5. Keeps ContactMode.JAMMING (frozen enum value 5) distinct from simulator WEDGING, and accepts the label only when the geometric lock is real.
+6. Keeps reconstructable identifiers and privileged telemetry out of model-visible training inputs.
 7. Guarantees deterministic replay and formalizes non-silent fail-closed rejection with audited reserve seed allocation.
 """
 
@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import hmac
 import json
 import math
 import os
@@ -67,18 +68,48 @@ STAGE3_STRATUM_CODES: Dict[str, int] = {
 
 RESERVE_SEEDS_PER_STRATUM = 50
 
-# Strict allowlist of keys permitted in student-visible observation packages
+# Frozen PegInHoleEnv and factory timing. The environment class defaults to
+# 0.02 s, but SyntheticExperienceFactory passes EnvironmentSamplingSpec.dt_s,
+# which is 0.01 s. Certified pilot impact metadata records dt_s = 0.01.
+PEG_CONTROL_DT_S = 0.01
+PEG_CONTACT_STIFFNESS_N_PER_M = 5000.0
+PEG_FORCE_RESOLUTION_N = 1e-4
+PEG_FORCE_LIMIT_N = 35.0
+PEG_TORQUE_LIMIT_NM = 7.0
+RIM_IMPACT_STRATUM = 1
+JAMMING_LATERAL_FORCE_N = 15.0
+JAMMING_TILT_DEG = 1.8
+WEDGING_MIN_DEPTH_MM = 5.0
+
+# Training archives may contain only these keys. Seed, episode_id and the
+# provenance hash are reconstructable joins into the public seed registry or
+# the audit manifest, so they are not model inputs.
 MODEL_VISIBLE_ALLOWLIST: Set[str] = {
     "states",
     "actions",
     "next_states",
     "wrenches",
     "next_wrenches",
-    "rewards",
-    "episode_id",
-    "seed",
+    "sample_id",
     "task",
+}
+
+RECONSTRUCTABLE_IDENTIFIER_KEYS: Set[str] = {
+    "seed",
+    "episode_id",
     "provenance_hash",
+    "slot_alias",
+    "canonical_episode_id",
+    "rewards",
+}
+
+# Frozen extractor layout from extract_env_state_and_wrench. Wrench channels
+# in the 15-D peg vector are the sensor wrench, not simulator parameters.
+APPROVED_STATE_WIDTHS: Dict[str, Set[int]] = {
+    "peg_in_hole": {12, 15},
+    "compliant_prelift": {23},
+    "compliant_lift": {23},
+    "multifinger_lift": {23},
 }
 
 # Blocklist tokens that MUST NEVER appear in model-visible training inputs
@@ -347,10 +378,11 @@ def verify_production_physical_interaction(
     """Authoritative physical interaction verification for Stage 3.3 production contract.
 
     Reconciliations enforced:
-    1. Impact stratum: strictly requires authentic rim contact (stratum 1 or mode 4)
-       AND measurable impact force (>= 1.0 N) AND bounded forces (<= 35.0 N, <= 7.0 Nm).
-    2. Wedging stratum: strictly requires same-timestep alignment between state depth,
-       telemetry depth (> 5.0 mm), and simulator stratum 3; forbids classifier mode 5 (JAMMING).
+    1. Impact stratum: the rim-impact event is simulator stratum 1. The force-rate
+       and impulse are computed only on that event. Force and torque limits are
+       separate gates.
+    2. Wedging stratum: same-timestep depth alignment. ContactMode.JAMMING is
+       accepted only when that timestep is also a geometric lock.
     3. Prelift nominal: requires positive liftoff (> 0.001 mm) and shear pad stretch.
     4. Prelift probe: requires controlled sliding (>= 0.0005 m/s) with zero liftoff.
     5. Prelift nonstationary:
@@ -459,33 +491,56 @@ def verify_production_physical_interaction(
 
         stratum_specific_passed = True
         wedging_aligned_steps: List[int] = []
+        valid_jamming_steps: List[int] = []
+        invalid_jamming_steps: List[int] = []
+        impact_metrics: Dict[str, Any] = {}
 
         if stratum == "nominal":
             # Nominal insertion must never wedge
             stratum_specific_passed = (3 not in strata_observed)
         elif stratum == "impact":
-            # Reconciled Contract: strictly require authentic rim collision
-            # (stratum 1 OR mode 4) AND measurable impact force (>= 1.0 N)
-            authentic_rim_contact = (1 in strata_observed) or (4 in modes)
-            measurable_force = max_force >= 1.0
-            stratum_specific_passed = authentic_rim_contact and measurable_force and forces_bounded
+            dt_s = float(episode.env_metadata.get("dt_s", PEG_CONTROL_DT_S))
+            impact_metrics = evaluate_aligned_rim_impact(
+                episode.next_wrenches,
+                strata_observed,
+                dt_s=dt_s,
+            )
+            stratum_specific_passed = bool(impact_metrics["passed"])
         elif stratum == "wedging":
-            # 1. Simulator stratum 3 must occur simultaneously with insertion depth > 5.0 mm
-            # 2. State depth and telemetry depth must match within 1e-3 mm
-            # 3. Classifier mode 5 (JAMMING) must NOT be emitted
-            jamming_forbidden = (5 not in modes)
-            T_len = min(len(strata_observed), len(depths_observed), episode.next_states.shape[0])
-            for t in range(T_len):
+            # Geometric wedging is simulator stratum 3 at insertion > 5 mm.
+            # ContactMode.JAMMING is a different label. It is valid only at a
+            # timestep that also satisfies the frozen mechanical-lock evidence.
+            jamming_tilt = episode.env_metadata.get("tilt_deg")
+            mode_horizon = len(modes)
+            telemetry_horizon = min(len(strata_observed), len(depths_observed), episode.next_states.shape[0])
+            for t in range(telemetry_horizon):
                 state_depth = float(max(0.0, -episode.next_states[t, 2]))
                 telem_depth = float(depths_observed[t])
                 if (
                     strata_observed[t] == 3
-                    and telem_depth > 5.0
-                    and state_depth > 5.0
+                    and telem_depth > WEDGING_MIN_DEPTH_MM
+                    and state_depth > WEDGING_MIN_DEPTH_MM
                     and abs(telem_depth - state_depth) < 1e-3
                 ):
                     wedging_aligned_steps.append(t)
-            stratum_specific_passed = (len(wedging_aligned_steps) > 0) and jamming_forbidden
+            for t in range(mode_horizon):
+                if int(modes[t]) != int(ContactMode.JAMMING):
+                    continue
+                if t >= len(strata_observed) or t >= len(depths_observed) or t >= episode.next_wrenches.shape[0]:
+                    invalid_jamming_steps.append(t)
+                    continue
+                lateral_force = float(np.linalg.norm(episode.next_wrenches[t, :2]))
+                if jamming_label_is_physically_valid(
+                    mode=int(modes[t]),
+                    stratum=int(strata_observed[t]),
+                    depth_mm=float(depths_observed[t]),
+                    lateral_force_n=lateral_force,
+                    tilt_deg=None if jamming_tilt is None else float(jamming_tilt),
+                ):
+                    valid_jamming_steps.append(t)
+                else:
+                    invalid_jamming_steps.append(t)
+            stratum_specific_passed = (len(wedging_aligned_steps) > 0) and (len(invalid_jamming_steps) == 0)
 
         is_valid_interaction = (
             insertion_attained
@@ -510,10 +565,92 @@ def verify_production_physical_interaction(
             "strata_observed": sorted(list(set(strata_observed))),
             "wedging_stratum_attained": (3 in strata_observed),
             "wedging_aligned_steps": wedging_aligned_steps,
+            "valid_jamming_steps": valid_jamming_steps,
+            "invalid_jamming_steps": invalid_jamming_steps,
             "wedging_aligned_depth_mm": round(float(depths_observed[wedging_aligned_steps[0]]), 4) if wedging_aligned_steps else 0.0,
             "interaction_passed": is_valid_interaction,
         }
+        metrics.update(impact_metrics)
         return is_valid_interaction, metrics
+
+
+# ---------------------------------------------------------------------------
+# Impact dynamics and jamming ontology
+# ---------------------------------------------------------------------------
+
+def evaluate_aligned_rim_impact(
+    next_wrenches: np.ndarray,
+    strata: List[int],
+    dt_s: float = PEG_CONTROL_DT_S,
+) -> Dict[str, Any]:
+    """Event-aligned rim-impact measurement.
+
+    The rim event is simulator contact stratum 1 (chamfer contact while
+    insertion < 2 mm). Impulse and rising force-rate are integrated only on
+    that event. A force peak elsewhere does not count. The 2.0 N·s shock in
+    document 12 is not used: at dt = 0.01 s the 35 N cap limits one step to
+    0.35 N·s, and every certified pilot rim impulse is below 0.10 N·s.
+    """
+    wrenches = np.asarray(next_wrenches, dtype=np.float64)
+    forces = np.linalg.norm(wrenches[:, :3], axis=-1) if wrenches.size else np.zeros(0)
+    torques = np.linalg.norm(wrenches[:, 3:6], axis=-1) if wrenches.size else np.zeros(0)
+    event = [index for index, stratum in enumerate(strata) if int(stratum) == RIM_IMPACT_STRATUM]
+    rates: List[float] = []
+    for index in event:
+        previous = float(forces[index - 1]) if index > 0 else 0.0
+        rates.append((float(forces[index]) - previous) / float(dt_s))
+    impulse = float(sum(float(forces[index]) * float(dt_s) for index in event))
+    peak_rate = float(max(rates)) if rates else 0.0
+    impulse_floor = PEG_FORCE_RESOLUTION_N * float(dt_s)
+    rate_floor = PEG_FORCE_RESOLUTION_N / float(dt_s)
+    dynamics_passed = bool(event) and impulse > impulse_floor and peak_rate > rate_floor
+    max_force = float(np.max(forces)) if forces.size else 0.0
+    max_torque = float(np.max(torques)) if torques.size else 0.0
+    force_limit_passed = max_force <= PEG_FORCE_LIMIT_N
+    torque_limit_passed = max_torque <= PEG_TORQUE_LIMIT_NM
+    peak_index = int(np.argmax(forces)) if forces.size else -1
+    unrelated = max_force > PEG_FORCE_RESOLUTION_N and peak_index not in event
+    return {
+        "passed": bool(dynamics_passed and force_limit_passed and torque_limit_passed),
+        "impact_dynamics_passed": bool(dynamics_passed),
+        "force_limit_passed": bool(force_limit_passed),
+        "torque_limit_passed": bool(torque_limit_passed),
+        "rim_event_steps": event,
+        "event_impulse_n_s": impulse,
+        "event_peak_rising_rate_n_s": peak_rate,
+        "unrelated_peak_outside_event": bool(unrelated),
+        "max_contact_force_n": max_force,
+        "max_torque_nm": max_torque,
+    }
+
+
+def jamming_label_is_physically_valid(
+    mode: int,
+    stratum: int,
+    depth_mm: float,
+    lateral_force_n: float,
+    tilt_deg: Optional[float] = None,
+) -> bool:
+    """Return whether ContactMode.JAMMING is the frozen geometric lock.
+
+    The frozen enum defines JAMMING as two-point geometric wedging / mechanical
+    lock. It is not a synonym for simulator stratum 3, and it is not forbidden
+    merely because the episode was sampled from the wedging stratum. A label is
+    valid only when the same timestep is in simulator WEDGING, deeper than the
+    frozen 5 mm wedging gate, and above the frozen 15 N lateral-force lock.
+    When tilt is supplied, it must also exceed the frozen 1.8 deg classifier gate.
+    """
+    if int(mode) != int(ContactMode.JAMMING):
+        return False
+    if int(stratum) != 3:
+        return False
+    if float(depth_mm) <= WEDGING_MIN_DEPTH_MM:
+        return False
+    if float(lateral_force_n) <= JAMMING_LATERAL_FORCE_N:
+        return False
+    if tilt_deg is not None and float(tilt_deg) <= JAMMING_TILT_DEG:
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -521,47 +658,252 @@ def verify_production_physical_interaction(
 # ---------------------------------------------------------------------------
 
 def validate_model_visible_package(pkg: Dict[str, Any]) -> bool:
-    """Enforces strict allowlist on model-visible data packages.
-
-    Raises SecurityViolationError if any unauthorized or privileged key is detected.
-    """
+    """Reject reconstructable identifiers and any key outside the training allowlist."""
     for key in pkg.keys():
         key_str = str(key)
         lowered = key_str.lower()
-
-        # Check against allowlist
-        if key_str not in MODEL_VISIBLE_ALLOWLIST:
+        if key_str in RECONSTRUCTABLE_IDENTIFIER_KEYS or key_str not in MODEL_VISIBLE_ALLOWLIST:
             raise SecurityViolationError(
                 f"Unauthorized key '{key_str}' detected in model observation package! "
-                f"Allowed keys: {sorted(list(MODEL_VISIBLE_ALLOWLIST))}"
+                f"Allowed keys: {sorted(MODEL_VISIBLE_ALLOWLIST)}"
             )
-
-        # Check against privileged blocklist tokens
         for token in PRIVILEGED_FIELD_BLOCKLIST:
             if token in lowered:
                 raise SecurityViolationError(
                     f"Privileged simulator field '{key_str}' matches forbidden token '{token}'!"
                 )
-
     return True
 
 
-def sanitize_for_model_ingestion(record: SyntheticEpisodeRecord) -> Dict[str, Any]:
-    """Produces verified model-visible package stripped of all privileged metadata."""
-    pkg = {
-        "states": record.states,
-        "actions": record.actions,
-        "next_states": record.next_states,
-        "wrenches": record.wrenches,
-        "next_wrenches": record.next_wrenches,
-        "rewards": record.rewards,
+def opaque_sample_id(canonical_episode_id: str, audit_salt: bytes) -> str:
+    """HMAC sample id. The salt stays in the audit manifest, not in the training archive."""
+    if not audit_salt:
+        raise SecurityViolationError("Audit salt must be non-empty and must not be written into the training archive")
+    return hmac.new(audit_salt, canonical_episode_id.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+def assert_tensor_channels_clean(
+    task: str,
+    states: np.ndarray,
+    wrenches: np.ndarray,
+    privileged_series: Dict[str, Any],
+) -> None:
+    """Reject a state or wrench channel that copies a privileged telemetry series."""
+    state_array = np.asarray(states, dtype=np.float64)
+    wrench_array = np.asarray(wrenches, dtype=np.float64)
+    allowed = APPROVED_STATE_WIDTHS.get(task)
+    if allowed is None or state_array.ndim != 2 or state_array.shape[1] not in allowed:
+        raise SecurityViolationError(
+            f"State width {getattr(state_array, 'shape', None)} is outside the approved schema for {task}"
+        )
+    if wrench_array.ndim != 2 or wrench_array.shape != (state_array.shape[0], 6):
+        raise SecurityViolationError("Wrench tensor must be (T, 6) and aligned with the state horizon")
+    for name, series in privileged_series.items():
+        privileged = np.asarray(series, dtype=np.float64).reshape(-1)
+        if privileged.shape[0] != state_array.shape[0]:
+            continue
+        if not np.any(np.abs(privileged) > 1e-8):
+            continue
+        for channel in range(state_array.shape[1]):
+            if np.allclose(state_array[:, channel], privileged, atol=1e-4, rtol=0.0):
+                raise SecurityViolationError(
+                    f"State channel {channel} copies privileged series '{name}'"
+                )
+        for channel in range(wrench_array.shape[1]):
+            if np.allclose(wrench_array[:, channel], privileged, atol=1e-4, rtol=0.0):
+                raise SecurityViolationError(
+                    f"Wrench channel {channel} copies privileged series '{name}'"
+                )
+
+
+def _jsonable_audit(value: Any) -> Any:
+    if isinstance(value, np.ndarray):
+        return np.ascontiguousarray(value).tolist()
+    if isinstance(value, (np.floating, float)):
+        return float(value)
+    if isinstance(value, (np.integer, int)) and not isinstance(value, bool):
+        return int(value)
+    if isinstance(value, dict):
+        return {str(key): _jsonable_audit(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable_audit(item) for item in value]
+    return value
+
+
+def build_training_package_and_audit(
+    record: SyntheticEpisodeRecord,
+    audit_salt: bytes,
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Split a record into a model package and a separately controlled audit record."""
+    canonical = str(record.env_metadata.get("canonical_episode_id", record.episode_id))
+    sample_id = opaque_sample_id(canonical, audit_salt)
+    privileged_series = {
+        key: record.env_metadata[key]
+        for key in ("step_mu_true", "step_object_mass_kg", "step_contact_stratum")
+        if key in record.env_metadata
+    }
+    assert_tensor_channels_clean(record.task, record.states, record.wrenches, privileged_series)
+    assert_tensor_channels_clean(record.task, record.next_states, record.next_wrenches, privileged_series)
+    package = {
+        "states": np.asarray(record.states),
+        "actions": np.asarray(record.actions),
+        "next_states": np.asarray(record.next_states),
+        "wrenches": np.asarray(record.wrenches),
+        "next_wrenches": np.asarray(record.next_wrenches),
+        "sample_id": sample_id,
+        "task": record.task,
+    }
+    validate_model_visible_package(package)
+    audit = {
+        "sample_id": sample_id,
         "episode_id": record.episode_id,
+        "canonical_episode_id": canonical,
+        "seed": int(record.seed),
+        "task": record.task,
+        "stratum": record.env_metadata.get("stratum"),
+        "provenance_hash": record.provenance_hash,
+        "friction_mu": record.env_metadata.get("initial_mu_true", record.env_metadata.get("friction_mu")),
+        "mass_kg": record.env_metadata.get("initial_mass_kg"),
+        "clearance_mm": record.env_metadata.get("clearance_mm"),
+        "env_metadata": _jsonable_audit(record.env_metadata),
+        "modes": np.asarray(record.modes).tolist(),
+        "rewards": np.asarray(record.rewards).tolist(),
+        "audit_salt_sha256": hashlib.sha256(audit_salt).hexdigest(),
+    }
+    return package, audit
+
+
+def sanitize_for_model_ingestion(
+    record: SyntheticEpisodeRecord,
+    audit_salt: bytes = b"",
+) -> Dict[str, Any]:
+    """Model-visible package only. The audit mapping is not returned to the loader."""
+    package, _audit = build_training_package_and_audit(record, audit_salt)
+    return package
+
+
+class ProductionTrainingDataloader:
+    """Loads training archives and refuses colocated audit or registry files."""
+
+    def __init__(self, training_dir: Path):
+        self.training_dir = Path(training_dir)
+        self._refuse_colocated_audit(self.training_dir)
+        self.samples: List[Dict[str, Any]] = []
+        for path in sorted(self.training_dir.glob("*.npz")):
+            self.samples.append(self._load_archive(path))
+
+    @staticmethod
+    def _refuse_colocated_audit(directory: Path) -> None:
+        if not directory.is_dir():
+            raise SecurityViolationError(f"Training directory does not exist: {directory}")
+        for path in directory.iterdir():
+            name = path.name.lower()
+            if name.endswith(".privileged.json") or "audit" in name or "seed_registry" in name:
+                raise SecurityViolationError(
+                    f"Training directory contains separately controlled audit material: {path.name}"
+                )
+
+    @staticmethod
+    def _scalar_text(value: Any) -> str:
+        array = np.asarray(value)
+        if array.shape == ():
+            return str(array.item())
+        return str(array.reshape(-1)[0])
+
+    def _load_archive(self, path: Path) -> Dict[str, Any]:
+        with np.load(path, allow_pickle=False) as data:
+            package = {
+                key: self._scalar_text(data[key]) if key in {"sample_id", "task"} else np.asarray(data[key])
+                for key in data.files
+            }
+        validate_model_visible_package(package)
+        assert_tensor_channels_clean(str(package["task"]), package["states"], package["wrenches"], {})
+        return package
+
+    def batches(self, batch_size: int) -> List[Dict[str, Any]]:
+        produced: List[Dict[str, Any]] = []
+        for start in range(0, len(self.samples), batch_size):
+            chunk = self.samples[start:start + batch_size]
+            batch = {
+                "sample_id": [sample["sample_id"] for sample in chunk],
+                "task": [sample["task"] for sample in chunk],
+                "states": np.stack([sample["states"] for sample in chunk]),
+                "actions": np.stack([sample["actions"] for sample in chunk]),
+                "next_states": np.stack([sample["next_states"] for sample in chunk]),
+                "wrenches": np.stack([sample["wrenches"] for sample in chunk]),
+                "next_wrenches": np.stack([sample["next_wrenches"] for sample in chunk]),
+            }
+            validate_model_visible_package({
+                "sample_id": batch["sample_id"][0],
+                "task": batch["task"][0],
+                "states": batch["states"][0],
+                "actions": batch["actions"][0],
+                "next_states": batch["next_states"][0],
+                "wrenches": batch["wrenches"][0],
+                "next_wrenches": batch["next_wrenches"][0],
+            })
+            produced.append(batch)
+        return produced
+
+    def cache_batch(self, batch: Dict[str, Any], path: Path) -> Path:
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        validate_model_visible_package({
+            "sample_id": batch["sample_id"][0],
+            "task": batch["task"][0],
+            "states": batch["states"][0],
+            "actions": batch["actions"][0],
+            "next_states": batch["next_states"][0],
+            "wrenches": batch["wrenches"][0],
+            "next_wrenches": batch["next_wrenches"][0],
+        })
+        np.savez_compressed(
+            path,
+            sample_id=np.array(batch["sample_id"]),
+            task=np.array(batch["task"]),
+            states=batch["states"],
+            actions=batch["actions"],
+            next_states=batch["next_states"],
+            wrenches=batch["wrenches"],
+            next_wrenches=batch["next_wrenches"],
+        )
+        return path
+
+    def apply_transform(self, batch: Dict[str, Any], transform: Any) -> Dict[str, Any]:
+        package = {
+            "sample_id": batch["sample_id"][0],
+            "task": batch["task"][0],
+            "states": batch["states"][0],
+            "actions": batch["actions"][0],
+            "next_states": batch["next_states"][0],
+            "wrenches": batch["wrenches"][0],
+            "next_wrenches": batch["next_wrenches"][0],
+        }
+        transformed = transform(package)
+        validate_model_visible_package(transformed)
+        return transformed
+
+
+def verify_provenance_against_serialized_audit(
+    record: SyntheticEpisodeRecord,
+    path: Path,
+) -> Tuple[bool, str, str]:
+    """Write the audit record and compare its stored hash with the live record hash."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "episode_id": record.episode_id,
+        "canonical_episode_id": record.env_metadata.get("canonical_episode_id", record.episode_id),
         "seed": int(record.seed),
         "task": record.task,
         "provenance_hash": record.provenance_hash,
+        "env_metadata": _jsonable_audit(record.env_metadata),
     }
-    validate_model_visible_package(pkg)
-    return pkg
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    stored = str(json.loads(path.read_text(encoding="utf-8"))["provenance_hash"])
+    file_sha = hashlib.sha256(path.read_bytes()).hexdigest()
+    verified = stored == record.provenance_hash == record.compute_record_hash()
+    return verified, stored, file_sha
 
 
 # ---------------------------------------------------------------------------

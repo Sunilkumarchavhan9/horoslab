@@ -132,3 +132,15 @@ for sample in reg['episodes'][:10]:
 ```
 
 If any replayed episode's hash differs from the committed manifest, the dataset is marked tainted, and training authorization is automatically withheld.
+
+### 6. Stage 3.3A.2 reproducibility guarantee and limits
+
+The production adapter's replay check runs the actual `Stage3ProductionExperienceFactory` twice from the same registered seed and compares state, action, wrench and reward arrays plus `compute_record_hash()`. The hash stored in the serialized audit JSON must equal that live hash. The SHA-256 of the audit file bytes is recorded separately and is not the provenance hash.
+
+This guarantee holds only when:
+
+- NumPy's `RandomState` and the frozen analytical environments are the same build. It is not a claim about a different physics engine, a GPU, or a changed `dt`.
+- The factory control period remains `EnvironmentSamplingSpec.dt_s = 0.01` s. `PegInHoleEnv`'s class default of `0.02` s is overridden and must not be used as the impulse timestep.
+- Opaque sample identifiers are assigned at serialization from an audit salt. They are not part of the physics hash. Replaying physics does not regenerate the salt.
+- The public seed registry remains present for audit. It is not a model input. Reserve seeds stay `UNALLOCATED_LOCKED`.
+

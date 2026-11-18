@@ -64,17 +64,31 @@ Every generated file is hashed immediately upon creation using standard SHA-256.
 
 ### 4. Security & Data Separation Enforcement
 
-To guarantee zero contamination of student world models:
-1. **Dataloader Isolation:**
-   - Training dataloaders must point exclusively to `experiments/stage3_production/accepted/*.npz`.
-   - Access to `.privileged.json` files is restricted to validation evaluators and audit scripts.
-2. **Zero-Leakage Assertion at Ingestion:**
-   - Every training batch loader must run a pre-ingestion check ensuring that no keys in `FORBIDDEN_PRIVILEGED_KEYS` exist in memory:
-   ```python
-   def assert_no_privileged_leak(batch_dict: dict) -> None:
-       for key in batch_dict:
-           assert key not in FORBIDDEN_PRIVILEGED_KEYS, f"Security Violation: Leaked {key}"
-   ```
+A top-level key allowlist is not sufficient. The public seed registry maps `seed` and slot aliases such as `prod_peg_in_hole_wedging_099` to friction, mass, clearance and pose. Those identifiers must not enter the training archive.
+
+#### 4.1 Model-visible training inputs
+
+Legitimate model inputs are sensor and kinematic measurements:
+
+| Tensor | Peg-in-hole channels | Compliant prelift channels | Privileged? |
+| :--- | :--- | :--- | :--- |
+| `states`, `next_states` | Frozen extractor is 15-D: position, velocity, orientation, sensor wrench. A 12-D kinematic projection is also accepted. | 23-D: fingertip positions, normal forces, slip velocities, workpiece position | No, if the width matches and no channel copies `step_mu_true`, `step_object_mass_kg`, or `step_contact_stratum` |
+| `wrenches`, `next_wrenches` | 6-D force/torque sensor, N and N·m | 6-D resultant wrench | No |
+| `actions` | Commanded motion | Commanded squeeze and lift | No |
+| `sample_id` | Opaque HMAC-SHA256 hex | Opaque HMAC-SHA256 hex | No, if the audit salt is absent |
+| `task` | Task name only | Task name only | No |
+
+Not model inputs:
+
+- `seed`, `episode_id`, `slot_alias`, `canonical_episode_id`, `provenance_hash` — reconstructable joins
+- `rewards` — the frozen peg reward adds $+100$ for seated and $-50$ for jammed or safety violation
+- `modes`, friction, mass, clearance, contact stratum, teacher suggestions
+
+The audit manifest holds the sample-id-to-seed map, simulator ground truth, environment metadata and provenance. `ProductionTrainingDataloader` refuses a training directory that also contains that manifest, a privileged JSON file, or the seed registry. Caching and batch transforms are re-validated and cannot reinsert `seed`.
+
+#### 4.2 Dataloader isolation
+
+Training dataloaders read only the model-visible `.npz` archives. They do not open `.privileged.json` or the audit manifest. Phase 3.4 `load_phase34_dataset_bundle` is not the production loader: it expects modes and episode metadata and must not be pointed at production training archives.
 
 ---
 

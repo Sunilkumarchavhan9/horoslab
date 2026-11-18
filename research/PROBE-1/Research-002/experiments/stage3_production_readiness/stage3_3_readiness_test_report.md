@@ -75,7 +75,7 @@ All 10 dedicated readiness tests in `test_p40_stage3_production_readiness.py` pa
 - **Result:** `PASSED`
 - **Verification:** Authoritative seven-class `ContactMode` ontology verified in code:
   - `0: FREE`, `1: FIRST_CONTACT`, `2: STICKING`, `3: SLIDING`, `4: IMPACT`, `5: JAMMING`, `6: RELEASE`.
-  - Verified decoupling: classifier mode 3 (`SLIDING`) vs simulator stratum 3 (`WEDGING`). Classifier ID 5 (`JAMMING`) is distinct and unassigned to wedging.
+  - Verified decoupling: classifier mode 3 (`SLIDING`) vs simulator stratum 3 (`WEDGING`). Classifier ID 5 (`JAMMING`) is a separate label. Stage 3.3A.2: it is valid during wedging only as a geometric lock, not banned by stratum membership.
 
 #### Test 6: `test_causal_regime_a_slip_acceptance_logic`
 - **Result:** `PASSED`

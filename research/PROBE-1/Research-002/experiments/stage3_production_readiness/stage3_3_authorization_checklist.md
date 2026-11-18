@@ -38,7 +38,7 @@ This checklist constitutes the formal decision gate between **Stage 3.3A (Readin
 
 #### D. Physical Acceptance & Rejection Rules
 - [x] **Seven-Class ContactMode Ontology:** Classifier classes (`0: FREE, 1: FIRST_CONTACT, 2: STICKING, 3: SLIDING, 4: IMPACT, 5: JAMMING, 6: RELEASE`) verified and decoupled from simulator strata.
-- [x] **Simulator Wedging Stratum Distinct:** Wedging stratum 3 is not conflated with classifier `JAMMING` (5) or classifier `SLIDING` (3).
+- [x] **Simulator Wedging Stratum Distinct:** Wedging stratum 3 is not remapped to classifier `JAMMING` (5). A JAMMING label is valid only as a geometric lock at that timestep.
 - [x] **Causal Regime A Slip Gate:** Rejection enforced if slip occurs prior to step 15 transition ($t < 14$). Acceptance strictly requires $\max_{t \ge 14} \|\dot{\delta}_t\| > 0.0010\text{ m/s}$.
 - [x] **Regime B Mass Influx Gate:** Continuous mass accretion $+0.0025\text{ kg/step}$ to $0.400\text{ kg}$ verified, with active grip hold ($F_n \ge 0.50\text{ N}, F_z \ge 0.50\text{ N}$).
 - [x] **Peg-in-Hole Wedging Alignment Gate:** Simultaneous occurrence of stratum 3, telemetry depth $> 5.0\text{ mm}$, and state depth $> 5.0\text{ mm}$ at the exact same timestep $t$ ($|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$).

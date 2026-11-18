@@ -5,8 +5,8 @@ Verifies:
 2. Distinctness from frozen Stage 3.0 factory seed formula (base 3,100,000).
 3. Reserve seed pool specification (base 3,390,000, 300 seeds) with zero collision against pilot or primary seeds.
 4. Dual episode identity resolution (canonical ID syn_... and slot alias prod_...).
-5. Peg-in-Hole impact acceptance hardening (authentic rim contact + measurable force >= 1.0 N).
-6. Wedging alignment and strict ContactMode JAMMING (mode 5) prohibition.
+5. Peg-in-Hole impact acceptance: event-aligned rim impulse, not a global force magnitude.
+6. Wedging alignment. ContactMode.JAMMING is accepted only as a geometric lock, not forbidden by stratum membership.
 7. Prelift physical interaction criteria (liftoff in nominal, sliding in probe, causal slip in nonstationary).
 8. Model-visible observation allowlist and SecurityViolationError on privileged data leakage.
 9. Bitwise deterministic reproducibility of production episodes.
@@ -173,15 +173,18 @@ def test_impact_acceptance_contract_reconciliation() -> None:
                 "step_insertion_depth_mm": [1.0] * H,
             }
 
-    # Case 1: Authentic rim impact via stratum 1 with measurable force (2.5 N) -> PASS
-    ep1 = MockPegEpisode([0, 1, 0, 0], [0, 1, 0, 0], force_mag=2.5)
-    pass1, _ = verify_production_physical_interaction("peg_in_hole", ep1)
+    # Case 1: Rising force on the stratum-1 rim step -> PASS
+    ep1 = MockPegEpisode([0, 1, 0, 0], [0, 1, 0, 0], force_mag=0.0)
+    ep1.next_wrenches[:, 0] = [0.0, 6.6173, 0.0, 0.0]
+    pass1, metrics1 = verify_production_physical_interaction("peg_in_hole", ep1)
     assert pass1 is True
+    assert metrics1["impact_dynamics_passed"] is True
 
-    # Case 2: Authentic rim impact via mode 4 with measurable force (1.5 N) -> PASS
+    # Case 2: Classifier mode 4 without simulator stratum 1 -> REJECT
     ep2 = MockPegEpisode([0, 0, 0, 0], [0, 4, 0, 0], force_mag=1.5)
+    ep2.next_wrenches[:, 0] = [0.0, 1.5, 0.0, 0.0]
     pass2, _ = verify_production_physical_interaction("peg_in_hole", ep2)
-    assert pass2 is True
+    assert pass2 is False
 
     # Case 3: False-success edge case in pilot: force = 1.5 N, but NEITHER stratum 1 nor mode 4 -> REJECT!
     ep3 = MockPegEpisode([0, 2, 2, 0], [0, 2, 2, 0], force_mag=1.5)
@@ -200,7 +203,7 @@ def test_impact_acceptance_contract_reconciliation() -> None:
 
 
 def test_wedging_alignment_and_jamming_prohibition() -> None:
-    """Verifies wedging alignment requirement and strict prohibition of classifier mode 5 (JAMMING)."""
+    """Verifies wedging alignment and rejects a JAMMING label that lacks the geometric lock."""
     class MockWedgingEpisode:
         def __init__(self, strata: List[int], depths: List[float], modes: List[int]):
             H = len(strata)
@@ -227,11 +230,12 @@ def test_wedging_alignment_and_jamming_prohibition() -> None:
     assert pass_good is True
     assert len(m_good["wedging_aligned_steps"]) > 0
 
-    # Case 2: Aligned wedging BUT classifier mode 5 (JAMMING) emitted -> REJECT!
+    # Case 2: JAMMING label at a wedging step, but lateral force is only 3 N -> REJECT
     modes_jam = [0, 1, 2, 2, 2, 5, 2, 2, 2, 2]  # mode 5 at step 5
     ep_jam = MockWedgingEpisode(strata_good, depths_good, modes_jam)
-    pass_jam, _ = verify_production_physical_interaction("peg_in_hole", ep_jam)
-    assert pass_jam is False, "Wedging episode emitting ContactMode.JAMMING MUST be rejected!"
+    pass_jam, metrics_jam = verify_production_physical_interaction("peg_in_hole", ep_jam)
+    assert pass_jam is False, "JAMMING without the 15 N mechanical lock MUST be rejected!"
+    assert 5 in metrics_jam["invalid_jamming_steps"]
 
     # Case 3: Stratum 3 occurs at shallow depth (< 5.0 mm) -> REJECT!
     depths_shallow = [0.1 * t for t in range(10)]
@@ -304,16 +308,17 @@ def test_model_visible_allowlist_security_guard() -> None:
         "next_states": np.zeros((10, 12)),
         "wrenches": np.zeros((10, 6)),
         "next_wrenches": np.zeros((10, 6)),
-        "rewards": np.zeros(10),
-        "episode_id": "prod_peg_in_hole_nominal_000",
-        "seed": 3321000,
+        "sample_id": "ab" * 32,
         "task": "peg_in_hole",
-        "provenance_hash": "a" * 64,
     }
     assert validate_model_visible_package(valid_package) is True
 
-    # Test leakage of privileged keys
+    # Reconstructable identifiers are themselves a leak, even without a privileged field name.
     for leak_key in [
+        "seed",
+        "episode_id",
+        "provenance_hash",
+        "rewards",
         "mu_true",
         "initial_mu_true",
         "object_mass",

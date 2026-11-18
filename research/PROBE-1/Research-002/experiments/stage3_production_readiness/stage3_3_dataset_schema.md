@@ -31,14 +31,14 @@ The Research-002 Stage 3 production dataset enforces a strict two-tier data sepa
 |   | • states: (T, D) float32           |   | • episode_id, seed, task         |   |
 |   | • actions: (T, A) float32          |   | • stratum, regime                |   |
 |   | • next_states: (T, D) float32      |   | • provenance_hash                |   |
-|   | • wrenches: (T, 6) float32         |   | • observation_sha256             |   |
+|   | • wrenches: (T, 6) float32         |   | • sample_id to seed map          |   |
 |   | • next_wrenches: (T, 6) float32    |   | • modes: (T,) ContactMode IDs    |   |
-|   | • rewards: (T,) float32            |   | • env_metadata:                  |   |
-|   | • episode_id: string               |   |     - step_mu_true (T,)          |   |
-|   | • seed: int64                      |   |     - step_object_mass_kg (T,)   |   |
-|   | • task: string                     |   |     - step_contact_stratum (T,)  |   |
-|   | • provenance_hash: string (SHA256) |   |     - step_insertion_depth_mm    |   |
-|   +------------------------------------+   |     - step_force_norm_n (T,)     |   |
+|   | • sample_id: opaque HMAC           |   | • rewards, including oracle      |   |
+|   | • task: string                     |   |     bonuses                      |   |
+|   |                                    |   | • env_metadata:                  |   |
+|   |                                    |   |     - step_mu_true (T,)          |   |
+|   |                                    |   |     - step_contact_stratum (T,)  |   |
+|   +------------------------------------+   |     - step_insertion_depth_mm    |   |
 |   | ZERO PRIVILEGED KEYS ALLOWED       |   |     - step_torque_norm_nm (T,)   |   |
 |   +------------------------------------+   | • validation_verdict & metrics   |   |
 |                                            +----------------------------------+   |
@@ -63,11 +63,9 @@ The Research-002 Stage 3 production dataset enforces a strict two-tier data sepa
 | `next_states` | `float32` | $(T, D)$ | Mixed | Post-action state resulting from action $t$ |
 | `wrenches` | `float32` | $(T, 6)$ | N, Nm | Pre-action sensor wrench $[F_x, F_y, F_z, T_x, T_y, T_z]$ |
 | `next_wrenches` | `float32` | $(T, 6)$ | N, Nm | Post-action sensor wrench resulting from action $t$ |
-| `rewards` | `float32` | $(T,)$ | Unitless | Step scalar reward signals |
-| `episode_id` | String | Scalar | N/A | Unique episode identifier |
-| `seed` | `int64` | Scalar | N/A | Scenario seed |
-| `task` | String | Scalar | N/A | Task identifier (`compliant_prelift` or `peg_in_hole`) |
-| `provenance_hash` | String | Scalar | N/A | SHA-256 provenance hash across full trajectory |
+| `rewards` | not in the training archive | — | — | Audit only. The frozen peg reward adds seated and jammed bonuses. |
+| `sample_id` | String | Scalar | N/A | Opaque HMAC-SHA256 identifier. Not a seed and not a slot alias. |
+| `task` | String | Scalar | N/A | Task name. Not a join key by itself. |
 
 #### 2.3 Task State Vector Dimensionality ($D$)
 - **Task 1: Compliant Prelift ($D = 23$, Horizon $T = 20$):**
@@ -169,7 +167,7 @@ Classified at every timestep from kinematic and sensor observation:
 | **2** | `ContactMode.STICKING` | Sticking | In contact ($F_n \ge 0.5\text{ N}$), slip velocity $\|\dot{\delta}\| < 0.001\text{ m/s}$ |
 | **3** | `ContactMode.SLIDING` | Sliding | In contact ($F_n \ge 0.5\text{ N}$), Coulomb slip $\|\dot{\delta}\| \ge 0.001\text{ m/s}$ |
 | **4** | `ContactMode.IMPACT` | Impact Impulse | High derivative normal impulse, collision spike |
-| **5** | `ContactMode.JAMMING` | Mechanical Jamming | Frictional lock without geometric constraint |
+| **5** | `ContactMode.JAMMING` | Geometric jamming | Two-point geometric wedging / mechanical lock. Valid during simulator WEDGING only when the same timestep has depth $> 5\,\text{mm}$ and lateral force $> 15\,\text{N}$. Not a remap of stratum 3. |
 | **6** | `ContactMode.RELEASE` | Contact Release | Breaking contact, normal force decaying to zero |
 
 #### 4.2 Authoritative Simulator Contact Strata
