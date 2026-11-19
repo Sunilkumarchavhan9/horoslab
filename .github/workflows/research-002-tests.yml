@@ -16,6 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Normalize line endings for frozen artifact hashes
         run: |
           python -c "
@@ -25,7 +30,7 @@ jobs:
               if os.path.isdir(td):
                   for root, _, files in os.walk(td):
                       for f in files:
-                          if f.endswith(('.json', '.csv', '.py')) or f == 'phase37_1_epistemic_ood_diagnostic_report.md':
+                          if f.endswith(('.json', '.csv')) or f == 'phase37_1_epistemic_ood_diagnostic_report.md':
                               p = os.path.join(root, f)
                               with open(p, 'rb') as fp:
                                   data = fp.read()
@@ -34,11 +39,6 @@ jobs:
                                   with open(p, 'wb') as fp:
                                       fp.write(crlf)
           "
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
 
       - name: Install Research-002 test dependencies
         run: |
