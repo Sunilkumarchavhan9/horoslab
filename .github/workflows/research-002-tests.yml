@@ -16,6 +16,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Normalize line endings for frozen artifact hashes
+        run: |
+          python -c "
+          import os
+          target_dirs = ['research/PROBE-1/Research-002', 'Research-002']
+          for td in target_dirs:
+              if os.path.isdir(td):
+                  for root, _, files in os.walk(td):
+                      for f in files:
+                          if f.endswith(('.json', '.csv', '.py')) or f == 'phase37_1_epistemic_ood_diagnostic_report.md':
+                              p = os.path.join(root, f)
+                              with open(p, 'rb') as fp:
+                                  data = fp.read()
+                              crlf = data.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
+                              if crlf != data:
+                                  with open(p, 'wb') as fp:
+                                      fp.write(crlf)
+          "
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -30,7 +49,7 @@ jobs:
       - name: Run Research-002 tests
         run: |
           if [ -d research/PROBE-1/Research-002/tests ]; then
-            python -m pytest research/PROBE-1/Research-002/tests -q --tb=line
+            PYTHONPATH=research/PROBE-1/Research-002:research/PROBE-1/Research-002/src python -m pytest research/PROBE-1/Research-002/tests -q --tb=line
           else
-            python -m pytest Research-002/tests -q --tb=line
+            PYTHONPATH=Research-002:Research-002/src python -m pytest Research-002/tests -q --tb=line
           fi

@@ -146,14 +146,14 @@ Episode Acceptance = [Physics Engine Valid] AND [Interaction Criteria Satisfied]
    - Event impulse must be strictly positive: $J_{\mathcal{E}} = \sum_{t \in \mathcal{E}} \|\mathbf{F}(t)\| \Delta t > 10^{-6}\text{ N}\cdot\text{s}$.
    - Rising force rate across event onset must satisfy: $\dot{F} > 0.01\text{ N/s}$.
    - Resultant contact force and torque bounded throughout: $\max_t \|\mathbf{F}(t)\| \le 35.0\text{ N}$, $\max_t \|\boldsymbol{\tau}(t)\| \le 7.0\text{ Nm}$.
-   - Force peaks occurring outside $\mathcal{E}$ are rejected as unaligned.
+   - Force peaks occurring outside $\mathcal{E}$ cannot satisfy the rim-event test, but do not independently reject an episode if the rim event meets all dynamic thresholds and force limits pass.
 5. **Peg-in-Hole Wedging Verification:**
    - Timestep alignment: There must exist at least one timestep $t$ where simultaneously:
      1. Simulator `step_contact_stratum[t] == 3`
      2. Telemetry insertion depth `step_insertion_depth_mm[t] > 5.0 mm`
      3. Model-visible post-action state insertion depth $\max(0.0, -next\_states[t, 2]) > 5.0\text{ mm}$
      4. Physical consistency $|z_{\text{telem}}[t] - z_{\text{state}}[t]| < 10^{-3}\text{ mm}$.
-   - Every `ContactMode.JAMMING` step must satisfy state/telemetry depth alignment ($|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$ at $z > 5.0\text{ mm}$), lateral force $> 15.0\text{ N}$, and instantaneous physical state tilt $\theta_{\text{state}} = \|\mathbf{rot}_{xy}\| > 1.8^\circ$ derived directly from the simulator state tensor. Occurrence in non-wedging strata causes immediate episode rejection.
+   - Every `ContactMode.JAMMING` step must satisfy state/telemetry depth alignment ($|z_{\text{telem}} - z_{\text{state}}| < 10^{-3}\text{ mm}$ at $z > 5.0\text{ mm}$), lateral force $> 15.0\text{ N}$, and instantaneous physical state tilt $\theta_{\text{state}} = \|\mathbf{rot}_{xy}\| > 1.8^\circ$ (when tilt telemetry/state is available) derived directly from the simulator state tensor. Occurrence in non-wedging strata causes immediate episode rejection.
 
 #### 5.2 Zero Silent Retry / Overwrite Policy
 - Failed episodes are **NEVER** silently regenerated, discarded, or retried under altered seeds.

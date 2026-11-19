@@ -781,6 +781,18 @@ def build_training_package_and_audit(
     }
     assert_tensor_channels_clean(record.task, record.states, record.wrenches, privileged_series)
     assert_tensor_channels_clean(record.task, record.next_states, record.next_wrenches, privileged_series)
+    if record.states.shape != record.next_states.shape:
+        raise SecurityViolationError(
+            f"Record state shape mismatch: states {record.states.shape} != next_states {record.next_states.shape}"
+        )
+    if record.wrenches.shape != record.next_wrenches.shape:
+        raise SecurityViolationError(
+            f"Record wrench shape mismatch: wrenches {record.wrenches.shape} != next_wrenches {record.next_wrenches.shape}"
+        )
+    if record.actions.shape[0] != record.states.shape[0]:
+        raise SecurityViolationError(
+            f"Record action horizon mismatch: actions {record.actions.shape[0]} != states {record.states.shape[0]}"
+        )
     package = {
         "states": np.asarray(record.states),
         "actions": np.asarray(record.actions),
@@ -856,6 +868,18 @@ class ProductionTrainingDataloader:
         validate_model_visible_package(package)
         assert_tensor_channels_clean(str(package["task"]), package["states"], package["wrenches"], {})
         assert_tensor_channels_clean(str(package["task"]), package["next_states"], package["next_wrenches"], {})
+        if package["states"].shape != package["next_states"].shape:
+            raise SecurityViolationError(
+                f"Transition state shape mismatch: states {package['states'].shape} != next_states {package['next_states'].shape}"
+            )
+        if package["wrenches"].shape != package["next_wrenches"].shape:
+            raise SecurityViolationError(
+                f"Transition wrench shape mismatch: wrenches {package['wrenches'].shape} != next_wrenches {package['next_wrenches'].shape}"
+            )
+        if "actions" in package and package["actions"].shape[0] != package["states"].shape[0]:
+            raise SecurityViolationError(
+                f"Transition action horizon mismatch: actions {package['actions'].shape[0]} != states {package['states'].shape[0]}"
+            )
         return package
 
     def batches(self, batch_size: int) -> List[Dict[str, Any]]:

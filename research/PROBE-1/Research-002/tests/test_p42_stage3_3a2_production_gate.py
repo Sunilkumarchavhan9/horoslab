@@ -553,3 +553,23 @@ def test_replay_and_serialized_provenance_cover_all_six_strata(tmp_path: Path) -
         assert digest == file_sha
         assert "seed" in payload
         assert payload["seed"] == int(record.seed)
+
+
+def test_dataloader_and_build_rejects_mismatched_transition_shapes(tmp_path: Path) -> None:
+    """Verify dataloader and build pipeline reject mismatched state horizons or state widths between transitions."""
+    training_dir = tmp_path / "training"
+    training_dir.mkdir(parents=True)
+    mismatched_archive = training_dir / f"{'b' * 64}.npz"
+    np.savez_compressed(
+        mismatched_archive,
+        states=np.zeros((3, 15), dtype=np.float32),
+        actions=np.zeros((3, 6), dtype=np.float32),
+        next_states=np.zeros((4, 15), dtype=np.float32),  # Horizon mismatch 3 vs 4
+        wrenches=np.zeros((3, 6), dtype=np.float32),
+        next_wrenches=np.zeros((4, 6), dtype=np.float32),
+        sample_id="b" * 64,
+        task="peg_in_hole",
+    )
+    with pytest.raises(SecurityViolationError, match="Transition state shape mismatch"):
+        ProductionTrainingDataloader(training_dir)
+
