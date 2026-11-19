@@ -681,11 +681,11 @@ def jamming_label_is_physically_valid(
         return False
     if int(stratum) != 3:
         return False
-    if float(depth_mm) <= WEDGING_MIN_DEPTH_MM:
+    if not np.isfinite(depth_mm) or float(depth_mm) <= WEDGING_MIN_DEPTH_MM:
         return False
-    if float(lateral_force_n) <= JAMMING_LATERAL_FORCE_N:
+    if not np.isfinite(lateral_force_n) or float(lateral_force_n) <= JAMMING_LATERAL_FORCE_N:
         return False
-    if tilt_deg is not None and float(tilt_deg) <= JAMMING_TILT_DEG:
+    if tilt_deg is not None and (not np.isfinite(tilt_deg) or float(tilt_deg) <= JAMMING_TILT_DEG):
         return False
     return True
 

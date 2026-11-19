@@ -22,8 +22,8 @@ Both repositories execute automated regression testing under GitHub Actions runn
 
 | Repository | Remote URL | Active Branch | Evaluated Commit SHA | CI Workflow | Check Name | Status / Conclusion | Tests Passed |
 | :--- | :--- | :--- | :---: | :--- | :--- | :---: | :---: |
-| **Canonical** | `Sunilkumarchavhan9/horoslab` | `feat/probe1-stage33-production-readiness` | `127e220f7b44` (and upcoming A5 sync) | `research-002-tests.yml` | `Research-002 pytest` | **VERIFIED** | **306/306 (100%)** |
-| **Mirror** | `Sunilkumarchavhan9/horos-probe-1` | `feat/probe1-stage33-production-readiness` | `60aa1e17e59c` (and upcoming A5 sync) | `ci.yml` & `research-002-tests.yml` | `Run HOROS PROBE-1 Regression Suite` | **SUCCESS** | **306/306 (100%)** |
+| **Canonical** | `Sunilkumarchavhan9/horoslab` | `feat/probe1-stage33-production-readiness` | `9b67ca1e` | `research-002-tests.yml` | `Research-002 pytest` | **SUCCESS** | **306/306 (100%)** |
+| **Mirror** | `Sunilkumarchavhan9/horos-probe-1` | `feat/probe1-stage33-production-readiness` | `97f3d64` | `ci.yml` & `research-002-tests.yml` | `Run HOROS PROBE-1 Regression Suite` & `Research-002 pytest` | **SUCCESS** | **306/306 (100%)** |
 
 ---
 

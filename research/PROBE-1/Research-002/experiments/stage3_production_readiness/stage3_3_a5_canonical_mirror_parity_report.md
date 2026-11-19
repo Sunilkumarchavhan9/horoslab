@@ -12,18 +12,18 @@ The mirror stores Research-002 at `Research-002/`. The canonical repository stor
 
 | Git Blob SHA-1 | Canonical File Path | Mirror File Path | Parity |
 | :--- | :--- | :--- | :---: |
-| `ad6c1cb9350b1762ccc969be40516f7531cff912` | `scripts/stage3_production_adapter.py` | `scripts/stage3_production_adapter.py` | **MATCH** |
+| `f062d15b4eed76c89ca0e3a53ca7d25eb8b98743` | `scripts/stage3_production_adapter.py` | `scripts/stage3_production_adapter.py` | **MATCH** |
 | `0676fc252e3a9496d2ff90405d8839d7f46f8393` | `tests/test_p41_stage3_production_contract.py` | `tests/test_p41_stage3_production_contract.py` | **MATCH** |
-| `a49c185c10b8a9a3b13736a1e399eb555cf9055a` | `tests/test_p42_stage3_3a2_production_gate.py` | `tests/test_p42_stage3_3a2_production_gate.py` | **MATCH** |
+| `ba08e7667442b18659e42f346dd9487e1fe31480` | `tests/test_p42_stage3_3a2_production_gate.py` | `tests/test_p42_stage3_3a2_production_gate.py` | **MATCH** |
 | `821fb7b1e914e33d8e733ffdb81fba15df7c8f77` | `experiments/.../stage3_3_acceptance_specification.md` | `experiments/.../stage3_3_acceptance_specification.md` | **MATCH** |
 | `649e3d9d0f288e206c430b539ef0f8e0901b49dd` | `experiments/.../stage3_3_contact_ontology_clarification.md` | `experiments/.../stage3_3_contact_ontology_clarification.md` | **MATCH** |
 | `b25cf1cc7965e082b4e14a7b6f45a8849b1595bf` | `experiments/.../stage3_3_production_generation_protocol.md` | `experiments/.../stage3_3_production_generation_protocol.md` | **MATCH** |
 | `33aa9e36f29b3649ca1d2ae91b3ef94125435bd7` | `experiments/.../stage3_3_dataset_schema.md` | `experiments/.../stage3_3_dataset_schema.md` | **MATCH** |
 | `d7a47dcddcb6bdac7bd35c2eda802971020f555f` | `experiments/.../stage3_3_seed_registry.json` | `experiments/.../stage3_3_seed_registry.json` | **MATCH** |
-| `e5bca9a5c888b9dc8c142edc83e75d848c5bb20e` | `experiments/.../stage3_3_a5_ci_verification_report.md` | `experiments/.../stage3_3_a5_ci_verification_report.md` | **MATCH** |
+| `f34d0d5af70b46684177a939daad3cca16a6684a` | `experiments/.../stage3_3_a5_ci_verification_report.md` | `experiments/.../stage3_3_a5_ci_verification_report.md` | **MATCH** |
 | `5ea4b17b4204e399423fcc82668295bc62c05dd7` | `experiments/.../stage3_3_a5_coderabbit_resolution_report.md` | `experiments/.../stage3_3_a5_coderabbit_resolution_report.md` | **MATCH** |
 | `3e46be7541466c203062e08640d7e9976a944b08` | `experiments/.../stage3_3_a5_branch_protection_report.md` | `experiments/.../stage3_3_a5_branch_protection_report.md` | **MATCH** |
 | `83f091b8239087bf5d5c5f64fb5dcbcd65536d6f` | `experiments/.../stage3_3_a5_seed_reconciliation_report.md` | `experiments/.../stage3_3_a5_seed_reconciliation_report.md` | **MATCH** |
-| `0be7a6a1396d4524fc2a65a7e7c5412f82a779ba` | `experiments/.../stage3_3_a5_final_integrity_and_signoff_report.md` | `experiments/.../stage3_3_a5_final_integrity_and_signoff_report.md` | **MATCH** |
+| `83b9cad6b829a4d0df81b2ecf2f9a3ae48dfa1c5` | `experiments/.../stage3_3_a5_final_integrity_and_signoff_report.md` | `experiments/.../stage3_3_a5_final_integrity_and_signoff_report.md` | **MATCH** |
 
 This parity report is copied byte-for-byte to the mirror. Its own hash is verified across both repositories.

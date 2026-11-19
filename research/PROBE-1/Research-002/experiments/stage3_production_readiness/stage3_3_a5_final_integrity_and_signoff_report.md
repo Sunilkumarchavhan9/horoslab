@@ -21,7 +21,7 @@ All five mandatory verification gates have been audited, confirmed passing, and 
 | :---: | :--- | :--- | :---: |
 | **Gate 1** | **GitHub Actions CI** | 306/306 regression tests pass locally and on GitHub Actions runners. Workflow updated with line-ending normalization for cross-platform Linux compatibility. | **PASS** |
 | **Gate 2** | **CodeRabbit Review Findings** | All 6 historical outside-diff findings and PR #43 review comments resolved. Transition pair horizon/dimension validation added to dataloader. Zero open Major/Critical issues. | **PASS** |
-| **Gate 3** | **Branch Protection Enforcement** | Required status check context verified as `Research-002 pytest`. Monorepo and mirror protection parameters documented for administrative enforcement on `main`. | **PASS** |
+| **Gate 3** | **Branch Protection Enforcement** | Required status check context verified as `Research-002 pytest`. Monorepo and mirror protection parameters documented for administrative enforcement on `main`. Requires Web UI confirmation by repository administrator. | **PENDING ADMINISTRATIVE CONFIRMATION** |
 | **Gate 4** | **Production Seed Reconciliation** | Exactly 1,000 unique production seeds mapped across 6 strata (500 Prelift, 500 Peg-in-Hole). Zero collision with 40 pilot seeds. All 300 reserve seeds locked (`UNALLOCATED_LOCKED`). | **PASS** |
 | **Gate 5** | **Final System Integrity & Parity** | 100% bitwise parity across all production gate files. 40/40 certified pilot trajectories verified. 21/21 frozen artifacts (B1–B4, CBF v1.0) verified. | **PASS** |
 

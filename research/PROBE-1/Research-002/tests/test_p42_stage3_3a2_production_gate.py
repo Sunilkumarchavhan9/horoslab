@@ -573,3 +573,19 @@ def test_dataloader_and_build_rejects_mismatched_transition_shapes(tmp_path: Pat
     with pytest.raises(SecurityViolationError, match="Transition state shape mismatch"):
         ProductionTrainingDataloader(training_dir)
 
+
+def test_jamming_label_rejects_nan_values() -> None:
+    """Verify jamming_label_is_physically_valid rejects non-finite / NaN values."""
+    from contact_modes.contact_mode_definitions import ContactMode
+
+    assert jamming_label_is_physically_valid(
+        int(ContactMode.JAMMING), stratum=3, depth_mm=float("nan"), lateral_force_n=20.0, tilt_deg=2.5
+    ) is False
+    assert jamming_label_is_physically_valid(
+        int(ContactMode.JAMMING), stratum=3, depth_mm=6.0, lateral_force_n=float("nan"), tilt_deg=2.5
+    ) is False
+    assert jamming_label_is_physically_valid(
+        int(ContactMode.JAMMING), stratum=3, depth_mm=6.0, lateral_force_n=20.0, tilt_deg=float("nan")
+    ) is False
+
+
