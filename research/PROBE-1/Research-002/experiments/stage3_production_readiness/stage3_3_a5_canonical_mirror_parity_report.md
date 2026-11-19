@@ -22,7 +22,7 @@ The mirror stores Research-002 at `Research-002/`. The canonical repository stor
 | `d7a47dcddcb6bdac7bd35c2eda802971020f555f` | `experiments/.../stage3_3_seed_registry.json` | `experiments/.../stage3_3_seed_registry.json` | **MATCH** |
 | `f34d0d5af70b46684177a939daad3cca16a6684a` | `experiments/.../stage3_3_a5_ci_verification_report.md` | `experiments/.../stage3_3_a5_ci_verification_report.md` | **MATCH** |
 | `5ea4b17b4204e399423fcc82668295bc62c05dd7` | `experiments/.../stage3_3_a5_coderabbit_resolution_report.md` | `experiments/.../stage3_3_a5_coderabbit_resolution_report.md` | **MATCH** |
-| `fb02421cdfc685390265601dc4abf9be4c0067ac` | `experiments/.../stage3_3_a5_branch_protection_report.md` | `experiments/.../stage3_3_a5_branch_protection_report.md` | **MATCH** |
+| `c44573c6dfc5c0f8f2a98c67a9f77b9ff8ba74dd` | `experiments/.../stage3_3_a5_branch_protection_report.md` | `experiments/.../stage3_3_a5_branch_protection_report.md` | **MATCH** |
 | `83f091b8239087bf5d5c5f64fb5dcbcd65536d6f` | `experiments/.../stage3_3_a5_seed_reconciliation_report.md` | `experiments/.../stage3_3_a5_seed_reconciliation_report.md` | **MATCH** |
 | `74fc61c6959e5b6f0b81bea3c2b834efdcd7c08e` | `experiments/.../stage3_3_a5_final_integrity_and_signoff_report.md` | `experiments/.../stage3_3_a5_final_integrity_and_signoff_report.md` | **MATCH** |
 

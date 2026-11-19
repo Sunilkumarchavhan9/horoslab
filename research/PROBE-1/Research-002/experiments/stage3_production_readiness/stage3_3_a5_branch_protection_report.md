@@ -31,7 +31,12 @@ Branch protection enforcement was audited and verified via authenticated GitHub 
 | **Enforce Admins (Zero Bypass)** | **`True`** (admins cannot bypass checks) | **`True`** (admins cannot bypass checks) |
 | **GitHub App Integration** | GitHub Actions (`app_id: 15368`) | GitHub Actions (`app_id: 15368`) |
 | **PR Merge Restriction** | Merging blocked unless required checks pass | Merging blocked unless required checks pass |
+| **Required PR Approvals** | `null` (not configured; single-contributor setup) | `null` (not configured; single-contributor setup) |
+| **Push Access Restrictions** | `null` (not restricted to specific teams) | `null` (not restricted to specific teams) |
 | **Enforcement Evidence** | Authenticated GitHub REST API (`HTTP 200 OK`) | Authenticated GitHub REST API (`HTTP 200 OK`) |
+
+> [!NOTE]
+> **Governance Scope Note:** The authenticated API evidence establishes that mandatory CI status checks and administrator enforcement (`enforce_admins: true`, zero bypass) are fully enabled on `main`. `required_pull_request_reviews: null` and `restrictions: null` reflect that secondary review sign-offs and team push restrictions are not configured for this repository structure. This does not alter the strict requirement that `Research-002 pytest` must pass before merging.
 
 ---
 
