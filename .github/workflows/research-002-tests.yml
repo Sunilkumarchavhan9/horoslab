@@ -16,19 +16,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
       - name: Normalize line endings for frozen artifact hashes
         run: |
-          python -c "
+          python3 -c "
           import os
-          target_dirs = ['research/PROBE-1/Research-002', 'Research-002']
-          for td in target_dirs:
-              if os.path.isdir(td):
-                  for root, _, files in os.walk(td):
+          for base in ['research/PROBE-1/Research-002', 'Research-002']:
+              if os.path.exists(base):
+                  for root, _, files in os.walk(base):
                       for f in files:
                           if f.endswith(('.json', '.csv')) or f == 'phase37_1_epistemic_ood_diagnostic_report.md':
                               p = os.path.join(root, f)
@@ -40,16 +34,20 @@ jobs:
                                       fp.write(crlf)
           "
 
-      - name: Install Research-002 test dependencies
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy==1.26.4 scipy==1.14.1 pytest==8.3.3 pydantic==2.9.2
-          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install pytest numpy torch scipy==1.14.1
 
-      - name: Run Research-002 tests
+      - name: Execute Full Test Suite
         run: |
           if [ -d research/PROBE-1/Research-002/tests ]; then
-            PYTHONPATH=research/PROBE-1/Research-002:research/PROBE-1/Research-002/src python -m pytest research/PROBE-1/Research-002/tests -q --tb=line
+            PYTHONPATH=research/PROBE-1/Research-002:research/PROBE-1/Research-002/src pytest research/PROBE-1/Research-002/tests -q
           else
-            PYTHONPATH=Research-002:Research-002/src python -m pytest Research-002/tests -q --tb=line
+            PYTHONPATH=Research-002:Research-002/src pytest Research-002/tests -q
           fi
