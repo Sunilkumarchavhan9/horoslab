@@ -69,7 +69,7 @@ class ContactState:
     contact_loss_count: int = 0
 
     def record_contact_loss(self):
-        """Reset contact fields when body separates from surface, preserving lifecycle counts."""
+        """Reset contact fields when body separates from surface, preserving lifecycle counts and First-Law passivity."""
         if self.in_contact:
             self.contact_loss_count += 1
         self.in_contact = False
@@ -89,8 +89,18 @@ class ContactState:
         self.reverse_stick_radius = 0.0
         self.bristle_deflection = 0.0
         self.bristle_velocity = 0.0
+
+        # Physical lift-off energy release:
+        # Any remaining stored elastic energy dissipates to heat upon complete separation
+        if self.stored_elastic_energy > 0.0:
+            self.cumulative_dissipated_energy += self.stored_elastic_energy
+            self.signed_step_dissipation = self.stored_elastic_energy
+        else:
+            self.signed_step_dissipation = 0.0
+
         self.stored_elastic_energy = 0.0
         self.instantaneous_dissipation_rate = 0.0
+        self.independent_step_dissipation = 0.0
 
     def verify_energy_passivity(self) -> bool:
         """

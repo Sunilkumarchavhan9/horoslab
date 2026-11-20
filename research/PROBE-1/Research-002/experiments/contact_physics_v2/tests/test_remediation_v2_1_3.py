@@ -247,6 +247,213 @@ def test_remediation_cp2_05_normal_load_collapse_no_negative_dissipation():
     assert abs(state.bristle_velocity) <= bound + 1e-9
 
 
+def test_remediation_cp2_03_passivity_operational_envelope_and_discriminant():
+    """
+    CP2-03: Analytical Passivity Domain & Raw Constitutive Dissipation Closure:
+    In standard LuGre friction:
+      P_diss = (sigma_0^2 * |v| / g(v)) * z^2 + sigma_1 * dz/dt * v + sigma_2 * v^2
+    Expanding dz/dt = v - (sigma_0 * |v| / g(v)) * z yields a quadratic in z with discriminant:
+      Delta_z = (sigma_0^2 * |v| / g(v)) * [ (sigma_1^2 * |v| / g(v)) - 4 * (sigma_1 + sigma_2) ]
+    1. For all |v| <= v_passive = 4 * (sigma_1 + sigma_2) * g(v) / sigma_1^2 (~44.6 mm/s),
+       Delta_z <= 0, which guarantees raw unmasked P_diss >= 0 for ALL z in (-inf, +inf).
+    2. Proves that compliant robotic pre-lift manipulation (|v| <= 10 mm/s) is strictly passive.
+    3. Analyzes the cofounder's out-of-domain query (v = 1.0 m/s with frozen static z = 0.00024 m),
+       confirming -81.3 W unmasked dissipation, and demonstrates that under physical dynamic
+       trajectory integration from rest, z relaxes in < 1 ms to z_ss ~ 0.00020 m where P_diss = +6.5 W > 0.
+    """
+    pair = create_silicone_aluminum_pair(mu_static=0.60, mu_kinetic=0.50)
+    lugre = LuGreModel(pair)
+    Fn = 10.0
+
+    # 1. Operational envelope verification: raw unmasked P_diss >= 0
+    test_velocities = [1e-5, 0.001, 0.005, 0.010, 0.020, 0.040, -1e-5, -0.001, -0.005, -0.010, -0.020, -0.040]
+    z_max = pair.mu_static * Fn / lugre.params.sigma_0
+
+    for v in test_velocities:
+        gv = lugre.compute_stribeck(v, Fn)
+        v_passive = 4.0 * (lugre.params.sigma_1 + lugre.params.sigma_2) * gv / (lugre.params.sigma_1 ** 2)
+        assert abs(v) <= v_passive, f"Velocity {v} exceeds passive bound {v_passive}"
+
+        # Evaluate across full Coulomb capacity interval [-z_max, +z_max]
+        for frac in [-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5, 0.75, 1.0]:
+            z = frac * z_max
+            dz = v - (lugre.params.sigma_0 * abs(v) / gv) * z
+            # Raw constitutive dissipation rate (NO max(0, ...) clipping):
+            P_diss = (
+                ((lugre.params.sigma_0 ** 2 * abs(v) / gv) * (z ** 2)) +
+                (lugre.params.sigma_1 * dz * v) +
+                (lugre.params.sigma_2 * (v ** 2))
+            )
+            assert P_diss >= 0.0, f"Raw dissipation negative at v={v}, z={z}: {P_diss:.4e} W"
+
+    # 2. Cofounder extreme point analysis (v = 1.0 m/s, z = 0.00024 m)
+    v_cf = 1.0
+    z_cf = 0.00024
+    gv_cf = lugre.compute_stribeck(v_cf, Fn)
+    dz_cf = v_cf - (lugre.params.sigma_0 * abs(v_cf) / gv_cf) * z_cf
+    P_diss_cf = (
+        ((lugre.params.sigma_0 ** 2 * abs(v_cf) / gv_cf) * (z_cf ** 2)) +
+        (lugre.params.sigma_1 * dz_cf * v_cf) +
+        (lugre.params.sigma_2 * (v_cf ** 2))
+    )
+    # Replicates exact cofounder calculation: -81.3 W
+    assert math.isclose(P_diss_cf, -81.3, abs_tol=0.1), f"Expected -81.3 W, got {P_diss_cf}"
+
+    # 3. Dynamic relaxation from rest to steady sliding at v = 1.0 m/s
+    state_dyn = ContactState(in_contact=True, normal_force=Fn, contact_radius=0.003)
+    # Integrate for 2 ms (dt = 0.0001 s, 20 steps)
+    for _ in range(20):
+        lugre.step(state_dyn, v_cmd=v_cf, dt=0.0001)
+
+    # In continuous physical trajectory, z relaxes to attractor z_ss ~ 0.00020 m
+    z_ss_expected = gv_cf / lugre.params.sigma_0
+    assert math.isclose(state_dyn.bristle_deflection, z_ss_expected, rel_tol=1e-3)
+    # Raw independent dissipation at physical attractor is strictly positive (+6.5 W)
+    assert state_dyn.independent_step_dissipation > 0.0
+    assert state_dyn.instantaneous_dissipation_rate > 0.0
+
+
+def test_remediation_cp2_03_power_port_conjugacy():
+    """
+    CP2-03: External-to-Local Power Port Decomposition and Conjugacy Closure:
+    External mechanical power:
+      P_ext = Ft_hybrid * v_cmd
+    Decomposes identically into:
+      P_ext = P_core + P_transport + P_annular
+    where:
+      P_core = Ft_core * v_cmd                      (elastic power driving sticking core)
+      P_transport = phi_slip * Ft_ann * (v_cmd - v_eff)  (elastic transport power across boundary)
+      P_annular = phi_slip * Ft_ann * v_eff         (local power driving annular bristles & slip)
+    Verifies equality to machine precision (< 1e-15 W) across multiple slip regimes.
+    """
+    pair = create_silicone_aluminum_pair(mu_static=0.60, mu_kinetic=0.50)
+    geom = SphericalContact(radius=0.015)
+    lugre = LuGreModel(pair)
+    Fn = 10.0
+    dt = 0.001
+
+    for c_over_a in [0.1, 0.3, 0.5, 0.7, 0.9]:
+        for v_cmd in [0.001, 0.005, -0.002, -0.010]:
+            phi_slip = geom.annular_slip_load_fraction(c_over_a)
+            sgn = 1.0 if v_cmd > 0 else -1.0
+            coulomb_limit = sgn * pair.mu_static * Fn
+            Ft_cm = coulomb_limit * (1.0 - c_over_a ** 3)
+            v_eff = v_cmd * (1.0 - c_over_a)
+
+            z, dz = lugre.integrate_bristle(0.0, v_eff, Fn, dt)
+            Ft_ann = lugre.compute_friction_force(z, dz, v_eff)
+            Ft_core = Ft_cm - phi_slip * coulomb_limit
+            Ft_hybrid = Ft_core + phi_slip * Ft_ann
+
+            P_ext = Ft_hybrid * v_cmd
+            P_core = Ft_core * v_cmd
+            P_trans = phi_slip * Ft_ann * (v_cmd - v_eff)
+            P_ann = phi_slip * Ft_ann * v_eff
+
+            residual = abs(P_ext - (P_core + P_trans + P_ann))
+            assert residual < 1e-15, f"Power port mismatch: residual={residual:.2e} W"
+
+
+def test_remediation_cp2_03_closed_cycle_external_work_matches_independent_dissipation():
+    """
+    CP2-03: Genuinely Closed Limit Cycle Without Work-Storage Residual Identity:
+    Runs a periodic sinusoidal limit cycle in standalone LuGre mode.
+    Verifies:
+    1. Perfect state closure: |Delta V_cycle| < 1e-10 J, |Delta Ft| < 1e-6 N, |Delta z| < 1e-10 m.
+    2. Net cyclic external work is positive (W_cycle > 0).
+    3. Independent constitutive dissipation matches external work to numerical precision (error < 0.05%)
+       WITHOUT relying on the dW - Delta V identity.
+    """
+    pair = create_silicone_aluminum_pair(mu_static=0.60, mu_kinetic=0.50)
+    lugre = LuGreModel(pair)
+    Fn = 10.0
+    a = 0.003
+    dt = 0.0001
+    state = ContactState(in_contact=True, normal_force=Fn, contact_radius=a)
+
+    omega = 2.0 * math.pi * 5.0  # 5 Hz
+    T = 1.0 / 5.0
+    V0 = 0.005  # 5 mm/s (strictly inside passive domain)
+    steps_per_period = int(T / dt)
+
+    # Warm up 5 periods to reach steady periodic limit cycle
+    for step in range(5 * steps_per_period):
+        t = step * dt
+        v = V0 * math.sin(omega * t)
+        lugre.step(state, v, dt)
+
+    # Test 1 full closed period
+    E_start = state.stored_elastic_energy
+    Ft_start = state.tangential_force
+    z_start = state.bristle_deflection
+    W_cycle = 0.0
+    D_indep_cycle = 0.0
+
+    for step in range(steps_per_period):
+        t = step * dt
+        v = V0 * math.sin(omega * t)
+        prev_Ft = state.tangential_force
+        lugre.step(state, v, dt)
+        W_cycle += 0.5 * (prev_Ft + state.tangential_force) * (v * dt)
+        D_indep_cycle += state.independent_step_dissipation
+
+    E_end = state.stored_elastic_energy
+    Ft_end = state.tangential_force
+    z_end = state.bristle_deflection
+
+    # 1. State closure
+    assert abs(E_end - E_start) < 1e-10, f"Elastic storage not closed: delta_E={abs(E_end - E_start)}"
+    assert abs(Ft_end - Ft_start) < 1e-6, f"Force not closed: delta_Ft={abs(Ft_end - Ft_start)}"
+    assert abs(z_end - z_start) < 1e-10, f"Deflection not closed: delta_z={abs(z_end - z_start)}"
+
+    # 2. Net positive cyclic work
+    assert W_cycle > 0.0, f"Net cyclic work must be positive, got {W_cycle}"
+    assert D_indep_cycle > 0.0, f"Independent cyclic dissipation must be positive, got {D_indep_cycle}"
+
+    # 3. Direct equivalence between cyclic external work and independent constitutive dissipation
+    relative_error = abs(W_cycle - D_indep_cycle) / W_cycle
+    assert relative_error < 0.0005, (
+        f"Cyclic work and independent dissipation differ by {relative_error*100:.3f}% "
+        f"(W_cycle={W_cycle:.6e}, D_indep={D_indep_cycle:.6e})"
+    )
+
+
+def test_remediation_liftoff_record_contact_loss_energy_conversion():
+    """
+    Verify ContactState.record_contact_loss() directly enforces physical energy conservation:
+    1. Converts stored elastic strain energy directly into cumulative dissipated energy.
+    2. Resets stored elastic energy, deflection, velocity, and forces to 0.0.
+    3. Eliminates ledger energy loss upon manual contact separation.
+    """
+    state = ContactState(
+        in_contact=True,
+        normal_force=10.0,
+        contact_radius=0.003,
+        bristle_deflection=0.0001,
+        tangential_force=2.5,
+        stored_elastic_energy=1.25e-4,
+        cumulative_dissipated_energy=5.0e-5
+    )
+
+    initial_stored = state.stored_elastic_energy
+    initial_diss = state.cumulative_dissipated_energy
+
+    # Call record_contact_loss directly
+    state.record_contact_loss()
+
+    assert not state.in_contact
+    assert state.contact_loss_count == 1
+    assert state.stored_elastic_energy == 0.0
+    assert state.bristle_deflection == 0.0
+    assert state.bristle_velocity == 0.0
+    assert state.tangential_force == 0.0
+    assert state.independent_step_dissipation == 0.0
+
+    # Stored energy must be converted to dissipation
+    assert state.signed_step_dissipation == initial_stored
+    assert math.isclose(state.cumulative_dissipated_energy, initial_diss + initial_stored, rel_tol=1e-12)
+
+
 def test_remediation_cp2_03_independent_passivity_closed_cycle():
     """
     CP2-03: Genuinely Closed Mechanical Cycle with Independent Passivity Verification:
