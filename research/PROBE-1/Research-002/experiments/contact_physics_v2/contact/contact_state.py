@@ -60,6 +60,7 @@ class ContactState:
     # Energetics & Passivity
     stored_elastic_energy: float = 0.0    # E_elastic (Joules)
     signed_step_dissipation: float = 0.0  # dW - dE_elastic (Joules, unmasked signed step residual)
+    independent_step_dissipation: float = 0.0 # Constitutive physical dissipation (Joules, independent of dW/dV)
     cumulative_dissipated_energy: float = 0.0  # E_diss (Joules, strictly >= 0)
     instantaneous_dissipation_rate: float = 0.0 # Power dissipated (Watts)
 
