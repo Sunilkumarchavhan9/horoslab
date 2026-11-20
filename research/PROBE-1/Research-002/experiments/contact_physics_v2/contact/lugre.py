@@ -79,8 +79,13 @@ class LuGreModel:
 
         # CP2-05 Constitutive Sliding Bristle Velocity for Micro-Damping:
         # Evaluated from constitutive rate dz/dt = v - (sigma_0 * |v| / g(v)) * z_next.
-        # This is bounded by |v| and prevents damping force explosion during parameter collapse.
-        dz_dt = v - (self.params.sigma_0 * v_abs / g_v) * z_next
+        # Under arbitrary velocity reversals, for any state within the admissible static Coulomb
+        # invariant set |z| <= mu_s * Fn / sigma_0, the constitutive rate satisfies:
+        # |dz/dt| <= (1 + mu_s / mu_k) * |v|.
+        # We enforce this invariant rate bound to prevent micro-damping force explosion.
+        dz_dt_constitutive = v - (self.params.sigma_0 * v_abs / max(1e-9, g_v)) * z_next
+        max_rate = (1.0 + (self.pair.mu_static / max(1e-6, self.pair.mu_kinetic))) * v_abs
+        dz_dt = max(-max_rate, min(max_rate, dz_dt_constitutive))
 
         return z_next, dz_dt
 
@@ -109,13 +114,10 @@ class LuGreModel:
         Fn = state.normal_force
         z_prev = state.bristle_deflection
 
-        # Track relaxation energy if normal load dropped
+        # CP2-04 Stick-to-Slip Relaxation under normal load reduction
         z_static_cap = (self.pair.mu_static * Fn) / self.params.sigma_0
-        dE_relax = 0.0
         if abs(z_prev) > z_static_cap:
-            z_relaxed = math.copysign(z_static_cap, z_prev)
-            dE_relax = 0.5 * self.params.sigma_0 * (z_prev**2 - z_relaxed**2)
-            z_prev = z_relaxed
+            z_prev = math.copysign(z_static_cap, z_prev)
 
         z_next, dz_dt = self.integrate_bristle(z_prev, v_cmd, Fn, dt)
         Ft = self.compute_friction_force(z_next, dz_dt, v_cmd)
@@ -132,15 +134,17 @@ class LuGreModel:
         state.is_gross_slipping = is_sliding
         state.slip_velocity = v_cmd if is_sliding else dz_dt
 
-        # Work and energy dissipation (Trapezoidal work integration + relaxation dissipation)
-        if prev_Ft != 0.0 and abs(prev_Ft) < 2.0 * self.pair.mu_static * Fn:
-            dW = 0.5 * (prev_Ft + Ft) * (v_cmd * dt)
-        else:
-            dW = Ft * (v_cmd * dt)
+        # Work and energy dissipation: Trapezoidal work integration
+        dW = 0.5 * (prev_Ft + Ft) * (v_cmd * dt)
 
         new_elastic = 0.5 * self.params.sigma_0 * (z_next ** 2)
         d_elastic = new_elastic - state.stored_elastic_energy
-        d_diss = (dW - d_elastic) + dE_relax
+
+        # Exact First-Law Energy Balance (Eliminating double-counting):
+        # Every Joule of mechanical work that does not increase stored elastic energy
+        # is dissipated. Under normal load drop at v = 0 (dW = 0), d_elastic is negative,
+        # so d_diss = -d_elastic > 0 directly reflects relaxation dissipation with ZERO double-counting.
+        d_diss = dW - d_elastic
 
         state.stored_elastic_energy = new_elastic
         state.signed_step_dissipation = d_diss
@@ -150,7 +154,7 @@ class LuGreModel:
     def step_composed_hybrid(self, state: ContactState, Ft_cm_elastic: float, v_cmd: float,
                             stick_ratio: float, dt: float, geometry: Optional[Any] = None) -> float:
         """
-        Continuum Traction Composition Strategy for Contact Physics v2.1.3 (CP2-01 / CP2-03 Remediated):
+        Continuum Traction Composition Strategy for Contact Physics v2.1.3.1 (CP2-01 / CP2-03 Remediated):
         Combines Cattaneo-Mindlin continuum partial-slip elasticity with LuGre dynamic dissipation
         WITHOUT DOUBLE-COUNTING STIFFNESS, WITH ZERO FORCE JUMP, AND WITH EXACT CONTINUUM TRACTION PARTITION:
 
@@ -162,22 +166,23 @@ class LuGreModel:
            - Rounded flat punch: Ciavarella (1998) / Truman asymptotic rounded edge slip
 
         2. Exact Continuum Tangential Traction Partition (CP2-01.1):
-           Rather than an ad-hoc convex blend (1 - Phi)*Ft_cm + Phi*Ft_lugre which distorts the
-           partial slip force by up to 12.5% at c/a = 1/sqrt(2), the continuum composition integrates:
            Ft_core_cm = Ft_cm_elastic - sgn * mu_s * Fn * Phi_slip
            Ft_annulus_lugre = Phi_slip * Ft_lugre
            Ft_hybrid = Ft_core_cm + Ft_annulus_lugre
                      = Ft_cm_elastic + Phi_slip * (Ft_lugre - sgn * mu_s * Fn)
 
-        3. Complete Hybrid Energy Balance (CP2-03):
-           Maintains exact coupled energy accounting across sticking core, annular bristles,
-           boundary migration transport, and trapezoidal temporal work integration:
-           E_elastic^hybrid = (1 - Phi_slip) * E_core + 0.5 * Phi_slip * sigma_0 * z^2
-           dW = 0.5 * (prev_Ft + total_Ft) * (v_cmd * dt)
-           d_diss = dW - d_elastic + Phi_slip * dE_relax
+        3. Complete Hybrid Energy Balance (CP2-03 / CP2-04 / CP2-05 Remediated):
+           - Reconciled kinematics: Annular bristles are driven by relative slip velocity
+             v_eff = v_cmd * (1 - c/a), unifying state dynamics, micro-viscous force, and dissipation.
+           - Exact First-Law energy conservation: d_diss = dW - d_elastic without double-counting.
+           - State tracking: Updates state.stick_ratio and state.stick_radius at every step.
         """
         Fn = state.normal_force
-        if Fn <= 0.0:
+        if Fn <= 0.0 or not state.in_contact:
+            state.stored_elastic_energy = 0.0
+            state.tangential_force = 0.0
+            state.stick_ratio = 1.0
+            state.stick_radius = 0.0
             return 0.0
 
         c_over_a = max(0.0, min(1.0, stick_ratio))
@@ -198,27 +203,24 @@ class LuGreModel:
         coulomb_limit = sgn * self.pair.mu_static * Fn
 
         # Synchronize annular bristle state with physical asperity slip strain if uninitialized:
-        # Asperities on the slipping annulus are strained to the static Coulomb threshold
         if abs(state.bristle_deflection) < 1e-12 and c_over_a < 1.0:
             state.bristle_deflection = coulomb_limit / self.params.sigma_0
 
-        # CP2-04 / CP2-05 Stick-to-Slip Relaxation under normal load reduction
+        # CP2-04 Stick-to-Slip Relaxation under normal load reduction
         z_static_cap = (self.pair.mu_static * Fn) / self.params.sigma_0
         z_prev = state.bristle_deflection
-        dE_relax = 0.0
         if abs(z_prev) > z_static_cap:
-            z_relaxed = math.copysign(z_static_cap, z_prev)
-            dE_relax = 0.5 * self.params.sigma_0 * (z_prev**2 - z_relaxed**2)
-            z_prev = z_relaxed
+            z_prev = math.copysign(z_static_cap, z_prev)
 
-        # Advance internal bristle state driven by local micro-slip / sliding velocity
+        # CP2-03 Reconciled Annular Kinematics:
+        # Annular bristles slip at effective relative velocity v_eff = v_cmd * (1 - c/a)
         v_eff = v_cmd * (1.0 - c_over_a) if c_over_a > 0.0 else v_cmd
         z_next, dz_dt = self.integrate_bristle(z_prev, v_eff, Fn, dt)
         state.bristle_deflection = z_next
         state.bristle_velocity = dz_dt
 
-        # Standard canonical LuGre dynamic friction force
-        Ft_lugre = self.compute_friction_force(z_next, dz_dt, v_cmd)
+        # Standard canonical LuGre dynamic friction force driven by annular velocity v_eff
+        Ft_lugre = self.compute_friction_force(z_next, dz_dt, v_eff)
 
         prev_Ft = state.tangential_force
         if c_over_a > 0.0:
@@ -231,42 +233,30 @@ class LuGreModel:
 
         state.tangential_force = total_Ft
 
-        # CP2-03: Complete Hybrid Energy Balance and Power Dissipation
-        # 1. Annular LuGre continuous power dissipation:
-        #    D_dot_ann = (sigma_0^2 * |v| / g(v)) * z^2 + sigma_1 * dz_dt * v + sigma_2 * v^2 >= 0
-        gv = self.compute_stribeck(v_cmd, Fn)
-        v_abs = abs(v_cmd)
-        if gv > 0.0 and v_abs > 1e-12:
-            d_diss_ann = ( ((self.params.sigma_0**2 * v_abs / gv) * (z_next**2)) +
-                           (self.params.sigma_1 * dz_dt * v_cmd) +
-                           (self.params.sigma_2 * (v_cmd**2)) ) * dt
-        else:
-            d_diss_ann = 0.0
+        # Work and energy dissipation: Trapezoidal work integration
+        dW = 0.5 * (prev_Ft + total_Ft) * (v_cmd * dt)
 
-        # 2. Moving stick-slip boundary migration dissipation:
-        #    As the stick core contracts (phi_slip increases), newly mobilized asperities release excess
-        #    yield strain into slip dissipation: 0.5 * sigma_0 * (z_yield^2 - z_next^2) * dPhi_slip
-        phi_prev = (1.0 - state.stick_ratio ** 2) ** 1.5 if state.stick_ratio < 1.0 else 0.0
-        dphi = max(0.0, phi_slip - phi_prev)
-        z_yield = abs(coulomb_limit) / self.params.sigma_0
-        d_diss_boundary = 0.5 * self.params.sigma_0 * max(0.0, z_yield**2 - z_next**2) * dphi
-
-        # 3. Core dissipation:
-        d_diss_core = (1.0 - phi_slip) * max(0.0, state.signed_step_dissipation if state.loading_direction != 0 else 0.0)
-
-        # 4. Total hybrid step dissipation:
-        d_diss = d_diss_core + phi_slip * d_diss_ann + d_diss_boundary + (phi_slip * dE_relax)
-
-        # Update composite elastic storage:
+        # Composite stored elastic energy (Sticking core compliance + Annular asperity bristles)
         a = state.contact_radius
         kt_0 = 8.0 * self.pair.equivalent_shear_modulus * a if a > 0.0 else 1.0
-        E_core = (1.0 - phi_slip) * (0.5 * (Ft_cm_elastic**2) / kt_0) if kt_0 > 0 else 0.0
-        E_ann = 0.5 * phi_slip * self.params.sigma_0 * (z_next**2)
-        new_elastic = E_core + E_ann
+        E_core = 0.5 * (Ft_cm_elastic ** 2) / kt_0 if kt_0 > 0.0 else 0.0
+        E_ann = 0.5 * self.params.sigma_0 * (z_next ** 2)
+        new_elastic = (1.0 - phi_slip) * E_core + phi_slip * E_ann
+
+        # Exact First-Law Energy Dissipation (eliminates double-counting):
+        # d_diss = dW - d_elastic
+        # Every Joule of mechanical work not stored as elastic potential is dissipated.
+        # This holds identically across expanding/contracting boundaries and load changes.
+        d_elastic = new_elastic - state.stored_elastic_energy
+        d_diss = dW - d_elastic
 
         state.stored_elastic_energy = new_elastic
         state.signed_step_dissipation = d_diss
         state.cumulative_dissipated_energy += d_diss
         state.instantaneous_dissipation_rate = d_diss / dt
+
+        # Update stick-zone state tracking so previous boundary states are NEVER stale
+        state.stick_ratio = c_over_a
+        state.stick_radius = c_over_a * state.contact_radius
 
         return total_Ft
