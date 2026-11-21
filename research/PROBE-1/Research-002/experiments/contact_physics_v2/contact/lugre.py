@@ -238,8 +238,10 @@ class LuGreModel:
             sgn = 1.0
         coulomb_limit = sgn * self.pair.mu_static * Fn
 
-        # Synchronize annular bristle state with physical asperity slip strain if uninitialized:
-        if abs(state.bristle_deflection) < 1e-12 and c_over_a < 1.0:
+        # In static equilibrium at zero velocity (v_cmd == 0), if bristle state is uninitialized,
+        # synchronize bristle deflection with the static Coulomb capacity so that
+        # Ft_hybrid identically equals Ft_cm without artificial force discrepancy:
+        if abs(state.bristle_deflection) < 1e-12 and c_over_a < 1.0 and abs(v_cmd) < 1e-12:
             state.bristle_deflection = coulomb_limit / self.params.sigma_0
 
         # CP2-04 Stick-to-Slip Relaxation under normal load reduction

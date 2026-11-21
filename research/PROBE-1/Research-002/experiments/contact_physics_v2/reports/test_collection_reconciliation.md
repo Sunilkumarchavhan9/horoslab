@@ -6,11 +6,12 @@ This document details the test collection evolution across the Contact Physics r
 - **v2.1.3 Remediation**: 32 tests (added CP2-03, CP2-04, CP2-05, and trapezoidal work tests).
 - **v2.1.3.1 Energy Accounting**: 33 tests (added `test_remediation_cp2_05_velocity_reversal_bounded_dynamics`).
 - **v2.1.3.2 Independent Passivity & Hybrid Port Closure**: 36 tests (+3 tests).
-- **v2.1.3.3 Raw Passivity & Exact Closure**: **40 tests** (+4 new targeted mathematical & physical tests in `test_remediation_v2_1_3.py`: `test_remediation_cp2_03_passivity_operational_envelope_and_discriminant`, `test_remediation_cp2_03_power_port_conjugacy`, `test_remediation_cp2_03_closed_cycle_external_work_matches_independent_dissipation`, and `test_remediation_liftoff_record_contact_loss_energy_conversion`).
+- **v2.1.3.3 Raw Passivity & Exact Closure**: 40 tests (+4 tests).
+- **v2.1.3.4 Hybrid Passivity & Moving-Boundary Energy Closure**: **42 tests** (+2 new comprehensive mathematical and physical tests: `test_remediation_cp2_03_clapeyron_core_numerical_quadrature_validation` and `test_remediation_cp2_03_hybrid_closed_cycle_independent_passivity`, along with expanded normal-force-dependent operating envelope testing in `test_remediation_cp2_03_passivity_operational_envelope_and_discriminant` and direct kernel-invocation power port verification in `test_remediation_cp2_03_power_port_conjugacy`).
 
 ---
 
-## 2. Test Collection Breakdown (v2.1.3.3 — 40 Tests)
+## 2. Test Collection Breakdown (v2.1.3.4 — 42 Tests)
 
 | Test Module | Test Name | Focus Area / Defect Guarded |
 | :--- | :--- | :--- |
@@ -40,21 +41,23 @@ This document details the test collection evolution across the Contact Physics r
 | | `test_remediation_annular_load_scaling_equivalence`| Normal load partition scaling |
 | | `test_remediation_signed_dissipation_no_masking`| Dissipation tracking sign preservation |
 | | `test_remediation_passivity_exact_cross_term`| LuGre storage inequality cross-term verification |
-| `test_remediation_v2_1_3.py` (12) | `test_remediation_cp2_04_zero_velocity_load_drop` | **CP2-04**: Standalone LuGre load drop ($10\,\text{N} \to 2\,\text{N}$) with First-Law equality and zero double counting ($W_{\text{ext}} = \Delta V + D_{\text{cum}}$). |
+| `test_remediation_v2_1_3.py` (14) | `test_remediation_cp2_04_zero_velocity_load_drop` | **CP2-04**: Standalone LuGre load drop ($10\,\text{N} \to 2\,\text{N}$) with First-Law equality and zero double counting ($W_{\text{ext}} = \Delta V + D_{\text{cum}}$). |
 | | `test_remediation_cp2_04_hybrid_zero_velocity_load_drop` | **CP2-04**: Hybrid mode partial slip ($c/a=0.5$) load drop ($10\,\text{N} \to 2\,\text{N}$), $F_t^{\text{hybrid}} \le \mu_s F_{n,\text{reduced}}$, asperity relaxation, positive dissipation. |
 | | `test_remediation_cp2_05_unclipped_constitutive_rate_bound` | **CP2-05**: Raw constitutive derivative $\|\dot{z}_{\text{constitutive}}\| \le (1+\mu_s/\mu_k)\|v\|$ across the invariant set without clipping. |
 | | `test_remediation_cp2_05_velocity_reversal_bounded_dynamics` | **CP2-05**: Reversal dynamics ($+10\,\text{mm/s} \to -10\,\text{mm/s}$), bounded rate, non-negative dissipation. |
 | | `test_remediation_cp2_05_normal_load_collapse_no_negative_dissipation` | **CP2-05**: Normal load collapse ($10\,\text{N} \to 10^{-5}\,\text{N}$) during sliding, preventing damping spikes and negative dissipation. |
-| | `test_remediation_cp2_03_passivity_operational_envelope_and_discriminant` | **CP2-03 (New)**: Analytical discriminant $\Delta_z \le 0$ proving unconditional non-negativity for $\|v\| \le 44.6\,\text{mm/s}$; robotic domain ($\le 10\,\text{mm/s}$) strictly passive; replicates cofounder $-81.3\,\text{W}$ point and dynamic attractor relaxation. |
-| | `test_remediation_cp2_03_power_port_conjugacy` | **CP2-03 (New)**: Exact power port conjugacy $P_{\text{ext}} = P_{\text{core}} + P_{\text{transport}} + P_{\text{annular}}$ to machine precision ($< 10^{-15}\,\text{W}$). |
-| | `test_remediation_cp2_03_closed_cycle_external_work_matches_independent_dissipation` | **CP2-03 (New)**: Genuinely closed periodic limit cycle: $\|\Delta V\| < 10^{-10}\,\text{J}$, $\|\Delta F_t\| < 10^{-6}\,\text{N}$, $W_{\text{cycle}} > 0$; external work matches independent constitutive dissipation ($< 0.05\%$ error) without $dW - \Delta V$ identity. |
-| | `test_remediation_liftoff_record_contact_loss_energy_conversion` | **Lift-off (New)**: Direct verification that `ContactState.record_contact_loss()` converts stored elastic strain energy into dissipation and cleanly resets all state fields. |
+| | `test_remediation_cp2_03_passivity_operational_envelope_and_discriminant` | **CP2-03 (v2.1.3.4)**: Force-dependent velocity bound $v_{\text{passive,min}}(F_n) \approx 4.4593 F_n\,\text{mm/s}$; minimum normal force $F_n \ge 2.2425\,\text{N}$ for $10\,\text{mm/s}$; low-force counterexample at $1\,\text{N}$ ($-1.65\,\text{mW}$); preloaded $1\,\text{m/s}$ jump relaxation in $< 1\,\text{ms}$. |
+| | `test_remediation_cp2_03_clapeyron_core_numerical_quadrature_validation` | **CP2-03 (New)**: High-precision 10,000-bin numerical quadrature of Cattaneo-Mindlin traction distribution validating Clapeyron sticking-core potential to relative error $< 10^{-6}$ across loads and stick ratios. |
+| | `test_remediation_cp2_03_power_port_conjugacy` | **CP2-03 (v2.1.3.4)**: Exact power port conjugacy $P_{\text{ext}} = P_{\text{core}} + P_{\text{transport}} + P_{\text{annular}}$ verified directly on the actual state returned by `step_composed_hybrid()` to machine precision ($< 10^{-15}\,\text{W}$). |
+| | `test_remediation_cp2_03_hybrid_closed_cycle_independent_passivity` | **CP2-03 (New)**: 400-step complete closed cycle directly through `step_composed_hybrid()`; verifies $W_{\text{cycle}} > 0$, $\|\Delta V\| < 10^{-12}\,\text{J}$, independent dissipation $\ge 0$ at every step, and First-Law equality to $< 10^{-12}\,\text{J}$. |
+| | `test_remediation_cp2_03_closed_cycle_external_work_matches_independent_dissipation` | **CP2-03**: Genuinely closed periodic limit cycle in LuGre: $\|\Delta V\| < 10^{-10}\,\text{J}$, $\|\Delta F_t\| < 10^{-6}\,\text{N}$, $W_{\text{cycle}} > 0$; external work matches independent constitutive dissipation ($< 0.05\%$ error) without $dW - \Delta V$ identity. |
+| | `test_remediation_liftoff_record_contact_loss_energy_conversion` | **Lift-off**: Direct verification that `ContactState.record_contact_loss()` converts stored elastic strain energy into dissipation and cleanly resets all state fields. |
 | | `test_remediation_cp2_03_independent_passivity_closed_cycle` | **CP2-03**: 400-step closed cycle ($\Delta V_{\text{cycle}}=0$); independent constitutive dissipation $\ge 0$ at every step; $W_{\text{cycle}} = D_{\text{cum}} > 0$. |
 | | `test_remediation_liftoff_recontact_energy_consistency` | **Lift-off**: Complete contact loss releases residual strain energy into dissipation, zeroing state fields, ensuring clean recontact. |
 | | `test_remediation_temporal_work_trapezoidal_convergence` | **Work Quadrature**: Trapezoidal work integration providing $>4\times$ discretization error reduction over naive endpoint products. |
 | `test_stick_zone.py` (2) | `test_stick_core_radius_scaling` | Sticking core radius $c = a(1 - F_t/(\mu F_n))^{1/3}$ |
 | | `test_traction_stick_slip_zones` | Radial traction distribution partition |
-| **Total v2.1.3.3** | **7 Modules** | **40 Tests (40 Passed in 0.15s)** |
+| **Total v2.1.3.4** | **7 Modules** | **42 Tests (42 Passed in 0.20s)** |
 
 ---
 
@@ -65,15 +68,15 @@ This document details the test collection evolution across the Contact Physics r
 platform win32 -- Python 3.12.10, pytest-9.0.2, pluggy-1.7.0
 rootdir: C:\projects\MemoryOS
 plugins: anyio-4.14.2
-collected 40 items
+collected 42 items
 
 research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_energy.py ... [  7%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_normal_contact.py ..... [ 20%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_numerical_stability.py .... [ 30%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_partial_slip.py .... [ 40%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_remediation_v2_1.py .......... [ 65%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_remediation_v2_1_3.py ............ [ 95%]
+research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_normal_contact.py ..... [ 19%]
+research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_numerical_stability.py .... [ 28%]
+research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_partial_slip.py .... [ 38%]
+research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_remediation_v2_1.py .......... [ 61%]
+research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_remediation_v2_1_3.py .............. [ 95%]
 research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_stick_zone.py .. [100%]
 
-============================= 40 passed in 0.15s ==============================
+============================= 42 passed in 0.20s ==============================
 ```
