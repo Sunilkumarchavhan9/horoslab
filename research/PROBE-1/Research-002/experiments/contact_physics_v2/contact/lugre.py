@@ -225,6 +225,32 @@ class LuGreModel:
         applied velocity Tuple[float, float] = (total_Ft, v_applied).
         Propagating v_applied ensures the physical hardware tracks the passivity-certified trajectory.
         """
+        # Upfront atomic validation: ensure unsupported domains fail without mutating state (v2.1.3.11)
+        if require_valid_domain:
+            is_gross_cand = (stick_ratio <= 0.0) or state.is_gross_slipping or (cm_state is not None and cm_state.is_gross_slipping)
+            if geometry is not None and hasattr(geometry, "corner_radius") and geometry.corner_radius == 0.0 and not geometry.has_annular_partial_slip():
+                if is_gross_cand:
+                    raise ValueError(
+                        "Analytical boundary flux invalid during sharp flat punch gross slip: "
+                        "Sharp flat punch gross slip: instantaneous boundary collapse outside quasi-static domain"
+                    )
+            elif geometry is not None and (
+                (hasattr(geometry, "corner_radius") and geometry.corner_radius > 0.0) or
+                (hasattr(geometry, "flat_radius") and getattr(geometry, "flat_radius", 0.0) > 0.0)
+            ):
+                geom_desc = "Rounded flat punch" if hasattr(geometry, "corner_radius") else "Truncated dome flat plateau"
+                raise ValueError(
+                    f"Analytical boundary flux invalid for non-Hertzian geometry: "
+                    f"Non-Hertzian geometry ({geom_desc}): analytical formula is approximate outside spherical domain"
+                )
+            else:
+                # Hertzian spherical
+                if is_gross_cand:
+                    raise ValueError(
+                        "Analytical boundary flux invalid during spherical gross slip: "
+                        "Hertzian spherical gross slip: sticking core collapsed (c=0), boundary flux unsupported in full sliding"
+                    )
+
         if cm_state is not None:
             state.sync_reversal_history_from(cm_state)
 
@@ -335,12 +361,16 @@ class LuGreModel:
         # Sticking core carries net force Ft_core under uniform core displacement delta_t
         a = state.contact_radius
         kt_0 = 8.0 * self.pair.equivalent_shear_modulus * a if a > 0.0 else 1.0
-        Ft_core = Ft_cm_elastic - coulomb_limit * phi_slip
-        if geometry is not None and hasattr(geometry, 'has_annular_partial_slip') and not geometry.has_annular_partial_slip():
-            delta_t_mag = abs(Ft_cm_elastic) / kt_0 if kt_0 > 0.0 else 0.0
+        if is_gross or c_over_a <= 0.0:
+            Ft_core = 0.0
+            E_core = 0.0
         else:
-            delta_t_mag = (1.5 * abs(coulomb_limit) / kt_0) * max(0.0, 1.0 - c_over_a**2) if kt_0 > 0.0 else 0.0
-        E_core = 0.5 * abs(Ft_core) * delta_t_mag
+            Ft_core = Ft_cm_elastic - coulomb_limit * phi_slip
+            if geometry is not None and hasattr(geometry, 'has_annular_partial_slip') and not geometry.has_annular_partial_slip():
+                delta_t_mag = abs(Ft_cm_elastic) / kt_0 if kt_0 > 0.0 else 0.0
+            else:
+                delta_t_mag = (1.5 * abs(coulomb_limit) / kt_0) * max(0.0, 1.0 - c_over_a**2) if kt_0 > 0.0 else 0.0
+            E_core = 0.5 * abs(Ft_core) * delta_t_mag
         E_ann = 0.5 * self.params.sigma_0 * (z_next ** 2)
         new_elastic = E_core + phi_slip * E_ann
 
@@ -512,3 +542,52 @@ class LuGreModel:
             require_valid_domain=require_valid_domain,
         )
         return total_Ft, state.applied_slip_velocity
+
+    def step_hybrid_synchronized(
+        self,
+        cm_model: Any,
+        cm_state: ContactState,
+        state: ContactState,
+        v_cmd: float,
+        dt: float,
+        geometry: Optional[Any] = None,
+        enforce_passivity_envelope: bool = True,
+        require_valid_domain: bool = False,
+    ) -> Tuple[float, float]:
+        """
+        CP2-03 / v2.1.3.11 Synchronized Hybrid Stepping Architecture:
+        Executes a fully synchronized time-step across both Cattaneo-Mindlin and LuGre models,
+        guaranteeing that both models advance along the EXACT same physically applied velocity trajectory.
+
+        1. Determines passivity envelope limit v_passive(Fn).
+        2. If clamping is active, clamps v_cmd to v_applied = sgn(v_cmd) * v_passive(Fn).
+        3. Advances Cattaneo-Mindlin state using dx = v_applied * dt.
+        4. Advances LuGre dynamic hybrid state using v_applied.
+        5. Returns Tuple[total_Ft, v_applied].
+        """
+        Fn = state.normal_force
+        v_lim = self.compute_passive_velocity_limit(Fn)
+        if enforce_passivity_envelope and v_lim > 0.0 and abs(v_cmd) > v_lim:
+            v_applied = math.copysign(v_lim, v_cmd)
+            is_clamped = True
+        else:
+            v_applied = v_cmd
+            is_clamped = False
+
+        # Step Cattaneo-Mindlin model strictly with v_applied:
+        cm_model.step(cm_state, v_applied * dt, dt)
+
+        # Step LuGre hybrid kernel with the synchronized cm_state:
+        total_Ft = self.step_composed_hybrid(
+            state=state,
+            Ft_cm_elastic=cm_state.tangential_force,
+            v_cmd=v_applied,
+            stick_ratio=cm_state.stick_ratio,
+            dt=dt,
+            geometry=geometry,
+            enforce_passivity_envelope=False,  # Already clamped
+            cm_state=cm_state,
+            require_valid_domain=require_valid_domain,
+        )
+        state.is_velocity_clamped = is_clamped
+        return total_Ft, v_applied
