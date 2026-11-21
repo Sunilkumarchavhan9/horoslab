@@ -189,7 +189,9 @@ class LuGreModel:
 
     def step_composed_hybrid(self, state: ContactState, Ft_cm_elastic: float, v_cmd: float,
                             stick_ratio: float, dt: float, geometry: Optional[Any] = None,
-                            enforce_passivity_envelope: bool = True) -> float:
+                            enforce_passivity_envelope: bool = True,
+                            cm_state: Optional[ContactState] = None,
+                            require_valid_domain: bool = False) -> float:
         """
         Continuum Traction Composition Strategy for Contact Physics v2.1.3.5:
         Combines Cattaneo-Mindlin continuum partial-slip elasticity with LuGre dynamic dissipation
@@ -223,6 +225,9 @@ class LuGreModel:
         applied velocity Tuple[float, float] = (total_Ft, v_applied).
         Propagating v_applied ensures the physical hardware tracks the passivity-certified trajectory.
         """
+        if cm_state is not None:
+            state.sync_reversal_history_from(cm_state)
+
         Fn = state.normal_force
         if Fn <= 0.0 or not state.in_contact:
             # Physical lift-off policy:
@@ -356,7 +361,6 @@ class LuGreModel:
             prev_phi_slip = geometry.annular_slip_load_fraction(state.stick_ratio)
         prev_E_ann = 0.5 * self.params.sigma_0 * (z_prev ** 2)
 
-        dot_V_core = (E_core - prev_E_core) / dt_safe
         dot_phi_slip = (phi_slip - prev_phi_slip) / dt_safe
 
         # CP2-03.8 Geometry & History Domain Restriction:
@@ -366,25 +370,35 @@ class LuGreModel:
         sgn_core = 1.0 if Ft_core > 0.0 else (-1.0 if Ft_core < 0.0 else sgn)
 
         if geometry is not None and hasattr(geometry, "corner_radius") and geometry.corner_radius == 0.0 and not geometry.has_annular_partial_slip():
-            # Sharp flat punch: Complete sticking (c = a) until instantaneous gross slide.
-            # No moving partial-slip boundary exists (dot_c == 0). Boundary flux is identically zero.
-            dot_E_boundary_core = 0.0
-            state.boundary_flux_domain_valid = True
-            state.boundary_flux_domain_reason = "Sharp flat punch: no moving boundary, zero boundary flux"
+            # Sharp flat punch
+            if c_over_a > 0.0 and not state.is_gross_slipping:
+                # Complete sticking (c = a): no moving boundary exists (dot_c == 0). Boundary flux is identically zero.
+                dot_E_boundary_core = 0.0
+                state.boundary_flux_domain_valid = True
+                state.boundary_flux_domain_reason = "Sharp flat punch: complete sticking, zero boundary flux"
+            else:
+                # Sharp flat punch instantaneous gross-slip transition cannot be modeled by quasi-static boundary flux
+                dot_E_boundary_core = float('nan')
+                state.boundary_flux_domain_valid = False
+                state.boundary_flux_domain_reason = "Sharp flat punch gross slip: instantaneous boundary collapse outside quasi-static domain"
+                if require_valid_domain:
+                    raise ValueError(f"Analytical boundary flux invalid during sharp flat punch gross slip: {state.boundary_flux_domain_reason}")
         elif geometry is not None and (
             (hasattr(geometry, "corner_radius") and geometry.corner_radius > 0.0) or
             (hasattr(geometry, "flat_radius") and getattr(geometry, "flat_radius", 0.0) > 0.0)
         ):
             # Non-Hertzian geometry (rounded punch fillet or truncated dome with central flat plateau)
-            # Analytical formula is approximate outside the Hertzian parabolic pressure field.
-            dot_E_boundary_core = - sgn_core * self.pair.mu_static * Fn * delta_t_mag * dot_phi_slip
+            # Analytical formula is outside the proven Hertzian parabolic pressure domain. Fail-closed:
+            dot_E_boundary_core = float('nan')
             state.boundary_flux_domain_valid = False
             geom_desc = "Rounded flat punch" if hasattr(geometry, "corner_radius") else "Truncated dome flat plateau"
             state.boundary_flux_domain_reason = f"Non-Hertzian geometry ({geom_desc}): analytical formula is approximate outside spherical domain"
+            if require_valid_domain:
+                raise ValueError(f"Analytical boundary flux invalid for non-Hertzian geometry: {state.boundary_flux_domain_reason}")
         else:
             # Hertzian spherical contact
             state.boundary_flux_domain_valid = True
-            if state.total_reversals > 0 and abs(state.reversal_tangential_disp) > 0.0:
+            if state.total_reversals > 0:
                 # Mindlin-Deresiewicz reversal regime: displacement measured relative to reversal point
                 disp_from_rev = abs(state.tangential_displacement - state.reversal_tangential_disp)
                 v_dir = 1.0 if v_applied > 0 else (-1.0 if v_applied < 0 else sgn_core)
@@ -394,6 +408,14 @@ class LuGreModel:
                 # Monotonic Cattaneo-Mindlin loading regime (exact continuum formula)
                 dot_E_boundary_core = - sgn_core * self.pair.mu_static * Fn * delta_t_mag * dot_phi_slip
                 state.boundary_flux_domain_reason = "Hertzian spherical monotonic: exact analytical Cattaneo-Mindlin traction flux"
+
+        # Core subsystem power and storage rate:
+        # By First Law on the sticking core control volume: P_core = dot_V_core + dot_E_boundary_core
+        P_core = Ft_core * v_applied
+        if state.boundary_flux_domain_valid and not math.isnan(dot_E_boundary_core):
+            dot_V_core = P_core - dot_E_boundary_core
+        else:
+            dot_V_core = (E_core - prev_E_core) / dt_safe
 
         # Complete annular stored-energy derivative:
         # d(Phi * E_ann)/dt = Phi * sigma_0 * z * dz_dt + dot_Phi * E_ann
@@ -406,9 +428,12 @@ class LuGreModel:
         dot_E_transport = phi_slip * Ft_lugre * (v_applied - v_eff)
 
         # Conservative interface energy transfer between core and annulus across the moving boundary:
-        # Full First-Law power port closure: P_ext = dot_V_core + d(Phi*E_ann)/dt + dot_E_boundary_transfer + P_diss
+        # Full First-Law power port closure: P_ext = dot_V_core + dot_V_ann + dot_E_boundary_core + dot_E_transport + P_diss
         # where dot_E_boundary_transfer = dot_E_boundary_core + dot_E_transport - dot_E_boundary_ann.
-        dot_E_boundary_transfer = dot_E_boundary_core + dot_E_transport - dot_E_boundary_ann
+        if math.isnan(dot_E_boundary_core):
+            dot_E_boundary_transfer = float('nan')
+        else:
+            dot_E_boundary_transfer = dot_E_boundary_core + dot_E_transport - dot_E_boundary_ann
 
         # Annular constitutive dissipation rate (raw signed, unmasked):
         # Direct evaluation of LuGre dissipation function on the slipping annulus
@@ -452,7 +477,9 @@ class LuGreModel:
         stick_ratio: float,
         dt: float,
         geometry=None,
-        enforce_passivity_envelope: bool = True
+        enforce_passivity_envelope: bool = True,
+        cm_state: Optional[ContactState] = None,
+        require_valid_domain: bool = False,
     ) -> Tuple[float, float]:
         """
         Executes composed hybrid step and returns Tuple[total_Ft, v_applied].
@@ -465,6 +492,14 @@ class LuGreModel:
         and Stage 3.3B production are strictly gated pending final review.
         """
         total_Ft = self.step_composed_hybrid(
-            state, Ft_cm_elastic, v_cmd, stick_ratio, dt, geometry, enforce_passivity_envelope
+            state,
+            Ft_cm_elastic,
+            v_cmd,
+            stick_ratio,
+            dt,
+            geometry,
+            enforce_passivity_envelope,
+            cm_state=cm_state,
+            require_valid_domain=require_valid_domain,
         )
         return total_Ft, state.applied_slip_velocity

@@ -86,6 +86,19 @@ class ContactState:
     contact_established_time: float = 0.0
     contact_loss_count: int = 0
 
+    def sync_reversal_history_from(self, source: "ContactState") -> None:
+        """
+        Synchronizes reversal history, displacement, and kinematics from a source state
+        (e.g., from a Cattaneo-Mindlin partial-slip model) to ensure history-consistent coupling
+        without overwriting the pre-step stick ratio used for moving-boundary flux calculation.
+        """
+        self.total_reversals = source.total_reversals
+        self.reversal_tangential_disp = source.reversal_tangential_disp
+        self.reversal_tangential_force = source.reversal_tangential_force
+        self.tangential_displacement = source.tangential_displacement
+        self.loading_direction = source.loading_direction
+        self.is_gross_slipping = source.is_gross_slipping
+
     def record_contact_loss(self):
         """Reset contact fields when body separates from surface, preserving lifecycle counts and First-Law passivity."""
         if self.in_contact:
