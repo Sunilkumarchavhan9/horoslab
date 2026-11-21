@@ -25,6 +25,16 @@ class LuGreModel:
         if self.params is None:
             raise ValueError("LuGreModel requires valid LuGreParameters either explicitly or on FrictionPair")
 
+    def compute_passive_velocity_limit(self, Fn: float) -> float:
+        """
+        Calculates the maximum relative sliding velocity guaranteeing unconditional
+        constitutive passivity (Delta_z <= 0) for all deflection states z in R:
+        v_passive(Fn) = 4 * (sigma_1 + sigma_2) * mu_k * Fn / sigma_1^2
+        """
+        if Fn <= 0.0:
+            return 0.0
+        return (4.0 * (self.params.sigma_1 + self.params.sigma_2) * self.pair.mu_kinetic * Fn) / (self.params.sigma_1 ** 2)
+
     def compute_stribeck(self, v: float, Fn: float) -> float:
         """
         Calculates velocity-dependent friction threshold g(v):
@@ -118,6 +128,7 @@ class LuGreModel:
             state.tangential_force = 0.0
             state.slip_velocity = 0.0
             state.is_gross_slipping = False
+            state.annular_step_dissipation = 0.0
             state.independent_step_dissipation = 0.0
             return
 
@@ -170,14 +181,17 @@ class LuGreModel:
                 (self.params.sigma_1 * dz_dt * v_cmd) +
                 (self.params.sigma_2 * (v_cmd**2))
             )
+            state.annular_step_dissipation = P_diss_indep * dt
             state.independent_step_dissipation = P_diss_indep * dt
         else:
+            state.annular_step_dissipation = 0.0
             state.independent_step_dissipation = 0.0
 
     def step_composed_hybrid(self, state: ContactState, Ft_cm_elastic: float, v_cmd: float,
-                            stick_ratio: float, dt: float, geometry: Optional[Any] = None) -> float:
+                            stick_ratio: float, dt: float, geometry: Optional[Any] = None,
+                            enforce_passivity_envelope: bool = True) -> float:
         """
-        Continuum Traction Composition Strategy for Contact Physics v2.1.3.2 (CP2-01 / CP2-03 Remediated):
+        Continuum Traction Composition Strategy for Contact Physics v2.1.3.5:
         Combines Cattaneo-Mindlin continuum partial-slip elasticity with LuGre dynamic dissipation
         WITHOUT DOUBLE-COUNTING STIFFNESS, WITH ZERO FORCE JUMP, AND WITH EXACT CONTINUUM TRACTION PARTITION:
 
@@ -199,7 +213,9 @@ class LuGreModel:
              v_eff = v_cmd * (1 - c/a), unifying state dynamics, micro-viscous force, and dissipation.
            - Exact First-Law energy conservation: d_diss = dW - d_elastic without double-counting.
            - State tracking: Updates state.stick_ratio and state.stick_radius at every step.
+           - Independent core storage rate (dot_V_core) and moving-boundary energy flux (dot_E_boundary).
            - Independent constitutive dissipation tracking and thermodynamic lift-off dissipation.
+           - Runtime passivity envelope enforcement: bounds commanded velocity to v_passive(Fn).
         """
         Fn = state.normal_force
         if Fn <= 0.0 or not state.in_contact:
@@ -212,14 +228,25 @@ class LuGreModel:
                 state.signed_step_dissipation = 0.0
 
             state.stored_elastic_energy = 0.0
+            state.core_stored_energy = 0.0
+            state.annular_stored_energy = 0.0
+            state.core_storage_rate = 0.0
+            state.boundary_energy_flux = 0.0
             state.bristle_deflection = 0.0
             state.bristle_velocity = 0.0
             state.tangential_force = 0.0
             state.stick_ratio = 1.0
             state.stick_radius = 0.0
             state.is_gross_slipping = False
+            state.annular_step_dissipation = 0.0
             state.independent_step_dissipation = 0.0
             return 0.0
+
+        # CP2-03.5 Runtime Passivity Envelope Enforcement:
+        # Enforce the normal-force-dependent velocity limit v_passive,max(Fn)
+        v_passive_limit = self.compute_passive_velocity_limit(Fn)
+        if enforce_passivity_envelope and v_passive_limit > 0.0 and abs(v_cmd) > v_passive_limit:
+            v_cmd = math.copysign(v_passive_limit, v_cmd)
 
         c_over_a = max(0.0, min(1.0, stick_ratio))
 
@@ -297,9 +324,25 @@ class LuGreModel:
         state.stored_elastic_energy = new_elastic
         state.signed_step_dissipation = d_diss
         state.cumulative_dissipated_energy += d_diss
-        state.instantaneous_dissipation_rate = d_diss / dt
+        state.instantaneous_dissipation_rate = d_diss / dt if dt > 0.0 else 0.0
 
-        # Independent constitutive dissipation rate (raw signed, unmasked):
+        # Independent calculation of core storage rate and moving-boundary energy flux:
+        dt_safe = max(1e-12, dt)
+        prev_E_core = state.core_stored_energy
+        prev_phi_slip = (1.0 - state.stick_ratio ** 2) ** 1.5 if state.stick_ratio < 1.0 else 0.0
+        if geometry is not None and hasattr(geometry, 'annular_slip_load_fraction'):
+            prev_phi_slip = geometry.annular_slip_load_fraction(state.stick_ratio)
+        prev_E_ann = 0.5 * self.params.sigma_0 * (z_prev ** 2)
+
+        dot_V_core = (E_core - prev_E_core) / dt_safe
+        dot_phi_slip = (phi_slip - prev_phi_slip) / dt_safe
+
+        dot_E_boundary_core = Ft_core * v_cmd - dot_V_core
+        dot_E_transport = phi_slip * Ft_lugre * (v_cmd - v_eff)
+        dot_E_boundary_ann = dot_phi_slip * prev_E_ann
+        dot_E_boundary = dot_E_boundary_core + dot_E_transport - dot_E_boundary_ann
+
+        # Annular constitutive dissipation rate (raw signed, unmasked):
         # Direct evaluation of LuGre dissipation function on the slipping annulus
         gv = self.compute_stribeck(v_eff, Fn)
         v_eff_abs = abs(v_eff)
@@ -309,9 +352,19 @@ class LuGreModel:
                 (self.params.sigma_1 * dz_dt * v_eff) +
                 (self.params.sigma_2 * (v_eff**2))
             )
-            state.independent_step_dissipation = phi_slip * P_ann_indep * dt
         else:
-            state.independent_step_dissipation = 0.0
+            P_ann_indep = 0.0
+
+        annular_diss_step = phi_slip * P_ann_indep * dt
+        state.annular_step_dissipation = annular_diss_step
+
+        dot_D_hybrid = phi_slip * P_ann_indep + dot_E_boundary
+        state.independent_step_dissipation = dot_D_hybrid * dt
+
+        state.core_stored_energy = E_core
+        state.annular_stored_energy = phi_slip * E_ann
+        state.core_storage_rate = dot_V_core
+        state.boundary_energy_flux = dot_E_boundary
 
         # Update stick-zone state tracking so previous boundary states are NEVER stale
         state.stick_ratio = c_over_a

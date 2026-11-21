@@ -58,11 +58,16 @@ class ContactState:
     bristle_velocity: float = 0.0         # dz/dt (m/s)
 
     # Energetics & Passivity
-    stored_elastic_energy: float = 0.0    # E_elastic (Joules)
+    stored_elastic_energy: float = 0.0    # E_elastic (Joules, total hybrid stored elastic energy)
+    core_stored_energy: float = 0.0       # V_core (Joules, Clapeyron sticking-core elastic potential)
+    annular_stored_energy: float = 0.0    # Phi_slip * V_ann (Joules, annular bristle elastic potential)
     signed_step_dissipation: float = 0.0  # dW - dE_elastic (Joules, unmasked signed step residual)
-    independent_step_dissipation: float = 0.0 # Constitutive physical dissipation (Joules, independent of dW/dV)
+    annular_step_dissipation: float = 0.0 # Constitutive annular slip dissipation (Joules, strictly >= 0 within envelope)
+    independent_step_dissipation: float = 0.0 # Total independent hybrid dissipation (Joules, independent of dW - dV)
     cumulative_dissipated_energy: float = 0.0  # E_diss (Joules, strictly >= 0)
     instantaneous_dissipation_rate: float = 0.0 # Power dissipated (Watts)
+    core_storage_rate: float = 0.0        # dot_V_core (Watts)
+    boundary_energy_flux: float = 0.0     # dot_E_boundary (Watts)
 
     # Contact lifecycle events
     contact_established_time: float = 0.0
@@ -99,7 +104,12 @@ class ContactState:
             self.signed_step_dissipation = 0.0
 
         self.stored_elastic_energy = 0.0
+        self.core_stored_energy = 0.0
+        self.annular_stored_energy = 0.0
+        self.core_storage_rate = 0.0
+        self.boundary_energy_flux = 0.0
         self.instantaneous_dissipation_rate = 0.0
+        self.annular_step_dissipation = 0.0
         self.independent_step_dissipation = 0.0
 
     def verify_energy_passivity(self) -> bool:
