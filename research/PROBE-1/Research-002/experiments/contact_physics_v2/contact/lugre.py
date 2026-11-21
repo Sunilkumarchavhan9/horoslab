@@ -315,13 +315,16 @@ class LuGreModel:
         Ft_lugre = self.compute_friction_force(z_next, dz_dt, v_eff)
 
         prev_Ft = state.tangential_force
-        if c_over_a > 0.0:
+        is_gross = (c_over_a <= 0.0) or state.is_gross_slipping or (cm_state is not None and cm_state.is_gross_slipping)
+        if not is_gross and c_over_a > 0.0:
             # Exact continuum traction partition (CP2-01.1):
             total_Ft = Ft_cm_elastic + phi_slip * (Ft_lugre - coulomb_limit)
             state.is_gross_slipping = False
         else:
             total_Ft = Ft_lugre
             state.is_gross_slipping = True
+            c_over_a = 0.0
+            phi_slip = 1.0
 
         state.tangential_force = total_Ft
 
@@ -397,25 +400,31 @@ class LuGreModel:
                 raise ValueError(f"Analytical boundary flux invalid for non-Hertzian geometry: {state.boundary_flux_domain_reason}")
         else:
             # Hertzian spherical contact
-            state.boundary_flux_domain_valid = True
-            if state.total_reversals > 0:
+            if c_over_a <= 0.0 or state.is_gross_slipping:
+                # Hertzian spherical gross slip: sticking core collapsed (c=0), boundary flux unsupported in full sliding
+                dot_E_boundary_core = float('nan')
+                state.boundary_flux_domain_valid = False
+                state.boundary_flux_domain_reason = "Hertzian spherical gross slip: sticking core collapsed (c=0), boundary flux unsupported in full sliding"
+                if require_valid_domain:
+                    raise ValueError(f"Analytical boundary flux invalid during spherical gross slip: {state.boundary_flux_domain_reason}")
+            elif state.total_reversals > 0:
                 # Mindlin-Deresiewicz reversal regime: displacement measured relative to reversal point
                 disp_from_rev = abs(state.tangential_displacement - state.reversal_tangential_disp)
                 v_dir = 1.0 if v_applied > 0 else (-1.0 if v_applied < 0 else sgn_core)
                 dot_E_boundary_core = - v_dir * self.pair.mu_static * Fn * disp_from_rev * dot_phi_slip
+                state.boundary_flux_domain_valid = True
                 state.boundary_flux_domain_reason = "Hertzian spherical reversal: Mindlin-Deresiewicz reversal traction flux"
             else:
                 # Monotonic Cattaneo-Mindlin loading regime (exact continuum formula)
                 dot_E_boundary_core = - sgn_core * self.pair.mu_static * Fn * delta_t_mag * dot_phi_slip
+                state.boundary_flux_domain_valid = True
                 state.boundary_flux_domain_reason = "Hertzian spherical monotonic: exact analytical Cattaneo-Mindlin traction flux"
 
         # Core subsystem power and storage rate:
-        # By First Law on the sticking core control volume: P_core = dot_V_core + dot_E_boundary_core
+        # Independently calculated finite-difference rate of change of stored core elastic energy:
+        # dot_V_core = (E_core - prev_E_core) / dt_safe
         P_core = Ft_core * v_applied
-        if state.boundary_flux_domain_valid and not math.isnan(dot_E_boundary_core):
-            dot_V_core = P_core - dot_E_boundary_core
-        else:
-            dot_V_core = (E_core - prev_E_core) / dt_safe
+        dot_V_core = (E_core - prev_E_core) / dt_safe
 
         # Complete annular stored-energy derivative:
         # d(Phi * E_ann)/dt = Phi * sigma_0 * z * dz_dt + dot_Phi * E_ann

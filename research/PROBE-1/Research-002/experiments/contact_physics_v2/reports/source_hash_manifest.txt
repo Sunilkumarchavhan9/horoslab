@@ -1,5 +1,5 @@
-# Contact Physics v2.1.3.9 Source & Test SHA-256 Hash Manifest
-# Milestone: HOROS Contact Physics v2.1.3.9 - Reversal-State Coupling, Independent Full Hybrid Port Certification & Fail-Closed Geometry Enforcement
+# Contact Physics v2.1.3.10 Source & Test SHA-256 Hash Manifest
+# Milestone: HOROS Contact Physics v2.1.3.10 - Independent Core Storage, Hybrid Cycle Closure & Spherical Gross-Slip Domain Audit
 # Repository: https://github.com/Sunilkumarchavhan9/horoslab.git
 # Mirror: https://github.com/Sunilkumarchavhan9/horos-probe-1.git
 # Branch: feat/probe1-stage33-production-readiness
@@ -10,7 +10,7 @@ f44663828383f9d52d380b113d6565c80ec7e829f0dc21eb8e6f6985e9fb0da5  contact/__init
 a7fe0d6eba427be03fe77ab2229984cf671a01c1bcee89515a1f5efe7a4f15f7  contact/cattaneo_mindlin.py
 215d870728bd8e02c5a57914a869c74ebd58a62a973f9f8d7b48eb83a3a7bfc1  contact/contact_state.py
 6613016b7502aff062f15a7461eb2a7fdf2d97fa6cadb00d1ed6750067b20c13  contact/geometry.py
-026d74e80581507543ad859620288a752764f2accaeb65308dbc15e66e9916a2  contact/lugre.py
+e2b698e910c9bdb205364c3992a19299b0a82114b971612b35ce2a106dcbff56  contact/lugre.py
 768ebe35fafa668e316eaba2228ac91efee84ff8c60d3eb72386ddaef81913f3  contact/material.py
 a0829c25f1dbf88530557adaf36b067804d03a84c0fb23e92e832715e9b59241  contact/normal_contact.py
 
@@ -21,5 +21,5 @@ c6c0cebd0dc9057e482cd3d743a033203450266f34f78fb20363c71d19423247  tests/test_nor
 8907f82a1de652ae25d6da43746e3e318901501d9ff969f5856aef4e26c1909d  tests/test_numerical_stability.py
 3774b437e0a7065d7ff16bebccdeb82625fd3b045b9b391c751d7ad8e4e4cf3a  tests/test_partial_slip.py
 e7abe9316380ac0abb748df80b96b36eb880f180fe6d3e35ef899ee74e8c3f22  tests/test_remediation_v2_1.py
-e0a722f0c274c5fd6f5bbbd006e8b1ccabc502870909934df9ac279ac5390391  tests/test_remediation_v2_1_3.py
+ba7b88b477727caabd9bfad6efc6bb73ff0dd2808abffb525cd6c4bff26fc4d8  tests/test_remediation_v2_1_3.py
 7e9cc26025c5d7577fd3322e90b94b70c7d4c27e806cf5f810f38e26242b338f  tests/test_stick_zone.py
