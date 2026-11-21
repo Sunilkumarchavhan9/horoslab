@@ -57,17 +57,23 @@ class ContactState:
     bristle_deflection: float = 0.0       # z (m)
     bristle_velocity: float = 0.0         # dz/dt (m/s)
 
+    # Actuator passivity envelope state
+    applied_slip_velocity: float = 0.0    # Actual applied velocity after passivity bounding (m/s)
+    is_velocity_clamped: bool = False     # Whether commanded velocity was clamped by passivity envelope
+    passive_velocity_limit: float = 0.0   # v_passive,max(Fn) computed for this step (m/s)
+
     # Energetics & Passivity
     stored_elastic_energy: float = 0.0    # E_elastic (Joules, total hybrid stored elastic energy)
     core_stored_energy: float = 0.0       # V_core (Joules, Clapeyron sticking-core elastic potential)
     annular_stored_energy: float = 0.0    # Phi_slip * V_ann (Joules, annular bristle elastic potential)
     signed_step_dissipation: float = 0.0  # dW - dE_elastic (Joules, unmasked signed step residual)
     annular_step_dissipation: float = 0.0 # Constitutive annular slip dissipation (Joules, strictly >= 0 within envelope)
-    independent_step_dissipation: float = 0.0 # Total independent hybrid dissipation (Joules, independent of dW - dV)
+    independent_step_dissipation: float = 0.0 # Pure irreversible frictional dissipation Phi_slip * D_ann (Joules, strictly >= 0)
     cumulative_dissipated_energy: float = 0.0  # E_diss (Joules, strictly >= 0)
     instantaneous_dissipation_rate: float = 0.0 # Power dissipated (Watts)
     core_storage_rate: float = 0.0        # dot_V_core (Watts)
-    boundary_energy_flux: float = 0.0     # dot_E_boundary (Watts)
+    boundary_energy_flux: float = 0.0     # dot_E_boundary_transfer (Watts, conservative interface flux)
+    reversible_boundary_transfer: float = 0.0 # Conservative energy transferred across moving stick-slip interface (Joules)
 
     # Contact lifecycle events
     contact_established_time: float = 0.0
@@ -94,6 +100,9 @@ class ContactState:
         self.reverse_stick_radius = 0.0
         self.bristle_deflection = 0.0
         self.bristle_velocity = 0.0
+        self.applied_slip_velocity = 0.0
+        self.is_velocity_clamped = False
+        self.passive_velocity_limit = 0.0
 
         # Physical lift-off energy release:
         # Any remaining stored elastic energy dissipates to heat upon complete separation
@@ -108,6 +117,7 @@ class ContactState:
         self.annular_stored_energy = 0.0
         self.core_storage_rate = 0.0
         self.boundary_energy_flux = 0.0
+        self.reversible_boundary_transfer = 0.0
         self.instantaneous_dissipation_rate = 0.0
         self.annular_step_dissipation = 0.0
         self.independent_step_dissipation = 0.0

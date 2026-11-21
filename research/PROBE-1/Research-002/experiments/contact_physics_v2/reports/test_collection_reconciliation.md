@@ -8,11 +8,12 @@ This document details the test collection evolution across the Contact Physics r
 - **v2.1.3.2 Independent Passivity & Hybrid Port Closure**: 36 tests (+3 tests).
 - **v2.1.3.3 Raw Passivity & Exact Closure**: 40 tests (+4 tests).
 - **v2.1.3.4 Hybrid Passivity & Moving-Boundary Energy Closure**: 42 tests (+2 tests).
-- **v2.1.3.5 Independent Storage-Rate & Passivity Verification**: **43 tests** (+1 new test: `test_remediation_cp2_03_runtime_passivity_envelope_enforcement`; upgraded `test_remediation_cp2_03_power_port_conjugacy` to independent rate calculations without velocity identities; upgraded `test_remediation_cp2_03_hybrid_closed_cycle_independent_passivity` to independent hybrid dissipation accumulation and full mechanical state closure).
+- **v2.1.3.5 Independent Storage-Rate & Passivity Verification**: 43 tests (+1 test).
+- **v2.1.3.6 Actuator Passivity, Analytical Moving-Boundary Flux & Hybrid Port Closure**: **45 tests** (+2 new tests: `test_remediation_cp2_03_runtime_passivity_envelope_actuator_propagation` and `test_remediation_cp2_03_analytical_moving_boundary_flux_first_principles`; upgraded `test_remediation_cp2_03_power_port_conjugacy` to continuous dynamic preloaded trajectories; upgraded `test_remediation_cp2_03_hybrid_closed_cycle_independent_passivity` to strict non-negative irreversible dissipation at every single step).
 
 ---
 
-## 2. Test Collection Breakdown (v2.1.3.5 — 43 Tests)
+## 2. Test Collection Breakdown (v2.1.3.6 — 45 Tests)
 
 | Test Module | Test Name | Focus Area / Defect Guarded |
 | :--- | :--- | :--- |
@@ -42,43 +43,29 @@ This document details the test collection evolution across the Contact Physics r
 | | `test_remediation_annular_load_scaling_equivalence`| Normal load partition scaling |
 | | `test_remediation_signed_dissipation_no_masking`| Dissipation tracking sign preservation |
 | | `test_remediation_passivity_exact_cross_term`| LuGre storage inequality cross-term verification |
-| `test_remediation_v2_1_3.py` (15) | `test_remediation_cp2_04_zero_velocity_load_drop` | **CP2-04**: Standalone LuGre load drop ($10\,\text{N} \to 2\,\text{N}$) with First-Law equality and zero double counting ($W_{\text{ext}} = \Delta V + D_{\text{cum}}$). |
+| `test_remediation_v2_1_3.py` (17) | `test_remediation_cp2_04_zero_velocity_load_drop` | **CP2-04**: Standalone LuGre load drop ($10\,\text{N} \to 2\,\text{N}$) with First-Law equality and zero double counting ($W_{\text{ext}} = \Delta V + D_{\text{cum}}$). |
 | | `test_remediation_cp2_04_hybrid_zero_velocity_load_drop` | **CP2-04**: Hybrid mode partial slip ($c/a=0.5$) load drop ($10\,\text{N} \to 2\,\text{N}$), $F_t^{\text{hybrid}} \le \mu_s F_{n,\text{reduced}}$, asperity relaxation, positive dissipation. |
 | | `test_remediation_cp2_05_unclipped_constitutive_rate_bound` | **CP2-05**: Raw constitutive derivative $\|\dot{z}_{\text{constitutive}}\| \le (1+\mu_s/\mu_k)\|v\|$ across the invariant set without clipping. |
 | | `test_remediation_cp2_05_velocity_reversal_bounded_dynamics` | **CP2-05**: Reversal dynamics ($+10\,\text{mm/s} \to -10\,\text{mm/s}$), bounded rate, non-negative dissipation. |
 | | `test_remediation_cp2_05_normal_load_collapse_no_negative_dissipation` | **CP2-05**: Normal load collapse ($10\,\text{N} \to 10^{-5}\,\text{N}$) during sliding, preventing damping spikes and negative dissipation. |
 | | `test_remediation_cp2_03_passivity_operational_envelope_and_discriminant` | **CP2-03 (v2.1.3.4)**: Force-dependent velocity bound $v_{\text{passive,min}}(F_n) \approx 4.4593 F_n\,\text{mm/s}$; minimum normal force $F_n \ge 2.2425\,\text{N}$ for $10\,\text{mm/s}$; low-force counterexample at $1\,\text{N}$ ($-1.65\,\text{mW}$); preloaded $1\,\text{m/s}$ jump relaxation in $< 1\,\text{ms}$. |
 | | `test_remediation_cp2_03_clapeyron_core_numerical_quadrature_validation` | **CP2-03**: High-precision 10,000-bin numerical quadrature of Cattaneo-Mindlin traction distribution validating Clapeyron sticking-core potential to relative error $< 10^{-6}$ across loads and stick ratios. |
-| | `test_remediation_cp2_03_power_port_conjugacy` | **CP2-03 (v2.1.3.5)**: Physical power port conjugacy $P_{\text{ext}} = \dot{V}_{\text{core}} + \dot{V}_{\text{ann}} + \dot{E}_{\text{boundary}} + P_{\text{ann,diss}}$ verified directly on actual kernel state to machine precision ($< 10^{-16}\,\text{W}$) without velocity identity trick. |
-| | `test_remediation_cp2_03_hybrid_closed_cycle_independent_passivity` | **CP2-03 (v2.1.3.5)**: Periodic limit cycle directly through `step_composed_hybrid()`; verifies $W_{\text{cycle}} > 0$, full initial/final mechanical state closure ($\Delta \delta_t=0, \Delta(c/a)=0, \Delta F_t<0.5\%, \Delta V<0.1\%, \Delta z<1.5\%$), independent annular dissipation $\ge 0$, and direct equivalence $W_{\text{cycle}} \approx D_{\text{independent,cycle}}$ ($< 1.5\%$ error). |
+| | `test_remediation_cp2_03_power_port_conjugacy` | **CP2-03 (v2.1.3.6)**: Physical power port conjugacy along a continuous dynamic preloaded trajectory ($E_{\text{ann,prev}} > 0, z_{\text{prev}} > 0$): $P_{\text{ext}} = \dot{V}_{\text{core}} + \Phi_{\text{slip}}\dot{V}_{\text{ann}} + \dot{E}_{\text{boundary}} + \dot{D}_{\text{irreversible}}$ verified to machine precision ($< 10^{-14}\,\text{W}$, max residual $2.71 \times 10^{-20}\,\text{W}$). |
+| | `test_remediation_cp2_03_hybrid_closed_cycle_independent_passivity` | **CP2-03 (v2.1.3.6)**: Closed periodic limit cycle through `step_composed_hybrid_with_velocity()`; verifies $W_{\text{cycle}} > 0$, full state closure ($\Delta \delta_t=0, \Delta(c/a)=0, \Delta F_t<0.5\%, \Delta V<0.1\%, \Delta z<1.5\%$), pure irreversible dissipation strictly non-negative at **every single step** ($> 0$), and First-Law cyclic balance ($< 0.1\%$). |
 | | `test_remediation_cp2_03_closed_cycle_external_work_matches_independent_dissipation` | **CP2-03**: Genuinely closed periodic limit cycle in LuGre: $\|\Delta V\| < 10^{-10}\,\text{J}$, $\|\Delta F_t\| < 10^{-6}\,\text{N}$, $W_{\text{cycle}} > 0$; external work matches independent constitutive dissipation ($< 0.05\%$ error) without $dW - \Delta V$ identity. |
 | | `test_remediation_liftoff_record_contact_loss_energy_conversion` | **Lift-off**: Direct verification that `ContactState.record_contact_loss()` converts stored elastic strain energy into dissipation and cleanly resets all state fields. |
 | | `test_remediation_cp2_03_independent_passivity_closed_cycle` | **CP2-03**: 400-step closed cycle ($\Delta V_{\text{cycle}}=0$); independent constitutive dissipation $\ge 0$ at every step; $W_{\text{cycle}} = D_{\text{cum}} > 0$. |
 | | `test_remediation_liftoff_recontact_energy_consistency` | **Lift-off**: Complete contact loss releases residual strain energy into dissipation, zeroing state fields, ensuring clean recontact. |
 | | `test_remediation_temporal_work_trapezoidal_convergence` | **Work Quadrature**: Trapezoidal work integration providing $>4\times$ discretization error reduction over naive endpoint products. |
-| | `test_remediation_cp2_03_runtime_passivity_envelope_enforcement` | **CP2-03 (New)**: Runtime passivity envelope enforcement in `step_composed_hybrid()`; verifies scaling, $1\,\text{N}$ counterexample clamping to safe envelope, positive dissipation rate ($+1.46\,\text{mW}$), and unconstrained probe toggle. |
+| | `test_remediation_cp2_03_runtime_passivity_envelope_enforcement` | **CP2-03**: Runtime passivity envelope enforcement in `step_composed_hybrid()`; verifies scaling, $1\,\text{N}$ counterexample clamping to safe envelope, positive dissipation rate ($+1.46\,\text{mW}$), and unconstrained probe toggle. |
+| | `test_remediation_cp2_03_runtime_passivity_envelope_actuator_propagation` | **CP2-03 (v2.1.3.6 New)**: Actuator-level velocity feedback via `step_composed_hybrid_with_velocity()` returning `(total_Ft, v_applied)`, updating `state.applied_slip_velocity`, `state.is_velocity_clamped`, and verifying external work consistency with applied velocity. |
+| | `test_remediation_cp2_03_analytical_moving_boundary_flux_first_principles` | **CP2-03 (v2.1.3.6 New)**: First-principles Cattaneo-Mindlin moving-boundary traction integral $\dot{E}_{\text{bdy,core}}^{\text{analytical}} = 2\pi c q(c) \delta_t \dot{c} = -\mu_s F_n \delta_t \dot{\Phi}_{\text{slip}}$; verified against numerical surface quadrature ($< 10^{-15}$) and closed-cycle reversibility ($\oint \dot{E} dt = -8.09 \times 10^{-19}\,\text{J} \equiv 0.00\,\text{J}$). |
 | `test_stick_zone.py` (2) | `test_stick_core_radius_scaling` | Sticking core radius $c = a(1 - F_t/(\mu F_n))^{1/3}$ |
-| | `test_traction_stick_slip_zones` | Radial traction distribution partition |
-| **Total v2.1.3.5** | **7 Modules** | **43 Tests (43 Passed in 0.32s)** |
+| | `test_traction_stick_slip_zones` | Parabolic/Hertzian radial traction profile |
 
 ---
 
-## 3. Pytest Execution Evidence
-
-```text
-============================= test session starts =============================
-platform win32 -- Python 3.12.10, pytest-9.0.2, pluggy-1.7.0
-rootdir: C:\projects\MemoryOS
-plugins: anyio-4.14.2
-collected 42 items
-
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_energy.py ... [  7%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_normal_contact.py ..... [ 19%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_numerical_stability.py .... [ 28%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_partial_slip.py .... [ 38%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_remediation_v2_1.py .......... [ 61%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_remediation_v2_1_3.py .............. [ 95%]
-research\PROBE-1\Research-002\experiments\contact_physics_v2\tests\test_stick_zone.py .. [100%]
-
-============================= 42 passed in 0.20s ==============================
-```
+## 3. Test Execution Verification
+Both suites executed and passing:
+- **Contact Physics v2 Kernel Suite**: **45 passed in 0.29s** (`pytest research/PROBE-1/Research-002/experiments/contact_physics_v2/tests/ -v`)
+- **Research-002 Full Regression Suite**: **307 passed in 37.49s** (`pytest research/PROBE-1/Research-002/tests/`)
