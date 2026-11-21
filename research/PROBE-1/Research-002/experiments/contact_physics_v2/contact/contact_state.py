@@ -79,6 +79,8 @@ class ContactState:
     kinematic_transport_flux: float = 0.0 # dot_E_transport = Phi_slip * Ft_lugre * (v_applied - v_eff) (Watts)
     boundary_energy_flux: float = 0.0     # Net conservative interface flux (Watts)
     reversible_boundary_transfer: float = 0.0 # Conservative energy transferred across moving stick-slip interface (Joules)
+    boundary_flux_domain_valid: bool = True   # Whether analytical boundary flux is within its proven mathematical domain (Hertzian spherical)
+    boundary_flux_domain_reason: str = "Hertzian Spherical Monotonic" # Description of geometric/history domain validity
 
     # Contact lifecycle events
     contact_established_time: float = 0.0

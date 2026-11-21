@@ -359,13 +359,41 @@ class LuGreModel:
         dot_V_core = (E_core - prev_E_core) / dt_safe
         dot_phi_slip = (phi_slip - prev_phi_slip) / dt_safe
 
-        # CP2-03.7 First-principles analytical moving-boundary flux for sticking core:
-        # Derived directly from Cattaneo-Mindlin boundary traction surface integral:
-        # dot_E_boundary_core = 2 * pi * c * q(c) * delta_t * dot_c
-        #                     = - sgn(Ft_core) * mu_s * Fn * delta_t * dot_phi_slip
-        # Evaluated strictly from contact mechanics, NOT as a power residual:
+        # CP2-03.8 Geometry & History Domain Restriction:
+        # The analytical formula is strictly exact for Hertzian spherical contact under Cattaneo-Mindlin traction.
+        # For non-Hertzian geometries (rounded punches with Ciavarella edge fields, truncated flat plateaus),
+        # or during Mindlin-Deresiewicz load reversal, the kernel explicitly tracks domain validity.
         sgn_core = 1.0 if Ft_core > 0.0 else (-1.0 if Ft_core < 0.0 else sgn)
-        dot_E_boundary_core = - sgn_core * self.pair.mu_static * Fn * delta_t_mag * dot_phi_slip
+
+        if geometry is not None and hasattr(geometry, "corner_radius") and geometry.corner_radius == 0.0 and not geometry.has_annular_partial_slip():
+            # Sharp flat punch: Complete sticking (c = a) until instantaneous gross slide.
+            # No moving partial-slip boundary exists (dot_c == 0). Boundary flux is identically zero.
+            dot_E_boundary_core = 0.0
+            state.boundary_flux_domain_valid = True
+            state.boundary_flux_domain_reason = "Sharp flat punch: no moving boundary, zero boundary flux"
+        elif geometry is not None and (
+            (hasattr(geometry, "corner_radius") and geometry.corner_radius > 0.0) or
+            (hasattr(geometry, "flat_radius") and getattr(geometry, "flat_radius", 0.0) > 0.0)
+        ):
+            # Non-Hertzian geometry (rounded punch fillet or truncated dome with central flat plateau)
+            # Analytical formula is approximate outside the Hertzian parabolic pressure field.
+            dot_E_boundary_core = - sgn_core * self.pair.mu_static * Fn * delta_t_mag * dot_phi_slip
+            state.boundary_flux_domain_valid = False
+            geom_desc = "Rounded flat punch" if hasattr(geometry, "corner_radius") else "Truncated dome flat plateau"
+            state.boundary_flux_domain_reason = f"Non-Hertzian geometry ({geom_desc}): analytical formula is approximate outside spherical domain"
+        else:
+            # Hertzian spherical contact
+            state.boundary_flux_domain_valid = True
+            if state.total_reversals > 0 and abs(state.reversal_tangential_disp) > 0.0:
+                # Mindlin-Deresiewicz reversal regime: displacement measured relative to reversal point
+                disp_from_rev = abs(state.tangential_displacement - state.reversal_tangential_disp)
+                v_dir = 1.0 if v_applied > 0 else (-1.0 if v_applied < 0 else sgn_core)
+                dot_E_boundary_core = - v_dir * self.pair.mu_static * Fn * disp_from_rev * dot_phi_slip
+                state.boundary_flux_domain_reason = "Hertzian spherical reversal: Mindlin-Deresiewicz reversal traction flux"
+            else:
+                # Monotonic Cattaneo-Mindlin loading regime (exact continuum formula)
+                dot_E_boundary_core = - sgn_core * self.pair.mu_static * Fn * delta_t_mag * dot_phi_slip
+                state.boundary_flux_domain_reason = "Hertzian spherical monotonic: exact analytical Cattaneo-Mindlin traction flux"
 
         # Complete annular stored-energy derivative:
         # d(Phi * E_ann)/dt = Phi * sigma_0 * z * dz_dt + dot_Phi * E_ann
@@ -378,6 +406,8 @@ class LuGreModel:
         dot_E_transport = phi_slip * Ft_lugre * (v_applied - v_eff)
 
         # Conservative interface energy transfer between core and annulus across the moving boundary:
+        # Full First-Law power port closure: P_ext = dot_V_core + d(Phi*E_ann)/dt + dot_E_boundary_transfer + P_diss
+        # where dot_E_boundary_transfer = dot_E_boundary_core + dot_E_transport - dot_E_boundary_ann.
         dot_E_boundary_transfer = dot_E_boundary_core + dot_E_transport - dot_E_boundary_ann
 
         # Annular constitutive dissipation rate (raw signed, unmasked):
@@ -428,6 +458,11 @@ class LuGreModel:
         Executes composed hybrid step and returns Tuple[total_Ft, v_applied].
         Provides actuator-level velocity feedback so controllers and simulators
         can observe when velocity clamping occurs to maintain passivity.
+
+        NOTE ON ACTUATOR INTEGRATION STATUS:
+        Currently verified via standalone closed-loop driver unit tests. No production
+        actuator consumer exists yet in the simulator, as multi-finger simulator integration
+        and Stage 3.3B production are strictly gated pending final review.
         """
         total_Ft = self.step_composed_hybrid(
             state, Ft_cm_elastic, v_cmd, stick_ratio, dt, geometry, enforce_passivity_envelope
