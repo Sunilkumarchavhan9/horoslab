@@ -71,8 +71,13 @@ class ContactState:
     independent_step_dissipation: float = 0.0 # Pure irreversible frictional dissipation Phi_slip * D_ann (Joules, strictly >= 0)
     cumulative_dissipated_energy: float = 0.0  # E_diss (Joules, strictly >= 0)
     instantaneous_dissipation_rate: float = 0.0 # Power dissipated (Watts)
-    core_storage_rate: float = 0.0        # dot_V_core (Watts)
-    boundary_energy_flux: float = 0.0     # dot_E_boundary_transfer (Watts, conservative interface flux)
+    # Separated storage rates and moving-boundary transfers (v2.1.3.7)
+    core_storage_rate: float = 0.0        # dot_V_core = dV_core/dt (Watts)
+    annular_storage_rate: float = 0.0     # dot_V_ann = Phi_slip * sigma_0 * z * dz_dt (Watts)
+    annular_boundary_flux: float = 0.0    # dot_E_bdy_ann = dot_Phi * E_ann (Watts)
+    analytical_core_boundary_flux: float = 0.0 # dot_E_bdy_core = -sgn * mu_s * Fn * delta_t * dot_Phi (Watts)
+    kinematic_transport_flux: float = 0.0 # dot_E_transport = Phi_slip * Ft_lugre * (v_applied - v_eff) (Watts)
+    boundary_energy_flux: float = 0.0     # Net conservative interface flux (Watts)
     reversible_boundary_transfer: float = 0.0 # Conservative energy transferred across moving stick-slip interface (Joules)
 
     # Contact lifecycle events
@@ -116,6 +121,10 @@ class ContactState:
         self.core_stored_energy = 0.0
         self.annular_stored_energy = 0.0
         self.core_storage_rate = 0.0
+        self.annular_storage_rate = 0.0
+        self.annular_boundary_flux = 0.0
+        self.analytical_core_boundary_flux = 0.0
+        self.kinematic_transport_flux = 0.0
         self.boundary_energy_flux = 0.0
         self.reversible_boundary_transfer = 0.0
         self.instantaneous_dissipation_rate = 0.0

@@ -216,6 +216,12 @@ class LuGreModel:
            - Independent core storage rate (dot_V_core) and moving-boundary energy flux (dot_E_boundary).
            - Independent constitutive dissipation tracking and thermodynamic lift-off dissipation.
            - Runtime passivity envelope enforcement: bounds commanded velocity to v_passive(Fn).
+
+        ACTUATOR AND SIMULATOR INTEGRATION NOTICE (v2.1.3.7):
+        This method returns only total_Ft. For physical actuator, robot, and simulator execution,
+        callers MUST use step_composed_hybrid_with_velocity() to obtain the passivity-bounded
+        applied velocity Tuple[float, float] = (total_Ft, v_applied).
+        Propagating v_applied ensures the physical hardware tracks the passivity-certified trajectory.
         """
         Fn = state.normal_force
         if Fn <= 0.0 or not state.in_contact:
@@ -231,6 +237,10 @@ class LuGreModel:
             state.core_stored_energy = 0.0
             state.annular_stored_energy = 0.0
             state.core_storage_rate = 0.0
+            state.annular_storage_rate = 0.0
+            state.annular_boundary_flux = 0.0
+            state.analytical_core_boundary_flux = 0.0
+            state.kinematic_transport_flux = 0.0
             state.boundary_energy_flux = 0.0
             state.reversible_boundary_transfer = 0.0
             state.applied_slip_velocity = 0.0
@@ -349,18 +359,26 @@ class LuGreModel:
         dot_V_core = (E_core - prev_E_core) / dt_safe
         dot_phi_slip = (phi_slip - prev_phi_slip) / dt_safe
 
-        # Sticking core mechanical power input:
-        P_core = Ft_core * v_applied
+        # CP2-03.7 First-principles analytical moving-boundary flux for sticking core:
+        # Derived directly from Cattaneo-Mindlin boundary traction surface integral:
+        # dot_E_boundary_core = 2 * pi * c * q(c) * delta_t * dot_c
+        #                     = - sgn(Ft_core) * mu_s * Fn * delta_t * dot_phi_slip
+        # Evaluated strictly from contact mechanics, NOT as a power residual:
+        sgn_core = 1.0 if Ft_core > 0.0 else (-1.0 if Ft_core < 0.0 else sgn)
+        dot_E_boundary_core = - sgn_core * self.pair.mu_static * Fn * delta_t_mag * dot_phi_slip
 
-        # Moving boundary energy flux across sticking core interface:
-        # dot_E_boundary_core = P_core - dot_V_core
-        dot_E_boundary_core = P_core - dot_V_core
+        # Complete annular stored-energy derivative:
+        # d(Phi * E_ann)/dt = Phi * sigma_0 * z * dz_dt + dot_Phi * E_ann
+        # 1. Annular bristle elastic storage rate:
+        dot_V_ann = phi_slip * self.params.sigma_0 * z_next * dz_dt
+        # 2. Annular moving-boundary stored-energy transfer:
+        dot_E_boundary_ann = dot_phi_slip * prev_E_ann
 
         # Kinematic transport flux between applied macro-velocity and micro-slip velocity:
         dot_E_transport = phi_slip * Ft_lugre * (v_applied - v_eff)
 
-        # Conservative interface energy transfer between core and annulus:
-        dot_E_boundary_transfer = dot_E_boundary_core + dot_E_transport
+        # Conservative interface energy transfer between core and annulus across the moving boundary:
+        dot_E_boundary_transfer = dot_E_boundary_core + dot_E_transport - dot_E_boundary_ann
 
         # Annular constitutive dissipation rate (raw signed, unmasked):
         # Direct evaluation of LuGre dissipation function on the slipping annulus
@@ -383,6 +401,10 @@ class LuGreModel:
         state.core_stored_energy = E_core
         state.annular_stored_energy = phi_slip * E_ann
         state.core_storage_rate = dot_V_core
+        state.annular_storage_rate = dot_V_ann
+        state.annular_boundary_flux = dot_E_boundary_ann
+        state.analytical_core_boundary_flux = dot_E_boundary_core
+        state.kinematic_transport_flux = dot_E_transport
         state.boundary_energy_flux = dot_E_boundary_transfer
         state.reversible_boundary_transfer = dot_E_boundary_transfer * dt
 
