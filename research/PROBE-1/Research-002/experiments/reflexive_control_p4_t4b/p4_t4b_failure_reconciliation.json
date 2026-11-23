@@ -1,0 +1,151 @@
+{
+  "total_episodes": 300,
+  "total_failures": 110,
+  "overall_failure_rate": 0.36666666666666664,
+  "clarification_of_reported_discrepancy": {
+    "apparent_contradiction": "Report text stated '54 failures occurred at v_shear = 5.0 mm/s (primarily fast tangential shocks)', while tangential shock disturbance had 27 failures (out of 60).",
+    "resolution": "54 is the total number of failures across ALL disturbance modes with v_shear = 5.0 mm/s (21 tangential shock + 14 shear ramp + 12 normal perturbation + 7 micro probe). Tangential shock accounted for 27 failures in total (21 at 5.0 mm/s and 6 at 2.5 mm/s). The text conflated the velocity level 5.0 mm/s with the disturbance type."
+  },
+  "by_disturbance_mode": {
+    "fast_ramp": {
+      "total_episodes": 60,
+      "failures": 50,
+      "successes": 10,
+      "success_rate": 0.16666666666666666,
+      "failure_rate": 0.8333333333333334
+    },
+    "tangential_shock": {
+      "total_episodes": 60,
+      "failures": 27,
+      "successes": 33,
+      "success_rate": 0.55,
+      "failure_rate": 0.45
+    },
+    "shear_ramp": {
+      "total_episodes": 60,
+      "failures": 14,
+      "successes": 46,
+      "success_rate": 0.7666666666666667,
+      "failure_rate": 0.23333333333333334
+    },
+    "normal_perturbation": {
+      "total_episodes": 60,
+      "failures": 12,
+      "successes": 48,
+      "success_rate": 0.8,
+      "failure_rate": 0.2
+    },
+    "micro_probe": {
+      "total_episodes": 60,
+      "failures": 7,
+      "successes": 53,
+      "success_rate": 0.8833333333333333,
+      "failure_rate": 0.11666666666666667
+    }
+  },
+  "by_shear_velocity": {
+    "1.0_mm_per_s": {
+      "total_episodes": 81,
+      "failures": 0,
+      "failure_rate": 0.0,
+      "success_rate": 1.0
+    },
+    "2.5_mm_per_s": {
+      "total_episodes": 78,
+      "failures": 6,
+      "failure_rate": 0.07692307692307693,
+      "success_rate": 0.9230769230769231
+    },
+    "5.0_mm_per_s": {
+      "total_episodes": 81,
+      "failures": 54,
+      "failure_rate": 0.6666666666666666,
+      "success_rate": 0.3333333333333333
+    },
+    "8.0_mm_per_s": {
+      "total_episodes": 60,
+      "failures": 50,
+      "failure_rate": 0.8333333333333334,
+      "success_rate": 0.16666666666666666
+    }
+  },
+  "cross_tabulation_disturbance_vs_velocity": {
+    "fast_ramp": {
+      "8.0_mm_per_s": {
+        "total": 60,
+        "failures": 50
+      }
+    },
+    "tangential_shock": {
+      "1.0_mm_per_s": {
+        "total": 21,
+        "failures": 0
+      },
+      "2.5_mm_per_s": {
+        "total": 18,
+        "failures": 6
+      },
+      "5.0_mm_per_s": {
+        "total": 21,
+        "failures": 21
+      }
+    },
+    "shear_ramp": {
+      "1.0_mm_per_s": {
+        "total": 21,
+        "failures": 0
+      },
+      "2.5_mm_per_s": {
+        "total": 18,
+        "failures": 0
+      },
+      "5.0_mm_per_s": {
+        "total": 21,
+        "failures": 14
+      }
+    },
+    "normal_perturbation": {
+      "1.0_mm_per_s": {
+        "total": 21,
+        "failures": 0
+      },
+      "2.5_mm_per_s": {
+        "total": 21,
+        "failures": 0
+      },
+      "5.0_mm_per_s": {
+        "total": 18,
+        "failures": 12
+      }
+    },
+    "micro_probe": {
+      "1.0_mm_per_s": {
+        "total": 18,
+        "failures": 0
+      },
+      "2.5_mm_per_s": {
+        "total": 21,
+        "failures": 0
+      },
+      "5.0_mm_per_s": {
+        "total": 21,
+        "failures": 7
+      }
+    }
+  },
+  "by_friction_stratum": {
+    "mu_0.35": {
+      "failure_count": 53,
+      "fraction_of_all_failures": 0.4818181818181818
+    },
+    "mu_0.55": {
+      "failure_count": 40,
+      "fraction_of_all_failures": 0.36363636363636365
+    },
+    "mu_0.75": {
+      "failure_count": 17,
+      "fraction_of_all_failures": 0.15454545454545454
+    }
+  },
+  "physics_root_cause": "Actuator rate limiting (50 N/s = 0.05 N/ms). At v_shear >= 5.0 mm/s, contact reaches macroscopic breakaway within < 5 ms, during which the actuator can add at most 0.25 N normal force, physically precluding closed-loop slip prevention."
+}

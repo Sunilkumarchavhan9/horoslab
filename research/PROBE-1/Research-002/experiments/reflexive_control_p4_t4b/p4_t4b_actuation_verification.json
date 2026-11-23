@@ -1,0 +1,179 @@
+{
+  "actuator_rate_limit_N_per_s": 50.0,
+  "actuator_step_limit_N_per_ms": 0.05,
+  "emergency_hold_horizon_ms": 100,
+  "emergency_boost_requested_N": 12.0,
+  "maximum_theoretical_increase_over_100ms_N": 5.0,
+  "measured_initial_emergency_fn_N": 5.05,
+  "measured_100ms_final_fn_N": 10.050000000000018,
+  "measured_realized_increase_over_100ms_N": 5.000000000000019,
+  "rate_limit_strictly_enforced": true,
+  "conclusion": "Requested emergency boost is +12.0 N, but the physical rate limiter of 50 N/s constrains the realized normal force increase to exactly 5.00 N over the 100 ms latch horizon. Rate limiter was fully respected without bypass.",
+  "sample_trajectory_snippet": [
+    {
+      "step": 14,
+      "time_ms": 15.000000000000007,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.0,
+      "commanded_fn": 5.05,
+      "realized_applied_fn": 5.05,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9490012814467969
+    },
+    {
+      "step": 15,
+      "time_ms": 16.000000000000007,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.05,
+      "commanded_fn": 5.1,
+      "realized_applied_fn": 5.1,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9458705473826228
+    },
+    {
+      "step": 16,
+      "time_ms": 17.000000000000007,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.1,
+      "commanded_fn": 5.1499999999999995,
+      "realized_applied_fn": 5.1499999999999995,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9427690926931592
+    },
+    {
+      "step": 17,
+      "time_ms": 18.00000000000001,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.15,
+      "commanded_fn": 5.199999999999999,
+      "realized_applied_fn": 5.199999999999999,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9396962578978709
+    },
+    {
+      "step": 18,
+      "time_ms": 19.00000000000001,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.2,
+      "commanded_fn": 5.249999999999999,
+      "realized_applied_fn": 5.249999999999999,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9366514043492996
+    },
+    {
+      "step": 19,
+      "time_ms": 20.00000000000001,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.25,
+      "commanded_fn": 5.299999999999999,
+      "realized_applied_fn": 5.299999999999999,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9336339133766522
+    },
+    {
+      "step": 20,
+      "time_ms": 21.00000000000001,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.299999999999997,
+      "commanded_fn": 5.349999999999999,
+      "realized_applied_fn": 5.349999999999999,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9306431854723458
+    },
+    {
+      "step": 21,
+      "time_ms": 22.000000000000014,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.349999999999998,
+      "commanded_fn": 5.399999999999999,
+      "realized_applied_fn": 5.399999999999999,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9276786395189716
+    },
+    {
+      "step": 22,
+      "time_ms": 23.000000000000014,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.4,
+      "commanded_fn": 5.449999999999998,
+      "realized_applied_fn": 5.449999999999998,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9247397120543144
+    },
+    {
+      "step": 23,
+      "time_ms": 24.000000000000014,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.45,
+      "commanded_fn": 5.499999999999998,
+      "realized_applied_fn": 5.499999999999998,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9218258565722219
+    },
+    {
+      "step": 24,
+      "time_ms": 25.000000000000014,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.5,
+      "commanded_fn": 5.549999999999998,
+      "realized_applied_fn": 5.549999999999998,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9189365428572636
+    },
+    {
+      "step": 25,
+      "time_ms": 26.000000000000018,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.549999999999997,
+      "commanded_fn": 5.599999999999998,
+      "realized_applied_fn": 5.599999999999998,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9160712563512567
+    },
+    {
+      "step": 26,
+      "time_ms": 27.000000000000018,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.599999999999998,
+      "commanded_fn": 5.649999999999998,
+      "realized_applied_fn": 5.649999999999998,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9132294975498626
+    },
+    {
+      "step": 27,
+      "time_ms": 28.000000000000018,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.65,
+      "commanded_fn": 5.6999999999999975,
+      "realized_applied_fn": 5.6999999999999975,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9104107814275683
+    },
+    {
+      "step": 28,
+      "time_ms": 29.000000000000018,
+      "op_state": 3,
+      "action": "emergency_slip_arrest",
+      "latched_target_fn": 17.699999999999996,
+      "commanded_fn": 5.749999999999997,
+      "realized_applied_fn": 5.749999999999997,
+      "slip_velocity": 0.0025,
+      "stick_ratio": 0.9076146368894851
+    }
+  ]
+}
