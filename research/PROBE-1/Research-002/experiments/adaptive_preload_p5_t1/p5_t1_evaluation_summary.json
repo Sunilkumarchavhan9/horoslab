@@ -1,0 +1,509 @@
+{
+  "benchmark": "HOROS PROBE-1 P5-T1 Adaptive Preload Planning Benchmark",
+  "timestamp": "2026-11-23 18:03:23 UTC",
+  "total_scenarios": 300,
+  "seed_range": [
+    4500001,
+    4500300
+  ],
+  "planners": {
+    "Fixed_3.0N": {
+      "success_rate": 0.6,
+      "success_95_ci": [
+        0.5466666666666666,
+        0.6566666666666666
+      ],
+      "total_episodes": 300,
+      "probe_induced_slips": 0,
+      "strata_stats": {
+        "mu_0.35": {
+          "count": 100,
+          "success_rate": 0.47,
+          "mean_fn": 13.586545454545536,
+          "peak_fn": 25.0,
+          "impulse": 7.472600000000049
+        },
+        "mu_0.55": {
+          "count": 100,
+          "success_rate": 0.6,
+          "mean_fn": 13.586545454545536,
+          "peak_fn": 25.0,
+          "impulse": 7.472600000000049
+        },
+        "mu_0.75": {
+          "count": 100,
+          "success_rate": 0.73,
+          "mean_fn": 13.586545454545536,
+          "peak_fn": 25.0,
+          "impulse": 7.472600000000049
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 0.7666666666666667
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 0.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 0.8833333333333333
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.55
+        },
+        "normal_perturbation": {
+          "count": 60,
+          "success_rate": 0.8
+        }
+      },
+      "preload_distribution": {
+        "p_3N": 1.0,
+        "p_5N": 0.0,
+        "p_8N": 0.0,
+        "p_12N": 0.0,
+        "mean_preload": 3.0
+      },
+      "average_fn_mean": 13.586545454545536,
+      "average_fn_median": 13.660000000000082,
+      "peak_fn_mean": 25.0,
+      "peak_fn_max": 25.0,
+      "impulse_spent_mean": 7.472600000000049,
+      "mechanical_work_mean_mJ": 20.787384750892823,
+      "tangential_work_mean_mJ": 5.105957210598553,
+      "damage_proxy_mean": 11.30004000000033,
+      "damage_proxy_max": 11.316750000000331,
+      "planning_latency_ms_mean": 0.0177050019071127,
+      "planning_latency_ms_p95": 0.025115016615018252,
+      "elapsed_seconds": 49.01
+    },
+    "Fixed_5.0N": {
+      "success_rate": 0.6,
+      "success_95_ci": [
+        0.5466666666666666,
+        0.6566666666666666
+      ],
+      "total_episodes": 300,
+      "probe_induced_slips": 0,
+      "strata_stats": {
+        "mu_0.35": {
+          "count": 100,
+          "success_rate": 0.47,
+          "mean_fn": 14.407796610169594,
+          "peak_fn": 25.0,
+          "impulse": 8.500600000000068
+        },
+        "mu_0.55": {
+          "count": 100,
+          "success_rate": 0.6,
+          "mean_fn": 14.407796610169594,
+          "peak_fn": 25.0,
+          "impulse": 8.500600000000068
+        },
+        "mu_0.75": {
+          "count": 100,
+          "success_rate": 0.73,
+          "mean_fn": 14.407796610169594,
+          "peak_fn": 25.0,
+          "impulse": 8.500600000000068
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 0.7666666666666667
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 0.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 0.8833333333333333
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.55
+        },
+        "normal_perturbation": {
+          "count": 60,
+          "success_rate": 0.8
+        }
+      },
+      "preload_distribution": {
+        "p_3N": 0.0,
+        "p_5N": 1.0,
+        "p_8N": 0.0,
+        "p_12N": 0.0,
+        "mean_preload": 5.0
+      },
+      "average_fn_mean": 14.407796610169596,
+      "average_fn_median": 14.476271186440783,
+      "peak_fn_mean": 25.0,
+      "peak_fn_max": 25.0,
+      "impulse_spent_mean": 8.500600000000068,
+      "mechanical_work_mean_mJ": 20.82328651659477,
+      "tangential_work_mean_mJ": 5.551675156970868,
+      "damage_proxy_mean": 15.22564000000033,
+      "damage_proxy_max": 15.316750000000336,
+      "planning_latency_ms_mean": 0.01718100024542461,
+      "planning_latency_ms_p95": 0.02390500740148127,
+      "elapsed_seconds": 47.54
+    },
+    "Fixed_8.0N": {
+      "success_rate": 0.6666666666666666,
+      "success_95_ci": [
+        0.6132500000000001,
+        0.72
+      ],
+      "total_episodes": 300,
+      "probe_induced_slips": 0,
+      "strata_stats": {
+        "mu_0.35": {
+          "count": 100,
+          "success_rate": 0.47,
+          "mean_fn": 15.450153846153976,
+          "peak_fn": 25.0,
+          "impulse": 10.042600000000093
+        },
+        "mu_0.55": {
+          "count": 100,
+          "success_rate": 0.6,
+          "mean_fn": 15.450153846153976,
+          "peak_fn": 25.0,
+          "impulse": 10.042600000000093
+        },
+        "mu_0.75": {
+          "count": 100,
+          "success_rate": 0.93,
+          "mean_fn": 15.450153846153976,
+          "peak_fn": 25.0,
+          "impulse": 10.042600000000093
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 0.7666666666666667
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 0.3333333333333333
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 0.8833333333333333
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.55
+        },
+        "normal_perturbation": {
+          "count": 60,
+          "success_rate": 0.8
+        }
+      },
+      "preload_distribution": {
+        "p_3N": 0.0,
+        "p_5N": 0.0,
+        "p_8N": 1.0,
+        "p_12N": 0.0,
+        "mean_preload": 8.0
+      },
+      "average_fn_mean": 15.450153846153981,
+      "average_fn_median": 15.512307692307823,
+      "peak_fn_mean": 25.0,
+      "peak_fn_max": 25.0,
+      "impulse_spent_mean": 10.042600000000093,
+      "mechanical_work_mean_mJ": 20.874092701355405,
+      "tangential_work_mean_mJ": 6.090631325598281,
+      "damage_proxy_mean": 21.00971000000041,
+      "damage_proxy_max": 21.31675000000043,
+      "planning_latency_ms_mean": 0.01663200130375723,
+      "planning_latency_ms_p95": 0.023405003594234586,
+      "elapsed_seconds": 47.07
+    },
+    "Fixed_12.0N": {
+      "success_rate": 0.6666666666666666,
+      "success_95_ci": [
+        0.6132500000000001,
+        0.72
+      ],
+      "total_episodes": 300,
+      "probe_induced_slips": 0,
+      "strata_stats": {
+        "mu_0.35": {
+          "count": 100,
+          "success_rate": 0.47,
+          "mean_fn": 16.57342465753437,
+          "peak_fn": 25.0,
+          "impulse": 12.0986000000001
+        },
+        "mu_0.55": {
+          "count": 100,
+          "success_rate": 0.6,
+          "mean_fn": 16.57342465753437,
+          "peak_fn": 25.0,
+          "impulse": 12.0986000000001
+        },
+        "mu_0.75": {
+          "count": 100,
+          "success_rate": 0.93,
+          "mean_fn": 16.57342465753437,
+          "peak_fn": 25.0,
+          "impulse": 12.0986000000001
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 0.7666666666666667
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 0.3333333333333333
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 0.8833333333333333
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.55
+        },
+        "normal_perturbation": {
+          "count": 60,
+          "success_rate": 0.8
+        }
+      },
+      "preload_distribution": {
+        "p_3N": 0.0,
+        "p_5N": 0.0,
+        "p_8N": 0.0,
+        "p_12N": 1.0,
+        "mean_preload": 12.0
+      },
+      "average_fn_mean": 16.57342465753437,
+      "average_fn_median": 16.6287671232878,
+      "peak_fn_mean": 25.0,
+      "peak_fn_max": 25.0,
+      "impulse_spent_mean": 12.098600000000102,
+      "mechanical_work_mean_mJ": 20.936709638903395,
+      "tangential_work_mean_mJ": 6.590905114041811,
+      "damage_proxy_mean": 28.70055000000041,
+      "damage_proxy_max": 29.316750000000432,
+      "planning_latency_ms_mean": 0.017439333993631106,
+      "planning_latency_ms_p95": 0.025600020308047533,
+      "elapsed_seconds": 47.95
+    },
+    "RuleBasedAdaptive": {
+      "success_rate": 0.6266666666666667,
+      "success_95_ci": [
+        0.5733333333333334,
+        0.68
+      ],
+      "total_episodes": 300,
+      "probe_induced_slips": 0,
+      "strata_stats": {
+        "mu_0.35": {
+          "count": 100,
+          "success_rate": 0.47,
+          "mean_fn": 15.369724591452314,
+          "peak_fn": 25.0,
+          "impulse": 10.083720000000083
+        },
+        "mu_0.55": {
+          "count": 100,
+          "success_rate": 0.6,
+          "mean_fn": 15.324680323623554,
+          "peak_fn": 25.0,
+          "impulse": 10.011760000000084
+        },
+        "mu_0.75": {
+          "count": 100,
+          "success_rate": 0.81,
+          "mean_fn": 15.132929249343755,
+          "peak_fn": 25.0,
+          "impulse": 9.698220000000079
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 0.7666666666666667
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 0.13333333333333333
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 0.8833333333333333
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.55
+        },
+        "normal_perturbation": {
+          "count": 60,
+          "success_rate": 0.8
+        }
+      },
+      "preload_distribution": {
+        "p_3N": 0.0,
+        "p_5N": 0.57,
+        "p_8N": 0.056666666666666664,
+        "p_12N": 0.37333333333333335,
+        "mean_preload": 7.783333333333333
+      },
+      "average_fn_mean": 15.275778054806542,
+      "average_fn_median": 14.476271186440783,
+      "peak_fn_mean": 25.0,
+      "peak_fn_max": 25.0,
+      "impulse_spent_mean": 9.931233333333415,
+      "mechanical_work_mean_mJ": 20.87204284450226,
+      "tangential_work_mean_mJ": 5.934630070222935,
+      "damage_proxy_mean": 20.5678753333337,
+      "damage_proxy_max": 29.316750000000432,
+      "planning_latency_ms_mean": 0.2788333328984057,
+      "planning_latency_ms_p95": 0.3615599591284991,
+      "elapsed_seconds": 47.46
+    },
+    "LearnedAdaptive": {
+      "success_rate": 0.6533333333333333,
+      "success_95_ci": [
+        0.6,
+        0.71
+      ],
+      "total_episodes": 300,
+      "probe_induced_slips": 0,
+      "strata_stats": {
+        "mu_0.35": {
+          "count": 100,
+          "success_rate": 0.47,
+          "mean_fn": 15.596307392259591,
+          "peak_fn": 25.0,
+          "impulse": 10.40240000000009
+        },
+        "mu_0.55": {
+          "count": 100,
+          "success_rate": 0.6,
+          "mean_fn": 15.561135296744242,
+          "peak_fn": 25.0,
+          "impulse": 10.34072000000009
+        },
+        "mu_0.75": {
+          "count": 100,
+          "success_rate": 0.89,
+          "mean_fn": 15.451146877176809,
+          "peak_fn": 25.0,
+          "impulse": 10.145400000000087
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 0.7666666666666667
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 0.26666666666666666
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 0.8833333333333333
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.55
+        },
+        "normal_perturbation": {
+          "count": 60,
+          "success_rate": 0.8
+        }
+      },
+      "preload_distribution": {
+        "p_3N": 0.0,
+        "p_5N": 0.26666666666666666,
+        "p_8N": 0.41,
+        "p_12N": 0.3233333333333333,
+        "mean_preload": 8.493333333333334
+      },
+      "average_fn_mean": 15.536196522060214,
+      "average_fn_median": 15.512307692307823,
+      "peak_fn_mean": 25.0,
+      "peak_fn_max": 25.0,
+      "impulse_spent_mean": 10.296173333333423,
+      "mechanical_work_mean_mJ": 20.887540932037094,
+      "tangential_work_mean_mJ": 6.1008982691055635,
+      "damage_proxy_mean": 21.92415900000039,
+      "damage_proxy_max": 29.316750000000432,
+      "planning_latency_ms_mean": 0.5178263327494884,
+      "planning_latency_ms_p95": 0.6739450094755739,
+      "elapsed_seconds": 47.63
+    }
+  },
+  "pairwise_comparisons": {
+    "Learned_vs_Fixed_5N": {
+      "b_learned_only": 16,
+      "c_fixed5_only": 0,
+      "mcnemar_stat": 14.0625,
+      "mcnemar_p_value": 8.841728520081471e-05,
+      "statistically_superior": true
+    },
+    "Learned_vs_Fixed_12N": {
+      "b_learned_only": 0,
+      "c_fixed12_only": 4,
+      "mcnemar_stat": 2.25,
+      "mcnemar_p_value": 0.06680720126885809,
+      "parity_within_3pct": true,
+      "force_reduction_pct": 6.258381456500165
+    }
+  },
+  "acceptance_matrix": {
+    "C1_overall_grasp_success": {
+      "value": 0.6533333333333333,
+      "threshold": ">= 0.70 (0.62 cond)",
+      "status": "CONDITIONAL_PASS"
+    },
+    "C2_low_friction_stabilization": {
+      "value": 0.47,
+      "threshold": ">= 0.50 (0.45 cond)",
+      "status": "CONDITIONAL_PASS"
+    },
+    "C3_high_friction_force_efficiency": {
+      "mean_fn": 15.451146877176809,
+      "success": 0.89,
+      "threshold": "Fn <= 14.0 N & succ >= 0.80",
+      "status": "CONDITIONAL_PASS"
+    },
+    "C4_superiority_over_fixed_5N": {
+      "value": 0.053333333333333344,
+      "p_value": 8.841728520081471e-05,
+      "status": "PASS"
+    },
+    "C5_force_savings_vs_fixed_12N": {
+      "force_diff": 1.037228135474157,
+      "succ_diff": -0.013333333333333308,
+      "status": "PASS"
+    },
+    "C6_probe_safety_zero_slips": {
+      "value": 0,
+      "threshold": "== 0",
+      "status": "PASS"
+    },
+    "C7_causality_and_observability": {
+      "value": "Verified (zero privileged states)",
+      "status": "PASS"
+    },
+    "C8_realtime_planning_latency": {
+      "p95_ms": 0.6739450094755739,
+      "threshold": "<= 0.50 ms",
+      "status": "CONDITIONAL_PASS"
+    },
+    "milestone_verdict": "CONDITIONAL_PASS"
+  }
+}

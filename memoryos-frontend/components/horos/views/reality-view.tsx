@@ -297,6 +297,7 @@ export function RealityView({
     return true;
   });
 
+
   return (
     <div className="space-y-6 max-w-[1240px] mx-auto pb-16 font-sans text-xs animate-in fade-in duration-150">
       {/* Top Header Matching Sleek Dark Style */}
@@ -688,3 +689,4 @@ export function RealityView({
     </div>
   );
 }
+

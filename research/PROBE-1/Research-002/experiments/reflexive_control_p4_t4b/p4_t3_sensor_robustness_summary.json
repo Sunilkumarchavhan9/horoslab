@@ -1,0 +1,68 @@
+{
+  "suite": "P4-T4B 4-Quadrant Tactile Sensor Noise Robustness",
+  "timestamp": "2026-11-23 12:23:36 UTC",
+  "checkpoint": "best_p4_t3_mlp.pt",
+  "total_test_episodes": 24,
+  "results": {
+    "Condition_A": {
+      "sigma_force_N": 0.02,
+      "sigma_disp_um": 0.5,
+      "precision": 1.0,
+      "recall": 0.7083333333333334,
+      "false_alarm_rate": 0.0,
+      "mean_lead_time_ms": 96.58823529411765,
+      "median_lead_time_ms": 69.99999999999999,
+      "future_margin_mae": 0.11586912640973947,
+      "brier_score": 0.04275576382180823,
+      "mean_uncertainty_var": 0.02535581245163472,
+      "p95_uncertainty_var": 0.05998397618532181,
+      "fallback_trigger_rate": 0.0,
+      "description": "Force 0.02 N, Disp 0.5 um (Nominal Baseline)"
+    },
+    "Condition_B": {
+      "sigma_force_N": 0.05,
+      "sigma_disp_um": 0.5,
+      "precision": 1.0,
+      "recall": 0.7083333333333334,
+      "false_alarm_rate": 0.0,
+      "mean_lead_time_ms": 96.88235294117646,
+      "median_lead_time_ms": 69.99999999999999,
+      "future_margin_mae": 0.11595317612650224,
+      "brier_score": 0.04276995368395831,
+      "mean_uncertainty_var": 0.025370638300341055,
+      "p95_uncertainty_var": 0.06002105772495269,
+      "fallback_trigger_rate": 0.0,
+      "description": "Force 0.05 N, Disp 0.5 um (Elevated Force Noise)"
+    },
+    "Condition_C": {
+      "sigma_force_N": 0.02,
+      "sigma_disp_um": 1.0,
+      "precision": 1.0,
+      "recall": 0.7083333333333334,
+      "false_alarm_rate": 0.0,
+      "mean_lead_time_ms": 96.58823529411765,
+      "median_lead_time_ms": 69.99999999999999,
+      "future_margin_mae": 0.11586916585137351,
+      "brier_score": 0.042755783739924634,
+      "mean_uncertainty_var": 0.025355815095492486,
+      "p95_uncertainty_var": 0.05998378247022629,
+      "fallback_trigger_rate": 0.0,
+      "description": "Force 0.02 N, Disp 1.0 um (Elevated Displacement Noise)"
+    },
+    "Condition_D": {
+      "sigma_force_N": 0.05,
+      "sigma_disp_um": 1.0,
+      "precision": 1.0,
+      "recall": 0.7083333333333334,
+      "false_alarm_rate": 0.0,
+      "mean_lead_time_ms": 96.88235294117646,
+      "median_lead_time_ms": 69.99999999999999,
+      "future_margin_mae": 0.11595323590078253,
+      "brier_score": 0.042769974053626314,
+      "mean_uncertainty_var": 0.025370640762266375,
+      "p95_uncertainty_var": 0.060025397688150406,
+      "fallback_trigger_rate": 0.0,
+      "description": "Force 0.05 N, Disp 1.0 um (Dual Elevated Stress)"
+    }
+  }
+}

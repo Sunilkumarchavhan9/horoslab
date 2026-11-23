@@ -1,0 +1,105 @@
+{
+  "milestone": "P4-T4B",
+  "timestamp": "2026-11-23 17:15:00 UTC",
+  "criteria": [
+    {
+      "id": "C1",
+      "name": "Overall Grasp Success",
+      "pass_target": ">= 70.0%",
+      "conditional_target": ">= 60.0%",
+      "measured_hybrid": 0.6333333333333333,
+      "measured_reactive": 0.6333333333333333,
+      "verdict": "CONDITIONAL PASS",
+      "notes": "Hybrid achieved 63.33% (190/300), satisfying the >=60.0% floor but below the 70.0% unconditional gate."
+    },
+    {
+      "id": "C2",
+      "name": "Superiority over Reactive",
+      "pass_target": "Statistically significant higher success OR equal success with >40% lower impulse",
+      "conditional_target": "Higher success in >= 2 strata",
+      "measured_hybrid": {
+        "success_rate": 0.6333,
+        "mean_impulse_Ns": 31.09975501333242,
+        "strata_success": {
+          "mu_0.35": 0.47,
+          "mu_0.55": 0.6,
+          "mu_0.75": 0.83
+        }
+      },
+      "measured_reactive": {
+        "success_rate": 0.6333,
+        "mean_impulse_Ns": 30.691138166666104,
+        "strata_success": {
+          "mu_0.35": 0.47,
+          "mu_0.55": 0.6,
+          "mu_0.75": 0.83
+        }
+      },
+      "verdict": "UNMET / PARITY ONLY",
+      "notes": "Hybrid and Reactive achieved exact parity (p=1.000 McNemar test). Impulse was comparable (31.10 Ns vs 30.69 Ns). Criterion was not satisfied; report previously over-claimed conditional pass."
+    },
+    {
+      "id": "C3",
+      "name": "Low-Friction Handling",
+      "pass_target": "Explicit stabilization (>= 40% on mu=0.35 under conservative load)",
+      "conditional_target": "Documented physical failure boundary with verified mechanism",
+      "measured_hybrid": {
+        "overall_low_mu_success": 0.47,
+        "Fn0_12N_success": 0.52,
+        "Fn0_3N_success": 0.44
+      },
+      "verdict": "PASS",
+      "notes": "Low-friction success reached 52.0% at Fn0=12.0N and 47.0% overall. Physical boundary (<0.70 ms transition vs 50 N/s rate limit) rigorously documented."
+    },
+    {
+      "id": "C4",
+      "name": "High-Friction Efficiency",
+      "pass_target": ">= 80% success on mu=0.75 with mean Fn <= 12.0 N",
+      "conditional_target": ">= 75% success on mu=0.75",
+      "measured_hybrid": {
+        "success_rate": 0.83,
+        "mean_fn_N": 21.65
+      },
+      "verdict": "CONDITIONAL PASS",
+      "notes": "Success reached 83.0% (meeting >=75%), but mean normal force was 21.65 N due to emergency latching during severe shocks."
+    },
+    {
+      "id": "C5",
+      "name": "False Intervention Rate",
+      "pass_target": "<= 5.0% on stable contacts (c/a >= 0.80)",
+      "conditional_target": "<= 25.0%",
+      "measured_hybrid": 0.21333333333333335,
+      "verdict": "CONDITIONAL PASS",
+      "notes": "Measured 21.33% due to conservative pre-slip latching under sensor noise."
+    },
+    {
+      "id": "C6",
+      "name": "Real-Time Control Latency",
+      "pass_target": "Mean step latency <= 0.50 ms",
+      "conditional_target": "Mean step latency <= 0.80 ms",
+      "measured_hybrid": 0.2831922007082014,
+      "verdict": "PASS",
+      "notes": "Measured 0.283 ms mean (p95: 0.313 ms), comfortably within 1.0 ms cycle budget."
+    },
+    {
+      "id": "C7",
+      "name": "Causality & Non-Leakage Contract",
+      "pass_target": "Zero privileged simulation states accessible during control",
+      "conditional_target": "Zero privileged simulation states accessible during control",
+      "measured_hybrid": "0 violations",
+      "verdict": "PASS",
+      "notes": "Formally verified by test_causality_and_observability_invariant."
+    },
+    {
+      "id": "C8",
+      "name": "Actuator Safety Bounds",
+      "pass_target": "Zero violations of Fn in [3, 25] N and |dFn/dt| <= 50 N/s",
+      "conditional_target": "Zero violations",
+      "measured_hybrid": "0 violations",
+      "verdict": "PASS",
+      "notes": "Formally verified by test_controller_action_bounds_and_rate_limits."
+    }
+  ],
+  "final_verdict": "CONDITIONAL PASS",
+  "rationale": "Meets 4 PASS criteria and 3 CONDITIONAL PASS criteria. Criterion C2 (Superiority over Reactive) was UNMET (parity achieved, not superiority). Milestone certified as CONDITIONAL PASS with explicit limitation that actuator rate limits prevent superior proactive performance on high-speed shocks."
+}

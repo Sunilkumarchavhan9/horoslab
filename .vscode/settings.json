@@ -1,0 +1,12 @@
+{
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/research/PROBE-1/Research-002",
+    "${workspaceFolder}/research/PROBE-1/Research-002/src",
+    "${workspaceFolder}/research/PROBE-1/Research-002/scripts"
+  ],
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/research/PROBE-1/Research-002",
+    "${workspaceFolder}/research/PROBE-1/Research-002/src",
+    "${workspaceFolder}/research/PROBE-1/Research-002/scripts"
+  ]
+}

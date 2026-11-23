@@ -1,0 +1,25 @@
+# Contact Physics v2.1.3.11 Source & Test SHA-256 Hash Manifest
+# Milestone: HOROS Contact Physics v2.1.3.11 - Full Hybrid Energy Accounting, Applied-Actuator Consistency & Independent Certification
+# Repository: https://github.com/Sunilkumarchavhan9/horoslab.git
+# Mirror: https://github.com/Sunilkumarchavhan9/horos-probe-1.git
+# Branch: feat/probe1-stage33-production-readiness
+
+# --- Source Files (contact/) ---
+f44663828383f9d52d380b113d6565c80ec7e829f0dc21eb8e6f6985e9fb0da5  contact/__init__.py
+43d844c874ab94930727f00da7018fbb0216dc5d0c5e6551180c5ce8e76a7410  contact/calibration_interface.py
+a7fe0d6eba427be03fe77ab2229984cf671a01c1bcee89515a1f5efe7a4f15f7  contact/cattaneo_mindlin.py
+215d870728bd8e02c5a57914a869c74ebd58a62a973f9f8d7b48eb83a3a7bfc1  contact/contact_state.py
+6613016b7502aff062f15a7461eb2a7fdf2d97fa6cadb00d1ed6750067b20c13  contact/geometry.py
+659fe31b11bbb91c2b2d93f731623f3b0511fccdc4cbdbc7ceffa51762d8cf56  contact/lugre.py
+768ebe35fafa668e316eaba2228ac91efee84ff8c60d3eb72386ddaef81913f3  contact/material.py
+a0829c25f1dbf88530557adaf36b067804d03a84c0fb23e92e832715e9b59241  contact/normal_contact.py
+
+# --- Test Suite Files (tests/) ---
+cb79a018a8739908cc16bc540318045b6f94dad22013778553681481344372b9  tests/__init__.py
+2c072192d9aa6bfd48a2863d565d2b9c7713cdb5c25f0d93ea6302fd55b9ac55  tests/test_energy.py
+c6c0cebd0dc9057e482cd3d743a033203450266f34f78fb20363c71d19423247  tests/test_normal_contact.py
+8907f82a1de652ae25d6da43746e3e318901501d9ff969f5856aef4e26c1909d  tests/test_numerical_stability.py
+3774b437e0a7065d7ff16bebccdeb82625fd3b045b9b391c751d7ad8e4e4cf3a  tests/test_partial_slip.py
+e7abe9316380ac0abb748df80b96b36eb880f180fe6d3e35ef899ee74e8c3f22  tests/test_remediation_v2_1.py
+1ab0a93c824561df9ae8e1475acb9ed662f19f68463174e4f6c40c0c74e60aab  tests/test_remediation_v2_1_3.py
+7e9cc26025c5d7577fd3322e90b94b70c7d4c27e806cf5f810f38e26242b338f  tests/test_stick_zone.py

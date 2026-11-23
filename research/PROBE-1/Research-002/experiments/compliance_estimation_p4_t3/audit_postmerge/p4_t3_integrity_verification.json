@@ -1,0 +1,42 @@
+{
+  "audit_version": "p4_t3_postmerge_v1.0",
+  "reconciled_counts": {
+    "total_canonical_episodes": 96,
+    "train_episodes": 62,
+    "train_windows": 24747,
+    "val_episodes": 16,
+    "val_windows": 5273,
+    "exposed_audit_episodes": 18,
+    "exposed_audit_windows": 8968,
+    "total_windows": 38988,
+    "independent_evaluation_episodes": 24,
+    "independent_seed_range": [
+      4200001,
+      4200024
+    ]
+  },
+  "target_alignment_reconciliation": {
+    "target_horizon_H_steps": 20,
+    "target_formula": "stick_ratio[min(total_steps - 1, t + H)]",
+    "evaluated_target": "aligned_future_margin_m_t_plus_H",
+    "regression_test": "test_future_margin_alignment_contract passed"
+  },
+  "noise_regimes": {
+    "regime_A": {
+      "sigma_F": 0.02,
+      "sigma_delta": 5e-07,
+      "label": "P4-T2 reference standard"
+    },
+    "regime_B": {
+      "sigma_F": 0.05,
+      "sigma_delta": 5e-07,
+      "label": "High-noise stress test"
+    }
+  },
+  "governance_status": {
+    "simulator_v1_modified": false,
+    "contact_physics_v2_modified": false,
+    "production_seeds_locked": true,
+    "gateway_verdict": "PASS"
+  }
+}

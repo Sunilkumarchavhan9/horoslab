@@ -1,0 +1,53 @@
+name: research-002-tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - feat/probe1-stage33-production-readiness
+  workflow_dispatch:
+
+jobs:
+  research-002:
+    name: Research-002 pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Normalize line endings for frozen artifact hashes
+        run: |
+          python3 -c "
+          import os
+          for base in ['research/PROBE-1/Research-002', 'Research-002']:
+              if os.path.exists(base):
+                  for root, _, files in os.walk(base):
+                      for f in files:
+                          if f.endswith(('.json', '.csv')) or f == 'phase37_1_epistemic_ood_diagnostic_report.md':
+                              p = os.path.join(root, f)
+                              with open(p, 'rb') as fp:
+                                  data = fp.read()
+                              crlf = data.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
+                              if crlf != data:
+                                  with open(p, 'wb') as fp:
+                                      fp.write(crlf)
+          "
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest numpy torch scipy==1.14.1
+
+      - name: Execute Full Test Suite
+        run: |
+          if [ -d research/PROBE-1/Research-002/tests ]; then
+            PYTHONPATH=research/PROBE-1/Research-002:research/PROBE-1/Research-002/src pytest research/PROBE-1/Research-002/tests -q
+          else
+            PYTHONPATH=Research-002:Research-002/src pytest Research-002/tests -q
+          fi
