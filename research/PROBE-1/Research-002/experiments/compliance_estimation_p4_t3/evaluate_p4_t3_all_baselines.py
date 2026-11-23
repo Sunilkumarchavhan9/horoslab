@@ -226,7 +226,9 @@ def run_p4_t3_comprehensive_benchmark(
 
                 if t_step <= gs:
                     pred_margins.append(m_hat)
-                    true_margins.append(stick_ratio[t_step])
+                    # Future margin at horizon H=20 steps (properly aligned target)
+                    future_idx = min(len(time_arr) - 1, t_step + 20)
+                    true_margins.append(stick_ratio[future_idx])
                     # Ground truth for gross slip within horizon 20 steps
                     is_slip_near = 1.0 if (t_step + 20 >= gs) else 0.0
                     brier_terms.append((p_slip - is_slip_near) ** 2)
