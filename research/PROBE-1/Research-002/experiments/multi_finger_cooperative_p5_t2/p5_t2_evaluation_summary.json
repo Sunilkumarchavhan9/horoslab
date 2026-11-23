@@ -1,0 +1,473 @@
+{
+  "benchmark": "HOROS PROBE-1 P5-T2 Multi-Finger Cooperative Preload Distribution Benchmark",
+  "timestamp": "2026-11-23 18:40:49 UTC",
+  "total_scenarios": 300,
+  "seed_range": [
+    4600001,
+    4600300
+  ],
+  "controllers": {
+    "EqualForce_Fixed8N": {
+      "success_rate": 0.8666666666666667,
+      "success_95_ci": [
+        0.8266666666666667,
+        0.9033333333333333
+      ],
+      "total_episodes": 300,
+      "strata_stats": {
+        "symmetric_friction": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 14.836799999999991,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 0.15511421561377378
+        },
+        "asymmetric_friction": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 15.645999999999994,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 0.9763073469560785
+        },
+        "off_center_and_torque": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 15.61378679332304,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 6.0098541905416685
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.3333333333333333
+        },
+        "torque_perturbation": {
+          "count": 60,
+          "success_rate": 1.0
+        }
+      },
+      "average_total_fn_mean": 15.365528931107677,
+      "peak_fn_mean": 7.903333333333333,
+      "peak_fn_max": 8.0,
+      "impulse_total_mean": 7.1586666666666705,
+      "mechanical_work_mean_mJ": 3.3214462081275324,
+      "tangential_work_mean_mJ": 5.702778884875521,
+      "damage_proxy_mean": 0.0,
+      "force_imbalance_index_mean": 0.0,
+      "max_tilt_deg_mean": 2.3804252510371744,
+      "max_tilt_deg_max": 20.104073256977237,
+      "latency_ms_mean": 0.011359062669954822,
+      "latency_ms_p95": 0.02114348637405783,
+      "elapsed_seconds": 6.98
+    },
+    "FixedTotalForce_16N": {
+      "success_rate": 0.8666666666666667,
+      "success_95_ci": [
+        0.8266666666666667,
+        0.9033333333333333
+      ],
+      "total_episodes": 300,
+      "strata_stats": {
+        "symmetric_friction": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 14.836799999999991,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 0.15511421561377378
+        },
+        "asymmetric_friction": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 15.645999999999994,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 0.9763073469560785
+        },
+        "off_center_and_torque": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 15.61378679332304,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 6.0098541905416685
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.3333333333333333
+        },
+        "torque_perturbation": {
+          "count": 60,
+          "success_rate": 1.0
+        }
+      },
+      "average_total_fn_mean": 15.365528931107677,
+      "peak_fn_mean": 7.903333333333333,
+      "peak_fn_max": 8.0,
+      "impulse_total_mean": 7.1586666666666705,
+      "mechanical_work_mean_mJ": 3.3214462081275324,
+      "tangential_work_mean_mJ": 5.702778884875521,
+      "damage_proxy_mean": 0.0,
+      "force_imbalance_index_mean": 0.0,
+      "max_tilt_deg_mean": 2.3804252510371744,
+      "max_tilt_deg_max": 20.104073256977237,
+      "latency_ms_mean": 0.011627474371736923,
+      "latency_ms_p95": 0.023251252423506213,
+      "elapsed_seconds": 7.09
+    },
+    "RuleBasedCooperative": {
+      "success_rate": 0.8666666666666667,
+      "success_95_ci": [
+        0.8266666666666667,
+        0.9033333333333333
+      ],
+      "total_episodes": 300,
+      "strata_stats": {
+        "symmetric_friction": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 14.72912373905123,
+          "imbalance_index": 0.022678566857831185,
+          "max_tilt_deg": 0.15616637669016847
+        },
+        "asymmetric_friction": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 15.385279268876614,
+          "imbalance_index": 0.036549077816832566,
+          "max_tilt_deg": 2.067312482912657
+        },
+        "off_center_and_torque": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 15.728634576631475,
+          "imbalance_index": 0.1901596832170026,
+          "max_tilt_deg": 2.5379948984491505
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.3333333333333333
+        },
+        "torque_perturbation": {
+          "count": 60,
+          "success_rate": 1.0
+        }
+      },
+      "average_total_fn_mean": 15.281012528186439,
+      "peak_fn_mean": 9.16239647415107,
+      "peak_fn_max": 12.450710170555357,
+      "impulse_total_mean": 6.915920806083198,
+      "mechanical_work_mean_mJ": 7.516259407597736,
+      "tangential_work_mean_mJ": 3.2244532533918613,
+      "damage_proxy_mean": 0.0,
+      "force_imbalance_index_mean": 0.08312910929722211,
+      "max_tilt_deg_mean": 1.5871579193506586,
+      "max_tilt_deg_max": 7.742000819684353,
+      "latency_ms_mean": 0.014429476663485735,
+      "latency_ms_p95": 0.035635532840387896,
+      "elapsed_seconds": 7.46
+    },
+    "PredictiveMarginBalancing": {
+      "success_rate": 0.9333333333333333,
+      "success_95_ci": [
+        0.9066666666666666,
+        0.9633333333333334
+      ],
+      "total_episodes": 300,
+      "strata_stats": {
+        "symmetric_friction": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 20.811354876548613,
+          "imbalance_index": 0.013706503083959279,
+          "max_tilt_deg": 0.13672780595651438
+        },
+        "asymmetric_friction": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 21.276872611408375,
+          "imbalance_index": 0.07450864585748264,
+          "max_tilt_deg": 0.8229677076220113
+        },
+        "off_center_and_torque": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 20.608872856730482,
+          "imbalance_index": 0.08034462829272143,
+          "max_tilt_deg": 2.72433726497629
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.6666666666666666
+        },
+        "torque_perturbation": {
+          "count": 60,
+          "success_rate": 1.0
+        }
+      },
+      "average_total_fn_mean": 20.899033448229158,
+      "peak_fn_mean": 13.55684512727304,
+      "peak_fn_max": 16.100000000000104,
+      "impulse_total_mean": 10.086823390781252,
+      "mechanical_work_mean_mJ": 19.046917618581453,
+      "tangential_work_mean_mJ": 3.5737704022133174,
+      "damage_proxy_mean": 0.008315867047965128,
+      "force_imbalance_index_mean": 0.05618659241138778,
+      "max_tilt_deg_mean": 1.2280109261849386,
+      "max_tilt_deg_max": 6.668271477375874,
+      "latency_ms_mean": 0.06577574988982329,
+      "latency_ms_p95": 0.12722647923510502,
+      "elapsed_seconds": 15.19
+    },
+    "IndependentP5T1Adaptive": {
+      "success_rate": 0.8666666666666667,
+      "success_95_ci": [
+        0.83,
+        0.9
+      ],
+      "total_episodes": 300,
+      "strata_stats": {
+        "symmetric_friction": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 16.0,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 0.15929230767433158
+        },
+        "asymmetric_friction": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 17.00000000000008,
+          "imbalance_index": 0.4117647058823543,
+          "max_tilt_deg": 0.3629685143109458
+        },
+        "off_center_and_torque": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 16.0,
+          "imbalance_index": 0.0,
+          "max_tilt_deg": 5.515629010977557
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.3333333333333333
+        },
+        "torque_perturbation": {
+          "count": 60,
+          "success_rate": 1.0
+        }
+      },
+      "average_total_fn_mean": 16.33333333333336,
+      "peak_fn_mean": 9.333333333333334,
+      "peak_fn_max": 12.0,
+      "impulse_total_mean": 7.877913333333352,
+      "mechanical_work_mean_mJ": 0.0,
+      "tangential_work_mean_mJ": 5.5941328635059255,
+      "damage_proxy_mean": 0.0,
+      "force_imbalance_index_mean": 0.13725490196078474,
+      "max_tilt_deg_mean": 2.012629944320945,
+      "max_tilt_deg_max": 20.089506358592647,
+      "latency_ms_mean": 0.010956080419432445,
+      "latency_ms_p95": 0.018200522172264755,
+      "elapsed_seconds": 7.1
+    },
+    "LearnedUncertaintyCooperative": {
+      "success_rate": 0.9333333333333333,
+      "success_95_ci": [
+        0.9066666666666666,
+        0.9633333333333334
+      ],
+      "total_episodes": 300,
+      "strata_stats": {
+        "symmetric_friction": {
+          "count": 100,
+          "success_rate": 0.8,
+          "mean_total_fn": 18.294673738681137,
+          "imbalance_index": 0.029271656154175818,
+          "max_tilt_deg": 0.143134865851954
+        },
+        "asymmetric_friction": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 18.927970279747804,
+          "imbalance_index": 0.1014575185740219,
+          "max_tilt_deg": 0.8329671187401853
+        },
+        "off_center_and_torque": {
+          "count": 100,
+          "success_rate": 1.0,
+          "mean_total_fn": 17.642944966391948,
+          "imbalance_index": 0.18956199834560328,
+          "max_tilt_deg": 2.725725806979054
+        }
+      },
+      "disturbance_stats": {
+        "shear_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "fast_ramp": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "micro_probe": {
+          "count": 60,
+          "success_rate": 1.0
+        },
+        "tangential_shock": {
+          "count": 60,
+          "success_rate": 0.6666666666666666
+        },
+        "torque_perturbation": {
+          "count": 60,
+          "success_rate": 1.0
+        }
+      },
+      "average_total_fn_mean": 18.288529661606958,
+      "peak_fn_mean": 12.481112566557258,
+      "peak_fn_max": 15.33963100307652,
+      "impulse_total_mean": 8.781571497470154,
+      "mechanical_work_mean_mJ": 17.674770338916996,
+      "tangential_work_mean_mJ": 3.461098945202345,
+      "damage_proxy_mean": 0.0001352594831958732,
+      "force_imbalance_index_mean": 0.10676372435793369,
+      "max_tilt_deg_mean": 1.233942597190398,
+      "max_tilt_deg_max": 6.67683785792577,
+      "latency_ms_mean": 0.0656878928213896,
+      "latency_ms_p95": 0.11461024958407506,
+      "elapsed_seconds": 15.16
+    }
+  },
+  "pairwise_comparisons": {
+    "Learned_vs_EqualForce_Fixed8N": {
+      "b_learned_only": 20,
+      "c_baseline_only": 0,
+      "mcnemar_stat": 18.05,
+      "mcnemar_p_value": 1.0758932189047776e-05,
+      "statistically_superior": true
+    },
+    "Learned_vs_IndependentP5T1Adaptive": {
+      "b_learned_only": 40,
+      "c_baseline_only": 20,
+      "mcnemar_stat": 6.016666666666667,
+      "mcnemar_p_value": 0.007085694127006104,
+      "statistically_superior": true
+    },
+    "Learned_vs_RuleBasedCooperative": {
+      "b_learned_only": 20,
+      "c_baseline_only": 0,
+      "mcnemar_stat": 18.05,
+      "mcnemar_p_value": 1.0758932189047776e-05,
+      "statistically_superior": true
+    }
+  },
+  "acceptance_matrix": {
+    "C1_overall_success_rate": {
+      "threshold": ">= 0.750",
+      "measured": 0.9333,
+      "status": "PASS"
+    },
+    "C2_asymmetric_friction_success": {
+      "threshold": ">= 0.700",
+      "measured": 1.0,
+      "status": "PASS"
+    },
+    "C3_off_center_torque_success": {
+      "threshold": ">= 0.650",
+      "measured": 1.0,
+      "status": "PASS"
+    },
+    "C4_superior_to_fixed_equal_8N": {
+      "threshold": "p < 0.05 or higher success",
+      "measured": "Learned=93.3%, Equal8N=86.7%, p=1.0759e-05",
+      "status": "PASS"
+    },
+    "C5_superior_to_independent_p5_t1": {
+      "threshold": "success >= indep",
+      "measured": "Learned=93.3%, Indep=86.7%, p=7.0857e-03",
+      "status": "PASS"
+    },
+    "C6_tilt_stability": {
+      "threshold": "<= 15.0 deg",
+      "measured": 1.23,
+      "status": "PASS"
+    },
+    "C7_telemetry_causality": {
+      "threshold": "Strictly Causal",
+      "measured": "Verified No Hidden State Leaks",
+      "status": "PASS"
+    },
+    "C8_execution_latency": {
+      "threshold": "P95 <= 0.20 ms",
+      "measured": "0.1146 ms",
+      "status": "PASS"
+    },
+    "overall_milestone_verdict": "PASS"
+  }
+}

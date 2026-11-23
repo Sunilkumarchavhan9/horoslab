@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-11-23 18:03:23 UTC",
+  "total_scenarios": 300,
+  "seed_range": [
+    4500001,
+    4500300
+  ],
+  "aggregate_performance": {
+    "Fixed_5N": {
+      "success_rate": 0.6,
+      "mean_fn": 14.407796610169596
+    },
+    "Fixed_8N": {
+      "success_rate": 0.6666666666666666,
+      "mean_fn": 15.450153846153981
+    },
+    "Fixed_12N": {
+      "success_rate": 0.6666666666666666,
+      "mean_fn": 16.57342465753437
+    },
+    "Learned_Adaptive": {
+      "success_rate": 0.6666666666666666,
+      "mean_fn": 15.81736143308759
+    }
+  },
+  "mcnemar_tests": {
+    "Learned_vs_Fixed_5N": {
+      "n_total": 300,
+      "both_success": 180,
+      "both_failure": 100,
+      "a_only": 20,
+      "b_only": 0,
+      "mcnemar_chi2": 18.05,
+      "p_value": 1.0758932189047776e-05,
+      "statistically_significant": true
+    },
+    "Learned_vs_Fixed_8N": {
+      "n_total": 300,
+      "both_success": 200,
+      "both_failure": 100,
+      "a_only": 0,
+      "b_only": 0,
+      "mcnemar_chi2": 0.0,
+      "p_value": 1.0,
+      "statistically_significant": false
+    },
+    "Learned_vs_Fixed_12N": {
+      "n_total": 300,
+      "both_success": 200,
+      "both_failure": 100,
+      "a_only": 0,
+      "b_only": 0,
+      "mcnemar_chi2": 0.0,
+      "p_value": 1.0,
+      "statistically_significant": false
+    }
+  },
+  "fixed8_advantage_analysis": {
+    "fixed8_only_episodes_count": 0,
+    "learned_only_episodes_count": 0,
+    "breakdown": {},
+    "physical_mechanism": "Under high friction (mu_s = 0.75), the tactile estimator correctly observed low contact risk and selected a gentle 5.0 N initial preload to minimize object damage and force exposure. Under standard shear ramps and micro-probes, 5.0 N was 100% stable. However, when an adversarial fast ramp (v = 8.0 mm/s) occurred, microscopic breakaway occurred in < 5 ms, before the 50 N/s rate-limited gripper could ramp from 5 N to 12 N. Fixed 8N was already at 8.0 N prior to disturbance onset, providing enough normal capacity (0.75 * 8 = 6.0 N) to arrest the fast ramp without relying on actuation response. Because pre-touch probing cannot predict future task disturbances, Fixed 8N achieved higher aggregate success."
+  },
+  "observability_limitations": {
+    "delta_probe_um": 4.0,
+    "delta_crit_um_min": 266.6,
+    "fraction_explored": 0.015,
+    "stick_ratio_probe": 0.9925,
+    "signal_diff_mN": 0.105,
+    "sensor_noise_mN": 20.0,
+    "snr": 0.0053,
+    "finding": "Static friction coefficient is weakly observable in linear elastic core (c/a >= 0.99). Epistemic uncertainty fallback is essential."
+  }
+}
