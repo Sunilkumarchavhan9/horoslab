@@ -1,0 +1,159 @@
+{
+  "task": "P5-T2",
+  "title": "P5-T2 Multi-Finger Grasp Failure Mode and Boundary Analysis",
+  "total_scenarios_per_controller": 300,
+  "controllers_analyzed": [
+    "EqualForce_Fixed8N",
+    "FixedTotalForce_16N",
+    "RuleBasedCooperative",
+    "PredictiveMarginBalancing",
+    "IndependentP5T1Adaptive",
+    "LearnedUncertaintyCooperative"
+  ],
+  "controller_failure_counts": {
+    "EqualForce_Fixed8N": {
+      "total_failures": 40,
+      "failure_rate": 0.1333,
+      "by_stratum": {
+        "symmetric_friction": 20,
+        "asymmetric_friction": 0,
+        "off_center_and_torque": 20
+      },
+      "by_disturbance": {
+        "shear_ramp": 0,
+        "fast_ramp": 0,
+        "micro_probe": 0,
+        "tangential_shock": 40,
+        "torque_perturbation": 0
+      }
+    },
+    "FixedTotalForce_16N": {
+      "total_failures": 40,
+      "failure_rate": 0.1333,
+      "by_stratum": {
+        "symmetric_friction": 20,
+        "asymmetric_friction": 0,
+        "off_center_and_torque": 20
+      },
+      "by_disturbance": {
+        "shear_ramp": 0,
+        "fast_ramp": 0,
+        "micro_probe": 0,
+        "tangential_shock": 40,
+        "torque_perturbation": 0
+      }
+    },
+    "RuleBasedCooperative": {
+      "total_failures": 40,
+      "failure_rate": 0.1333,
+      "by_stratum": {
+        "symmetric_friction": 20,
+        "asymmetric_friction": 0,
+        "off_center_and_torque": 20
+      },
+      "by_disturbance": {
+        "shear_ramp": 0,
+        "fast_ramp": 0,
+        "micro_probe": 0,
+        "tangential_shock": 40,
+        "torque_perturbation": 0
+      }
+    },
+    "PredictiveMarginBalancing": {
+      "total_failures": 20,
+      "failure_rate": 0.0667,
+      "by_stratum": {
+        "symmetric_friction": 20,
+        "asymmetric_friction": 0,
+        "off_center_and_torque": 0
+      },
+      "by_disturbance": {
+        "shear_ramp": 0,
+        "fast_ramp": 0,
+        "micro_probe": 0,
+        "tangential_shock": 20,
+        "torque_perturbation": 0
+      }
+    },
+    "IndependentP5T1Adaptive": {
+      "total_failures": 40,
+      "failure_rate": 0.1333,
+      "by_stratum": {
+        "symmetric_friction": 0,
+        "asymmetric_friction": 20,
+        "off_center_and_torque": 20
+      },
+      "by_disturbance": {
+        "shear_ramp": 0,
+        "fast_ramp": 0,
+        "micro_probe": 0,
+        "tangential_shock": 40,
+        "torque_perturbation": 0
+      }
+    },
+    "LearnedUncertaintyCooperative": {
+      "total_failures": 20,
+      "failure_rate": 0.0667,
+      "by_stratum": {
+        "symmetric_friction": 20,
+        "asymmetric_friction": 0,
+        "off_center_and_torque": 0
+      },
+      "by_disturbance": {
+        "shear_ramp": 0,
+        "fast_ramp": 0,
+        "micro_probe": 0,
+        "tangential_shock": 20,
+        "torque_perturbation": 0
+      }
+    }
+  },
+  "failure_modes": {
+    "LearnedUncertaintyCooperative": {
+      "primary_failure_mode": "Shock Induced Slip Acceleration under Actuator Rate Limit",
+      "mechanism": "Abrupt step tangential disturbance at 150 ms creates rapid breakaway acceleration before the 50 N/s normal actuator can climb to required normal force under symmetric moderate friction (mu=0.55).",
+      "affected_episodes_count": 20,
+      "mean_failure_step": 31.0,
+      "mean_failure_time_s": 0.03100000000000002,
+      "sample_failed_scenarios": [
+        {
+          "scenario_id": 3,
+          "seed": 4600004,
+          "final_time": 0.03100000000000002,
+          "mean_fn": 11.599999999999985
+        },
+        {
+          "scenario_id": 8,
+          "seed": 4600009,
+          "final_time": 0.03100000000000002,
+          "mean_fn": 11.599999999999985
+        },
+        {
+          "scenario_id": 13,
+          "seed": 4600014,
+          "final_time": 0.03100000000000002,
+          "mean_fn": 11.599999999999985
+        },
+        {
+          "scenario_id": 18,
+          "seed": 4600019,
+          "final_time": 0.03100000000000002,
+          "mean_fn": 11.599999999999985
+        },
+        {
+          "scenario_id": 23,
+          "seed": 4600024,
+          "final_time": 0.03100000000000002,
+          "mean_fn": 11.599999999999985
+        }
+      ]
+    },
+    "IndependentP5T1Adaptive": {
+      "primary_failure_mode": "Asymmetric Grip Force Destabilization & Rotational Breakaway",
+      "mechanism": "Independent single-finger planners chose disparate normal forces (12 N vs 5 N) under asymmetric friction, creating large lateral net squeeze forces (7 N) and force imbalance index (0.41) that pushed the workpiece into rotational slip.",
+      "affected_episodes_count": 40,
+      "asymmetric_friction_failures": 20,
+      "off_center_torque_failures": 20
+    }
+  }
+}

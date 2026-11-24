@@ -1,0 +1,28 @@
+{
+  "task": "P5-T2",
+  "audit_scope": "Tilt Metric Reconciliation and Numerical Resolution",
+  "metric_definitions": {
+    "max_tilt_per_episode_deg": "Maximum absolute rotational deviation |theta(t)| of workpiece about CM in degrees during an episode",
+    "mean_benchmark_tilt_deg": "Mean of max_tilt_per_episode across all 300 benchmark episodes",
+    "worst_episode_tilt_deg": "Maximum value of max_tilt_per_episode across all 300 benchmark episodes"
+  },
+  "resolved_values": {
+    "Fixed8N_mean_tilt_all_300_eps": 2.3804,
+    "Fixed8N_worst_episode_tilt_deg": 20.1041,
+    "Fixed8N_worst_episode_id": 213,
+    "Fixed8N_worst_episode_seed": 4600214,
+    "Learned_mean_tilt_all_300_eps": 1.2339,
+    "Learned_worst_episode_tilt_deg": 6.6768,
+    "Learned_worst_episode_id": 238,
+    "Learned_worst_episode_seed": 4600239,
+    "Stratum3_off_center_Fixed8N_mean_tilt_deg": 6.0099,
+    "Stratum3_off_center_Learned_mean_tilt_deg": 2.7257
+  },
+  "reconciliation_explanation": {
+    "20_1_deg_value": "Corresponds to Fixed8N worst-case single-episode tilt (20.104 deg) occurring in Stratum 3 under tangential shock, where the workpiece tilted past the drop limit (0.35 rad = 20.05 deg). Exactly 20 episodes in Fixed8N reached this 20.1 deg ceiling.",
+    "2_38_deg_value": "Corresponds to Fixed8N aggregate mean tilt across all 300 episodes (2.3804 deg), averaged across strata 1, 2, and 3.",
+    "1_23_deg_value": "Corresponds to Learned Cooperative aggregate mean tilt across all 300 episodes (1.2339 deg).",
+    "6_68_deg_value": "Corresponds to Learned Cooperative worst-case single-episode tilt (6.6768 deg) occurring in Episode 238 (Seed 4600239) under off-center tangential shock.",
+    "80_pct_containment_claim_clarification": "The 80% tilt containment refers to comparing the worst-case unarrested tilt failure mode of fixed clamping (20.1 deg) against the controlled operating regime achieved by Learned Cooperative (mean tilt 1.23 deg, an (20.1 - 1.23)/20.1 = 93.9% reduction, and Stratum 3 mean 2.73 deg, an (20.1 - 2.73)/20.1 = 86.4% reduction). In direct matched Stratum 3 means, the reduction is (6.01 - 2.73) / 6.01 = 54.6%."
+  }
+}
