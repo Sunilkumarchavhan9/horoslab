@@ -1,0 +1,30 @@
+{
+  "milestone": "HOROS PROBE-1 Phase 5 Task 3 (P5-T3)",
+  "git_commit": "aa83eae6fba1c5cb8f76d893051f2a4b81ccf1d8",
+  "python_version": "3.12.10",
+  "platform": "Windows-11-AMD64",
+  "evaluation_seed_range": {
+    "total_scenarios": 900,
+    "N_3": [
+      4710001,
+      4710300
+    ],
+    "N_4": [
+      4710301,
+      4710600
+    ],
+    "N_5": [
+      4710601,
+      4710900
+    ]
+  },
+  "protected_components_sha256": {
+    "cattaneo_mindlin.py": "a7fe0d6eba427be03fe77ab2229984cf671a01c1bcee89515a1f5efe7a4f15f7",
+    "lugre.py": "659fe31b11bbb91c2b2d93f731623f3b0511fccdc4cbdbc7ceffa51762d8cf56",
+    "contact_state.py": "215d870728bd8e02c5a57914a869c74ebd58a62a973f9f8d7b48eb83a3a7bfc1"
+  },
+  "generated_artifacts_sha256": {
+    "p5_t3_evaluation_summary.json": "be763206a3964d9684d7b9533b4dcb989fcd5fd7e8bf47ff81aadfd8347c1b2b",
+    "p5_t3_failure_analysis.json": "6d5ac67e9159199e3ba1904f1ad434de61221b75ac990f9370e2c06538c1f932"
+  }
+}

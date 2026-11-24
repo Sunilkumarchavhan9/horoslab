@@ -1,0 +1,49 @@
+{
+  "task": "P5-T2",
+  "audit_scope": "Statistical Verification of Paired Baseline Comparisons",
+  "comparison_1_Learned_vs_EqualForce_Fixed8N": {
+    "sample_size": 300,
+    "contingency_table": {
+      "both_succeeded_n11": 260,
+      "both_failed_n00": 20,
+      "learned_only_b": 20,
+      "baseline_only_c": 0
+    },
+    "paired_difference_pct": 6.6667,
+    "paired_diff_95_ci_pct": [
+      3.844,
+      9.4893
+    ],
+    "edwards_continuity_corrected_chi2": 18.05,
+    "asymptotic_mcnemar_1sided_p": 1.075893e-05,
+    "asymptotic_mcnemar_2sided_p": 2.151786e-05,
+    "standard_uncorrected_chi2": 20.0,
+    "asymptotic_uncorrected_2sided_p": 7.744216e-06,
+    "exact_binomial_1sided_p": 9.536743e-07,
+    "exact_binomial_2sided_p": 1.907349e-06,
+    "statistically_significant_at_alpha_0_05": true
+  },
+  "comparison_2_Learned_vs_IndependentP5T1": {
+    "sample_size": 300,
+    "contingency_table": {
+      "both_succeeded_n11": 240,
+      "both_failed_n00": 0,
+      "learned_only_b": 40,
+      "baseline_only_c": 20
+    },
+    "paired_difference_pct": 6.6667,
+    "paired_diff_95_ci_pct": [
+      1.6626,
+      11.6707
+    ],
+    "edwards_continuity_corrected_chi2": 6.0167,
+    "asymptotic_mcnemar_1sided_p": 0.007085694,
+    "asymptotic_mcnemar_2sided_p": 0.01417139,
+    "standard_uncorrected_chi2": 6.6667,
+    "asymptotic_uncorrected_2sided_p": 0.009823275,
+    "exact_binomial_1sided_p": 0.006744647,
+    "exact_binomial_2sided_p": 0.01348929,
+    "statistically_significant_at_alpha_0_05": true
+  },
+  "methodological_note": "The original evaluation report emitted one-sided continuity-corrected p-values (1.076e-5 and 7.086e-3). Both tests remain unconditionally significant at p < 0.05 under two-sided continuity-corrected asymptotic McNemar and two-sided exact binomial tests."
+}
